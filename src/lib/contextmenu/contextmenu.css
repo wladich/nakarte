@@ -1,0 +1,50 @@
+.contextmenu {
+    position: fixed;
+    background-color: #fff;
+    font: 12px/1.5 "Helvetica Neue",Arial,Helvetica,sans-serif;
+    box-shadow: 0 1px 7px rgba(0,0,0,0.4);
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    padding: 4px 0;
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.contextmenu .item {
+    display: block;
+    color: #222;
+    font-size: 12px;
+    line-height: 16px;
+    height: 16px;
+    text-decoration: none;
+    padding: 0 12px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    cursor: default;
+}
+
+.contextmenu .item:hover {
+    background-color: #f4f4f4;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.contextmenu .separator span {
+    background-color: white;
+    padding: 0 0.2em;
+    color: #888;
+    margin: 0 1em;
+}
+.contextmenu .separator {
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    width: 100%;
+    line-height: 1px;
+    margin: 8px 0;
+}
+
+.contextmenu .disabled {
+    color: #aaa;
+}

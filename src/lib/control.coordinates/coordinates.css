@@ -1,0 +1,38 @@
+.leaflet-control-coordinates {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-image: url('coords16.png');
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.leaflet-control-coordinates.expanded {
+    background-image: none;
+    width: auto;
+    padding: 0 0.7em;
+    overflow: hidden;
+}
+
+.leaflet-control-coordinates-text {
+    display: none;
+    white-space: nowrap;
+    float: left;
+    line-height: 26px;
+}
+
+.leaflet-control-coordinates-text:first-child {
+    margin-right: 1em;
+}
+
+.leaflet-control-coordinates.expanded .leaflet-control-coordinates-text {
+    display: inline;
+}
+
+.coordinates-control-active {
+    cursor: default;
+}

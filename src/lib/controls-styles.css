@@ -1,0 +1,44 @@
+.leaflet-control.control-form {
+    background-color: white;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    padding: 5px 10px 5px 12px;
+    color: #333;
+}
+
+.leaflet-control.control-form input[type="text"] {
+    padding: 0 5px;
+    margin: 0;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    text-align: right;
+}
+
+.leaflet-control .image-button {
+    width: 26px;
+    height: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 26px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.leaflet-control .image-button:hover,
+.leaflet-control .text-button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control .text-button {
+    display: inline-block;
+    height: 26px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}

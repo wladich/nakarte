@@ -1,0 +1,120 @@
+.control-print-pages {
+    line-height: 1.4;
+}
+
+.control-print-pages .scale {
+    width: 3.2em;
+}
+
+.control-print-pages .page-size {
+    width: 2.1em;
+}
+
+.control-print-pages .margins input {
+    width: 1.1em;
+}
+
+.control-print-pages .resolution {
+    width: 2.1em;
+}
+
+.button-add-page-horiz {
+    background-image: url("images/add-page-horiz.png");
+    margin-left: 2mm;
+}
+
+.button-add-page-vert {
+    background-image: url("images/add-page-vert.png");
+}
+
+.button-remove-pages {
+    background-image: url("images/remove-pages.png");
+    float: right;
+}
+
+.button-settings {
+    background-image: url("images/settings.png");
+}
+
+.control-print-pages table {
+    border-collapse: collapse;
+}
+
+.control-print-pages tr,
+.control-print-pages td,
+.control-print-pages tbody {
+    margin: 0;
+    padding: 0;
+}
+
+.control-print-pages td {
+    border-top: 1px solid #eee;
+    padding-top: 1.5mm;
+    padding-bottom: 1mm;
+}
+
+.control-print-pages tr:first-child td {
+    border: 0;
+}
+
+.control-print-pages td:nth-child(2) {
+    padding-left: 2mm;
+}
+
+.control-print-pages .margins td {
+    padding: 0;
+    border: 0;
+}
+
+.control-print-pages .settings-summary {
+    display: inline-block;
+    margin-left: 3mm;
+}
+
+.control-print-pages tr:last-child td {
+    text-align: center;
+}
+
+.preset-values {
+    margin-bottom: 1.5mm;
+}
+
+.preset-values a {
+    color: #999;
+    border-bottom: 1px dotted #999;
+    cursor: pointer;
+    margin-right: 2.5mm;
+}
+
+.preset-values a:last-child {
+    margin-right: 0;
+}
+
+.control-print-pages .label {
+    vertical-align: bottom;
+}
+
+.control-print-pages .label-high {
+    vertical-align: middle;
+}
+
+.print-page-marker {
+    box-sizing: border-box;
+    color: rgba(255, 120, 0, 0.5);
+    text-align: center;
+    /*background-color: rgba(255, 120, 0, 0.2);*/
+    /*border: solid 2px rgba(255, 120, 0, 0.7);*/
+    margin: 0;
+    vertical-align: middle;
+
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated.print-page-marker {
+    transition:
+        width 0.25s cubic-bezier(0, 0, 0.25, 1),
+        height 0.25s cubic-bezier(0, 0, 0.25, 1),
+        margin 0.25s cubic-bezier(0, 0, 0.25, 1),
+        font-size 0.25s cubic-bezier(0, 0, 0.25, 1),
+        line-height 0.25s cubic-bezier(0, 0, 0.25, 1),
+        transform 0.25s cubic-bezier(0,0,0.25,1);
+}
