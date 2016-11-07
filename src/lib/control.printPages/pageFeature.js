@@ -1,5 +1,5 @@
 import L from 'leaflet'
-
+import './page-feature.css';
 
 const PageFeature = L.Marker.extend({
         initialize: function(centerLatLng, paperSize, scale, label) {
@@ -32,9 +32,7 @@ const PageFeature = L.Marker.extend({
         },
 
         getLatLngBounds: function() {
-            var latlng = this.getLatLng(),
-                lng = latlng.lng,
-                lat = latlng.lat;
+            let {lat, lng} = this.getLatLng();
             var width = this.paperSize[0] * this.scale / 10 / 111319.49 / Math.cos(lat * Math.PI / 180);
             var height = this.paperSize[1] * this.scale / 10 / 111319.49;
             var latlng_sw = [lat - height / 2, lng - width / 2];

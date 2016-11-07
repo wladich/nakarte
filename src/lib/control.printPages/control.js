@@ -2,7 +2,7 @@ import L from 'leaflet'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import '../controls-styles.css';
-import './style.css';
+import './control.css';
 import PrintPagesForm from './form';
 import PageFeature from './pageFeature';
 import Contextmenu from '../contextmenu/contextmenu';
