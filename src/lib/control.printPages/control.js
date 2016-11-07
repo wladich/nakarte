@@ -1,18 +1,51 @@
 import L from 'leaflet'
-import React from 'react';
-import ReactDOM from 'react-dom';
+import ko from 'knockout';
+import '../knockout.component.progress/progress';
 import '../controls-styles.css';
 import './control.css';
-import PrintPagesForm from './form';
 import PageFeature from './pageFeature';
 import Contextmenu from '../contextmenu/contextmenu';
 import {renderMap} from './map-render'
+import formHtml from './form.html';
+
+ko.extenders.checkNumberRange = function(target, range) {
+    return ko.pureComputed({
+            read: target,  //always return the original observables value
+            write: function(newValue) {
+                newValue = parseFloat(newValue);
+                if (newValue >= range[0] && newValue <= range[1]) {
+                    target(newValue);
+                } else {
+                    target.notifySubscribers(target());
+                }
+            }
+        }
+    ).extend({notify: 'always'});
+};
 
 L.Control.PrintPages = L.Control.extend({
         options: {position: 'bottomleft'},
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
             this.pages = [];
+            this.scale = ko.observable(500).extend({checkNumberRange: [1, 1000000]});
+            this.resolution = ko.observable(300).extend({checkNumberRange: [10, 9999]});
+            this.zoomLevel = ko.observable('auto');
+            this.pageWidth = ko.observable(210).extend({checkNumberRange: [10, 9999]});
+            this.pageHeight = ko.observable(297).extend({checkNumberRange: [10, 9999]});
+            this.settingsExpanded = ko.observable(false);
+            this.makingPdf = ko.observable(false);
+            this.downloadProgressRange = ko.observable(undefined);
+            this.downloadProgressDone = ko.observable(undefined);
+            this.marginLeft = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.marginRight = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.marginTop = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.marginBottom = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.autoZoomLevels = ko.observable({});
+            this.printSize = ko.pureComputed(this._printSize, this);
+            this.printSize.subscribe(this.onPageSizeChanged, this);
+            this.scale.subscribe(this.onPageSizeChanged, this);
+            this.resolution.subscribe(this.onPageSizeChanged, this);
         },
 
         onAdd: function(map) {
@@ -25,26 +58,19 @@ L.Control.PrintPages = L.Control.extend({
             }
 
             map.on('move', this.updateFormZooms, this);
-            this.form = ReactDOM.render(<PrintPagesForm
-                    onAddLandscapePage={this.addLandscapePage.bind(this)}
-                    onAddPortraitPage={this.addPortraitPage.bind(this)}
-                    onRemovePages={this.removePages.bind(this)}
-                    onSavePdf={this.savePdf.bind(this)}
-                    onFormDataChanged={this.onFormDataChanged.bind(this)}
-                />, container
-            );
+            container.innerHTML = formHtml;
+            ko.applyBindings(this, container);
             this.updateFormZooms();
             return container;
         },
 
-        addPage: function(data, landsacape) {
-            let {pageWidth, pageHeight, marginLeft, marginTop, marginRight, marginBottom} = data;
-            if (landsacape) {
+        addPage: function(isLandsacape) {
+            let [pageWidth, pageHeight] = this.printSize();
+            if (isLandsacape) {
                 [pageWidth, pageHeight] = [pageHeight, pageWidth];
             }
-            const page = new PageFeature(this._map.getCenter(),
-                [pageWidth - marginLeft - marginRight, pageHeight - marginTop - marginBottom],
-                data.scale, (this.pages.length + 1).toString()
+            const page = new PageFeature(this._map.getCenter(), [pageWidth, pageHeight],
+                this.scale(), (this.pages.length + 1).toString()
             );
             page.addTo(this._map);
             this.pages.push(page);
@@ -56,13 +82,13 @@ L.Control.PrintPages = L.Control.extend({
             return page
         },
 
-        addLandscapePage: function(data) {
-            const page = this.addPage(data, true);
+        addLandscapePage: function() {
+            const page = this.addPage(true);
             page._rotated = true;
         },
 
-        addPortraitPage: function(data) {
-            this.addPage(data, false);
+        addPortraitPage: function() {
+            this.addPage(false);
         },
 
         removePage: function(page) {
@@ -88,22 +114,21 @@ L.Control.PrintPages = L.Control.extend({
             renderMap(this._map);
         },
 
-        onFormDataChanged: function(data) {
-            let {pageWidth, pageHeight, marginLeft, marginTop, marginRight, marginBottom, scale} = data;
+        onPageSizeChanged: function() {
+            let [pageWidth, pageHeight] = this.printSize();
             this.pages.forEach((page) => {
-                    let w = pageWidth - marginLeft - marginRight,
-                        h = pageHeight - marginTop - marginBottom;
+                    let [w, h] = [pageWidth, pageHeight];
                     if (page._rotated) {
                         [w, h] = [h, w];
                     }
-                    page.setSize([w, h], scale);
+                    page.setSize([w, h], this.scale());
                 }
             );
             this.updateFormZooms();
         },
 
         makePageContexmenuItems: function(page) {
-            var items = [
+            const items = [
                 {text: 'Rotate', callback: this.rotatePage.bind(this, page)},
                 '-',
                 {text: 'Delete', callback: this.removePage.bind(this, page)},
@@ -144,9 +169,14 @@ L.Control.PrintPages = L.Control.extend({
             }
         },
 
+        _printSize: function() {
+            return [this.pageWidth() - this.marginLeft() - this.marginRight(),
+                this.pageHeight() - this.marginTop() - this.marginBottom()];
+        },
+
         suggestZooms: function() {
-            const scale = this.form.state.scale,
-                resolution = this.form.state.resolution;
+            const scale = this.scale(),
+                resolution = this.resolution();
             let referenceLat;
             if (this.pages.length > 0) {
                 let absLats = this.pages.map((page) => {
@@ -160,18 +190,18 @@ L.Control.PrintPages = L.Control.extend({
                 }
                 referenceLat = this._map.getCenter().lat;
             }
-            var targetMetersPerPixel = scale / (resolution / 2.54);
-            var mapUnitsPerPixel = targetMetersPerPixel / Math.cos(referenceLat * Math.PI / 180);
-            var zoomSat = Math.ceil(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
+            let targetMetersPerPixel = scale / (resolution / 2.54);
+            let mapUnitsPerPixel = targetMetersPerPixel / Math.cos(referenceLat * Math.PI / 180);
+            const satZoom = Math.ceil(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
 
             targetMetersPerPixel = scale / (90 / 2.54) / 1.5;
             mapUnitsPerPixel = targetMetersPerPixel / Math.cos(referenceLat * Math.PI / 180);
-            var zoomMap = Math.round(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
-            return {zoomMap, zoomSat};
+            const mapZoom = Math.round(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
+            return {mapZoom, satZoom};
         },
 
         updateFormZooms: function() {
-            this.form.setSuggestedZooms(this.suggestZooms());
+            this.autoZoomLevels(this.suggestZooms());
         }
     }
 );

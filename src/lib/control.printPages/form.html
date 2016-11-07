@@ -1,0 +1,91 @@
+<table class="layout">
+    <tbody>
+    <tr><td colspan="2">
+        <a title="Add page in portrait orientation" class="button-add-page-vert image-button"
+           data-bind="click: addPortraitPage"></a>
+        <a title="Add page in landscape orientation" class="button-add-page-horiz image-button"
+           data-bind="click: addLandscapePage"></a>
+        <a title="Remove all pages" class="button-remove-pages image-button"
+           data-bind="click: removePages"></a>
+    </td></tr>
+    <tr>
+        <td class="label">Print scale</td>
+        <td>
+            <div class="preset-values" >
+                <a data-bind="click: function() {$root.scale(100)}">100 m</a>
+                <a data-bind="click: function() {$root.scale(500)}">500 m</a>
+                <a data-bind="click: function() {$root.scale(1000)}">1 km</a>
+            </div>
+            <input type="text" class="scale" maxlength="6" data-bind="value: scale">&nbsp;m in 1 cm
+        </td>
+    </tr>
+    <tr data-bind="visible: settingsExpanded">
+        <td class="label">Page size</td>
+        <td>
+            <div class="preset-values">
+                <a data-bind="click: function() {$root.pageWidth(594); $root.pageHeight(841)}">A1</a>
+                <a data-bind="click: function() {$root.pageWidth(420); $root.pageHeight(594)}">A2</a>
+                <a data-bind="click: function() {$root.pageWidth(297); $root.pageHeight(420)}">A3</a>
+                <a data-bind="click: function() {$root.pageWidth(210); $root.pageHeight(297)}">A4</a>
+                <a data-bind="click: function() {$root.pageWidth(148); $root.pageHeight(210)}">A5</a>
+            </div>
+            <input type="text" maxlength="4" title="width" placeholder="width" class="page-size" data-bind="value: pageWidth">
+            x <input type="text" maxlength="4" title="height" placeholder="height" class="page-size" data-bind="value: pageHeight"> mm
+        </td>
+    </tr>
+    <tr data-bind="visible: settingsExpanded">
+        <td class="label-high">Margins</td>
+        <td>
+            <table class="margins">
+                <tr>
+                    <td></td>
+                    <td><input type="text" maxlength="2" value="3" data-bind="value: marginTop"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="2" value="3" data-bind="value: marginLeft"></td>
+                    <td></td><td><input type="text" maxlength="2" value="3" data-bind="value: marginRight"> mm</td>
+                </tr>
+                <tr><td></td><td><input type="text" maxlength="2" value="3" data-bind="value: marginBottom"></td><td></td></tr>
+            </table>
+        </td>
+    </tr>
+    <tr data-bind="visible: settingsExpanded">
+        <td class="label">Resolution</td>
+        <td><input type="text" maxlength="4" class="resolution" data-bind="value: resolution"> dpi</td>
+    </tr>
+    <tr data-bind="visible: settingsExpanded">
+        <td class="label">Source zoom<br />level</td>
+        <td>
+            <select name="srczoom"
+                    data-bind="options: ['auto', 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], value: zoomLevel">
+            </select>
+        </td>
+    </tr>
+    <tr><td colspan="2">
+        <a class="button-settings image-button" data-bind="click: function() {settingsExpanded(!settingsExpanded())}"></a>
+        <div class="settings-summary">
+            <span data-bind="text: pageWidth"></span>&nbsp;x&nbsp;<span data-bind="text: pageHeight"></span>&nbsp;mm,<br/>
+            <span data-bind="text: resolution"></span>&nbsp;dpi,
+            zoom&nbsp;<span data-bind="text: zoomLevel"></span>
+            <!-- ko if: zoomLevel()=== "auto" -->
+            (<span title="Zoom for satellite and scanned imagery" data-bind="text: autoZoomLevels().satZoom"></span>&nbsp;
+            /&nbsp;<span title="Zoom for maps like OSM and Google" data-bind="text: autoZoomLevels().mapZoom"></span>)
+            <!-- /ko -->
+        </div>
+    </td></tr>
+    <tr><td colspan="2">
+        <div class="download-button-row">
+            <a class="text-button button-save" data-bind="
+                                click: savePdf,
+                                visible: !makingPdf()">Save PDF</a>
+            <div data-bind="
+                                component: { 
+                                    name: 'progress-indicator',
+                                    params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
+                                },
+                                visible: makingPdf()"></div>
+        </div>
+    </td></tr>
+    </tbody>
+</table>
