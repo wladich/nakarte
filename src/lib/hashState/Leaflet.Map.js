@@ -11,7 +11,7 @@ L.Map.include({
             var zoom = this.getZoom();
             var precision = 5;
             var state = [
-                zoom,
+                zoom.toString(),
                 center.lat.toFixed(precision),
                 center.lng.toFixed(precision),
             ];
@@ -25,8 +25,7 @@ L.Map.include({
             var zoom = parseInt(values[0], 10),
                 lat = parseFloat(values[1]),
                 lng = parseFloat(values[2]);
-            if (isNaN(zoom) || isNaN(lat) || isNaN(lng) || zoom < 0 || zoom > 32 || lat < -90 || lat > 90 || lng < -180 ||
-                lng > 180) {
+            if (isNaN(zoom) || isNaN(lat) || isNaN(lng) || zoom < 0 || zoom > 32 || lat < -90 || lat > 90 ) {
                 return false;
             }
             // this._updating_state = true;
