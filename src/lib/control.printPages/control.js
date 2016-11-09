@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import ko from 'knockout';
-import '../knockout.component.progress/progress';
-import '../controls-styles.css';
+import 'lib/knockout.component.progress/progress';
+import 'lib/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
 import Contextmenu from '../contextmenu/contextmenu';
