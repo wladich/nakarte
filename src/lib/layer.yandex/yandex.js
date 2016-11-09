@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import './style.css';
 
 const yandexCrs = L.CRS.EPSG3395;
 
@@ -8,7 +9,8 @@ const origCreateTile = L.TileLayer.prototype.createTile;
 
 L.Layer.Yandex = L.TileLayer.extend({
         options: {
-            subdomains: '1234'
+            subdomains: '1234',
+            className: 'yandex-tile-layer'
         },
 
         initialize: function(mapType, options) {
