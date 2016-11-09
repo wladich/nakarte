@@ -9,8 +9,10 @@ import './lib/control.coordinates/coordinates';
 import './lib/control.layers.hotkeys/control.Layers-hotkeys';
 import './lib/hashState/Leaflet.Map';
 import './lib/hashState/Leaflet.Control.Layers';
+import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
 
 function setUp() {
+    fixAnimationBug();
     const map = L.map('map', {
             zoomControl: false,
             fadeAnimation: false,
