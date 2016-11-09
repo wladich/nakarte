@@ -86,7 +86,8 @@ const hashState = {
         }
         for (let [key, callback] of this._listeners) {
             if (key in changedKeys) {
-                // setTimeout(callback.bind(null, state[key]), 0);
+                // setTimeout(callback.bind(null, newState[key]), 0);
+
                 callback(newState[key]);
             }
         }
