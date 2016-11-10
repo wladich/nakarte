@@ -1,8 +1,9 @@
 import L from "leaflet";
-import 'lib/layer.yandex/yandex';
-import 'lib/layer.google/google';
-import 'lib/layer.bing/bing';
+import 'lib/leaflet.layer.yandex/yandex';
+import 'lib/leaflet.layer.google/google';
+import 'lib/leaflet.layer.bing/bing';
 import config from './config';
+import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
 
 function getBaseMaps() {
     var bingKey = 'AhZy06XFi8uAADPQvWNyVseFx4NHYAOH-7OTMKDPctGtYo86kMfx2T0zUrF5AAaM';
@@ -52,8 +53,8 @@ function getOverlays() {
         "Slazav map": new L.TileLayer("http://{s}.tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
             {code: 'Z', tms: true, maxNativeZoom: 14, print: true, jnx: true}),
         "O-sport": new L.TileLayer("http://{s}.tiles.nakarte.tk/osport/{z}/{x}/{y}",
-            {code: 'R', tms: true, maxNativeZoom: 17, print: true, jnx: true})
-        // "Soviet military grid": new L.SovietTopoGrid({code: 'Ng'}),
+            {code: 'R', tms: true, maxNativeZoom: 17, print: true, jnx: true}),
+        "Soviet topo maps grid": new L.Layer.SovietTopoGrid({code: 'Ng'}),
         // "Wikimapia": new L.Wikimapia({code: 'W', zIndexOffset: 10000}),
         // "Google Street View": new L.GoogleStreetView('street-view', {print: true, code: 'Gs', zIndexOffset: 10000}),
         // "Mountain passes (Westra)": new L.WestraPasses('/westraPasses/', {code: 'Wp', print: true, zIndexOffset: 10000})
