@@ -1,5 +1,6 @@
 import L from "leaflet";
-import './lib/layer.yandex/yandex';
+import 'lib/layer.yandex/yandex';
+import 'lib/layer.google/google';
 
 function getBaseMaps() {
     // var bingKey = 'AhZy06XFi8uAADPQvWNyVseFx4NHYAOH-7OTMKDPctGtYo86kMfx2T0zUrF5AAaM';
@@ -13,9 +14,8 @@ function getBaseMaps() {
         ),
         'Yandex': new L.Layer.Yandex('map', {scaleDependent: true, code: 'Y', print: true, jnx: true}),
         'Yandex Sat': new L.Layer.Yandex('sat', {scaleDependent: false, code: 'S', print: true, jnx: true}),
-        // 'Google': new L.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true}),
-        // 'Google Sat': new L.Google('SATELLITE', {code: 'L', print: true, jnx: true}),
-        // 'Google Sat Hybrid': new L.Google('HYBRID', {code: 'H', scaleDependent: true, print: true, jnx: false}),
+        'Google': new L.Layer.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true}),
+        'Google Sat': new L.Layer.Google('SATELLITE', {code: 'L', print: true, jnx: true}),
         // 'Bing Sat': L.bingLayer(bingKey, {code: 'I', print: true, jnx: true}),
         'marshruty.ru': L.tileLayer('http://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
             {code: 'M', maxNativeZoom: 18, noCors: true, scaleDependent: true, print: true, jnx: true}
