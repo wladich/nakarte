@@ -2,13 +2,13 @@ import './App.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import layers from './layers';
-import './lib/control.printPages/control'
-import './lib/control.caption/caption'
+import 'lib/leaflet.control.printPages/control'
+import 'lib/leaflet.control.caption/caption'
 import config from './config'
-import './lib/control.coordinates/coordinates';
-import './lib/control.layers.hotkeys/control.Layers-hotkeys';
-import './lib/hashState/Leaflet.Map';
-import './lib/hashState/Leaflet.Control.Layers';
+import 'lib/leaflet.control.coordinates/coordinates';
+import 'lib/leaflet.control.layers.hotkeys/control.Layers-hotkeys';
+import 'lib/leaflet.hashState/Leaflet.Map';
+import 'lib/leaflet.hashState/Leaflet.Control.Layers';
 import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
 
 function setUp() {
