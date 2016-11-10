@@ -12,7 +12,7 @@ L.Control.Layers.include({
 
             this._map.eachLayer((layer) => {
                     let key = layer.options.code;
-                    if (key && key.length === 1) {
+                    if (key) {
                         state.push(key);
                     }
                 }
