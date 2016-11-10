@@ -24,7 +24,7 @@ L.BingLayer = L.TileLayer.extend({
             var mask = 1 << (i - 1);
             if ((x & mask) !== 0) digit += 1;
             if ((y & mask) !== 0) digit += 2;
-            quad = quad + digit;
+            quad += digit;
         }
         return quad;
     },
@@ -49,7 +49,6 @@ L.BingLayer = L.TileLayer.extend({
             e.parentNode.removeChild(e);
             if (meta.errorDetails) {
                 throw new Error(meta.errorDetails);
-                return;
             }
             _this.initMetadata(meta);
         };
