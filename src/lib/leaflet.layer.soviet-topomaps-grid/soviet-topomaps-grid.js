@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import './style.css';
+import Contextmenu from 'lib/contextmenu/contextmenu';
 
 function zeroPad(num, size) {
     var s = num + "";
@@ -14,9 +15,9 @@ var Nomenclature = {
         var name = '';
         if (row < 0) {
             row = -row - 1;
-            name = name + 'x';
+            name += 'x';
         }
-        column = column + 31;
+        column += 31;
         name += 'ABCDEFGHIJKLMNOPQRSTUV'[row] + ' &ndash; ' + zeroPad(column, 2);
         for (var n = 1; n <= join - 1; n++) {
             name += ',' + zeroPad(column + n, 2);
@@ -31,7 +32,7 @@ var Nomenclature = {
         if (join > 1) {
             name += ',' + (subquad + 1);
         }
-        if (join == 4) {
+        if (join === 4) {
             name +=
                 ',' + this.getQuadName1m(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + ' &ndash; ' + subquad +
                 ',' + (subquad + 1);
@@ -46,7 +47,7 @@ var Nomenclature = {
         if (join > 1) {
             name += ',' + zeroPad(subquad + 1, 3);
         }
-        if (join == 4) {
+        if (join === 4) {
             name += ',' + zeroPad(subquad + 2, 3) + ',' + zeroPad(subquad + 3, 3);
         }
 
@@ -60,7 +61,7 @@ var Nomenclature = {
         if (join > 1) {
             name += ',' + (subquad + 1);
         }
-        if (join == 4) {
+        if (join === 4) {
             name += ',' + this.getQuadName100k(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + ' &ndash; ' +
                 subquad + ',' + (subquad + 1);
         }
@@ -156,13 +157,14 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             };
             var rect = L.rectangle(bounds, rect_options);
             this.addLayer(rect);
-            if (layer == 1) {
+            if (layer === 1) {
                 rect.bringToBack();
             }
             var objects = [rect];
             var html = L.Util.template('<span style="color:{color}">{title}</span>', {color: color, title: title});
             var icon = L.divIcon({html: html, className: 'leaflet-sovietgrid-quadtitle-' + layer, iconSize: null});
             var marker = L.marker(L.latLngBounds(bounds).getCenter(), {icon: icon});
+            marker.on('click', () => {console.log('click')});
             this.addLayer(marker);
             objects.push(marker);
             this._quads[id] = objects;
@@ -234,7 +236,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 this._quads = {};
             } else {
                 var map_bbox = this._map.getBounds();
-                for (var quad_id in this._quads) {
+                for (var quad_id of Object.keys(this._quads)) {
                     var rect = this._quads[quad_id][0];
                     if (!map_bbox.intersects(rect.getBounds())) {
                         this._removeQuad(quad_id);
@@ -244,11 +246,9 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
         },
 
         _update: function(reset) {
-            var t = new Date().getTime();
             this._cleanupQuads(reset);
             this._updatePathViewport();
             this._addGrid();
-            t = new Date().getTime() - t;
         }
     }
 );
