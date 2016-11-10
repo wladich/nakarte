@@ -9,7 +9,7 @@ L.Control.Layers.include({
         _addLayer: function(layer, name, overlay) {
             if (layer.options) {
                 const code = layer.options.code;
-                if (code.length === 1) {
+                if (code && code.length === 1) {
                     name += `<span class="layers-control-hotkey">${code}</span>`;
                 }
             }
