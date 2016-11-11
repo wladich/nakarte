@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import './style.css';
 import Contextmenu from 'lib/contextmenu/contextmenu';
-
+import copyToClipboard from 'lib/clipboardCopy/clipboardCopy';
 function zeroPad(num, size) {
     var s = num + "";
     while (s.length < size) {
@@ -9,6 +9,21 @@ function zeroPad(num, size) {
     }
     return s;
 }
+
+const bigLetterReplacers = [
+    {
+        '1': 'А',
+        '2': 'Б',
+        '3': 'В',
+        '4': 'Г'
+    },
+    {
+        '1': 'A',
+        '2': 'B',
+        '3': 'C',
+        '4': 'D'
+    }
+];
 
 var Nomenclature = {
     getQuadName1m: function(column, row, join) {
@@ -18,32 +33,40 @@ var Nomenclature = {
             name += 'x';
         }
         column += 31;
-        name += 'ABCDEFGHIJKLMNOPQRSTUV'[row] + ' &ndash; ' + zeroPad(column, 2);
+        name += 'ABCDEFGHIJKLMNOPQRSTUV'[row] + '-' + zeroPad(column, 2);
         for (var n = 1; n <= join - 1; n++) {
             name += ',' + zeroPad(column + n, 2);
         }
-        return name;
+        return [name];
     },
 
     getQuadName500k: function(column, row, join) {
-        var name = this.getQuadName1m(Math.floor(column / 2), Math.floor(row / 2), 1);
+        var name1 = this.getQuadName1m(Math.floor(column / 2), Math.floor(row / 2), 1)[0];
         var subquad = 2 - (row & 1) * 2 + (column & 1) + 1;
-        name = name + ' &ndash; ' + subquad;
+        let name2 = '-' + subquad;
         if (join > 1) {
-            name += ',' + (subquad + 1);
+            name2 += ',' + (subquad + 1);
         }
         if (join === 4) {
-            name +=
-                ',' + this.getQuadName1m(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + ' &ndash; ' + subquad +
+            name2 +=
+                ',' + this.getQuadName1m(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + '-' + subquad +
                 ',' + (subquad + 1);
         }
-        return name;
+        const names = [name1 + name2];
+        for (let replacer of bigLetterReplacers) {
+            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
+                    return replacer[s]
+                }
+            );
+            names.push(name1 + name3);
+        }
+        return names;
     },
 
     getQuadName100k: function(column, row, join) {
         var name = this.getQuadName1m(Math.floor(column / 12), Math.floor(row / 12), 1);
         var subquad = 132 - (row % 12) * 12 + (column % 12) + 1;
-        name = name + ' &ndash; ' + zeroPad(subquad, 3);
+        name = name + '-' + zeroPad(subquad, 3);
         if (join > 1) {
             name += ',' + zeroPad(subquad + 1, 3);
         }
@@ -51,21 +74,29 @@ var Nomenclature = {
             name += ',' + zeroPad(subquad + 2, 3) + ',' + zeroPad(subquad + 3, 3);
         }
 
-        return name;
+        return [name];
     },
 
     getQuadName050k: function(column, row, join) {
-        var name = this.getQuadName100k(Math.floor(column / 2), Math.floor(row / 2), 1);
+        var name1 = this.getQuadName100k(Math.floor(column / 2), Math.floor(row / 2), 1);
         var subquad = 2 - (row & 1) * 2 + (column & 1) + 1;
-        name = name + ' &ndash; ' + subquad;
+        let name2 = '-' + subquad;
         if (join > 1) {
-            name += ',' + (subquad + 1);
+            name2 += ',' + (subquad + 1);
         }
         if (join === 4) {
-            name += ',' + this.getQuadName100k(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + ' &ndash; ' +
+            name2 += ',' + this.getQuadName100k(Math.floor((column + 2) / 2), Math.floor(row / 2), 1) + '-' +
                 subquad + ',' + (subquad + 1);
         }
-        return name;
+        const names = [name1 + name2];
+        for (let replacer of bigLetterReplacers) {
+            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
+                    return replacer[s]
+                }
+            );
+            names.push(name1 + name3);
+        }
+        return names;
     },
 
     _getQuads: function(bounds, row_height, column_width, name_factory) {
@@ -93,8 +124,8 @@ var Nomenclature = {
                 var column_west = column * column_width;
                 var column_east = column_west + column_width * joined_quads;
                 var quad_bounds = L.latLngBounds([[row_south, column_west], [row_north, column_east]]);
-                var name = name_factory(column, row, joined_quads);
-                quads.push({'name': name, 'bounds': quad_bounds});
+                var names = name_factory(column, row, joined_quads);
+                quads.push({'names': names, 'bounds': quad_bounds});
             }
         }
         return quads;
@@ -125,14 +156,16 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
         initialize: function(options) {
             L.LayerGroup.prototype.initialize.call(this);
             L.Util.setOptions(this, options);
-            this._updatePathViewport = L.Util.throttle(this.__updatePathViewport, 100, this);
+            this.renderer = L.svg({padding: 0.5});
             this._quads = {};
+            this._updateRenderer = L.Util.throttle(this._updateRenderer, 100, this);
         },
 
         onAdd: function(map) {
             this._map = map;
             map.on('zoomend', this._reset, this);
             map.on('move', this._update, this);
+            map.on('move', this._updateRenderer, this);
             this._update();
         },
 
@@ -142,7 +175,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             this._cleanupQuads(true);
         },
 
-        _addQuad: function(bounds, id, title, color, layer) {
+        _addQuad: function(bounds, id, titles, color, layer, scale) {
             if (id in this._quads) {
                 return;
             }
@@ -153,36 +186,70 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 fill: false,
                 opacity: {1: 0.7, 2: 0.4}[layer],
                 color: color,
-                weight: {1: 1, 2: 3}[layer]
+                weight: {1: 1, 2: 3}[layer],
+                renderer: this.renderer
             };
+
             var rect = L.rectangle(bounds, rect_options);
             this.addLayer(rect);
             if (layer === 1) {
                 rect.bringToBack();
             }
             var objects = [rect];
-            var html = L.Util.template('<span style="color:{color}">{title}</span>', {color: color, title: title});
+            const title = titles[0].replace(/-/g, ' &ndash; ');
+            var html = L.Util.template(`<span style="color:{color}">{title}</span>`, {color: color, title: title});
             var icon = L.divIcon({html: html, className: 'leaflet-sovietgrid-quadtitle-' + layer, iconSize: null});
             var marker = L.marker(L.latLngBounds(bounds).getCenter(), {icon: icon});
-            marker.on('click', () => {console.log('click')});
             this.addLayer(marker);
             objects.push(marker);
             this._quads[id] = objects;
+            marker.on('click', this._showContextMenu.bind(this, scale, titles));
+        },
+
+        _showContextMenu: function(scale, titles, e) {
+            const scaleString = {
+                '1m': '1:1 000 000',
+                '500k': '1:500 000',
+                '100k': '1:100 000',
+                '050k': '1:50 000'
+            }[scale];
+            const items = [
+                {'text': scaleString, disabled: true},
+                {'text': 'Click name to copy to clibpoard', disabled: true},
+                {
+                    'text': titles[0], callback: () => {
+                    copyToClipboard(titles[0], e.originalEvent)
+                }
+                }
+            ];
+            if (titles.length > 1) {
+                items.push({
+                        'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>', callback: () => {
+                            copyToClipboard(titles[1], e.originalEvent)
+                        }
+                    }
+                );
+                items.push({
+                        'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>', callback: () => {
+                            copyToClipboard(titles[2], e.originalEvent)
+                        }
+                    }
+                );
+            }
+            const menu = new Contextmenu(items);
+            menu.show(e);
         },
 
         _removeQuad: function(id) {
-            var objects = this._quads[id];
-            for (var i = 0; i < objects.length; i++) {
-                this.removeLayer(objects[i]);
-            }
+            this._quads[id].forEach(this.removeLayer.bind(this));
             delete this._quads[id];
         },
 
 
-        _addQuads: function(quads, id_prefix, color, layer) {
+        _addQuads: function(quads, scale, color, layer) {
             quads.forEach(function(quad) {
-                    var id = id_prefix + quad.name;
-                    this._addQuad(quad.bounds, id, quad.name, color, layer);
+                    var id = scale + quad.names[0];
+                    this._addQuad(quad.bounds, id, quad.names, color, layer, scale);
                 }.bind(this)
             );
         },
@@ -219,13 +286,6 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             }
         },
 
-        __updatePathViewport: function() {
-            try {
-                this._map._updateSvgViewport();
-            } catch (e) {
-            }
-        },
-
         _reset: function() {
             this._update(true);
         },
@@ -245,9 +305,12 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             }
         },
 
+        _updateRenderer: function() {
+            this.renderer._update();
+        },
+
         _update: function(reset) {
             this._cleanupQuads(reset);
-            this._updatePathViewport();
             this._addGrid();
         }
     }

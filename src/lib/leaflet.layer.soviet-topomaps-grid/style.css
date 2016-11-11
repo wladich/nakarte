@@ -7,6 +7,8 @@
 	line-height: 50px;
 	font-family: "Times New Roman";
 	font-weight: bold;
+	outline: none;
+
 	text-shadow: 1px  0    0.5px   #eee,
                  1px  1px  0.5px   #eee,
                  0    1px  0.5px   #eee,
@@ -23,4 +25,9 @@
 
 .leaflet-sovietgrid-quadtitle-2 {
 	font-size: 32px;
+}
+
+.leaflet-sovietgrid-lang {
+	color: #aaa;
+	margin-left: 0.5em;
 }
