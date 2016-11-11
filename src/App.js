@@ -1,4 +1,5 @@
 import './App.css';
+import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import layers from './layers';
@@ -11,12 +12,17 @@ import 'lib/leaflet.hashState/Leaflet.Map';
 import 'lib/leaflet.hashState/Leaflet.Control.Layers';
 import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
 
+
+
 function setUp() {
     fixAnimationBug();
     const map = L.map('map', {
             zoomControl: false,
             fadeAnimation: false,
-            zoom: 10
+            attributionControl: false,
+            inertiaMaxSpeed: 1500,
+            easeLinearity: 0.2,
+            inertiaMaxSpeed: 1500
         }
     );
     map.enableHashState('m', [10, 55.75185, 37.61856]);
@@ -37,7 +43,6 @@ function setUp() {
 
     new L.Control.PrintPages().addTo(map);
     new L.Control.Coordinates().addTo(map);
-
 }
 
 export default {setUp};
