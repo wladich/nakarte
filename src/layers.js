@@ -6,7 +6,6 @@ import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
 
 function getBaseMaps() {
-    var bingKey = 'AhZy06XFi8uAADPQvWNyVseFx4NHYAOH-7OTMKDPctGtYo86kMfx2T0zUrF5AAaM';
     return {
         'OpenStreetMap': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {code: 'O', scaleDependent: true, print: true, jnx: true}
