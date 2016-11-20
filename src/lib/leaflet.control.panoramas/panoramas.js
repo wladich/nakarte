@@ -24,7 +24,6 @@ L.Control.Panoramas = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            this.initPanoramaApi();
             const container = L.DomUtil.create('a', 'leaflet-control leaflet-contol-button leaflet-contol-panoramas');
             container.title = 'Show panoramas';
             L.DomEvent.disableClickPropagation(container);
@@ -53,7 +52,7 @@ L.Control.Panoramas = L.Control.extend({
                 return;
             }
             L.DomUtil.addClass(this._panoramaContainer, 'enabled');
-            this.panoramaApi.then((api) => api.panorama.setVisible(true));
+            this.getGoogleApi().then((api) => api.panorama.setVisible(true));
             window.dispatchEvent(new Event('resize'));
             this.marker.addTo(this._map);
             this.panoramaVisible = true;
@@ -64,7 +63,7 @@ L.Control.Panoramas = L.Control.extend({
             if (!this.panoramaVisible) {
                 return;
             }
-            this.panoramaApi.then((api) => api.panorama.setVisible(false));
+            this.getGoogleApi().then((api) => api.panorama.setVisible(false));
             L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
             window.dispatchEvent(new Event('resize'));
             this._map.removeLayer(this.marker);
@@ -102,7 +101,7 @@ L.Control.Panoramas = L.Control.extend({
                 }
             }
 
-            this.panoramaApi.then((api) => {
+            this.getGoogleApi().then((api) => {
                     api.service.getPanorama({
                             location: latlng,
                             radius: searchRadiusMeters,
@@ -134,7 +133,7 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         onPanoramaChangePosition: function() {
-            this.panoramaApi.then((api) => {
+            this.getGoogleApi().then((api) => {
                     let pos = api.panorama.getPosition();
                     if (pos) {
                         pos = L.latLng([pos.lat(), pos.lng()]);
@@ -156,7 +155,7 @@ L.Control.Panoramas = L.Control.extend({
             if (markerIcon) {
                 markerIcon = markerIcon.children[0]
             }
-            this.panoramaApi.then((api) => {
+            this.getGoogleApi().then((api) => {
                     const pov = api.panorama.getPov();
                     if (markerIcon) {
                         markerIcon.style.transform = `rotate(${pov.heading}deg)`;
@@ -171,28 +170,29 @@ L.Control.Panoramas = L.Control.extend({
             this.fire('panoramachanged')
         },
 
-        initPanoramaApi: function() {
-            if (this.panoramaApi) {
-                return;
-            }
-            this.panoramaApi = getGoogle().then((google) => {
-                    const panorama = new google.maps.StreetViewPanorama(this._panoramaContainer, {
-                            enableCloseButton: true,
-                            imageDateControl: true
+        getGoogleApi: function() {
+            if (!this._googleApi) {
+                this._googleApi = getGoogle().then((google) => {
+                        const panorama = new google.maps.StreetViewPanorama(this._panoramaContainer, {
+                                enableCloseButton: true,
+                                imageDateControl: true
+                            }
+                        );
+                        panorama.addListener('position_changed', this.onPanoramaChangePosition.bind(this));
+                        panorama.addListener('pov_changed', this.onPanoramaChangeView.bind(this));
+                        panorama.addListener('closeclick', this.hidePanorama.bind(this));
+
+                        return {
+                            google,
+                            service: new google.maps.StreetViewService(),
+                            panorama
+
                         }
-                    );
-                    panorama.addListener('position_changed', this.onPanoramaChangePosition.bind(this));
-                    panorama.addListener('pov_changed', this.onPanoramaChangeView.bind(this));
-                    panorama.addListener('closeclick', this.hidePanorama.bind(this));
-
-                    return {
-                        google,
-                        service: new google.maps.StreetViewService(),
-                        panorama
-
                     }
-                }
-            )
+                );
+            }
+            return this._googleApi;
+
         }
     }
 );
