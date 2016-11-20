@@ -1,14 +1,5 @@
 .leaflet-control-coordinates {
-    display: inline-block;
-    width: 26px;
-    height: 26px;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
     background-image: url('coords16.png');
-    border-radius: 4px;
-    background-color: white;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
 }
 
 .leaflet-control-coordinates.expanded {
@@ -16,6 +7,10 @@
     width: auto;
     padding: 0 0.7em;
     overflow: hidden;
+}
+
+.leaflet-control-coordinates.expanded:hover {
+    background-color: white;
 }
 
 .leaflet-control-coordinates-text {
