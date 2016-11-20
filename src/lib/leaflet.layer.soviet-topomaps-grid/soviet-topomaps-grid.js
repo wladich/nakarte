@@ -65,7 +65,9 @@ var Nomenclature = {
 
     getQuadName100k: function(column, row, join) {
         var name = this.getQuadName1m(Math.floor(column / 12), Math.floor(row / 12), 1);
-        var subquad = 132 - (row % 12) * 12 + (column % 12) + 1;
+        row = row - Math.floor(row / 12) * 12;
+        column = column - Math.floor(column / 12) * 12;
+        var subquad = 132- row * 12 + column + 1;
         name = name + '-' + zeroPad(subquad, 3);
         if (join > 1) {
             name += ',' + zeroPad(subquad + 1, 3);
