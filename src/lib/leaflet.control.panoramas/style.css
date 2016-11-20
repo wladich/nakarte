@@ -1,0 +1,23 @@
+.leaflet-contol-panoramas {
+    background-image: url('panoramas-off.png');
+}
+
+.leaflet-contol-panoramas.enabled {
+    background-image: url('panoramas-on.png');
+}
+
+.leaflet-panorama-marker-wraper {
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+}
+
+.leaflet-panorama-marker {
+    background-image: url("binocualar.png");
+    width: 31px;
+    height: 31px;
+    margin-left: -17px;
+    margin-top: -17px;
+    /*transform-origin: 17px 17px;*/
+
+}
