@@ -37,6 +37,7 @@
     "path-exists": "2.1.0",
     "postcss-loader": "1.0.0",
     "promise": "7.1.1",
+    "raw-loader": "^0.5.1",
     "react-dev-utils": "^0.3.0",
     "recursive-readdir": "2.1.0",
     "rimraf": "2.5.4",
@@ -55,9 +56,6 @@
     "leaflet": "^1.0.1",
     "load-script": "^1.0.0",
     "rbush": "^2.0.1"
-    "raw-loader": "^0.5.1",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2"
   },
   "scripts": {
     "start": "node scripts/start.js",
