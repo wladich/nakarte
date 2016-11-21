@@ -49,9 +49,12 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "browser-filesaver": "^1.1.1",
+    "escape-html": "^1.0.3",
     "knockout": "^3.4.0",
     "leaflet": "^1.0.1",
     "load-script": "^1.0.0",
+    "rbush": "^2.0.1"
     "raw-loader": "^0.5.1",
     "react": "^15.3.2",
     "react-dom": "^15.3.2"

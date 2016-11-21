@@ -4,6 +4,7 @@ import 'lib/leaflet.layer.google/google';
 import 'lib/leaflet.layer.bing/bing';
 import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
+import 'lib/leaflet.layer.westraPasses/westraPasses';
 
 function getBaseMaps() {
     return {
@@ -56,7 +57,7 @@ function getOverlays() {
         "Soviet topo maps grid": new L.Layer.SovietTopoGrid({code: 'Ng'}),
         // "Wikimapia": new L.Wikimapia({code: 'W', zIndexOffset: 10000}),
         // "Google Street View": new L.GoogleStreetView('street-view', {print: true, code: 'Gs', zIndexOffset: 10000}),
-        // "Mountain passes (Westra)": new L.WestraPasses('/westraPasses/', {code: 'Wp', print: true, zIndexOffset: 10000})
+        "Mountain passes (Westra)": new L.Layer.WestraPasses(config.westraDataBaseUrl, {code: 'Wp', print: true})
     };
 }
 
