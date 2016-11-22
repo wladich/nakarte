@@ -16,6 +16,7 @@ const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
         initialize: function(baseUrl, options) {
             L.Layer.CanvasMarkers.prototype.initialize.call(this, null, options);
             this.on('markerclick', this.showPassDescription, this);
+            // TODO: обработка ошибок, повторные запросы
             const {send, promise} = prepareXMLHttpRequestPromise(baseUrl + this.options.filePasses,
                 {responseType: 'json', timeout: 30000}
             );
