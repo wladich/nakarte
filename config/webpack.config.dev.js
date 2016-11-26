@@ -33,6 +33,7 @@ module.exports = {
   // This means they will be the "root" imports that are included in JS bundle.
   // The first two entry points enable "hot" CSS and auto-refreshes for JS.
   entry: [
+    'babel-polyfill',
     // Include an alternative client for WebpackDevServer. A client's job is to
     // connect to WebpackDevServer by a socket and get notified about changes.
     // When you save a file, the client will either apply hot updates (in case
@@ -83,7 +84,7 @@ module.exports = {
       'react-native': 'react-native-web'
     }
   },
-  
+
   module: {
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
@@ -92,16 +93,26 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'eslint',
         include: paths.appSrc,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
       }
     ],
     loaders: [
+      {
+        test: /\.js$/,
+        include: [
+            paths.appSrc + '/vendored/github.com/augustl/js-unzip',
+            paths.appSrc + '/vendored/github.com/dankogai/js-deflate'
+        ],
+        loader: 'legacy'
+      },
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
         loader: 'babel',
         query: {
-          
+
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/react-scripts/
           // directory for faster rebuilds. We use findCacheDir() because of:

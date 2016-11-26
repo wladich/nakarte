@@ -54,6 +54,7 @@ module.exports = {
   devtool: 'source-map',
   // In production, we only want to load the polyfills and the app code.
   entry: [
+    'babel-polyfill',
     require.resolve('./polyfills'),
     paths.appIndexJs
   ],
@@ -95,13 +96,24 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         loader: 'eslint',
-        include: paths.appSrc
+        include: paths.appSrc,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
       }
     ],
     loaders: [
+      {
+        test: /\.js$/,
+        include: [
+          paths.appSrc + '/vendored/github.com/augustl/js-unzip',
+          paths.appSrc + '/vendored/github.com/dankogai/js-deflate'
+        ],
+        loader: 'legacy'
+      },
+
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
         include: paths.appSrc,
         loader: 'babel',
         

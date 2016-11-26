@@ -13,6 +13,7 @@ import 'lib/leaflet.hashState/Leaflet.Control.Layers';
 import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
 import './adaptive.css';
 import 'lib/leaflet.control.panoramas/panoramas';
+import 'lib/leaflet.control.track-list/track-list';
 
 function autoSizeControl(map, control) {
     // для контрола Layers есть аналогичная функция при разворачивании из кнопки.
@@ -68,11 +69,18 @@ function setUp() {
 
     new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
     new L.Control.Coordinates().addTo(map);
-    const panoramas = new L.Control.Panoramas(document.getElementById('street-view')).addTo(map);
+    new L.Control.Panoramas(document.getElementById('street-view'))
+        .addTo(map)
+        .enableHashState('n');
+    const tracksControl = new L.Control.TrackList()
+        .addTo(map);
 
-    panoramas.enableHashState('n');
+
     map.on('resize', autoSizeControl.bind(null, map, layersControl));
     autoSizeControl(map, layersControl);
+
+    map.on('resize', autoSizeControl.bind(null, map, tracksControl));
+    autoSizeControl(map, tracksControl);
 
     raiseControlsOnMouse();
 }
