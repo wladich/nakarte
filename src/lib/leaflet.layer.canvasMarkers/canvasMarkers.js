@@ -212,8 +212,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.font = L.Util.template('bold {size}px {name}',
                         {'name': this.options.labelFontName, 'size': this.options.labelFontSize}
                     );
-                    for (let markerId of Object.keys(markerJobs)) {
-                        const job = markerJobs[markerId];
+                    for (let [markerId, job] of Object.entries(markerJobs)) {
                         let img = this._images[job.icon.url];
                         job.img = img;
                         const imgW = Math.round(img.width * this.options.iconScale);
@@ -386,6 +385,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
         },
 
         onAdd: function(map) {
+            if (this.options.pane === 'rasterMarker' && !map.getPane('rasterMarker')) {
+                map.createPane('rasterMarker').style.zIndex = 550;
+            }
             L.GridLayer.prototype.onAdd.call(this, map);
             map.on('mousemove', this.onMouseMove, this);
             map.on('mouseout', this.onMouseOut, this);
