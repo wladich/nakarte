@@ -112,7 +112,7 @@ class Contextmenu {
     }
 
     onItemClick(callback, e) {
-        callback();
+        callback(e);
         e.stopPropagation();
         e.preventDefault();
     }
