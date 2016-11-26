@@ -4,7 +4,7 @@ import 'lib/knockout.component.progress/progress';
 import 'lib/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
-import Contextmenu from '../contextmenu/contextmenu';
+import Contextmenu from 'lib/contextmenu/contextmenu';
 import {renderMap} from './map-render'
 import formHtml from './form.html';
 
