@@ -4,7 +4,7 @@ import openPopup from 'lib/popupWindow/popupWindow';
 import escapeHtml from 'escape-html';
 import {saveAs} from 'browser-filesaver';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage/iconFromBackgroundImage';
-import {prepareXMLHttpRequestPromise} from 'lib/xhr-promise/xhr-promise';
+import {XMLHttpRequestPromise} from 'lib/xhr-promise/xhr-promise';
 
 
 const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
@@ -16,12 +16,7 @@ const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
         initialize: function(baseUrl, options) {
             L.Layer.CanvasMarkers.prototype.initialize.call(this, null, options);
             this.on('markerclick', this.showPassDescription, this);
-            // TODO: обработка ошибок, повторные запросы
-            const {send, promise} = prepareXMLHttpRequestPromise(baseUrl + this.options.filePasses,
-                {responseType: 'json', timeout: 30000}
-            );
-            promise.then((xhr) => this._loadMarkers(xhr));
-            this.sendDataRequest = send;
+            this.url = baseUrl + this.options.filePasses;
         },
 
         loadData: function() {
@@ -29,7 +24,11 @@ const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
                 return;
             }
             this._downloadStarted = true;
-            this.sendDataRequest();
+            const {promise} = XMLHttpRequestPromise(this.url,
+                {responseType: 'json', timeout: 30000}
+            );
+            promise.then((xhr) => this._loadMarkers(xhr));
+
         },
 
         onAdd: function(map) {
