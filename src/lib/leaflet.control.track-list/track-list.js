@@ -329,14 +329,18 @@ L.Control.TrackList = L.Control.extend({
             if (lines.length || points.length) {
                 var bounds = L.latLngBounds([]);
                 lines.forEach(function(l) {
-                        bounds.extend(l.getBounds());
+                        if (l.getLatLngs().length > 1) {
+                            bounds.extend(l.getBounds());
+                        }
                     }
                 );
                 points.forEach(function(p) {
                         bounds.extend([p.latlng.lat, p.latlng.lng]);
                     }
                 );
-                this.map.flyToBounds(bounds);
+                if (bounds.isValid()) {
+                    this.map.flyToBounds(bounds);
+                }
 
             }
         },
