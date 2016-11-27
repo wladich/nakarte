@@ -5,6 +5,7 @@ import escapeHtml from 'escape-html';
 import {saveAs} from 'browser-filesaver';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage/iconFromBackgroundImage';
 import {XMLHttpRequestPromise} from 'lib/xhr-promise/xhr-promise';
+import {notifyXhrError} from 'lib/notifications/notifications';
 
 
 const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
@@ -27,7 +28,9 @@ const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
             const {promise} = XMLHttpRequestPromise(this.url,
                 {responseType: 'json', timeout: 30000}
             );
-            promise.then((xhr) => this._loadMarkers(xhr));
+            promise.then((xhr) => this._loadMarkers(xhr),
+                (xhr) => notifyXhrError(xhr, 'westra passes data')
+            );
 
         },
 
