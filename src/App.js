@@ -14,6 +14,8 @@ import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug
 import './adaptive.css';
 import 'lib/leaflet.control.panoramas/panoramas';
 import 'lib/leaflet.control.track-list/track-list';
+import 'lib/leaflet.control.track-list/track-list.hash-state';
+
 
 function autoSizeControl(map, control) {
     // для контрола Layers есть аналогичная функция при разворачивании из кнопки.
@@ -73,7 +75,8 @@ function setUp() {
         .addTo(map)
         .enableHashState('n');
     const tracksControl = new L.Control.TrackList()
-        .addTo(map);
+        .addTo(map)
+        .enableHashState('nktk');
 
 
     map.on('resize', autoSizeControl.bind(null, map, layersControl));
