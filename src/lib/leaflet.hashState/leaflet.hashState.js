@@ -11,16 +11,19 @@ L.Mixin.HashState = {
         );
 
         hashState.addEventListener(key, (state) => {
-                this.unserializeState(state)
+                if (!this.unserializeState(state)) { // state from hash is invalid, update hash from component state
+                    hashState.updateState(key, this.serializeState());
+                }
             }
         );
 
         const state = hashState.getState(key) || defaultInitialState;
         if (state) {
-            if (!this.unserializeState(state)) { // state from hash is invalid, update hash from component state
+            if (!this.unserializeState(state) && !this.unserializeState(defaultInitialState)) { // state from hash is invalid, update hash from default state
                 hashState.updateState(key, this.serializeState());
             }
         }
+        return this;
     },
 
     updateHashState: function(state) {
