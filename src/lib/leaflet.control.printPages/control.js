@@ -25,6 +25,15 @@ ko.extenders.checkNumberRange = function(target, range) {
 
 L.Control.PrintPages = L.Control.extend({
         options: {position: 'bottomleft'},
+
+        pageSizes: [
+            {'name': 'A1', width: 594, height: 841},
+            {'name': 'A2', width: 420, height: 594},
+            {'name': 'A3', width: 297, height: 420},
+            {'name': 'A4', width: 210, height: 297},
+            {'name': 'A5', width: 594, height: 210}
+        ],
+
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
             this.pages = [];
@@ -46,6 +55,7 @@ L.Control.PrintPages = L.Control.extend({
             this.printSize.subscribe(this.onPageSizeChanged, this);
             this.scale.subscribe(this.onPageSizeChanged, this);
             this.resolution.subscribe(this.onPageSizeChanged, this);
+            this.pageSizeDescription = ko.pureComputed(this._displayPageSize, this);
         },
 
         onAdd: function(map) {
@@ -202,6 +212,17 @@ L.Control.PrintPages = L.Control.extend({
 
         updateFormZooms: function() {
             this.autoZoomLevels(this.suggestZooms());
+        },
+
+        _displayPageSize: function() {
+            const width = this.pageWidth(),
+                height = this.pageHeight();
+            for (let size of this.pageSizes) {
+                if (size.width === width && size.height === height) {
+                    return size.name;
+                }
+            }
+            return `${width} x ${height} mm`;
         }
     }
 );

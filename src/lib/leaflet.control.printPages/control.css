@@ -98,3 +98,8 @@
     vertical-align: middle;
 }
 
+.preset-values .selected {
+    /*background-color: #ddd;*/
+    border-bottom: 1px solid #333;
+    color: #333;
+}
