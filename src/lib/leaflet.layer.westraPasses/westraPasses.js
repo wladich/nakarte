@@ -48,7 +48,7 @@ L.Layer.WestraPasses = L.Layer.extend({
                 return;
             }
             var newZoom;
-            var zoomFinished = e ? (e.type != 'zoomanim') : true;
+            var zoomFinished = e ? (e.type !== 'zoomanim') : true;
             if (e && e.zoom !== undefined) {
                 newZoom = e.zoom;
             } else {
