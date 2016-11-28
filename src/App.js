@@ -15,7 +15,7 @@ import './adaptive.css';
 import 'lib/leaflet.control.panoramas/panoramas';
 import 'lib/leaflet.control.track-list/track-list';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
-
+import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
 
 function autoSizeControl(map, control) {
     // для контрола Layers есть аналогичная функция при разворачивании из кнопки.
@@ -69,20 +69,17 @@ function setUp() {
         .addTo(map)
         .enableHashState('l');
     enableLayersControlHotKeys (layersControl);
-
+    enableLayersControlAdaptiveHeight(layersControl);
 
     new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
     new L.Control.Coordinates().addTo(map);
     new L.Control.Panoramas(document.getElementById('street-view'))
         .addTo(map)
         .enableHashState('n');
+
     const tracksControl = new L.Control.TrackList()
         .addTo(map)
         .enableHashState('nktk');
-
-
-    map.on('resize', autoSizeControl.bind(null, map, layersControl));
-    autoSizeControl(map, layersControl);
 
     map.on('resize', autoSizeControl.bind(null, map, tracksControl));
     autoSizeControl(map, tracksControl);
