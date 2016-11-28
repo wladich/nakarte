@@ -15,14 +15,12 @@ L.Layer.WestraPasses = L.Layer.extend({
             this.markers = new westraPasesMarkers(baseUrl);
             this.regions1 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileRegions1, {
                     className: 'westra-region-polygon',
-                    onEachFeature: this._setRegionLabel.bind(this, 'regions1'),
-                    requestTimeout: 10000
+                    onEachFeature: this._setRegionLabel.bind(this, 'regions1')
                 }
             );
             this.regions2 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileRegions2, {
                     className: 'westra-region-polygon',
-                    onEachFeature: this._setRegionLabel.bind(this, 'regions2'),
-                    requestTimeout: 10000
+                    onEachFeature: this._setRegionLabel.bind(this, 'regions2')
                 }
             );
         },

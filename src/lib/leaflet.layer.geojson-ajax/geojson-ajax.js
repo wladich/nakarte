@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {XMLHttpRequestPromise} from 'lib/xhr-promise/xhr-promise';
+import {fetch} from 'lib/xhr-promise/xhr-promise';
 import {notifyXhrError} from 'lib/notifications/notifications';
 
 L.Layer.GeoJSONAjax = L.GeoJSON.extend({
@@ -17,10 +17,11 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
                 return;
             }
             this._loadStarted = true;
-            const {promise} = XMLHttpRequestPromise(this.url,
-                {responseType: 'json', timeout: this.options.requestTimeout});
-            promise.then((xhr) => this.addData(xhr.response),
-                (xhr) => notifyXhrError(xhr, `GeoJSON data from ${this.url}`))
+            fetch(this.url, {responseType: 'json', timeout: this.options.requestTimeout})
+                .then(
+                    (xhr) => this.addData(xhr.response),
+                    (xhr) => notifyXhrError(xhr, `GeoJSON data from ${this.url}`)
+                )
         },
 
         onAdd: function(map) {
