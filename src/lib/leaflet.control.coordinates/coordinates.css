@@ -1,5 +1,6 @@
 .leaflet-control-coordinates {
     background-image: url('coords16.png');
+    user-select: none;
 }
 
 .leaflet-control-coordinates.expanded {
