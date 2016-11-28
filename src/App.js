@@ -7,7 +7,7 @@ import 'lib/leaflet.control.printPages/control'
 import 'lib/leaflet.control.caption/caption'
 import config from './config'
 import 'lib/leaflet.control.coordinates/coordinates';
-import 'lib/leaflet.control.layers.hotkeys/control.Layers-hotkeys';
+import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys/control.Layers-hotkeys';
 import 'lib/leaflet.hashState/Leaflet.Map';
 import 'lib/leaflet.hashState/Leaflet.Control.Layers';
 import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
@@ -64,9 +64,11 @@ function setUp() {
 
 
     let baseLayers = layers.getBaseMaps();
-    const layersControl = L.control.layers(baseLayers, layers.getOverlays(), {collapsed: false}).addTo(map);
     map.addLayer(baseLayers['OpenStreetMap']);
-    layersControl.enableHashState('l');
+    const layersControl = L.control.layers(baseLayers, layers.getOverlays(), {collapsed: false})
+        .addTo(map)
+        .enableHashState('l');
+    enableLayersControlHotKeys (layersControl);
 
 
     new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
