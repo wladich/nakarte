@@ -6,7 +6,7 @@ L.Control.TrackList.include({
         stateChangeEvents: [],
 
         serializeState: function(e) {
-            return [];
+            return null;
         },
 
         unserializeState: function(values) {

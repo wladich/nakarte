@@ -1,6 +1,4 @@
 function arrayItemsEqual(l1, l2) {
-    l1 = l1 || [];
-    l2 = l2 || [];
     if (l1.length !== l2.length)
         return false;
     for (var i = 0; i < l1.length; i++) {
@@ -35,7 +33,11 @@ const hashState = {
     },
 
     updateState: function(key, values) {
-        this._state[key] = values;
+        if (values) {
+            this._state[key] = values;
+        } else {
+            delete this._state[key];
+        }
         this._saveStateToHash();
     },
 
@@ -51,11 +53,15 @@ const hashState = {
             hash = hash.substr(i + 1).trim();
             let m, key, value;
             for (let pair of hash.split('&')) {
-                m = /(.+?)=(.+)/.exec(pair);
+                m = /^([^=]+?)(?:=(.*))?$/.exec(pair);
                 if (m) {
                     [, key, value] = m;
-                    value = value.split('/');
-                    value = value.map(decodeURIComponent);
+                    if (value) {
+                        value = value.split('/');
+                        value = value.map(decodeURIComponent);
+                    } else {
+                        value = [];
+                    }
                     args[key] = value;
                 }
             }
@@ -66,9 +72,13 @@ const hashState = {
     _saveStateToHash: function() {
         var stateItems = [];
         for (let key of Object.keys(this._state)) {
-            if (this._state[key].length) {
-                var values = this._state[key].join('/');
-                stateItems.push(key + '=' + values);
+            if (this._state[key]) {
+                if (this._state[key].length) {
+                    var values = this._state[key].join('/');
+                    stateItems.push(key + '=' + values);
+                } else {
+                    stateItems.push(key);
+                }
             }
         }
         var hashString = '#' + stateItems.join('&');
@@ -80,7 +90,7 @@ const hashState = {
         const newState = this._parseHash();
         const changedKeys = {};
         for (let key of Object.keys(newState)) {
-            if (!arrayItemsEqual(newState[key], this._state[key])) {
+            if (!(key in this._state)  || !arrayItemsEqual(newState[key], this._state[key])) {
                 changedKeys[key] = 1;
             }
         }
@@ -93,8 +103,6 @@ const hashState = {
 
         for (let [key, callback] of this._listeners) {
             if (key in changedKeys) {
-                // setTimeout(callback.bind(null, newState[key]), 0);
-
                 callback(newState[key]);
             }
         }

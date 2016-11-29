@@ -167,7 +167,7 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         notifyChanged: function() {
-            this.fire('panoramachanged')
+            this.fire('panoramachanged');
         },
 
         getGoogleApi: function() {
@@ -203,45 +203,43 @@ L.Control.Panoramas.include({
 
         serializeState: function() {
             if (!this.coverageVisible) {
-                return [];
+                return null;
             }
             const state = [];
-            if (this.panoramaVisible) {
-                state.push('1');
-                if (this.panoramaPosition && this.panoramaAngle !== undefined) {
-                    state.push(this.panoramaPosition.lat.toFixed(5));
-                    state.push(this.panoramaPosition.lng.toFixed(5));
-                    state.push(Math.round(this.panoramaAngle.heading).toFixed());
-                    state.push(Math.round(this.panoramaAngle.pitch).toFixed());
-                    state.push(Math.round(this.panoramaAngle.zoom).toFixed(2));
-                }
-            } else {
-                state.push('0');
+            if (this.panoramaVisible && this.panoramaPosition && this.panoramaAngle !== undefined) {
+                state.push(this.panoramaPosition.lat.toFixed(5));
+                state.push(this.panoramaPosition.lng.toFixed(5));
+                state.push(Math.round(this.panoramaAngle.heading).toFixed());
+                state.push(Math.round(this.panoramaAngle.pitch).toFixed());
+                state.push(Math.round(this.panoramaAngle.zoom).toFixed(2));
             }
             return state;
         },
 
         unserializeState: function(state) {
-            if (!state || !state.length) {
+            if (!state) {
                 this.hidePanorama();
                 this.hideCoverage();
-                return;
+                return true;
             }
-            if (state[0] === '1') {
-                this.showCoverage();
-                const lat = parseFloat(state[1]);
-                const lng = parseFloat(state[2]);
-                const heading = parseFloat(state[3]);
-                const pitch = parseFloat(state[4]);
-                const zoom = parseFloat(state[5]);
-                if (!isNaN(lat) && !isNaN(lng) && !isNaN(heading) && !isNaN(pitch)) {
-                    this.showPanoramaAtPos(L.latLng(lat, lng), {heading, pitch, zoom});
-                }
-
-            } else {
+            if (state.length === 0) {
                 this.hidePanorama();
                 this.showCoverage();
+                return true;
             }
+
+            const lat = parseFloat(state[0]);
+            const lng = parseFloat(state[1]);
+            const heading = parseFloat(state[2]);
+            const pitch = parseFloat(state[3]);
+            const zoom = parseFloat(state[4]);
+            if (!isNaN(lat) && !isNaN(lng) && !isNaN(heading) && !isNaN(pitch)) {
+                this.showCoverage();
+                this.showPanoramaAtPos(L.latLng(lat, lng), {heading, pitch, zoom});
+                return true;
+            }
+
+            return false;
         }
     }
 );

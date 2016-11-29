@@ -25,8 +25,20 @@ L.Control.Layers.include({
                 return false;
             }
 
+            let hasBaselayer;
             for (let layer of this._layers) {
-                if (values.includes(layer.layer.options.code)) {
+                if (layer.layer.options && values.includes(layer.layer.options.code) && !layer.overlay) {
+                    hasBaselayer = true;
+                    break;
+                }
+            }
+
+            if (!hasBaselayer) {
+                return false;
+            }
+
+            for (let layer of this._layers) {
+                if (layer.layer.options && values.includes(layer.layer.options.code)) {
                     this._map.addLayer(layer.layer);
                 } else {
                     this._map.removeLayer(layer.layer);
