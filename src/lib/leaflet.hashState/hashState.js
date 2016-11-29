@@ -65,7 +65,7 @@ const hashState = {
 
     _saveStateToHash: function() {
         var stateItems = [];
-        for (var key in this._state) {
+        for (let key of Object.keys(this._state)) {
             if (this._state[key].length) {
                 var values = this._state[key].join('/');
                 stateItems.push(key + '=' + values);
@@ -79,13 +79,13 @@ const hashState = {
     onHashChanged: function() {
         const newState = this._parseHash();
         const changedKeys = {};
-        for (let key in newState) {
+        for (let key of Object.keys(newState)) {
             if (!arrayItemsEqual(newState[key], this._state[key])) {
                 changedKeys[key] = 1;
             }
         }
 
-        for (let key in this._state) {
+        for (let key of Object.keys(this._state)) {
             if (! (key in newState)) {
                 changedKeys[key] = 1;
             }
