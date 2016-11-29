@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import './style.css';
 
 function enableAdaptiveHeight(control) {
     if (control._adaptiveHeightEnabled) {
