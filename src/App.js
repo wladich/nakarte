@@ -71,7 +71,7 @@ function setUp() {
         .addTo(map)
         .enableHashState('n');
 
-    const tracksControl = new L.Control.TrackList()
+    new L.Control.TrackList()
         .addTo(map)
         .enableHashState('nktk');
 
