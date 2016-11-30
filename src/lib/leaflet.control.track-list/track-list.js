@@ -91,7 +91,7 @@ L.Control.TrackList = L.Control.extend({
                         visible: readingFiles"></div>
                 </div>
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
-                <table class="tracks-rows" data-bind="foreach: {data: tracks, as: 'track'}">
+                <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
                     <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
@@ -101,7 +101,7 @@ L.Control.TrackList = L.Control.extend({
                         <td><div class="button-add-point" title="Add point" data-bind="click: $parent.placeNewPoint.bind($parent, track)"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
-                </table>
+                </tbody></table>
                 </div>
             `;
 
