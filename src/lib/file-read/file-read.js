@@ -1,9 +1,9 @@
 function intArrayToString(arr) {
     var s = [];
     var chunk;
-    for (var i = 0; i < arr.length; i+=4096) {
+    for (var i = 0; i < arr.length; i += 4096) {
         chunk = arr.subarray(i, i + 4096);
-        chunk = String.fromCharCode.apply(null,chunk);
+        chunk = String.fromCharCode.apply(null, chunk);
         s.push(chunk);
     }
     return s.join('');
@@ -32,15 +32,17 @@ function selectFiles(multiple=false) {
 
 function readFile(file) {
     return new Promise(function(resolve) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            resolve({
-                data: arrayBufferToString(e.target.result),
-                filename: file.name
-            });
-        };
-        reader.readAsArrayBuffer(file);
-    });
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                resolve({
+                        data: arrayBufferToString(e.target.result),
+                        filename: file.name
+                    }
+                );
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    );
 }
 
 function readFiles(files) {
