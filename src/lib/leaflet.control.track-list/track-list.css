@@ -4,14 +4,13 @@
     border-radius: 5px 5px 5px 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
     padding: 8px 8px 8px 8px;
+    width: 310px;
 }
 
 .tracks-rows-wrapper {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 3px 0 0;
-    box-sizing: content-box;
-    width: 305px;
 }
 
 .leaflet-control-tracklist .hint {
@@ -46,7 +45,7 @@
 
 .leaflet-control-tracklist .input-url {
     display: inline-block;
-    width: 170px;
+    width: 176px;
     height: 26px;
     line-height: 26px;
     padding: 0 3px;
@@ -110,7 +109,7 @@
     color: #333;
     cursor: pointer;
     border-bottom: 1px dashed #999;
-    max-width: 140px;
+    max-width: 136px;
     white-space:nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
