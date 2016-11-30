@@ -13,7 +13,7 @@ function enableAdaptiveHeight(control) {
             onAdd: function(map) {
                 const result = originalOnAdd.call(this, map);
                 this.__setupResizeEventsHandler();
-                this.__setAdaptiveHeight();
+                setTimeout(() => this.__setAdaptiveHeight(), 0);
                 return result;
             },
 
