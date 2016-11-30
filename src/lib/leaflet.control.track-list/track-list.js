@@ -59,12 +59,13 @@ L.Control.TrackList = L.Control.extend({
             this.readProgressRange = ko.observable(10);
             this.readProgressDone = ko.observable(2);
             this._lastTrackColor = 0;
+            this.trackListHeight = ko.observable(0);
         },
 
         onAdd: function(map) {
             this.map = map;
             this.tracks.removeAll();
-            var container = L.DomUtil.create('div', 'leaflet-control leaflet-control-tracklist');
+            var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-tracklist');
             L.DomEvent.disableClickPropagation(container);
             if (!L.Browser.touch) {
                 L.DomEvent.disableScrollPropagation(container);
@@ -89,6 +90,7 @@ L.Control.TrackList = L.Control.extend({
                         },
                         visible: readingFiles"></div>
                 </div>
+                <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows" data-bind="foreach: {data: tracks, as: 'track'}">
                     <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
@@ -100,6 +102,7 @@ L.Control.TrackList = L.Control.extend({
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
                 </table>
+                </div>
             `;
 
             ko.applyBindings(this, container);
@@ -116,7 +119,19 @@ L.Control.TrackList = L.Control.extend({
             );
             this._markerLayer = new Waypoints(null, {print: true, zIndex: 100001}).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
+            map.on('resize', this._setAdaptiveHeight, this);
+            setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
+        },
+
+        _setAdaptiveHeight: function() {
+            const mapHeight = this._map.getSize().y;
+            let maxHeight;
+            maxHeight = (mapHeight
+            - this._container.offsetTop // controls above
+            - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
+            - 85); // margin
+            this.trackListHeight(maxHeight + 'px');
         },
 
         onFileDraging: function(e) {

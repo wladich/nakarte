@@ -26,11 +26,6 @@
     }
 }
 
-.leaflet-control-tracklist {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 .nakarte-controls-raised {
     z-index: 2000 !important;
 }

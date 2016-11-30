@@ -17,12 +17,6 @@ import 'lib/leaflet.control.track-list/track-list';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
 
-function autoSizeControl(map, control) {
-    // для контрола Layers есть аналогичная функция при разворачивании из кнопки.
-    // если делать collapsable: true надо сделать патч, отключающий её там
-    const margin = 50;
-    control.getContainer().style.maxHeight = (map.getSize().y - margin) + 'px';
-}
 
 function raiseControlsOnMouse(controls) {
     const selectors = ['.leaflet-top.leaflet-right', '.leaflet-bottom.leaflet-right', '.leaflet-top.leaflet-left',
@@ -80,9 +74,6 @@ function setUp() {
     const tracksControl = new L.Control.TrackList()
         .addTo(map)
         .enableHashState('nktk');
-
-    map.on('resize', autoSizeControl.bind(null, map, tracksControl));
-    autoSizeControl(map, tracksControl);
 
     raiseControlsOnMouse();
 }
