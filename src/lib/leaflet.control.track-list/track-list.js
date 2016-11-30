@@ -72,8 +72,18 @@ L.Control.TrackList = L.Control.extend({
             }
 
             container.innerHTML = `
-                <div class="hint">
-                    GPX Ozi GoogleEarth ZIP YandexMaps
+                <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
+                <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
+                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
+                        <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
+                        <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
+                        <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
+                        <td><div class="button-length" data-bind="text: $parent.formatLength(track.length()), css: {'ticks-enabled': track.measureTicksShown}, click: $parent.switchMeasureTicksVisibility.bind($parent)"></div></td>
+                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
+                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.placeNewPoint.bind($parent, track)"></div></td>
+                        <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
+                    </tr>
+                </tbody></table>
                 </div>
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
                     <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
@@ -90,19 +100,11 @@ L.Control.TrackList = L.Control.extend({
                         },
                         visible: readingFiles"></div>
                 </div>
-                <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
-                <table class="tracks-rows" data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
-                        <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
-                        <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
-                        <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
-                        <td><div class="button-length" data-bind="text: $parent.formatLength(track.length()), css: {'ticks-enabled': track.measureTicksShown}, click: $parent.switchMeasureTicksVisibility.bind($parent)"></div></td>
-                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
-                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.placeNewPoint.bind($parent, track)"></div></td>
-                        <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
-                    </tr>
-                </table>
+
+                <div class="hint">
+                    GPX Ozi KML ZIP YandexMaps
                 </div>
+
             `;
 
             ko.applyBindings(this, container);
@@ -130,7 +132,7 @@ L.Control.TrackList = L.Control.extend({
             maxHeight = (mapHeight
             - this._container.offsetTop // controls above
             - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-            - 85); // margin
+            - 90); // margin
             this.trackListHeight(maxHeight + 'px');
         },
 
