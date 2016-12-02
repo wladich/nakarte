@@ -16,6 +16,7 @@ import 'lib/leaflet.control.panoramas/panoramas';
 import 'lib/leaflet.control.track-list/track-list';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
+import enableLayersMinimize from 'lib/leaflet.control.layers.minimize/minimize';
 
 
 function raiseControlsOnMouse(controls) {
@@ -64,6 +65,7 @@ function setUp() {
         .enableHashState('l');
     enableLayersControlHotKeys (layersControl);
     enableLayersControlAdaptiveHeight(layersControl);
+    enableLayersMinimize(layersControl);
 
     new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
     new L.Control.Coordinates().addTo(map);

@@ -103,3 +103,21 @@
     border-bottom: 1px solid #333;
     color: #333;
 }
+
+.control-print-pages .button-minimize {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.control-print-pages .download-button-row {
+    position: relative;
+}
+
+.control-print-pages .leaflet-control-button-toggle {
+    background-image: url("images/printer.svg");
+    width: 24px;
+    height: 24px;
+    margin: 5px;
+
+}

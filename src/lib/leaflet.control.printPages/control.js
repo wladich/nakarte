@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import ko from 'knockout';
 import 'lib/knockout.component.progress/progress';
-import 'lib/controls-styles.css';
+import 'lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
 import Contextmenu from 'lib/contextmenu/contextmenu';
@@ -72,6 +72,14 @@ L.Control.PrintPages = L.Control.extend({
             ko.applyBindings(this, container);
             this.updateFormZooms();
             return container;
+        },
+
+        setExpanded: function() {
+            L.DomUtil.removeClass(this._container, 'minimized');
+        },
+
+        setMinimized: function() {
+            L.DomUtil.addClass(this._container, 'minimized');
         },
 
         addPage: function(isLandsacape) {

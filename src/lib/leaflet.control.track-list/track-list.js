@@ -15,8 +15,9 @@ import 'lib/leaflet.polyline-measure/measured_line';
 import 'lib/leaflet.layer.canvasMarkers/canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs/simplify';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage/iconFromBackgroundImage';
+import 'lib/controls-styles/controls-styles.css';
 
-var MeasuredEditableLine = L.MeasuredLine.extend({}); 
+var MeasuredEditableLine = L.MeasuredLine.extend({});
 MeasuredEditableLine.include(L.Polyline.EditMixin);
 
 var Waypoints = L.Layer.CanvasMarkers.extend({
@@ -72,8 +73,13 @@ L.Control.TrackList = L.Control.extend({
             }
 
             container.innerHTML = `
-                <div class="hint">
-                    GPX Ozi GoogleEarth ZIP YandexMaps
+                <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"></div>
+                <div class="leaflet-control-content">
+                <div class="header">
+                    <div class="hint">
+                        GPX Ozi GoogleEarth ZIP YandexMaps
+                    </div>
+                    <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
                     <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
@@ -103,6 +109,7 @@ L.Control.TrackList = L.Control.extend({
                     </tr>
                 </tbody></table>
                 </div>
+                </div>
             `;
 
             ko.applyBindings(this, container);
@@ -130,8 +137,16 @@ L.Control.TrackList = L.Control.extend({
             maxHeight = (mapHeight
             - this._container.offsetTop // controls above
             - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-            - 85); // margin
+            - 100); // margin
             this.trackListHeight(maxHeight + 'px');
+        },
+
+        setExpanded: function() {
+            L.DomUtil.removeClass(this._container, 'minimized');
+        },
+
+        setMinimized: function() {
+            L.DomUtil.addClass(this._container, 'minimized');
         },
 
         onFileDraging: function(e) {
@@ -709,7 +724,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMouseMoveOnSegmentUpdateLineJoinCursor: function(e) {
-                    if (!this._lineJoinCursor) {
+            if (!this._lineJoinCursor) {
                 return;
             }
             var trackSegment = e.target,

@@ -4,6 +4,7 @@
     border-radius: 5px 5px 5px 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
     padding: 8px 8px 8px 8px;
+.leaflet-control-tracklist-contents {
     width: 310px;
 }
 
@@ -233,4 +234,21 @@
 
 .leaflet-point-placing svg * {
     pointer-events: none;
+}
+
+.leaflet-control-tracklist .button-minimize {
+    float: right;
+
+}
+
+.leaflet-control-tracklist .header {
+    margin-bottom: 6px;
+    height: 18px;
+}
+
+.leaflet-control-tracklist .leaflet-control-button-toggle {
+    background-image: url("images/route.svg");
+    width: 24px;
+    height: 24px;
+    margin: 5px;
 }

@@ -1,3 +1,5 @@
+<div class="leaflet-control-button-toggle" data-bind="click: setExpanded"></div>
+<div class="leaflet-control-content">
 <table class="layout">
     <tbody>
     <tr><td colspan="2">
@@ -74,6 +76,7 @@
     </td></tr>
     <tr><td colspan="2">
         <div class="download-button-row">
+            <div class="button-minimize" data-bind="click: setMinimized"></div>
             <a class="text-button button-save" data-bind="
                                 click: savePdf,
                                 visible: !makingPdf()">Save PDF</a>
@@ -87,3 +90,4 @@
     </td></tr>
     </tbody>
 </table>
+</div>
