@@ -20,7 +20,6 @@ function enableTopRow(control) {
         },
 
         __injectTopRow: function() {
-            const container = this._container;
             this._topRow = L.DomUtil.create('div', 'leaflet-control-layers-top-row');
             this._form.parentNode.insertBefore(this._topRow, this._form);
         }
