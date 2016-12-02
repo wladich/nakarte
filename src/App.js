@@ -50,13 +50,22 @@ function setUp() {
     );
     map.enableHashState('m', [10, 55.75185, 37.61856]);
 
+    /////////// controls top-left corner
 
     new L.Control.Caption(`<a href=mailto:${config.email}">nakarte@nakarte.tk</a>`, {
             position: 'topleft'
         }
     ).addTo(map);
+
     L.control.zoom().addTo(map);
 
+    new L.Control.Panoramas(document.getElementById('street-view'))
+        .addTo(map)
+        .enableHashState('n');
+
+    new L.Control.Coordinates({position: 'topleft'}).addTo(map);
+
+    /////////// controls top-right corner
 
     let baseLayers = layers.getBaseMaps();
     map.addLayer(baseLayers['OpenStreetMap']);
@@ -67,11 +76,11 @@ function setUp() {
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
 
+    /////////// controls bottom-left corner
+
     new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
-    new L.Control.Coordinates().addTo(map);
-    new L.Control.Panoramas(document.getElementById('street-view'))
-        .addTo(map)
-        .enableHashState('n');
+
+    /////////// controls bottom-right corner
 
     new L.Control.TrackList()
         .addTo(map)
