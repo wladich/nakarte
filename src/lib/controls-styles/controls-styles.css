@@ -92,10 +92,11 @@
 
 .leaflet-control-button-toggle {
     cursor: pointer;
-    width: 36px;
-    height: 36px;
+    width: 26px;
+    height: 26px;
     background-position: 50% 50%;
     background-repeat: no-repeat;
+    margin: 5px;
 }
 
 .leaflet-control.minimized {

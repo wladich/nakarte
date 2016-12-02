@@ -116,8 +116,4 @@
 
 .control-print-pages .leaflet-control-button-toggle {
     background-image: url("images/printer.svg");
-    width: 24px;
-    height: 24px;
-    margin: 5px;
-
 }
