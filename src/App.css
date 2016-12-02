@@ -12,3 +12,7 @@
 #street-view.enabled {
   display: block;
 }
+
+*:focus {
+  outline: 0;
+}
