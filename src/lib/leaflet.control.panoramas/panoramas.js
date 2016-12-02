@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import './style.css';
+import 'lib/controls-styles/controls-styles.css';
 import getGoogle from 'lib/googleMapsApi/googleMapsApi';
 
 
