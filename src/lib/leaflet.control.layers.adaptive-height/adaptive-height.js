@@ -27,7 +27,7 @@ function enableAdaptiveHeight(control) {
                     maxHeight = (mapHeight
                     - this._container.offsetTop // controls above
                     - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-                    - 30); // margin
+                    - 50); // margin
                 this._form.style.maxHeight = maxHeight + 'px';
             }
         }
@@ -36,7 +36,6 @@ function enableAdaptiveHeight(control) {
     if (control._map) {
         control.__setupResizeEventsHandler();
         setTimeout(() => control.__setAdaptiveHeight(), 0);
-
     }
 
     return control;
