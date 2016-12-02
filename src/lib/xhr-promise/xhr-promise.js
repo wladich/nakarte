@@ -20,6 +20,7 @@ class XMLHttpRequestPromise {
         this.catch = promise.catch.bind(promise);
         this.method = method;
         this.url = url;
+        this.postData = data;
         this._isResponseSuccess = isResponseSuccess;
         this._responseNeedsRetry = responseNeedsRetry;
         this._retryTimeWait = retryTimeWait;
@@ -72,7 +73,7 @@ class XMLHttpRequestPromise {
     send() {
         // console.log('send', this.url);
         this.triesLeft -= 1;
-        this.xhr.send();
+        this.xhr.send(this.postData);
     }
 }
 

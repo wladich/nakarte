@@ -16,6 +16,7 @@ import 'lib/leaflet.layer.canvasMarkers/canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs/simplify';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage/iconFromBackgroundImage';
 import 'lib/controls-styles/controls-styles.css';
+import 'lib/leaflet.control.elevation-profile/elevation-profile';
 
 var MeasuredEditableLine = L.MeasuredLine.extend({});
 MeasuredEditableLine.include(L.Polyline.EditMixin);
