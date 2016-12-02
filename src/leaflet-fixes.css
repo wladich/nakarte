@@ -1,3 +1,7 @@
 .leaflet-control-layers-list label {
     white-space: nowrap;
 }
+
+.leaflet-control {
+    user-select: none;
+}
