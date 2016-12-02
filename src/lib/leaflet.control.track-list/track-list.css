@@ -4,6 +4,8 @@
     border-radius: 5px 5px 5px 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
     padding: 8px 8px 8px 8px;
+ }
+
 .leaflet-control-tracklist-contents {
     width: 310px;
 }
