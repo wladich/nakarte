@@ -6,7 +6,7 @@ import './track-list.css';
 import {selectFiles, readFiles} from 'lib/file-read/file-read';
 import {parseGeoFile} from './lib/geo_file_formats';
 import urlViaCorsProxy from 'lib/CORSProxy/proxy';
-import {XMLHttpRequestPromise} from 'lib/xhr-promise/xhr-promise';
+import {fetch} from 'lib/xhr-promise/xhr-promise';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy/clipboardCopy';
 import {saveAs} from 'browser-filesaver';
@@ -239,7 +239,7 @@ L.Control.TrackList = L.Control.extend({
                         .replace(/\/*$/, '')
                         .split('/')
                         .pop();
-                    XMLHttpRequestPromise(url_for_request, {responseType: 'binarystring'})
+                    fetch(url_for_request, {responseType: 'binarystring'})
                         .then(function(xhr) {
                                 var geodata = parseGeoFile(name, xhr.response);
                                 this.addTracksFromGeodataArray(geodata);
