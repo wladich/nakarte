@@ -25,7 +25,7 @@ L.Control.Panoramas = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            const container = L.DomUtil.create('a', 'leaflet-control leaflet-contol-button leaflet-contol-panoramas');
+            const container = L.DomUtil.create('a', 'leaflet-control leaflet-control-button leaflet-contol-panoramas');
             container.title = 'Show panoramas';
             L.DomEvent.disableClickPropagation(container);
             if (!L.Browser.touch) {

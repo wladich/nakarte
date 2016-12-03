@@ -43,7 +43,7 @@
     color: #333;
 }
 
-.leaflet-contol-button {
+.leaflet-control-button {
     display: inline-block;
     width: 26px;
     height: 26px;
@@ -55,7 +55,7 @@
     cursor: pointer;
 }
 
-.leaflet-contol-button:hover {
+.leaflet-control-button:hover {
     background-color: #f4f4f4;
 }
 

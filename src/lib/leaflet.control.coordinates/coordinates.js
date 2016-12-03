@@ -22,7 +22,7 @@ L.Control.Coordinates = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-contol-button leaflet-control-coordinates');
+            var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
             L.DomEvent.disableClickPropagation(container);
             if (!L.Browser.touch) {
                 L.DomEvent.disableScrollPropagation(container);
