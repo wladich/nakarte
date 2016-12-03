@@ -14,6 +14,7 @@ import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug
 import './adaptive.css';
 import 'lib/leaflet.control.panoramas/panoramas';
 import 'lib/leaflet.control.track-list/track-list';
+import 'lib/leaflet.control.track-list/control-ruler';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
 import 'lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
@@ -36,6 +37,8 @@ function setUp() {
     );
     map.enableHashState('m', [10, 55.75185, 37.61856]);
 
+    const tracklist = new L.Control.TrackList();
+
     /////////// controls top-left corner
 
     new L.Control.Caption(`<a href=mailto:${config.email}">nakarte@nakarte.tk</a>`, {
@@ -44,6 +47,8 @@ function setUp() {
     ).addTo(map);
 
     L.control.zoom().addTo(map);
+
+    new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
     new L.Control.Panoramas(document.getElementById('street-view'))
         .addTo(map)
@@ -68,8 +73,7 @@ function setUp() {
 
     /////////// controls bottom-right corner
 
-    const tracklist = new L.Control.TrackList()
-        .addTo(map);
+    tracklist.addTo(map);
     if (!hashState.getState('nktk')) {
         tracklist.loadTracksFromStorage();
     }
