@@ -284,7 +284,7 @@ L.Control.ElevationProfile = L.Class.extend({
 
         onSvgDragStart: function(e) {
 
-            if (e.dragButton == 0) {
+            if (e.dragButton === 0) {
                 // FIXME: restore hiding when we make display of selection on map
                 // this.cursorHide();
                 this.polyLineSelection.addTo(this._map).bringToBack();
@@ -325,7 +325,7 @@ L.Control.ElevationProfile = L.Class.extend({
         },
 
         onSvgDragEnd: function(e) {
-            if (e.dragButton == 0) {
+            if (e.dragButton === 0) {
                 this.cursorShow();
                 this.updateGraphSelection(e);
                 var stats = this.calcProfileStats(this.values.slice(this.selStartInd, this.selEndInd + 1), true);
@@ -338,17 +338,17 @@ L.Control.ElevationProfile = L.Class.extend({
         },
 
         onSvgDrag: function(e) {
-            if (e.dragButton == 0) {
+            if (e.dragButton === 0) {
                 this.updateGraphSelection(e);
                 this.polyLineSelection.setLatLngs(this.samples.slice(this.selStartInd, this.selEndInd + 1));
             }
-            if (e.dragButton == 2) {
+            if (e.dragButton === 2) {
                 this.drawingContainer.scrollLeft -= e.movementX;
             }
         },
 
         onSvgClick: function(e) {
-            if (e.dragButton == 0) {
+            if (e.dragButton === 0) {
                 this.dragStart = null;
                 L.DomUtil.addClass(this.graphSelection, 'elevation-profile-cursor-hidden');
                 L.DomUtil.removeClass(this.propsContainer, 'elevation-profile-properties-selected');
@@ -357,7 +357,7 @@ L.Control.ElevationProfile = L.Class.extend({
                     this.updatePropsDisplay(this.stats);
                 }
             }
-            if (e.dragButton == 2) {
+            if (e.dragButton === 2) {
                 this.setMapPositionAtIndex(Math.round(this.xToIndex(e.offsetX)));
             }
         },
@@ -759,7 +759,7 @@ L.Control.ElevationProfile = L.Class.extend({
                 s = s.split('\n');
                 for (var i = 0; i < s.length; i++) {
                     if (s[i]) {
-                        if (s[i] == 'NULL') {
+                        if (s[i] === 'NULL') {
                             v = 0;
                         } else {
                             v = parseFloat(s[i]);
