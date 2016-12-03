@@ -19,25 +19,9 @@ import 'lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
 import enableLayersMinimize from 'lib/leaflet.control.layers.minimize/minimize';
 import hashState from 'lib/leaflet.hashState/hashState';
+import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus/raise-on-focus';
 
 
-function raiseControlsOnMouse(controls) {
-    const selectors = ['.leaflet-top.leaflet-right', '.leaflet-bottom.leaflet-right', '.leaflet-top.leaflet-left',
-        '.leaflet-bottom.leaflet-left'];
-    let elements = selectors.map(document.querySelector.bind(document));
-
-    function raise(target) {
-        for (let cornerDiv of elements) {
-            if (cornerDiv === target) {
-                L.DomUtil.addClass(cornerDiv, 'nakarte-controls-raised');
-            } else {
-                L.DomUtil.removeClass(cornerDiv, 'nakarte-controls-raised');
-            }
-        }
-    }
-
-    elements.forEach((el) => L.DomEvent.on(el, 'mouseenter', raise.bind(null, el)));
-}
 
 function setUp() {
     fixAnimationBug();
@@ -91,7 +75,8 @@ function setUp() {
     }
     tracklist.enableHashState('nktk');
 
-    raiseControlsOnMouse();
+    raiseControlsOnFocus(map);
+
     L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
 }
 
