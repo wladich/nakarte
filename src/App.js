@@ -15,8 +15,10 @@ import './adaptive.css';
 import 'lib/leaflet.control.panoramas/panoramas';
 import 'lib/leaflet.control.track-list/track-list';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
+import 'lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
 import enableLayersMinimize from 'lib/leaflet.control.layers.minimize/minimize';
+import hashState from 'lib/leaflet.hashState/hashState';
 
 
 function raiseControlsOnMouse(controls) {
@@ -82,11 +84,15 @@ function setUp() {
 
     /////////// controls bottom-right corner
 
-    new L.Control.TrackList()
-        .addTo(map)
-        .enableHashState('nktk');
+    const tracklist = new L.Control.TrackList()
+        .addTo(map);
+    if (!hashState.getState('nktk')) {
+        tracklist.loadTracksFromStorage();
+    }
+    tracklist.enableHashState('nktk');
 
     raiseControlsOnMouse();
+    L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
 }
 
 export default {setUp};
