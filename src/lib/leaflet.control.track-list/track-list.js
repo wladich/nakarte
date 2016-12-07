@@ -138,7 +138,7 @@ L.Control.TrackList = L.Control.extend({
             maxHeight = (mapHeight
             - this._container.offsetTop // controls above
             - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-            - 100); // margin
+            - 105); // margin
             this.trackListHeight(maxHeight + 'px');
         },
 
