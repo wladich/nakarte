@@ -6,59 +6,388 @@ import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses/westraPasses';
 
-function getBaseMaps() {
-    return {
-        'OpenStreetMap': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {code: 'O', scaleDependent: true, print: true, jnx: true}
-        ),
-        'ESRI Sat': L.tileLayer(
-            'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            {code: 'E', maxNativeZoom: 17, print: true, jnx: true}
-        ),
-        'Yandex': new L.Layer.Yandex('map', {scaleDependent: true, code: 'Y', print: true, jnx: true}),
-        'Yandex Sat': new L.Layer.Yandex('sat', {scaleDependent: false, code: 'S', print: true, jnx: true}),
-        'Google': new L.Layer.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true}),
-        'Google Sat': new L.Layer.Google('SATELLITE', {code: 'L', print: true, jnx: true}),
-        'Bing Sat': L.bingLayer(config.bingKey, {code: 'I', print: true, jnx: true}),
-        'marshruty.ru': L.tileLayer('http://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
-            {code: 'M', maxNativeZoom: 18, noCors: true, scaleDependent: true, print: true, jnx: true}
-        ),
-        'Topomapper 1km': L.tileLayer(
-            'http://144.76.234.107//cgi-bin/ta/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
-            {code: 'T', maxNativeZoom: 13, noCors: true, print: true, jnx: true}
-        )
-    };
+export default function getLayers() {
+    const layers = [
+        {
+            group: 'Default layers',
+            layers: [
+                {
+                    title: 'OpenStreetMap',
+                    description: 'OSM default style',
+                    order: 10,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        {code: 'O', scaleDependent: true, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'ESRI Sat',
+                    order: 20,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: L.tileLayer(
+                        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                        {code: 'E', scaleDependent: false, maxNativeZoom: 17, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Yandex map',
+                    order: 30,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: new L.Layer.Yandex('map', {scaleDependent: true, code: 'Y', print: true, jnx: true})
+                },
+                {
+                    title: 'Yandex Sat',
+                    order: 40,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: new L.Layer.Yandex('sat', {scaleDependent: false, code: 'S', print: true, jnx: true})
+                },
+                {
+                    title: 'Google',
+                    order: 50,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: new L.Layer.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true})
+                },
+                {
+                    title: 'Google Sat',
+                    order: 60,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: new L.Layer.Google('SATELLITE', {code: 'L', scaleDependent: false, print: true, jnx: true})
+                },
+                {
+                    title: 'Bing Sat',
+                    order: 70,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: L.bingLayer(config.bingKey, {code: 'I', scaleDependent: false, print: true, jnx: true})
+                },
+
+                {
+                    title: 'marshruty.ru',
+                    order: 80,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: L.tileLayer('http://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
+                        {code: 'M', maxNativeZoom: 18, noCors: true, scaleDependent: true, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Topomapper 1km',
+                    order: 90,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: L.tileLayer(
+                        'http://144.76.234.107//cgi-bin/ta/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
+                        {code: 'T', scaleDependent: false, maxNativeZoom: 13, noCors: true, print: true, jnx: true}
+                    )
+                },
+
+                {
+                    title: 'Topo 10km',
+                    order: 1010,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
+                        {code: 'D', tms: true, scaleDependent: false, maxNativeZoom: 9, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'GGC 2 km',
+                    order: 1020,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
+                        {code: 'N', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'ArbaletMO',
+                    order: 1030,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
+                        {code: 'A', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Slazav mountains',
+                    order: 1040,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
+                        {code: 'Q', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'GGC 1km',
+                    order: 1050,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
+                        {code: 'J', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Topo 1km',
+                    order: 1060,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
+                        {code: 'C', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'GGC 500m',
+                    order: 1070,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
+                        {code: 'F', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Topo 500m',
+                    order: 1080,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo500/{z}/{x}/{y}",
+                        {code: 'B', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'GGC 250m',
+                    order: 1090,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
+                        {code: 'K', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Slazav map',
+                    order: 1100,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
+                        {code: 'Z', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'O-sport',
+                    order: 1110,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/osport/{z}/{x}/{y}",
+                        {code: 'R', tms: true, scaleDependent: false, maxNativeZoom: 17, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'Soviet topo maps grid',
+                    order: 1120,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: new L.Layer.SovietTopoGrid({code: 'Ng'})
+                },
+                // {
+                //     title: 'Wikimapia',
+                //     order: 1130,
+                //     isOverlay: true,
+                //     isDefault: true,
+                //     layer: new L.Wikimapia({code: 'W', zIndexOffset: 10000}),
+                // },
+                {
+                    title: 'Mountain passes (Westra)',
+                    order: 1140,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
+                            code: 'Wp',
+                            print: true,
+                            scaleDependent: true
+                        }
+                    )
+                }]
+        },
+
+
+        {
+            group: 'OpenStreetMap alternatives',
+            layers: [
+                {
+                    title: 'OpenTopoMap',
+                    order: 11,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                        {code: 'Otm', scaleDependent: true, print: true, jnx: true}
+                    )
+                },
+                {
+                    title: 'OpenCycleMap',
+                    order: 12,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                        {code: 'Ocm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true}
+                    )
+                }]
+        },
+        {
+            group: 'Topo maps',
+            layers: [
+                {
+                    title: 'Topo 250m',
+                    order: 1095,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo250/{z}/{x}/{y}",
+                        {code: 'T25', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
+                    )
+                }]
+        },
+        {
+            group: 'Mountains maps',
+            layers: [
+                {
+                    title: 'Mountains by Aleksey Tsvetkov',
+                    description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
+                    order: 1039,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://map.g-utka.ru/{z}/{x}/{y}.png",
+                        // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
+                        {
+                            code: 'Mt',
+                            tms: false,
+                            minZoom: 7,
+                            minNativeZoom: 7,
+                            maxNativeZoom: 15,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: false
+                        }
+                    )
+                }]
+        },
+        {
+            group: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
+            layers: [
+                {
+                    // Вместо 404 отдают 500 для отсутствующих тайлов
+                    title: 'UT map',
+                    order: 500,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
+                        {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true}
+                    )
+                },
+                // {
+                //     title: '',
+                //     order: 0,
+                //     isOverlay: true,
+                //     isDefault: false,
+                //     layer: null
+                // },
+                // {
+                //     title: '',
+                //     order: 0,
+                //     isOverlay: true,
+                //     isDefault: false,
+                //     layer: null
+                // },
+                {
+                    // Вместо 404 отдают 500 для отсутствующих тайлов
+                    title: 'Norway roads',
+                    order: 500,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("http://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
+                        {code: 'Nr', tms: false, print: true, jnx: true, scaleDependent: true}
+                    )
+
+                }]
+        },
+        {
+            group: 'Czech <a href="http://mapy.cz">http://mapy.cz</a>',
+            layers: [
+                {
+                    title: 'Czech basic',
+                    order: 501,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
+                        {code: 'Czb', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Czhch tourist',
+                    order: 502,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist-m/{z}-{x}-{y}",
+                        {code: 'Czt', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Czech summer',
+                    order: 503,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
+                        {code: 'Czs', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Czech winter',
+                    order: 504,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist_winter-m/{z}-{x}-{y}",
+                        {code: 'Czw', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Czech geographical',
+                    order: 505,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
+                        {code: 'Czg', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
+                    )
+                }]
+        },
+        // {
+        //     title: '',
+        //     order: 0,
+        //     isOverlay: true,
+        //     isDefault: false,
+        //     layer: null
+        // },
+    ];
+    // TODO: move it to tests
+    const codes = {};
+    for (let group of layers) {
+        for (let layer of group.layers) {
+            layer = layer.layer;
+            if (!layer.options) {
+                throw new Error('Layer without options: ' + layer.title);
+            }
+            let code = layer.options.code;
+            if (!code) {
+                throw new Error('Layer without code: ' + layer.title);
+            }
+            if (code in codes) {
+                throw new Error(`Duplicate layer code "${code}"`);
+            }
+            codes[code] = 1;
+        }
+    }
+    return layers;
 }
 
-function getOverlays() {
-    return {
-        "Topo 10km": new L.TileLayer("http://{s}.tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
-            {code: 'D', tms: true, maxNativeZoom: 9, print: true, jnx: true}),
-        "GGC 2 km": new L.TileLayer("http://{s}.tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
-            {code: 'N', tms: true, maxNativeZoom: 15, print: true, jnx: true}),
-        "ArbaletMO": new L.TileLayer("http://{s}.tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
-            {code: 'A', tms: true, maxNativeZoom: 13, print: true, jnx: true}),
-        "Slazav mountains": new L.TileLayer("http://{s}.tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
-            {code: 'Q', tms: true, maxNativeZoom: 13, print: true, jnx: true}),
-        "GGC 1km": new L.TileLayer("http://{s}.tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
-            {code: 'J', tms: true, maxNativeZoom: 13, print: true, jnx: true}),
-        "Topo 1km": new L.TileLayer("http://{s}.tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
-            {code: 'C', tms: true, maxNativeZoom: 13, print: true, jnx: true}),
-        "GGC 500m": new L.TileLayer("http://{s}.tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
-            {code: 'F', tms: true, maxNativeZoom: 14, print: true, jnx: true}),
-        "Topo 500m": new L.TileLayer("http://{s}.tiles.nakarte.tk/topo500/{z}/{x}/{y}",
-            {code: 'B', tms: true, maxNativeZoom: 14, print: true, jnx: true}),
-        "GGC 250m": new L.TileLayer("http://{s}.tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
-            {code: 'K', tms: true, maxNativeZoom: 15, print: true, jnx: true}),
-        "Slazav map": new L.TileLayer("http://{s}.tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
-            {code: 'Z', tms: true, maxNativeZoom: 14, print: true, jnx: true}),
-        "O-sport": new L.TileLayer("http://{s}.tiles.nakarte.tk/osport/{z}/{x}/{y}",
-            {code: 'R', tms: true, maxNativeZoom: 17, print: true, jnx: true}),
-        "Soviet topo maps grid": new L.Layer.SovietTopoGrid({code: 'Ng'}),
-        // "Wikimapia": new L.Wikimapia({code: 'W', zIndexOffset: 10000}),
-        // "Google Street View": new L.GoogleStreetView('street-view', {print: true, code: 'Gs', zIndexOffset: 10000}),
-        "Mountain passes (Westra)": new L.Layer.WestraPasses(config.westraDataBaseUrl, {code: 'Wp', print: true})
-    };
-}
-
-export default {getBaseMaps, getOverlays};

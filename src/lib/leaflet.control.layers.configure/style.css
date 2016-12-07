@@ -1,0 +1,90 @@
+.leaflet-control-layers .button-config {
+    cursor: pointer;
+    width: auto;
+    margin-right: auto;
+
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+
+    padding: 0 4px;
+    font-weight: bold;
+    color: #777777;
+    float: left;
+}
+
+.leaflet-control-layers .button-config:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-layers-select-window-wrapper {
+    position: absolute;
+    top: 25px;
+    bottom: 25px;
+    max-width: 100%;
+    padding-bottom: 50px;
+    left: 50%;
+}
+
+.leaflet-layers-select-window {
+    position: relative;
+    left: -50%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    z-index: 3000;
+    max-width: 100%;
+    overflow: hidden;
+    height: 100%;
+    padding: 6px 0 40px 6px;
+}
+
+.leaflet-layers-select-window form {
+    overflow: auto;
+    overflow: overlay;
+    padding-right: 18px;
+    max-height: 100%;
+    margin-bottom: 50px;
+    width: auto ;
+}
+
+.leaflet-layers-select-window * {
+    white-space: nowrap;
+}
+
+.leaflet-layers-select-window .buttons-row {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 6px;
+}
+
+.leaflet-layers-select-window label {
+    display: block;
+}
+
+.leaflet-layers-select-window .button {
+    display: inline-block;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 6px;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+.leaflet-layers-select-window .button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-layers-select-window .section-header{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.leaflet-layers-select-window a {
+    color: #666;
+}

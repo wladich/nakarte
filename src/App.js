@@ -2,7 +2,6 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import layers from './layers';
 import 'lib/leaflet.control.printPages/control'
 import 'lib/leaflet.control.caption/caption'
 import config from './config'
@@ -19,8 +18,10 @@ import 'lib/leaflet.control.track-list/track-list.hash-state';
 import 'lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
 import enableLayersMinimize from 'lib/leaflet.control.layers.minimize/minimize';
+import enableLayersConfig from 'lib/leaflet.control.layers.configure/layers-configure';
 import hashState from 'lib/leaflet.hashState/hashState';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus/raise-on-focus';
+import getLayers from 'layers';
 
 
 
@@ -58,14 +59,13 @@ function setUp() {
 
     /////////// controls top-right corner
 
-    let baseLayers = layers.getBaseMaps();
-    map.addLayer(baseLayers['OpenStreetMap']);
-    const layersControl = L.control.layers(baseLayers, layers.getOverlays(), {collapsed: false})
-        .addTo(map)
-        .enableHashState('l');
+    const layersControl = L.control.layers(null, null, {collapsed: false})
+        .addTo(map);
     enableLayersControlHotKeys (layersControl);
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
+    enableLayersConfig(layersControl, getLayers());
+    layersControl.enableHashState('l');
 
     /////////// controls bottom-left corner
 
