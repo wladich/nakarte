@@ -38,6 +38,7 @@
     overflow: hidden;
     height: 100%;
     padding: 6px 0 40px 6px;
+    min-width: 250px;
 }
 
 .leaflet-layers-select-window form {
@@ -47,10 +48,6 @@
     max-height: 100%;
     margin-bottom: 50px;
     width: auto ;
-}
-
-.leaflet-layers-select-window * {
-    white-space: nowrap;
 }
 
 .leaflet-layers-select-window .buttons-row {
@@ -86,5 +83,9 @@
 }
 
 .leaflet-layers-select-window a {
+    color: #000;
+}
+
+.leaflet-layers-select-window .section-header a {
     color: #666;
 }
