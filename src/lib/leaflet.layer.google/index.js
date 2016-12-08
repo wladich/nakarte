@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import getGoogle from 'lib/googleMapsApi/googleMapsApi';
+import getGoogle from 'lib/googleMapsApi';
 
 L.Layer.Google = L.GridLayer.extend({
         options: {},

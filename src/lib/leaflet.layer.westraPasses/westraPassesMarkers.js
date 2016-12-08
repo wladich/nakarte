@@ -1,11 +1,11 @@
 import L from 'leaflet';
-import 'lib/leaflet.layer.canvasMarkers/canvasMarkers'
-import openPopup from 'lib/popupWindow/popupWindow';
+import 'lib/leaflet.layer.canvasMarkers'
+import openPopup from 'lib/popupWindow';
 import escapeHtml from 'escape-html';
 import {saveAs} from 'browser-filesaver';
-import iconFromBackgroundImage from 'lib/iconFromBackgroundImage/iconFromBackgroundImage';
-import {fetch} from 'lib/xhr-promise/xhr-promise';
-import {notifyXhrError} from 'lib/notifications/notifications';
+import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
+import {fetch} from 'lib/xhr-promise';
+import {notifyXhrError} from 'lib/notifications';
 
 
 const westraPasesMarkers = L.Layer.CanvasMarkers.extend({

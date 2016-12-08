@@ -3,24 +3,24 @@ import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'lib/leaflet.control.printPages/control'
-import 'lib/leaflet.control.caption/caption'
+import 'lib/leaflet.control.caption'
 import config from './config'
-import 'lib/leaflet.control.coordinates/coordinates';
-import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys/control.Layers-hotkeys';
+import 'lib/leaflet.control.coordinates';
+import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys';
 import 'lib/leaflet.hashState/Leaflet.Map';
 import 'lib/leaflet.hashState/Leaflet.Control.Layers';
-import fixAnimationBug from 'lib/leaflet.fixAnimationBug/leaflet.fixAnimationBug'
+import fixAnimationBug from 'lib/leaflet.fixAnimationBug'
 import './adaptive.css';
-import 'lib/leaflet.control.panoramas/panoramas';
+import 'lib/leaflet.control.panoramas';
 import 'lib/leaflet.control.track-list/track-list';
 import 'lib/leaflet.control.track-list/control-ruler';
 import 'lib/leaflet.control.track-list/track-list.hash-state';
 import 'lib/leaflet.control.track-list/track-list.localstorage';
-import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height/adaptive-height';
-import enableLayersMinimize from 'lib/leaflet.control.layers.minimize/minimize';
-import enableLayersConfig from 'lib/leaflet.control.layers.configure/layers-configure';
+import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height';
+import enableLayersMinimize from 'lib/leaflet.control.layers.minimize';
+import enableLayersConfig from 'lib/leaflet.control.layers.configure';
 import hashState from 'lib/leaflet.hashState/hashState';
-import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus/raise-on-focus';
+import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
 
 

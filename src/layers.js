@@ -1,11 +1,11 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.yandex/yandex';
-import 'lib/leaflet.layer.google/google';
-import 'lib/leaflet.layer.bing/bing';
+import 'lib/leaflet.layer.yandex';
+import 'lib/leaflet.layer.google';
+import 'lib/leaflet.layer.bing';
 import config from './config';
-import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
-import 'lib/leaflet.layer.westraPasses/westraPasses';
-import 'lib/leaflet.layer.nordeskart/norderskart';
+import 'lib/leaflet.layer.soviet-topomaps-grid';
+import 'lib/leaflet.layer.westraPasses';
+import 'lib/leaflet.layer.nordeskart';
 
 export default function getLayers() {
     const layers = [

@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './elevation-profile.css';
-import {fetch} from 'lib/xhr-promise/xhr-promise';
+import {fetch} from 'lib/xhr-promise';
 import config from 'config';
 
 function createSvg(tagName, attributes, parent) {

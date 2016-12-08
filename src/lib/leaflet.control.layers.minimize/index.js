@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import './style.css';
 import 'lib/controls-styles/controls-styles.css';
-import enableTopRow from 'lib/leaflet.control.layers.top-row/top-row';
+import enableTopRow from 'lib/leaflet.control.layers.top-row';
 
 
 function enableMinimize(control) {

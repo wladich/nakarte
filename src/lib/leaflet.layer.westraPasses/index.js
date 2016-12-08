@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './westraPasses.css';
-import 'lib/leaflet.layer.geojson-ajax/geojson-ajax';
+import 'lib/leaflet.layer.geojson-ajax';
 import westraPasesMarkers from './westraPassesMarkers';
 
 L.Layer.WestraPasses = L.Layer.extend({

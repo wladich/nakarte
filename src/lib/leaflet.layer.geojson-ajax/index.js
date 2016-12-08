@@ -1,6 +1,6 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise/xhr-promise';
-import {notifyXhrError} from 'lib/notifications/notifications';
+import {fetch} from 'lib/xhr-promise';
+import {notifyXhrError} from 'lib/notifications';
 
 L.Layer.GeoJSONAjax = L.GeoJSON.extend({
         options: {

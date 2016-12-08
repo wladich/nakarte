@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import './coordinates.css';
-import copyToClipboard from 'lib/clipboardCopy/clipboardCopy';
-import Contextmenu from 'lib/contextmenu/contextmenu';
+import copyToClipboard from 'lib/clipboardCopy';
+import Contextmenu from 'lib/contextmenu';
 
 function pad(s, n) {
     var j = s.indexOf('.');

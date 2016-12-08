@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './style.css';
-import enableTopRow from 'lib/leaflet.control.layers.top-row/top-row';
+import enableTopRow from 'lib/leaflet.control.layers.top-row';
 import ko from 'knockout';
 
 

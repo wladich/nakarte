@@ -1,6 +1,6 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise/xhr-promise';
-import {formatXhrError, notify} from 'lib/notifications/notifications';
+import {fetch} from 'lib/xhr-promise';
+import {formatXhrError, notify} from 'lib/notifications';
 
 function parseResponse(s) {
     let data;
