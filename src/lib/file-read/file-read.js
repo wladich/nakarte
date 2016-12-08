@@ -32,7 +32,7 @@ const selectFiles = (() => {
                 );
             }
         );
-        setTimeout(fileInput.click.bind(fileInput), 0);
+        fileInput.click();
         return result;
     }
 })();
