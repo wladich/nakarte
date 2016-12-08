@@ -5,6 +5,7 @@ import 'lib/leaflet.layer.bing/bing';
 import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid/soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses/westraPasses';
+import 'lib/leaflet.layer.nordeskart/norderskart';
 
 export default function getLayers() {
     const layers = [
@@ -279,7 +280,7 @@ export default function getLayers() {
             layers: [
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
-                    title: 'UT map',
+                    title: 'Norway UT map',
                     order: 500,
                     isOverlay: false,
                     isDefault: false,
@@ -287,30 +288,52 @@ export default function getLayers() {
                         {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true}
                     )
                 },
-                // {
-                //     title: '',
-                //     order: 0,
-                //     isOverlay: true,
-                //     isDefault: false,
-                //     layer: null
-                // },
-                // {
-                //     title: '',
-                //     order: 0,
-                //     isOverlay: true,
-                //     isDefault: false,
-                //     layer: null
-                // },
+                {
+                    title: 'Norway paper map',
+                    order: 1031,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                        {code: 'Np', maxNativeZoom: 16, tms: false,  print: true, jnx: true, scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Norway map',
+                    order: 1032,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                        {code: 'Nm', tms: false,  print: true, jnx: true, scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Norway summer trails',
+                    order: 2000,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_sommer/{z}/{x}/{y}.png",
+                        {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true}
+                    )
+                },
+                {
+                    title: 'Norway winter trails',
+                    order: 2001,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_vinter/{z}/{x}/{y}.png",
+                        {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true}
+                    )
+                },
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
-                    order: 500,
+                    description: '<a href="http://kart.finn.no/">http://kart.finn.no/</a>',
+                    order: 503,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("http://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {code: 'Nr', tms: false, print: true, jnx: true, scaleDependent: true}
                     )
-
                 }]
         },
         {
@@ -318,7 +341,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Czech basic',
-                    order: 501,
+                    order: 504,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
@@ -327,7 +350,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czhch tourist',
-                    order: 502,
+                    order: 505,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist-m/{z}-{x}-{y}",
@@ -336,7 +359,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech summer',
-                    order: 503,
+                    order: 506,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
@@ -345,7 +368,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech winter',
-                    order: 504,
+                    order: 507,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist_winter-m/{z}-{x}-{y}",
@@ -354,31 +377,24 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech geographical',
-                    order: 505,
+                    order: 508,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
                         {code: 'Czg', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
                     )
                 }]
-        },
-        // {
-        //     title: '',
-        //     order: 0,
-        //     isOverlay: true,
-        //     isDefault: false,
-        //     layer: null
-        // },
+        }
     ];
     // TODO: move it to tests
     const codes = {};
+    const orders = {};
     for (let group of layers) {
         for (let layer of group.layers) {
-            layer = layer.layer;
-            if (!layer.options) {
+            if (!layer.layer.options) {
                 throw new Error('Layer without options: ' + layer.title);
             }
-            let code = layer.options.code;
+            let code = layer.layer.options.code;
             if (!code) {
                 throw new Error('Layer without code: ' + layer.title);
             }
@@ -386,6 +402,14 @@ export default function getLayers() {
                 throw new Error(`Duplicate layer code "${code}"`);
             }
             codes[code] = 1;
+            let order = layer.order;
+            if (!order) {
+                throw new Error('Layer without order: ' + layer.title);
+            }
+            if (order in orders) {
+                throw new Error(`Duplicate layer order "${order}"`);
+            }
+            orders[order] = 1;
         }
     }
     return layers;
