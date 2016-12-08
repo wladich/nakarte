@@ -308,7 +308,9 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
         },
 
         _updateRenderer: function() {
-            this.renderer._update();
+            if (this.renderer._map) {
+                this.renderer._update();
+            }
         },
 
         _update: function(reset) {
