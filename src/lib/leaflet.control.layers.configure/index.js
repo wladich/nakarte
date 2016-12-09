@@ -13,7 +13,7 @@ function enableConfig(control, layers) {
     enableTopRow(control);
 
     L.Util.extend(control, {
-            configEnabled: true,
+            _configEnabled: true,
             _allLayersGroups: layers,
             _allLayers: [].concat(...layers.map(group => group.layers)),
 
@@ -25,7 +25,7 @@ function enableConfig(control, layers) {
 
             __injectConfigButton: function() {
                 const configButton = L.DomUtil.create('div', 'button-config');
-                configButton.innerHTML = 'More layers';
+                configButton.title = 'Configure layers';
                 this._topRow.appendChild(configButton);
                 L.DomEvent.on(configButton, 'click', this._onConfigButtonClick, this);
             },
