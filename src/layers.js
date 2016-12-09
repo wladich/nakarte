@@ -225,7 +225,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                        {code: 'Otm', scaleDependent: true, print: true, jnx: true}
+                        {code: 'Otm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true}
                     )
                 },
                 {
@@ -234,7 +234,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
-                        {code: 'Ocm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true}
+                        {code: 'Ocm', scaleDependent: true, print: true, jnx: true}
                     )
                 }]
         },
