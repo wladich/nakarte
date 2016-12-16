@@ -1,5 +1,6 @@
 import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
 import RawDeflate from 'vendored/github.com/dankogai/js-deflate/rawinflate';
+import stripBom from 'lib/stripBom';
 
 import {decode as utf8_decode} from 'utf8';
 
@@ -65,6 +66,7 @@ function parseGpx(txt, name) {
         return waypoints;
     };
 
+    txt = stripBom(txt);
     // remove namespaces
     txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
     var dom = (new DOMParser()).parseFromString(txt, "text/xml");
@@ -248,6 +250,7 @@ function parseKml(txt, name) {
         return points;
     }
 
+    txt = stripBom(txt);
     txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
     var dom = (new DOMParser()).parseFromString(txt, "text/xml");
     if (dom.documentElement.nodeName === 'parsererror') {

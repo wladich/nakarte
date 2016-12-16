@@ -241,7 +241,7 @@ L.Control.TrackList = L.Control.extend({
                         .pop();
                     fetch(url_for_request, {responseType: 'binarystring'})
                         .then(function(xhr) {
-                                var geodata = parseGeoFile(name, xhr.response);
+                                var geodata = parseGeoFile(name, xhr.responseBinaryText);
                                 this.addTracksFromGeodataArray(geodata);
                             }.bind(this),
                             function() {

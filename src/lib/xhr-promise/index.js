@@ -6,6 +6,20 @@ function retryIfNetworkErrorOrServerError(xhr) {
     return (xhr.status === 0 || xhr.status >= 500);
 }
 
+
+function arrayBufferToString(arBuf) {
+    const result = [];
+    const arr = new Uint8Array(arBuf);
+    let chunk;
+    for (let i = 0; i < arr.length; i += 4096) {
+        chunk = arr.subarray(i, i + 4096);
+        chunk = String.fromCharCode.apply(null, chunk);
+        result.push(chunk);
+    }
+    return result.join('');
+}
+
+
 class XMLHttpRequestPromise {
     constructor(
         url, {method='GET', data=null, responseType='', timeout=30000, maxTries=3, retryTimeWait=1000,
@@ -20,6 +34,7 @@ class XMLHttpRequestPromise {
         this.catch = promise.catch.bind(promise);
         this.method = method;
         this.url = url;
+        this.responseType = responseType;
         this.postData = data;
         this._isResponseSuccess = isResponseSuccess;
         this._responseNeedsRetry = responseNeedsRetry;
@@ -31,8 +46,7 @@ class XMLHttpRequestPromise {
         this._open();
         xhr.timeout = timeout;
         if (responseType === 'binarystring') {
-            xhr.responseType = 'text';
-            xhr.overrideMimeType('text/plain; charset=x-user-defined');
+            xhr.responseType = 'arraybuffer';
         } else {
             xhr.responseType = responseType;
         }
@@ -47,6 +61,9 @@ class XMLHttpRequestPromise {
         const xhr = this.xhr;
         if (xhr.readyState === 4 && !this._aborted) {
             // console.log('ready state 4', this.url);
+            if (this.responseType === 'binarystring' && xhr.response && xhr.response.byteLength) {
+                xhr.responseBinaryText = arrayBufferToString(xhr.response);
+            }
             if (this._isResponseSuccess(xhr)) {
                 // console.log('success', this.url);
                 this._resolve(xhr);
