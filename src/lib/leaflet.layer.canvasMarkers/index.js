@@ -180,7 +180,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             const
                 iconUrls = [],
                 markerJobs = {};
-            var markers = this.rtree.search(
+
+            const pointsForMarkers = this.rtree.search(
                 {
                     minX: iconsBounds.getWest(),
                     minY: iconsBounds.getSouth(),
@@ -189,7 +190,14 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 }
             );
 
-            for (let marker of markers) {
+            const pointsForLabels = this.rtree.search({
+                    minX: labelsBounds.getWest(), minY: labelsBounds.getSouth(),
+                    maxX: labelsBounds.getEast(), maxY: labelsBounds.getNorth()
+                }
+            );
+
+
+            for (let marker of pointsForMarkers) {
                 const p = this._map.project(marker.latlng, zoom);
                 let icon = marker.icon;
                 if (typeof icon === 'function') {
@@ -233,12 +241,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                         job.iconCenter = [x + imgW / 2, y + imgH / 2];
                         job.iconSize = [imgW, imgH];
                     }
-                    markers = this.rtree.search({
-                            minX: labelsBounds.getWest(), minY: labelsBounds.getSouth(),
-                            maxX: labelsBounds.getEast(), maxY: labelsBounds.getNorth()
-                        }
-                    );
-                    for (let marker of markers) {
+                    for (let marker of pointsForLabels) {
                         const markerId = L.stamp(marker);
                         const job = markerJobs[markerId];
                         let label = job.marker.label;
