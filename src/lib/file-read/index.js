@@ -27,7 +27,6 @@ const selectFiles = (() => {
         fileInput.style.display = 'none';
 
         const result = new Promise(function(resolve) {
-                fileInput.onclick = (e) => console.log('click', e);
                 fileInput.addEventListener('change', function() {
                         resolve(fileInput.files);
                     }
