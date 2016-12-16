@@ -85,7 +85,8 @@ L.Control.TrackList = L.Control.extend({
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
                     <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
                     ><a class="button open-file" title="Open file" data-bind="click: loadFilesFromDisk"></a
-                    ><input type="text" class="input-url" placeholder="Track URL" data-bind="textInput: url, event: {keypress: onEnterPressedInInput}"
+                    ><input type="text" class="input-url" placeholder="Track URL"
+                        data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: onFileInputRightClick}"
                     ><a class="button download-url" title="Download URL" data-bind="click: loadFilesFromUrl"></a
                     ><a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}"></a>
                 </div>
@@ -130,6 +131,11 @@ L.Control.TrackList = L.Control.extend({
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
+        },
+
+        onFileInputRightClick: function(_, e) {
+            L.DomEvent.stopPropagation(e);
+            return true;
         },
 
         _setAdaptiveHeight: function() {
