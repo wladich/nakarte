@@ -17,13 +17,15 @@ function arrayBufferToString(arBuf) {
 const selectFiles = (() => {
     let fileInput;
     return function selectFiles(multiple = false) {
-        if (!fileInput) {
-            fileInput = document.createElement('input');
-            document.body.appendChild(fileInput);
-            fileInput.type = 'file';
-            fileInput.multiple = !!multiple;
-            fileInput.style.display = 'none';
+        if (fileInput) {
+            document.body.removeChild(fileInput);
         }
+        fileInput = document.createElement('input');
+        document.body.appendChild(fileInput);
+        fileInput.type = 'file';
+        fileInput.multiple = !!multiple;
+        fileInput.style.display = 'none';
+
         const result = new Promise(function(resolve) {
                 fileInput.onclick = (e) => console.log('click', e);
                 fileInput.addEventListener('change', function() {
