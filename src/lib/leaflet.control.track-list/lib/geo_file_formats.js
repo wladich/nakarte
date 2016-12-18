@@ -555,9 +555,12 @@ function parseStringified(s, oldVersion) {
         color = s.readNumber();
         measureTicksShown = s.readNumber();
     } catch (e) {
-        if (version === 0 && e.message.match('Unexpected end of line while unpacking number')) {
+        if (e.message.match('Unexpected end of line while unpacking number')) {
             color = 0;
             measureTicksShown = 0;
+            if (version > 0) {
+                error = ['CORRUPT'];
+            }
         } else {
             throw e;
         }
