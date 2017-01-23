@@ -6,6 +6,7 @@ import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses';
 import 'lib/leaflet.layer.nordeskart';
+import 'lib/leaflet.layer.tracks-collection';
 
 export default function getLayers() {
     const layers = [
@@ -212,7 +213,21 @@ export default function getLayers() {
                             scaleDependent: true
                         }
                     )
-                }]
+                },
+                {
+                    title: 'Tracks',
+                    order: 1150,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: new L.TracksCollection({
+                            tms: true,
+                            maxNativeZoom: 12,
+                            code: 'Tc',
+                            print: false,
+                        }
+                    )
+                },
+            ]
         },
 
 
@@ -294,7 +309,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
-                        {code: 'Np', maxNativeZoom: 16, tms: false,  print: true, jnx: true, scaleDependent: true}
+                        {code: 'Np', maxNativeZoom: 16, tms: false, print: true, jnx: true, scaleDependent: true}
                     )
                 },
                 {
@@ -303,7 +318,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}&gkt={baatToken}',
-                        {code: 'Nm', tms: false,  print: true, jnx: true, scaleDependent: true}
+                        {code: 'Nm', tms: false, print: true, jnx: true, scaleDependent: true}
                     )
                 },
                 {
