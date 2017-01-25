@@ -77,10 +77,9 @@ function enableConfig(control, layers) {
 
                 const container = this._configWindow =
                     L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper');
-                L.DomEvent.disableClickPropagation(container);
-                if (!L.Browser.touch) {
-                    L.DomEvent.disableScrollPropagation(container);
-                }
+                L.DomEvent
+                    .disableClickPropagation(container)
+                    .disableScrollPropagation(container);
                 container.innerHTML = `
 <div class="leaflet-layers-select-window">
     <form>
@@ -230,13 +229,9 @@ function enableConfig(control, layers) {
                 this._customLayerWindow =
                     L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper', this._map._controlContainer);
 
-                if (!L.Browser.touch) {
-                    L.DomEvent
-                        .disableClickPropagation(this._customLayerWindow)
-                        .disableScrollPropagation(this._customLayerWindow);
-                } else {
-                    L.DomEvent.on(this._customLayerWindow, 'click', L.DomEvent.stopPropagation);
-                }
+                L.DomEvent
+                    .disableClickPropagation(this._customLayerWindow)
+                    .disableScrollPropagation(this._customLayerWindow);
 
                 let customLayerWindow = L.DomUtil.create('div', 'custom-layers-window', this._customLayerWindow);
                 let form = L.DomUtil.create('form', '', customLayerWindow);
