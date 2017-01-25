@@ -94,11 +94,58 @@ class XMLHttpRequestPromise {
     }
 }
 
+
+class XHRQueue {
+    constructor(maxSimultaneousRequests=6) {
+        this._maxConnections = maxSimultaneousRequests;
+        this._queue = [];
+        this._activeCount = 0;
+    }
+
+    put(url, options) {
+        const promise = new XMLHttpRequestPromise(url, options);
+        promise._originalAbort = promise.abort;
+        promise.abort = this._abortPromise.bind(promise)
+        this._queue.push(promise);
+    }
+
+    _abortPromise(promise) {
+        const i = this._queue.indexOf(promise);
+        if (i > -1) {
+            this._queue.splice(i, 1);
+        } else {
+            promise._originalAbort();
+            this._activeCount -= 1;
+            setTimeout(() => this._processQueue(), 0);
+        }
+    }
+
+    _processQueue() {
+        if (this._activeCount >= this._maxConnections || this._queue.length === 0) {
+            return;
+        }
+        const promise = this._queue.shift();
+        promise.then(() => this._onRequestReady(promise));
+        this._activeCount += 1;
+        promise.send()
+    }
+
+    _onRequestReady(promise) {
+        if (!promise._aborted) {
+            this._activeCount -= 1;
+        }
+        setTimeout(() => this._processQueue(), 0);
+    }
+}
+
+
 function fetch(url, options) {
     // console.log('fetch', url);
     const promise = new XMLHttpRequestPromise(url, options);
     promise.send();
     return promise;
 }
+
+
 export {fetch};
 
