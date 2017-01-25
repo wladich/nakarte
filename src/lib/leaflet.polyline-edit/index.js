@@ -241,8 +241,10 @@ L.Polyline.EditMixin = {
             latlngs = this.getLatLngs(),
             nodeIndex = latlngs.indexOf(segmentOverlay._lineNode) + 1;
         this.addNode(nodeIndex, e.latlng);
-        // TODO: hack, may be replace with sending mouse event
-        latlngs[nodeIndex]._nodeMarker.dragging._draggable._onDown(e.originalEvent);
+        if (L.Draggable._dragging) {
+            L.Draggable._dragging.finishDrag()
+        }
+        latlngs[nodeIndex]._nodeMarker.dragging._draggable._onDown(e.originalEvent)
         this.fire('nodeschanged');
     },
 
