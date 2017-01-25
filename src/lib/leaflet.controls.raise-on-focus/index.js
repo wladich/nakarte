@@ -16,7 +16,7 @@ function raiseControlsOnFocus(map) {
         }
     }
 
-    elements.forEach((el) => L.DomEvent.on(el, 'mouseenter', raise.bind(null, el)));
+    [...elements].forEach((el) => L.DomEvent.on(el, 'mouseenter', raise.bind(null, el)));
 }
 
 export default raiseControlsOnFocus;
