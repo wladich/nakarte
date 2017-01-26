@@ -10,8 +10,9 @@ class Cache {
             const value = this._store[key];
             delete this._store[key];
             this._store[key] = value;
-            return value;
+            return {value, found: true};
         }
+        return {found: false}
     }
 
     put(key, value) {
