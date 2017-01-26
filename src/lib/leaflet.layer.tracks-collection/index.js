@@ -1,29 +1,29 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise';
 import Pbf from 'pbf';
 import {Tile as TileProto} from './track_tile_proto';
-import {Cache} from 'lib/cache';
 import './style.css';
+import {TiledDataLoader} from 'lib/tiled-data-loader';
 
-class TileCache extends Cache {
-    makeKey(coords) {
-        return `${coords.x}:${coords.y}:${coords.z}`;
-    }
 
-    get(coords) {
-        return super.get(this.makeKey(coords));
-    }
-
-    put(coords, value) {
-        super.put(this.makeKey(coords), value);
-    }
-}
-
-class TrackTilesLoader {
+class TrackTilesLoader extends TiledDataLoader {
     constructor(url, maxZoom) {
+        super();
         this.url = url;
         this.maxZoom = maxZoom;
-        this.cache = new TileCache(50);
+    }
+
+    layerTileToDataTileCoords(layerTileCoords) {
+        if (layerTileCoords.z > this.maxZoom) {
+            let z = this.maxZoom,
+                multiplier = 1 << (layerTileCoords.z - z);
+            return {
+                x: Math.floor(layerTileCoords.x / multiplier),
+                y: Math.floor(layerTileCoords.y / multiplier),
+                z
+            }
+        } else {
+            return Object.assign({}, layerTileCoords);
+        }
     }
 
     getTileUrl(coords) {
@@ -33,6 +33,17 @@ class TrackTilesLoader {
             y: (2 ** coords.z) - coords.y - 1
         };
         return L.Util.template(this.url, data)
+    }
+
+    makeRequestData(dataTileCoords) {
+        return {
+            url: this.getTileUrl(dataTileCoords),
+            options: {
+                responseType: 'arraybuffer',
+                timeout: 10000,
+                isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 204
+            }
+        }
     }
 
     unpackTileData(dataArray) {
@@ -56,51 +67,30 @@ class TrackTilesLoader {
         return tileData;
     }
 
-    requestTileData(coords) {
-        let {x, y, z} = coords;
-        let adjustments;
-        if (z > this.maxZoom) {
-            let z2 = this.maxZoom,
-                multiplier = 1 << (z - z2),
-                x2 = Math.floor(x / multiplier),
-                y2 = Math.floor(y / multiplier);
-            adjustments = {
-                multiplier: multiplier,
-                offsetX: (x - x2 * multiplier) * 256,
-                offsetY: (y - y2 * multiplier) * 256
-            };
-            [x, y, z] = [x2, y2, z2];
+    processResponse(xhr, originalDataTileCoords) {
+        let tileData;
+        if (xhr.status === 200 && xhr.response) {
+            tileData = this.unpackTileData(xhr.response)
+        } else {
+            tileData = null;
         }
 
-        let tileData = this.cache.get({x, y, z});
-        if (tileData !== undefined) {
-            return {
-                dataPromise: Promise.resolve({tileData, adjustments}),
-                abortLoading: () => {
-                }
-            }
+        return {
+            tileData,
+            coords: originalDataTileCoords
         }
-        let url = this.getTileUrl({x, y, z});
-        const fetchPromise = fetch(url, {
-                responseType: 'arraybuffer',
-                timeout: 10000,
-                isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 204
-            }
-        );
-        //TODO: handle errors
-        const dataPromise = fetchPromise.then((xhr) => {
-                let tileData;
-                if (xhr.status === 200 && xhr.response) {
-                    tileData = this.unpackTileData(xhr.response)
-                } else {
-                    tileData = null;
-                }
-                this.cache.put({x, y, z}, tileData);
-                return {tileData, adjustments};
-            }
-        );
-        return {dataPromise, abortLoading: fetchPromise.abort.bind(fetchPromise)};
     }
+
+    calcAdjustment(layerTileCoords, dataTileCoords) {
+        const adjustment = super.calcAdjustment(layerTileCoords, dataTileCoords);
+        if (adjustment) {
+            adjustment.offsetX *= 256;
+            adjustment.offsetY *= 256;
+        }
+        return adjustment;
+    }
+
+
 }
 
 function sqDistancePointToSegment(p, p1, p2) {
@@ -197,10 +187,10 @@ L.ProtobufTileLines = L.GridLayer.extend({
             canvas.style.position = 'absolute';
             overlayCanvas.style.position = 'absolute';
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
-            dataPromise.then((tileData) => {
-                    tile._tileData = tileData.tileData;
-                    tile._adjustments = tileData.adjustments;
-                    this.drawTile(canvas, tileData);
+            dataPromise.then((data) => {
+                    tile._tileData = data.tileData;
+                    tile._adjustment = data.adjustment;
+                    this.drawTile(tile);
                     this._tileOnLoad(done, tile)
                 }
             );
@@ -211,7 +201,11 @@ L.ProtobufTileLines = L.GridLayer.extend({
             return tile;
         },
 
-        drawTile: function(canvas, {tileData, adjustments}) {
+        drawTile: function(tile) {
+            const
+                tileData = tile._tileData,
+                adjustment = tile._adjustment,
+                canvas = tile._canvas;
             if (!tileData) {
                 return
             }
@@ -225,7 +219,7 @@ L.ProtobufTileLines = L.GridLayer.extend({
             if (tileData.rasters.length) {
                 this.drawRasterTile(canvas, tileData.rasters);
             }
-            this.drawVectorTile(canvas, tileData.tracks, adjustments);
+            this.drawVectorTile(canvas, tileData.tracks, adjustment);
         },
 
         drawRasterTile: function(canvas, rasters) {
@@ -251,14 +245,14 @@ L.ProtobufTileLines = L.GridLayer.extend({
             canvas._imageData = data;
         },
 
-        drawTrackLines: function(context, track, adjustments) {
+        drawTrackLines: function(context, track, adjustment) {
             let ar = track.coordinates,
                 x, y;
-            if (adjustments) {
+            if (adjustment) {
                 const
                     ar_len = ar.length,
                     ar2 = new Float64Array(ar_len),
-                    {multiplier, offsetX, offsetY} = adjustments;
+                    {multiplier, offsetX, offsetY} = adjustment;
                 let i = 0;
                 while (i < ar_len) {
                     ar2[i] = ar[i] * multiplier - offsetX;
@@ -282,7 +276,7 @@ L.ProtobufTileLines = L.GridLayer.extend({
             }
         },
 
-        drawVectorTile: function(canvas, tracks, adjustments) {
+        drawVectorTile: function(canvas, tracks, adjustment) {
             const ctx = canvas.getContext('2d');
             let hasDrawn = false;
             ctx.strokeStyle = '#0000FF';
@@ -290,7 +284,7 @@ L.ProtobufTileLines = L.GridLayer.extend({
             for (let track of tracks) {
                 if (track.filter & this.options.trackFilter & ~canvas._rastersCombinedFilter) {
                     hasDrawn = true;
-                    this.drawTrackLines(ctx, track, adjustments);
+                    this.drawTrackLines(ctx, track, adjustment);
                 }
             }
             if (hasDrawn) {
@@ -316,7 +310,7 @@ L.ProtobufTileLines = L.GridLayer.extend({
 
 
         highlightTracks: function(trackIds) {
-            console.log(trackIds);
+            // console.log(trackIds);
             for (let tile of Object.values(this._tiles)) {
                 if (tile.current) {
                     let tileData = tile.el._tileData;
@@ -332,7 +326,7 @@ L.ProtobufTileLines = L.GridLayer.extend({
                     for (let trackId of trackIds) {
                         let track = tileData.tracksById[trackId];
                         if (track) {
-                            this.drawTrackLines(ctx, track, tile.el._adjustments);
+                            this.drawTrackLines(ctx, track, tile.el._adjustment);
                         }
                     }
                     ctx.stroke();
@@ -362,8 +356,8 @@ L.ProtobufTileLines = L.GridLayer.extend({
                 maxX = pixel.x + tolerance,
                 minY = pixel.y - tolerance,
                 maxY = pixel.y + tolerance;
-            for (let y = minY; y <= maxY; y++){
-                for (let x = minX; x <= maxX; x++){
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
                     if (imageData[(y * 256 + x) * 4 + 3] > 127) {
                         return true;
                     }
@@ -375,16 +369,16 @@ L.ProtobufTileLines = L.GridLayer.extend({
         getTracksIdsForPoint: function(tile, pixel) {
             const
                 tileData = tile._tileData,
-                adjustments = tile._adjustments;
+                adjustment = tile._adjustment;
             let
                 tolerance = 5;
             if (!tileData) {
                 return [];
             }
-            if (adjustments) {
-                pixel.x = (pixel.x + adjustments.offsetX) / adjustments.multiplier;
-                pixel.y = (pixel.y + adjustments.offsetY) / adjustments.multiplier;
-                tolerance /= adjustments.multiplier;
+            if (adjustment) {
+                pixel.x = (pixel.x + adjustment.offsetX) / adjustment.multiplier;
+                pixel.y = (pixel.y + adjustment.offsetY) / adjustment.multiplier;
+                tolerance /= adjustment.multiplier;
             }
             if (tile._canvas._imageData) { // tile was drawn as raster
                 let trackIds = [];
