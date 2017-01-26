@@ -105,8 +105,10 @@ class XHRQueue {
     put(url, options) {
         const promise = new XMLHttpRequestPromise(url, options);
         promise._originalAbort = promise.abort;
-        promise.abort = this._abortPromise.bind(promise)
+        promise.abort = () => this._abortPromise(promise);
         this._queue.push(promise);
+        this._processQueue();
+        return promise;
     }
 
     _abortPromise(promise) {
@@ -125,7 +127,9 @@ class XHRQueue {
             return;
         }
         const promise = this._queue.shift();
-        promise.then(() => this._onRequestReady(promise));
+        promise
+            .catch(() => {})
+            .then(() => this._onRequestReady(promise));
         this._activeCount += 1;
         promise.send()
     }
@@ -147,5 +151,5 @@ function fetch(url, options) {
 }
 
 
-export {fetch};
+export {fetch, XHRQueue};
 
