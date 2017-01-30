@@ -175,15 +175,13 @@ L.ProtobufTileLines = L.GridLayer.extend({
         },
 
         createTile: function(coords, done) {
-            const tile = document.createElement('div');
-            const canvas = document.createElement('canvas');
-            const overlayCanvas = document.createElement('canvas');
-            tile.appendChild(canvas);
-            tile.appendChild(overlayCanvas);
+            const tile = L.DomUtil.create('div', 'leaflet-tile');
+            const canvas = L.DomUtil.create('canvas', '', tile);
+            const overlayCanvas = L.DomUtil.create('canvas', '', tile);
             canvas.width = 256;
             canvas.height = 256;
             overlayCanvas.width = 256;
-            overlayCanvas.height = 256;
+            overlayCanvas.height = 256 ;
             canvas.style.position = 'absolute';
             overlayCanvas.style.position = 'absolute';
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
@@ -304,8 +302,10 @@ L.ProtobufTileLines = L.GridLayer.extend({
         onTileUnload: function(e) {
             const tile = e.tile;
             tile._abortLoading();
-            delete tile._promise;
-            delete tile._features;
+            delete tile._tileData;
+            delete tile._adjustment;
+            delete tile._canvas;
+            delete tile._overlayCanvas;
         },
 
 
