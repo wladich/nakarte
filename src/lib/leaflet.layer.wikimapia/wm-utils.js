@@ -1,3 +1,5 @@
+import L from 'leaflet';
+
 // (1233,130,5) -> "032203"
 function getTileId({x, y, z}) {
     let id = [];
@@ -99,7 +101,7 @@ function decodePolygon(s) {
     return coords;
 }
 
-function makeCoordsLocal(line, tileCoords, projectFunc) {
+function makeCoordsLocal(line, tileCoords, projectObj) {
     const {x: tileX, y: tileY, z: tileZ} = tileCoords,
         x0 = tileX * 1024,
         y0 = tileY * 1024,
@@ -107,7 +109,7 @@ function makeCoordsLocal(line, tileCoords, projectFunc) {
     let latlon, p;
     for (let i = 0; i < line.length; i++) {
         latlon = line[i];
-        p = projectFunc(latlon, tileZ + 2);
+        p = projectObj.project(latlon, tileZ + 2);
         p.x -= x0;
         p.y -= y0;
         localCoords.push(p);
@@ -119,7 +121,28 @@ function asap() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-async function parseTile(s, projectFunc) {
+function simplifyPolygon(latlngs, tileCoords, projectObj) {
+    const
+        x = tileCoords.x * 1024,
+        y = tileCoords.y * 1024,
+        p0 = projectObj.unproject([x, y]),
+        p1 = projectObj.unproject([x + 1, y + 1]),
+        pixelDegSize = p0.lat - p1.lat;
+    let points = [];
+    for (let i = 0; i < latlngs.length; i++) {
+        let ll = latlngs[i];
+        points.push({x: ll[0], y: ll[1]});
+    }
+    points = L.LineUtil.simplify(points, pixelDegSize * 2);
+    latlngs = [];
+    for (let i = 0; i < points.length; i++) {
+        let p = points[i];
+        latlngs.push([p.x, p.y]);
+    }
+    return latlngs
+}
+
+async function parseTile(s, projectObj) {
     const tile = {};
     const places = tile.places = [];
     const lines = s.split('\n');
@@ -175,8 +198,8 @@ async function parseTile(s, projectFunc) {
             throw new Error(`Polygon has ${coords.length} points`);
         }
         place.polygon = coords;
-        place.localPolygon = makeCoordsLocal(coords, tile.coords, projectFunc);
-        // place.localBoundsWESN = makeBoundsLocal(place.boundsWESN);
+        let polygon = simplifyPolygon(coords, tile.coords, projectObj);
+        place.localPolygon = makeCoordsLocal(polygon, tile.coords, projectObj);
         places.push(place);
     }
     return tile;

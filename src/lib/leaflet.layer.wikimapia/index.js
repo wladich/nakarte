@@ -33,7 +33,7 @@ L.Wikimapia = L.GridLayer.extend({
 
         onAdd: function(map) {
             if (!this.loader) {
-                this.loader = new WikimapiaLoader(map.project.bind(map));
+                this.loader = new WikimapiaLoader(map);
             }
             L.GridLayer.prototype.onAdd.call(this, map);
             this.on('tileunload', this.onTileUnload, this);
@@ -103,7 +103,6 @@ L.Wikimapia = L.GridLayer.extend({
             const canvas = L.DomUtil.create('canvas', 'leaflet-tile');
             canvas.width = this.options.tileSize;
             canvas.height = this.options.tileSize;
-
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
             dataPromise.then((data) => {
                     canvas._tileData = data.tileData;

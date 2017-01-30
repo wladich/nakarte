@@ -6,9 +6,9 @@ class WikimapiaLoader extends TiledDataLoader {
     maxZoom = 15;
     tileSize = 1024;
 
-    constructor(projectFunc) {
+    constructor(projectObj) {
         super();
-        this._project = projectFunc;
+        this._projectObj = projectObj;
 
     }
 
@@ -58,7 +58,7 @@ class WikimapiaLoader extends TiledDataLoader {
     }
 
     processResponse(xhr) {
-        return wmUtils.parseTile(xhr.response, this._project)
+        return wmUtils.parseTile(xhr.response, this._projectObj)
             .then((tileData) => {
                     return {
                         tileData,
