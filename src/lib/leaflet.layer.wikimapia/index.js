@@ -23,7 +23,7 @@ function isPointInPolygon(polygon, p) {
 L.Wikimapia = L.GridLayer.extend({
         options: {
             tileSize: 1024,
-            updateWhenIdle: true,
+            updateWhenIdle: true
         },
 
         initialize: function(options) {

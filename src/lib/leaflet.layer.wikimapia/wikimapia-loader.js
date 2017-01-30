@@ -58,17 +58,22 @@ class WikimapiaLoader extends TiledDataLoader {
     }
 
     processResponse(xhr) {
-        const tileData = wmUtils.parseTile(xhr.response, this._project);
-        return {
-            tileData,
-            coords: tileData.coords
-        }
+        return wmUtils.parseTile(xhr.response, this._project)
+            .then((tileData) => {
+                    return {
+                        tileData,
+                        coords: tileData.coords
+                    }
+                }
+            );
+
     }
 
     calcAdjustment(layerTileCoords, dataTileCoords) {
         const adjustment = super.calcAdjustment(
             {x: layerTileCoords.x, y: layerTileCoords.y, z: layerTileCoords.z - 2},
-            dataTileCoords);
+            dataTileCoords
+        );
         if (adjustment) {
             adjustment.offsetX *= 1024;
             adjustment.offsetY *= 1024;

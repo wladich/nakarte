@@ -78,21 +78,22 @@ class TiledDataLoader {
             const {url, options} = this.makeRequestData(dataTileCoords);
             const fetchPromise = this._xhrQueue.put(url, options);
             // TODO: handle errors
-            const dataPromise = fetchPromise.then((xhr) => {
-                    const {tileData, coords} = this.processResponse(xhr, dataTileCoords);
-                    this._cache.put(this.makeTileKey(coords), tileData);
-                    delete this._pendingRequests[dataTileKey];
-                    return {
-                        tileData,
-                        coords
-                    };
-                }
-            );
+            const dataPromise = fetchPromise
+                .then((xhr) => this.processResponse(xhr, dataTileCoords))
+                .then(({tileData, coords}) => {
+                        this._cache.put(this.makeTileKey(coords), tileData);
+                        delete this._pendingRequests[dataTileKey];
+                        return {
+                            tileData,
+                            coords
+                        };
+                    }
+                );
             const pendingRequest = this._pendingRequests[dataTileKey] = {
                 dataPromise,
                 refCount: 0
             };
-            pendingRequest.abortLoading = function() {
+            pendingRequest.abortLoading = () => {
                 pendingRequest.refCount -= 1;
                 if (pendingRequest.refCount < 1) {
                     fetchPromise.abort();
@@ -107,13 +108,14 @@ class TiledDataLoader {
 
         return {
             dataPromise: pendingRequest.dataPromise.then((data) => {
-                return {
-                    coords: data.coords,
-                    tileData: data.tileData,
-                    adjustment: this.calcAdjustment(layerTileCoords, data.coords)
-                };
-            }),
-            abortLoading: () => pendingRequest.abortLoading
+                    return {
+                        coords: data.coords,
+                        tileData: data.tileData,
+                        adjustment: this.calcAdjustment(layerTileCoords, data.coords)
+                    };
+                }
+            ),
+            abortLoading: () => pendingRequest.abortLoading()
         }
 
     }

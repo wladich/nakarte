@@ -115,7 +115,11 @@ function makeCoordsLocal(line, tileCoords, projectFunc) {
     return localCoords;
 }
 
-function parseTile(s, projectFunc) {
+function asap() {
+    return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+async function parseTile(s, projectFunc) {
     const tile = {};
     const places = tile.places = [];
     const lines = s.split('\n');
@@ -132,7 +136,13 @@ function parseTile(s, projectFunc) {
     tile.hasChildren = fields[1] === '1';
 
     //FIXME: ignore some errors
+    let prevTime = Date.now();
     for (let line of lines.slice(2)) {
+        let curTime = Date.now();
+        if (curTime - prevTime > 20) {
+            await asap();
+            prevTime = Date.now();
+        }
         const place = {};
         const fields = line.split('|');
         if (fields.length < 6) {
