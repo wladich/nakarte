@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import {WikimapiaLoader} from './wikimapia-loader';
 import './style.css';
+import {openPopupWindow} from 'lib/popup-window';
 
 
 function isPointInPolygon(polygon, p) {
@@ -186,7 +187,11 @@ L.Wikimapia = L.GridLayer.extend({
         },
 
         onClick: function(e) {
-
+            const place = this.getPlaceAtMousePos(e);
+            if (place) {
+                const url = `http://wikimapia.org/${place.id}/ru/`;
+                openPopupWindow(url, 568, 'wikimapia-details');
+            }
         },
 
         getPlaceAtLatlng: function(latlng, places) {
