@@ -41,9 +41,9 @@ class TiledDataLoader {
     }
 
     calcAdjustment(layerTileCoords, dataTileCoords) {
-        if (layerTileCoords.x == dataTileCoords.x &&
-            layerTileCoords.y == dataTileCoords.y &&
-            layerTileCoords.z == dataTileCoords.z) {
+        if (layerTileCoords.x === dataTileCoords.x &&
+            layerTileCoords.y === dataTileCoords.y &&
+            layerTileCoords.z === dataTileCoords.z) {
             return null;
         }
         if (dataTileCoords.z > layerTileCoords.z) {

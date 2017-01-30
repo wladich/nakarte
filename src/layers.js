@@ -7,6 +7,7 @@ import 'lib/leaflet.layer.soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses';
 import 'lib/leaflet.layer.nordeskart';
 import 'lib/leaflet.layer.tracks-collection';
+import 'lib/leaflet.layer.wikimapia';
 
 export default function getLayers() {
     const layers = [
@@ -195,13 +196,13 @@ export default function getLayers() {
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({code: 'Ng'})
                 },
-                // {
-                //     title: 'Wikimapia',
-                //     order: 1130,
-                //     isOverlay: true,
-                //     isDefault: true,
-                //     layer: new L.Wikimapia({code: 'W', zIndexOffset: 10000}),
-                // },
+                {
+                    title: 'Wikimapia',
+                    order: 1130,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: new L.Wikimapia({code: 'W'}),
+                },
                 {
                     title: 'Mountain passes (Westra)',
                     order: 1140,

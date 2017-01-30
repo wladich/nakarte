@@ -1,7 +1,3 @@
-import urlViaCorsProxy from 'lib/CORSProxy';
-import 'lib/xhr-promise';
-
-
 // (1233,130,5) -> "032203"
 function getTileId({x, y, z}) {
     let id = [];
@@ -16,6 +12,12 @@ function getTileId({x, y, z}) {
     return id.reverse().join('');
 }
 
+function makeTileUrl(coords) {
+    const
+        tileId = getTileId(coords),
+        urlPath = tileId.replace(/(\d{3})(?!$)/g, '$1/'); // "033331022" -> "033/331/022"
+    return `http://wikimapia.org/z1/itiles/${urlPath}.xy?342342`;
+}
 
 function tileIdToCoords(tileId) {
     const z = tileId.length - 1;
@@ -46,29 +48,6 @@ function getWikimapiaTileCoords(coords, viewTileSize) {
     return {x, y, z};
 }
 
-function fetchTile(tileId) {
-    let url = tileId.replace(/(\d{3})(?!$)/g, '$1/'); // "033331022" -> "033/331/022"
-    url = 'http://wikimapia.org/z1/itiles/' + url + '.xy?342342';
-
-    url = urlViaCorsProxy(url);
-    let {promise, requestId} = window.xmlHttpRequestQueue.put(url, {timeout: 30000});
-    promise = promise.then((xhr) => {
-            if (xhr.status === 0) {
-                throw new Error(`Network error while fetching wikimapia data, request "${url}"`);
-            }
-            if (xhr.status !== 200) {
-                throw new Error(`Wikimapia server responded with status ${xhr.status}, request "${url}"`);
-            }
-            return xhr.response;
-        }
-    );
-    const abort = () => {
-        window.xmlHttpRequestQueue.remove(requestId);
-    };
-    // return {promise, abort};
-    return promise;
-
-}
 
 function decodeTitles(s) {
     const titles = {};
@@ -120,7 +99,23 @@ function decodePolygon(s) {
     return coords;
 }
 
-function parseTile(s) {
+function makeCoordsLocal(line, tileCoords, projectFunc) {
+    const {x: tileX, y: tileY, z: tileZ} = tileCoords,
+        x0 = tileX * 1024,
+        y0 = tileY * 1024,
+        localCoords = [];
+    let latlon, p;
+    for (let i = 0; i < line.length; i++) {
+        latlon = line[i];
+        p = projectFunc(latlon, tileZ + 2);
+        p.x -= x0;
+        p.y -= y0;
+        localCoords.push(p);
+    }
+    return localCoords;
+}
+
+function parseTile(s, projectFunc) {
     const tile = {};
     const places = tile.places = [];
     const lines = s.split('\n');
@@ -170,9 +165,67 @@ function parseTile(s) {
             throw new Error(`Polygon has ${coords.length} points`);
         }
         place.polygon = coords;
+        place.localPolygon = makeCoordsLocal(coords, tile.coords, projectFunc);
+        // place.localBoundsWESN = makeBoundsLocal(place.boundsWESN);
         places.push(place);
     }
     return tile;
 }
 
-export default {getTileId, getWikimapiaTileCoords, fetchTile, parseTile}
+// быстрое проектирование полигонов
+// TODO: каждые 50-100 мс отдавать управление
+// projectPlacesForZoom: function(tile, viewZoom) {
+//     if (viewZoom < tile.coords.z) {
+//         throw new Error('viewZoom < tile.zoom');
+//     }
+//     if (tile.places && tile.places[0] && tile.places[0].projectedPolygons &&
+//         tile.places[0].projectedPolygons[viewZoom]) {
+//         return;
+//     }
+//     const virtualTileSize = 256 * (2 ** (viewZoom - tile.coords.z));
+//     const p1 = L.point([tile.coords.x * virtualTileSize, tile.coords.y * virtualTileSize]),
+//         p2 = L.point([(tile.coords.x + 1) * virtualTileSize, (tile.coords.y + 1) * virtualTileSize]),
+//         latlng1 = this._map.unproject(p1, viewZoom),
+//         latlng2 = this._map.unproject(p2, viewZoom),
+//         lat0 = latlng1.lat,
+//         lng0 = latlng1.lng;
+//     const qx = (p2.x - p1.x) / (latlng2.lng - latlng1.lng),
+//         qy = (p2.y - p1.y) / (latlng2.lat - latlng1.lat);
+//
+//     const offsets = [],
+//         offsetsStep = virtualTileSize / 64;
+//     const y0 = p1.y;
+//     for (let y = -virtualTileSize; y <= 2 * virtualTileSize; y += offsetsStep) {
+//         let lat = y / qy + lat0;
+//         let offset = this._map.project([lat, lng0], viewZoom).y - y0 - y;
+//         offsets.push(offset);
+//     }
+//
+//     let ll, offset, offsetPos, offsetIndex, offsetIndexDelta, x, y;
+//     const x0 = p1.x;
+//     for (let place of tile.places) {
+//         let polygon = place.polygon;
+//         if (polygon.length < 3) {
+//             continue;
+//         }
+//         let projectedPolygon = [];
+//         for (let i = 0; i < polygon.length; i++) {
+//             ll = polygon[i];
+//             x = (ll[1] - lng0) * qx;
+//             y = (ll[0] - lat0) * qy;
+//             offsetPos = (y + virtualTileSize) / offsetsStep;
+//             offsetIndex = Math.floor(offsetPos);
+//             offsetIndexDelta = offsetPos - offsetIndex;
+//             offset = offsets[offsetIndex] * (1 - offsetIndexDelta) + offsets[offsetIndex + 1] * offsetIndexDelta;
+//             projectedPolygon.push([x + x0, y + offset + y0]);
+//         }
+//         projectedPolygon = projectedPolygon.map(L.point);
+//         projectedPolygon = L.LineUtil.simplify(projectedPolygon, 1.5);
+//         if (!place.projectedPolygons) {
+//             place.projectedPolygons = [];
+//         }
+//         place.projectedPolygons[viewZoom] = projectedPolygon;
+//     }
+// },
+
+export default {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl}

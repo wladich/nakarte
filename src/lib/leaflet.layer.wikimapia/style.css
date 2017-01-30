@@ -10,4 +10,14 @@
     z-index: 10000;
     max-width: 500px;
     box-sizing: border-box;
+    margin-top: -6px;
+    /*box-shadow: none !important;*/
+}
+
+.wikimapia-tooltip:before {
+    border: none !important;
+}
+
+.leaflet-tooltip-right {
+    margin-left: 16px !important;
 }
