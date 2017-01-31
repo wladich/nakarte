@@ -8,7 +8,7 @@ import {fetch} from 'lib/xhr-promise';
 import {notifyXhrError} from 'lib/notifications';
 
 
-const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
+const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {
             filePasses: 'westra_passes.json',
             scaleDependent: true
@@ -230,4 +230,4 @@ const westraPasesMarkers = L.Layer.CanvasMarkers.extend({
     }
 );
 
-export default westraPasesMarkers;
+export {WestraPassesMarkers};
