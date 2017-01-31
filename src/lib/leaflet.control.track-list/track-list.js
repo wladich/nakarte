@@ -126,7 +126,7 @@ L.Control.TrackList = L.Control.extend({
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
                 ]
             );
-            this._markerLayer = new Waypoints(null, {print: true, zIndex: 100001}).addTo(map);
+            this._markerLayer = new Waypoints(null, {print: true}).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
