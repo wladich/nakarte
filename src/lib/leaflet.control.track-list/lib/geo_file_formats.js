@@ -576,7 +576,7 @@ function parseStringified(s, oldVersion) {
                 n = s.readNumber();
                 waypointName = s.readString(n);
                 waypointName = utf8_decode(waypointName);
-                // symbol = s.readNumber();
+                let symbol = s.readNumber();
                 x = s.readNumber() + midX;
                 y = s.readNumber() + midY;
                 wayPoints.push({
