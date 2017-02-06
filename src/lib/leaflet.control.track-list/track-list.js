@@ -890,7 +890,9 @@ L.Control.TrackList = L.Control.extend({
         removePoint: function(marker) {
             this.stopPlacingPoint();
             this._markerLayer.removeMarker(marker);
-            marker._parentTrack.markers.remove(marker);
+            const markers = marker._parentTrack.markers;
+            const i = markers.indexOf(marker);
+            markers.splice(i, 1);
         },
 
         renamePoint: function(marker) {
