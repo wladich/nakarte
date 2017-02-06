@@ -8,6 +8,20 @@ import './contextmenu.css';
         {text: 'section', separator: true},
     ]
  */
+
+function isDescendant(parent, child) {
+    if (!parent) {
+        return false;
+    }
+    while (child) {
+        if (child === parent) {
+            return true;
+        }
+        child = child.parentNode;
+    }
+}
+
+
 class Contextmenu {
     constructor(items) {
         this.items = items;
@@ -59,8 +73,10 @@ class Contextmenu {
         }
     };
 
-    onMouseDown = () => {
-        this.hide();
+    onMouseDown = (e) => {
+        if (!isDescendant(this._container, e.target)) {
+            this.hide();
+        }
     };
 
     setPosition(x, y) {
@@ -106,15 +122,16 @@ class Contextmenu {
 
         const callback = itemOptions.callback;
         if (callback && !itemOptions.disabled) {
-            el.addEventListener('mousedown', this.onItemClick.bind(this, callback));
+            el.addEventListener('click', this.onItemClick.bind(this, callback));
         }
         return el;
     }
 
     onItemClick(callback, e) {
-        callback(e);
         e.stopPropagation();
         e.preventDefault();
+        this.hide();
+        setTimeout(() => callback(e), 0);
     }
 
     createSeparator(itemOptions) {
