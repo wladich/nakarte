@@ -31,7 +31,8 @@ L.Mixin.HashState = {
         if (this._ignoreStateChange) {
             return;
         }
-        hashState.updateState(this._hashStateKey, this.serializeState());
+        const state = this.serializeState();
+        hashState.updateState(this._hashStateKey, state);
     },
 
     _onExternalStateChanged: function(state) {
