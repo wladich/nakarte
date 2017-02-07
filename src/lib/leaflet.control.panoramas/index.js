@@ -20,7 +20,7 @@ L.Control.Panoramas = L.Control.extend({
                     html: '<div class="leaflet-panorama-marker"></div>'
                 }
             );
-            this.marker = L.marker([0, 0], {icon: icon});
+            this.marker = L.marker([0, 0], {icon: icon, interactive: false});
         },
 
         onAdd: function(map) {
@@ -77,6 +77,7 @@ L.Control.Panoramas = L.Control.extend({
                 return;
             }
             L.DomUtil.addClass(this.getContainer(), 'enabled');
+            L.DomUtil.addClass(this._map._container, 'panoramas-control-active');
             this._coverageLayer.addTo(this._map);
             this._map.on('click', this.onMapClick, this);
             this.coverageVisible = true;
@@ -118,6 +119,7 @@ L.Control.Panoramas = L.Control.extend({
                 return;
             }
             L.DomUtil.removeClass(this.getContainer(), 'enabled');
+            L.DomUtil.removeClass(this._map._container, 'panoramas-control-active');
             this._coverageLayer.removeFrom(this._map);
             this._map.off('click', this.onMapClick, this);
             this.coverageVisible = false;
