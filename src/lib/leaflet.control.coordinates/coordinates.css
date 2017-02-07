@@ -30,5 +30,5 @@
 }
 
 .coordinates-control-active {
-    cursor: default;
+    cursor: crosshair;
 }
