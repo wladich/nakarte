@@ -212,9 +212,9 @@ L.Control.Panoramas.include({
             if (this.panoramaVisible && this.panoramaPosition && this.panoramaAngle !== undefined) {
                 state.push(this.panoramaPosition.lat.toFixed(5));
                 state.push(this.panoramaPosition.lng.toFixed(5));
-                state.push(Math.round(this.panoramaAngle.heading).toFixed());
-                state.push(Math.round(this.panoramaAngle.pitch).toFixed());
-                state.push(Math.round(this.panoramaAngle.zoom).toFixed(2));
+                state.push(this.panoramaAngle.heading.toFixed(1));
+                state.push(this.panoramaAngle.pitch.toFixed(1));
+                state.push(this.panoramaAngle.zoom.toFixed(1));
             }
             return state;
         },
