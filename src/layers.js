@@ -42,7 +42,7 @@ export default function getLayers() {
                     layer: new L.Layer.Yandex('map', {scaleDependent: true, code: 'Y', print: true, jnx: true})
                 },
                 {
-                    title: 'Yandex Sat',
+                    title: 'Yandex Satellite',
                     order: 40,
                     isOverlay: false,
                     isDefault: true,
@@ -56,7 +56,7 @@ export default function getLayers() {
                     layer: new L.Layer.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true})
                 },
                 {
-                    title: 'Google Sat',
+                    title: 'Google Satellite',
                     order: 60,
                     isOverlay: false,
                     isDefault: true,
