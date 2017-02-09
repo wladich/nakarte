@@ -3,10 +3,6 @@ import './style.css';
 
 const yandexCrs = L.CRS.EPSG3395;
 
-const origPxBoundsToTileRange = L.TileLayer.prototype._pxBoundsToTileRange;
-const origInitTile = L.TileLayer.prototype._initTile;
-const origCreateTile = L.TileLayer.prototype.createTile;
-
 L.Layer.Yandex = L.TileLayer.extend({
         options: {
             subdomains: '1234',
@@ -14,7 +10,7 @@ L.Layer.Yandex = L.TileLayer.extend({
         },
 
         initialize: function(mapType, options) {
-            var url;
+            let url;
             this._mapType = mapType;
             if (mapType === 'sat') {
                 url = 'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}';
@@ -35,11 +31,11 @@ L.Layer.Yandex = L.TileLayer.extend({
             const bounds2 = new L.Bounds(
                 yandexCrs.latLngToPoint(this._map.unproject(bounds.min, zoom), zoom),
                 yandexCrs.latLngToPoint(this._map.unproject(bounds.max, zoom), zoom));
-            return origPxBoundsToTileRange.call(this, bounds2);
+            return L.TileLayer.prototype._pxBoundsToTileRange.call(this, bounds2);
         },
 
         createTile: function(coords, done) {
-            const tile = origCreateTile.call(this, coords, done);
+            const tile = L.TileLayer.prototype.createTile.call(this, coords, done);
             const coordsBelow = L.point(coords).add([0, 1]);
             coordsBelow.z = coords.z;
             tile._adjustHeight = this._getTilePos(coordsBelow).y - this._getTilePos(coords).y;
@@ -47,7 +43,7 @@ L.Layer.Yandex = L.TileLayer.extend({
         },
 
         _initTile: function(tile) {
-            origInitTile.call(this, tile);
+            L.TileLayer.prototype._initTile.call(this, tile);
             tile.style.height = `${tile._adjustHeight}px`;
         }
     }
