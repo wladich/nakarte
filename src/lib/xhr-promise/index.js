@@ -1,3 +1,5 @@
+import {arrayBufferToString} from 'lib/binary-strings';
+
 function successIfStatus200(xhr) {
     return xhr.status >= 200 && xhr.status <= 299;
 }
@@ -5,20 +7,6 @@ function successIfStatus200(xhr) {
 function retryIfNetworkErrorOrServerError(xhr) {
     return (xhr.status === 0 || xhr.status >= 500);
 }
-
-
-function arrayBufferToString(arBuf) {
-    const result = [];
-    const arr = new Uint8Array(arBuf);
-    let chunk;
-    for (let i = 0; i < arr.length; i += 4096) {
-        chunk = arr.subarray(i, i + 4096);
-        chunk = String.fromCharCode.apply(null, chunk);
-        result.push(chunk);
-    }
-    return result.join('');
-}
-
 
 class XMLHttpRequestPromise {
     constructor(

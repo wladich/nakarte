@@ -1,18 +1,4 @@
-function intArrayToString(arr) {
-    var s = [];
-    var chunk;
-    for (var i = 0; i < arr.length; i += 4096) {
-        chunk = arr.subarray(i, i + 4096);
-        chunk = String.fromCharCode.apply(null, chunk);
-        s.push(chunk);
-    }
-    return s.join('');
-}
-
-function arrayBufferToString(arBuf) {
-    var arr = new Uint8Array(arBuf);
-    return intArrayToString(arr);
-}
+import {arrayBufferToString} from 'lib/binary-strings';
 
 const selectFiles = (() => {
     let fileInput;
