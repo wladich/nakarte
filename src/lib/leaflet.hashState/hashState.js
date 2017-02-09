@@ -81,8 +81,7 @@ const hashState = {
                 }
             }
         }
-        var hashString = '#' + stateItems.join('&');
-        location.replace(hashString);
+        location.hash = stateItems.join('&');
     },
 
 
