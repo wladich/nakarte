@@ -114,11 +114,17 @@ class XHRQueue {
     _abortPromise(promise) {
         const i = this._queue.indexOf(promise);
         if (i > -1) {
+            // console.log('ABORT IN QUEUE');
             this._queue.splice(i, 1);
         } else {
-            promise._originalAbort();
-            this._activeCount -= 1;
-            setTimeout(() => this._processQueue(), 0);
+            if (promise.xhr.readyState === 4) {
+                // console.log('ABORT COMPLETED');
+            } else {
+                // console.log('ABORT ACTIVE');
+                promise._originalAbort();
+                this._activeCount -= 1;
+                setTimeout(() => this._processQueue(), 0);
+            }
         }
     }
 
