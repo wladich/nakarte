@@ -2,7 +2,7 @@ import L from 'leaflet';
 import './style.css';
 import 'lib/controls-styles/controls-styles.css';
 import getGoogle from 'lib/googleMapsApi';
-
+import 'lib/leaflet.hashState/leaflet.hashState';
 
 L.Control.Panoramas = L.Control.extend({
         includes: L.Mixin.Events,
@@ -220,6 +220,7 @@ L.Control.Panoramas.include({
         },
 
         unserializeState: function(state) {
+
             if (!state) {
                 this.hidePanorama();
                 this.hideCoverage();
