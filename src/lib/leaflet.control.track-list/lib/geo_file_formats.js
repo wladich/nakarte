@@ -59,7 +59,12 @@ function parseGpx(txt, name) {
                 error = 'CORRUPT';
                 continue;
             }
-            waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]));
+            try {
+                waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]));
+            }  catch (e) {
+                error = 'CORRUPT';
+                continue;
+            }
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);
         }
@@ -239,7 +244,12 @@ function parseKml(txt, name) {
                 error = 'CORRUPT';
                 break;
             }
-            name = utf8_decode(xmlGetNodeText(name[0]).trim());
+            try {
+                name = utf8_decode(xmlGetNodeText(name[0]).trim());
+            } catch (e) {
+                error = 'CORRUPT';
+                break;
+            }
             points.push({
                     name: name,
                     lat: lat,
