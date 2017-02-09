@@ -63,6 +63,13 @@ export default function getLayers() {
                     layer: new L.Layer.Google('SATELLITE', {code: 'L', scaleDependent: false, print: true, jnx: true})
                 },
                 {
+                    title: 'Google Terrain',
+                    order: 65,
+                    isOverlay: false,
+                    isDefault: true,
+                    layer: new L.Layer.Google('TERRAIN', {code: 'P', scaleDependent: false, print: true, jnx: true})
+                },
+                {
                     title: 'Bing Sat',
                     order: 70,
                     isOverlay: false,
