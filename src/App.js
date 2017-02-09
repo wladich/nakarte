@@ -70,7 +70,9 @@ function setUp() {
 
     /////////// controls bottom-left corner
 
-    new L.Control.PrintPages({position: 'bottomleft'}).addTo(map);
+    new L.Control.PrintPages({position: 'bottomleft'})
+        .addTo(map)
+        .enableHashState('p');
 
     /////////// controls bottom-right corner
 

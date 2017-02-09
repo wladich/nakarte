@@ -5,8 +5,13 @@ import 'lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
 import Contextmenu from 'lib/contextmenu';
-import {renderMap} from './map-render'
+import {renderPages} from './map-render'
 import formHtml from './form.html';
+import {notify, notifyXhrError} from 'lib/notifications';
+import {makePdf} from './pdf';
+import {saveAs} from 'browser-filesaver';
+import {blobFromString} from 'lib/binary-strings';
+import 'lib/leaflet.hashState/leaflet.hashState';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -23,8 +28,22 @@ ko.extenders.checkNumberRange = function(target, range) {
     ).extend({notify: 'always'});
 };
 
+function savePagesPdf(imagesInfo, resolution) {
+    let pdf = makePdf(imagesInfo, resolution);
+    pdf = blobFromString(pdf);
+    saveAs(pdf, 'map.pdf');
+}
+
+function savePageJpg(page) {
+    saveAs(blobFromString(page.data), 'map.jpg');
+}
+
 L.Control.PrintPages = L.Control.extend({
         options: {position: 'bottomleft'},
+
+        includes: [L.Mixin.Events, L.Mixin.HashState],
+
+        stateChangeEvents: ['change'],
 
         pageSizes: [
             {'name': 'A1', width: 594, height: 841},
@@ -56,6 +75,12 @@ L.Control.PrintPages = L.Control.extend({
             this.scale.subscribe(this.onPageSizeChanged, this);
             this.resolution.subscribe(this.onPageSizeChanged, this);
             this.pageSizeDescription = ko.pureComputed(this._displayPageSize, this);
+
+            //hash state notifications
+            this.scale.subscribe(this.notifyChange, this);
+            this.printSize.subscribe(this.notifyChange, this);
+            this.resolution.subscribe(this.notifyChange, this);
+            this.zoomLevel.subscribe(this.notifyChange, this);
         },
 
         onAdd: function(map) {
@@ -82,27 +107,32 @@ L.Control.PrintPages = L.Control.extend({
             L.DomUtil.addClass(this._container, 'minimized');
         },
 
-        addPage: function(isLandsacape) {
+        addPage: function(isLandsacape, center) {
             let [pageWidth, pageHeight] = this.printSize();
             if (isLandsacape) {
                 [pageWidth, pageHeight] = [pageHeight, pageWidth];
             }
-            const page = new PageFeature(this._map.getCenter(), [pageWidth, pageHeight],
+            if (!center) {
+                center = this._map.getCenter();
+            }
+            const page = new PageFeature(center, [pageWidth, pageHeight],
                 this.scale(), (this.pages.length + 1).toString()
             );
+            page._rotated = isLandsacape;
             page.addTo(this._map);
             this.pages.push(page);
             let cm = new Contextmenu(this.makePageContexmenuItems.bind(this, page));
             page.on('contextmenu', cm.show, cm);
             page.on('click', this.rotatePage.bind(this, page));
             page.on('move', this.updateFormZooms, this);
+            page.on('moveend', this.notifyChange, this);
             this.updateFormZooms();
+            this.notifyChange();
             return page
         },
 
         addLandscapePage: function() {
             const page = this.addPage(true);
-            page._rotated = true;
         },
 
         addPortraitPage: function() {
@@ -116,20 +146,101 @@ L.Control.PrintPages = L.Control.extend({
             for (; i < this.pages.length; i++) {
                 this.pages[i].setLabel((i + 1).toString());
             }
+            this.notifyChange();
             this.updateFormZooms()
         },
 
         removePages: function() {
             this.pages.forEach((page) => page.removeFrom(this._map));
             this.pages = [];
+            this.notifyChange();
             this.updateFormZooms();
         },
 
-        savePdf: function(data) {
+        onSavePdfClicked: function() {
+            if (!this.pages.length) {
+                notify('Add some pages to print');
+                return;
+            }
+            this.savePdf();
+        },
+
+        zoomForPrint: function() {
+            let zoom = this.zoomLevel();
+            if (zoom === 'auto') {
+                zoom = this.suggestZooms()
+            } else {
+                zoom = {mapZoom: zoom, satZoom: zoom}
+            }
+            return zoom;
+        },
+
+        incrementProgress: function(inc, range) {
+            this.downloadProgressRange(range);
+            this.downloadProgressDone((this.downloadProgressDone() || 0) + inc);
+        },
+
+        savePdf: function() {
             if (!this._map) {
                 return;
             }
-            renderMap(this._map);
+            this.downloadProgressDone(0);
+            this.makingPdf(true);
+            const pages = this.pages.map((page) => {
+                    return {
+                        latLngBounds: page.getLatLngBounds(),
+                        printSize: page.getPrintSize()
+                    }
+                }
+            );
+            const resolution = this.resolution();
+            renderPages({
+                    map: this._map,
+                    pages,
+                    zooms: this.zoomForPrint(),
+                    resolution,
+                    progressCallback: this.incrementProgress.bind(this)
+                }
+            ).then((images) => {
+                    if (images) {
+                        savePagesPdf(images, resolution)
+                    }
+                }
+            ).catch((e) => {
+                    if (e.status !== undefined) {
+                        notifyXhrError(e, 'map');
+                    } else {
+                        notify(e);
+                    }
+                }
+            ).then(() => this.makingPdf(false));
+        },
+
+        savePageJpg: function(page) {
+            const pages = [{
+                latLngBounds: page.getLatLngBounds(),
+                printSize: page.getPrintSize()
+            }];
+            this.downloadProgressDone(0);
+            this.makingPdf(true);
+            renderPages({
+                    map: this._map,
+                    pages,
+                    zooms: this.zoomForPrint(),
+                    resolution: this.resolution(),
+                    progressCallback: this.incrementProgress.bind(this)
+                }
+            )
+                .then((images) => savePageJpg(images[0]))
+                .catch((e) => {
+                        // throw e;
+                        if (e.status !== undefined) {
+                            notifyXhrError(e, 'map');
+                        } else {
+                            notify(e);
+                        }
+                    }
+                ).then(() => this.makingPdf(false));
         },
 
         onPageSizeChanged: function() {
@@ -151,7 +262,7 @@ L.Control.PrintPages = L.Control.extend({
                 '-',
                 {text: 'Delete', callback: this.removePage.bind(this, page)},
                 '-',
-                {text: 'Save image', callback: this.savePageJpg.bind(this, page), disabled: true}
+                {text: 'Save image', callback: this.savePageJpg.bind(this, page)}
             ];
             if (this.pages.length > 1) {
                 items.push({text: 'Change order', separator: true});
@@ -172,10 +283,7 @@ L.Control.PrintPages = L.Control.extend({
         rotatePage: function(page) {
             page._rotated = !page._rotated;
             page.rotate();
-        },
-
-        savePageJpg: function(page) {
-
+            this.notifyChange();
         },
 
         renumberPage: function(page, newIndex) {
@@ -185,6 +293,7 @@ L.Control.PrintPages = L.Control.extend({
             for (let i = Math.min(oldIndex, newIndex); i < this.pages.length; i++) {
                 this.pages[i].setLabel((i + 1).toString());
             }
+            this.notifyChange();
         },
 
         _printSize: function() {
@@ -231,6 +340,64 @@ L.Control.PrintPages = L.Control.extend({
                 }
             }
             return `${width} x ${height} mm`;
+        },
+
+        notifyChange: function() {
+            this.fire('change');
+        },
+
+        serializeState: function() {
+            const pages = this.pages;
+            let state = null;
+            if (pages.length) {
+                state = [];
+                state.push(this.scale().toString());
+                state.push(this.resolution().toString());
+                state.push(this.zoomLevel().toString());
+                state.push(this.pageWidth().toString());
+                state.push(this.pageHeight().toString());
+                state.push(this.marginLeft().toString());
+                state.push(this.marginRight().toString());
+                state.push(this.marginTop().toString());
+                state.push(this.marginBottom().toString());
+                for (let page of pages) {
+                    let latLng = page.getLatLng();
+                    state.push(latLng.lat.toFixed(5));
+                    state.push(latLng.lng.toFixed(5));
+                    state.push(page._rotated ? '1' : '0');
+                }
+            }
+            return state;
+        },
+
+        unserializeState: function(state) {
+            if (!state || !state.length) {
+                return false;
+            }
+            this.removePages();
+            state = [...state];
+            this.scale(state.shift());
+            this.resolution(state.shift());
+            this.zoomLevel(state.shift());
+            this.pageWidth(state.shift());
+            this.pageHeight(state.shift());
+            this.marginLeft(state.shift());
+            this.marginRight(state.shift());
+            this.marginTop(state.shift());
+            this.marginBottom(state.shift());
+            let lat, lng, rotated;
+            while (state.length >= 3) {
+                lat = parseFloat(state.shift());
+                lng = parseFloat(state.shift());
+                rotated = parseInt(state.shift(), 10);
+                if (isNaN(lat) || isNaN(lng) || lat < -85 || lat > 85 || lng < -180 || lng > 180) {
+                    break;
+                }
+                this.addPage(!!rotated, L.latLng(lat, lng));
+            }
+            return true;
+
+
         }
     }
 );

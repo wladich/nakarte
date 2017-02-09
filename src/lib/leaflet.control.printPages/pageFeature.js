@@ -75,8 +75,11 @@ const PageFeature = L.Marker.extend({
         setSize: function(paperSize, scale) {
             this.paperSize = paperSize;
             this.scale = scale;
-            console.log(paperSize, scale);
             this.updateView();
+        },
+
+        getPrintSize: function() {
+            return L.point(...this.paperSize);
         },
 
         rotate: function(e) {

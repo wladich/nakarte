@@ -78,7 +78,7 @@
         <div class="download-button-row">
             <div class="button-minimize" data-bind="click: setMinimized"></div>
             <a class="text-button button-save" data-bind="
-                                click: savePdf,
+                                click: onSavePdfClicked,
                                 visible: !makingPdf()">Save PDF</a>
             <div data-bind="
                                 component: { 
