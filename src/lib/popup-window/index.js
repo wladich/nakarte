@@ -1,7 +1,6 @@
 function openPopupWindow(url, width, uniqName = null) {
     var left, top, height,
         screenLeft = screen.availLeft || 0,
-        screenTop = screen.availTop || 0,
         bordersWidth = 8;
     // if browser window is in the right half of screen, place new window on left half
     if (window.screenX - screenLeft - bordersWidth * 1.5 > width) {

@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import 'lib/leaflet.layer.canvasMarkers'
-import openPopup from 'lib/popupWindow';
+import {openPopupWindow} from 'lib/popup-window';
 import escapeHtml from 'escape-html';
 import {saveAs} from 'browser-filesaver';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
@@ -217,7 +217,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 </table>`;
             this._map.openPopup(description, latLng, {maxWidth: 500});
             document.getElementById('westra-pass-link').onclick = function() {
-                openPopup(url, 650);
+                openPopupWindow(url, 780, 'westra-details');
                 return false;
             };
             document.getElementById('westra-pass-gpx').onclick = function() {
