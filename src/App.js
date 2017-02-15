@@ -9,7 +9,7 @@ import 'lib/leaflet.control.coordinates';
 import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys';
 import 'lib/leaflet.hashState/Leaflet.Map';
 import 'lib/leaflet.hashState/Leaflet.Control.Layers';
-import fixAnimationBug from 'lib/leaflet.fixAnimationBug'
+import {fixAll} from 'lib/leaflet.fixes'
 import './adaptive.css';
 import 'lib/leaflet.control.panoramas';
 import 'lib/leaflet.control.track-list/track-list';
@@ -26,7 +26,7 @@ import getLayers from 'layers';
 
 
 function setUp() {
-    fixAnimationBug();
+    fixAll();
 
     const map = L.map('map', {
             zoomControl: false,
