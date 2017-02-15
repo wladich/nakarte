@@ -114,19 +114,33 @@ class PageComposer {
     }
 }
 
-function getTempMap(zoom) {
+function getTempMap(zoom, fullSize, pixelBounds) {
     const container = L.DomUtil.create('div', '', document.body);
+    let width, height, center;
+    if (fullSize) {
+        const size = pixelBounds.getSize();
+        width = size.x;
+        height = size.y;
+        center = pixelBounds.min.add(size.divideBy(2));
+        center = L.CRS.EPSG3857.pointToLatLng(center, zoom);
+    } else {
+        width = 100;
+        height = 100;
+        center = L.latLng(0, 0);
+    }
+
     Object.assign(container.style, {
-            width: '100px',
-            height: '100px',
+            width: `${width}px`,
+            height: `${height}px`,
             position: 'absolute',
             left: '0',
             top: '0',
-            // visibility: 'hidden'
+            visibility: 'hidden'
         }
     );
+
     const map = L.map(container, {fadeAnimation: false, zoomAnimation: false, inertia: false});
-    map.setView(L.latLng(0, 0), zoom);
+    map.setView(center, zoom);
     return map;
 }
 
@@ -150,11 +164,11 @@ async function* iterateLayersTiles(layers, latLngBounds, zooms) {
         } else {
             zoom = zooms.satZoom;
         }
-        let map = getTempMap(zoom);
         let pixelBounds = L.bounds(
-            map.project(latLngBounds.getNorthWest()).round(),
-            map.project(latLngBounds.getSouthEast()).round()
+            L.CRS.EPSG3857.latLngToPoint(latLngBounds.getNorthWest(), zoom).round(),
+            L.CRS.EPSG3857.latLngToPoint(latLngBounds.getSouthEast(), zoom).round()
         );
+        let map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
         map.addLayer(layer);
         let {iterateTilePromises, count} = await layer.getTilesInfo({xhrOptions: defaultXHROptions, pixelBounds});
         for (let tilePromise of iterateTilePromises()) {
@@ -163,7 +177,6 @@ async function* iterateLayersTiles(layers, latLngBounds, zooms) {
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
-                console.log('DO STOP3');
                 break;
             }
         }
@@ -187,7 +200,6 @@ async function* promiseQueueBuffer(source, maxActive) {
     while (queue.length) {
         let doStop = yield queue.shift();
         if (doStop) {
-            console.log('DO STOP2');
             let {value, done} = await source.next(true);
             if (!done) {
                 queue.push(value);
@@ -231,7 +243,6 @@ async function renderPages({map, pages, zooms, resolution, progressCallback}) {
             try {
                 tileInfo = await tilePromise.tilePromise;
             } catch (e) {
-                console.log('DO STOP1');
                 queuedTilesIterator.next(true);
                 throw e;
             }

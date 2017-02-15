@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'lib/leaflet.layer.bing';
 
 L.BingLayer.include({
-        whenReady: function() {
+        waitTilesReadyToGrab: function() {
             if (this._url) {
                 return Promise.resolve();
             } else {
@@ -22,9 +22,5 @@ L.BingLayer.include({
         cloneForPrint: function(options) {
             return new L.BingLayer(this._key, L.Util.extend({}, this.options, options));
         },
-
-        getTilesInfo: function(printOptions) {
-            return this.whenReady().then(() => L.TileLayer.prototype.getTilesInfo.call(this, printOptions));
-        }
     }
 );

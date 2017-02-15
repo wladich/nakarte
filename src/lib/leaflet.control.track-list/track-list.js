@@ -21,32 +21,6 @@ import 'lib/leaflet.control.elevation-profile';
 var MeasuredEditableLine = L.MeasuredLine.extend({});
 MeasuredEditableLine.include(L.Polyline.EditMixin);
 
-var Waypoints = L.Layer.CanvasMarkers.extend({
-        options: {
-            scaleDependent: true
-        },
-
-        clone: function() {
-            var markers = this.rtree.all(),
-                markersCopy;
-
-            function cloneMarker(marker) {
-                return {
-                    latlng: {lat: marker.latlng.lat, lng: marker.latlng.lng},
-                    label: marker.label,
-                    icon: marker.icon
-                };
-            }
-
-            markersCopy = markers.map(cloneMarker);
-            var options = {};
-            L.extend(options, this.options, {iconScale: 1.5, labelFontSize: 14});
-            return new Waypoints(markersCopy, options);
-        }
-    }
-);
-
-
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
 
@@ -126,7 +100,7 @@ L.Control.TrackList = L.Control.extend({
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
                 ]
             );
-            this._markerLayer = new Waypoints(null, {print: true}).addTo(map);
+            this._markerLayer = new L.Layer.CanvasMarkers(null, {print: true, scaleDependent: true}).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
@@ -491,6 +465,7 @@ L.Control.TrackList = L.Control.extend({
 
             var fileText = exporter(lines, name, points);
             var filename = name + extension;
+            // FIXME: make function stringToBlob: convert string to byteArray first
             saveAs(new Blob([fileText], {type: 'application/download'}), filename);
         },
 

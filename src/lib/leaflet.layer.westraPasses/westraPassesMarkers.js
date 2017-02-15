@@ -124,6 +124,8 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 markers.push(marker);
             }
             this.addMarkers(markers);
+            this._dataLoaded = true;
+            this.fire('data-loaded');
         },
 
 

@@ -24,6 +24,7 @@ L.Layer.WestraPasses = L.Layer.extend({
                 }
             );
         },
+
         _setRegionLabel: function(layerName, feature, layer) {
             var latlon = layer.getBounds().getCenter();
             var icon = L.divIcon({
@@ -94,6 +95,5 @@ L.Layer.WestraPasses = L.Layer.extend({
         }
     }
 );
-
 
 

@@ -237,8 +237,6 @@ export default function getLayers() {
                 },
             ]
         },
-
-
         {
             group: 'OpenStreetMap alternatives',
             layers: [

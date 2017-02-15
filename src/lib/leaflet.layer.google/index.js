@@ -7,7 +7,6 @@ L.Layer.Google = L.GridLayer.extend({
         // Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
         initialize: function(mapType, options) {
             L.GridLayer.prototype.initialize.call(this, options);
-            L.Layer.prototype.constructor(options);
             this.mapType = mapType;
         },
 
@@ -55,7 +54,7 @@ L.Layer.Google = L.GridLayer.extend({
             }
             this._googleMap = null;
             this._clearTiles();
-            map.getContainer().removeChild(this._googleMapContainer);
+            L.DomUtil.remove(this._googleMapContainer);
             map.off({
                     viewreset: this._clearTiles,
                     resize: this._onResize,

@@ -1,3 +1,6 @@
 import './TileLayer'
 import './Bing'
 import './Yandex'
+import './Google'
+import './WestraPasses'
+import './CanvasMarkers'
