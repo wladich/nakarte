@@ -132,7 +132,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         addLandscapePage: function() {
-            const page = this.addPage(true);
+            this.addPage(true);
         },
 
         addPortraitPage: function() {
