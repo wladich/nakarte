@@ -14,6 +14,6 @@ ko.components.register('progress-indicator', {
             var range = params.progressRange(),
                 done = params.progressDone();
             return done === undefined ? undefined : done * 100 / range;
-        }.bind(this));
+        });
     }
 });
