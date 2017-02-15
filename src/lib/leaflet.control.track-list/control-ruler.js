@@ -17,6 +17,10 @@ L.Control.TrackList.Ruler = L.Control.extend({
     onAdd: function(map) {
         this._map = map;
         const container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-ruler');
+        L.DomEvent.disableClickPropagation(container);
+        if (!L.Browser.touch) {
+            L.DomEvent.disableScrollPropagation(container);
+        }
         L.DomEvent.on(container, 'click', this.onClick, this);
         return container;
     },
