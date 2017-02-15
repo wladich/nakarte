@@ -11,7 +11,7 @@ function isPointInPolygon(polygon, p) {
     for (i = 0; i < polygon.length; i++) {
         node = polygon[i];
         if (
-            ((node[0] <= p[0] && p[0] < prevNode[0]) || prevNode[0] <= p[0] && p[0] < node[0]) &&
+            ((node[0] <= p[0] && p[0] < prevNode[0]) || (prevNode[0] <= p[0] && p[0] < node[0])) &&
             p[1] < (prevNode[1] - node[1]) * (p[0] - node[0]) / (prevNode[0] - node[0]) + node[1]
         ) {
             inside = !inside;
@@ -160,7 +160,7 @@ L.Wikimapia = L.GridLayer.extend({
 
         onMouseMove: function(e) {
             const place = this.getPlaceAtMousePos(e);
-            if (this.highlightedPlace && (!place || this.highlightedPlace.id != place.id)) {
+            if (this.highlightedPlace && (!place || this.highlightedPlace.id !== place.id)) {
                 this._map.removeLayer(this.highlightedPlace.polygon);
                 this._map.removeLayer(this.highlightedPlace.label);
                 this.highlightedPlace = null;
