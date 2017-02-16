@@ -3,6 +3,7 @@ import L from 'leaflet';
 function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
+    disableGridLayerUpdateWhenZooming();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -23,6 +24,13 @@ function fixPanAnimationBug() {
 
 function fixTouchDetection() {
     L.Browser.touch &= (navigator.pointerEnabled || navigator.maxTouchPoints)
+}
+
+function disableGridLayerUpdateWhenZooming() {
+    L.GridLayer.addInitHook(function() {
+            this.options.updateWhenZooming = false;
+        }
+    );
 }
 
 export {fixAll}
