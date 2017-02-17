@@ -32,7 +32,6 @@ function setUp() {
             zoomControl: false,
             fadeAnimation: false,
             attributionControl: false,
-            easeLinearity: 0.2,
             inertiaMaxSpeed: 1500,
             worldCopyJump: true
         }
