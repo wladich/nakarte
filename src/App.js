@@ -71,7 +71,8 @@ function setUp() {
 
     new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
-        .enableHashState('p');
+        .enableHashState('p')
+        .setMinimized();
 
     /////////// controls bottom-right corner
 
