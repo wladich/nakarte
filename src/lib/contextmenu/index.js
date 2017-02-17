@@ -131,7 +131,7 @@ class Contextmenu {
         e.stopPropagation();
         e.preventDefault();
         this.hide();
-        setTimeout(() => callback(e), 0);
+        callback(e);
     }
 
     createSeparator(itemOptions) {
