@@ -36,7 +36,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             labelFontName: 'Verdana, Arial, sans-serif',
             labelFontSize: 10,
             iconScale: 1,
-            pane: 'rasterMarker'
+            pane: 'rasterMarker',
+            updateWhenZooming: !L.Browser.mobile
         },
 
         initialize: function(markers, options) {
@@ -150,7 +151,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             const canvas = L.DomUtil.create('canvas', 'leaflet-tile');
             canvas.width = this.options.tileSize;
             canvas.height = this.options.tileSize;
-            this.drawTile(canvas, coords);
+            L.Util.requestAnimFrame(() => this.drawTile(canvas, coords));
             return canvas;
         },
 
