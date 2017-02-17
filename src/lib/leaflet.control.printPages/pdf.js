@@ -127,10 +127,10 @@ function makePdf(imagesInfo, resolution) {
 
     function addRec(s, skipOffset) {
         pdf.push(s);
-        offset += s.length + 1;
         if (!skipOffset) {
             offsets.push(offset);
         }
+        offset += s.length;
     }
 
     addRec(header(), true);
