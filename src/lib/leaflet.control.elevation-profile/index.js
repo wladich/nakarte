@@ -85,7 +85,7 @@ function movementFromEvents(e1, e2) {
 var DragEvents = L.Class.extend({
         options: {
             dragTolerance: 2,
-            dragButtons: {0: true}
+            dragButtons: [0]
         },
 
         includes: L.Mixin.Events,
@@ -108,7 +108,7 @@ var DragEvents = L.Class.extend({
         },
 
         onMouseDown: function(e) {
-            if (this.options.dragButtons[e.button]) {
+            if (this.options.dragButtons.includes(e.button)) {
                 e._offset = offestFromEvent(e);
                 this.dragStartPos[e.button] = e;
                 this.prevEvent[e.button] = e;
@@ -121,7 +121,7 @@ var DragEvents = L.Class.extend({
             L.DomUtil.enableImageDrag();
             L.DomUtil.enableTextSelection();
 
-            if (this.options.dragButtons[e.button]) {
+            if (this.options.dragButtons.includes(e.button)) {
                 this.dragStartPos[e.button] = null;
                 if (this.isDragging[e.button]) {
                     this.isDragging[e.button] = false;
@@ -147,7 +147,7 @@ var DragEvents = L.Class.extend({
                     Math.abs(e.clientY - self.dragStartPos[button].clientY) > tolerance;
             }
 
-            var dragButtons = Object.keys(this.options.dragButtons);
+            var dragButtons = this.options.dragButtons;
             for (i = 0; i < dragButtons.length; i++) {
                 button = dragButtons[i];
                 if (this.isDragging[button]) {
@@ -176,7 +176,7 @@ var DragEvents = L.Class.extend({
 
         onMouseLeave: function(e) {
             var i, button;
-            var dragButtons = Object.keys(this.options.dragButtons);
+            var dragButtons = this.options.dragButtons;
             for (i = 0; i < dragButtons.length; i++) {
                 button = dragButtons[i];
                 if (this.isDragging[button]) {
@@ -262,7 +262,7 @@ L.Control.ElevationProfile = L.Class.extend({
             L.DomEvent.on(svg, 'mouseenter', this.onSvgEnter, this);
             L.DomEvent.on(svg, 'mouseleave', this.onSvgLeave, this);
             L.DomEvent.on(svg, 'mousewheel', this.onSvgMouseWheel, this);
-            this.svgDragEvents = new DragEvents(this.drawingContainer, null, {dragButtons: {0: true, 2: true}});
+            this.svgDragEvents = new DragEvents(this.drawingContainer, null, {dragButtons: [0, 2]});
             this.svgDragEvents.on('dragstart', this.onSvgDragStart, this);
             this.svgDragEvents.on('dragend', this.onSvgDragEnd, this);
             this.svgDragEvents.on('drag', this.onSvgDrag, this);
@@ -283,7 +283,6 @@ L.Control.ElevationProfile = L.Class.extend({
         },
 
         onSvgDragStart: function(e) {
-
             if (e.dragButton === 0) {
                 // FIXME: restore hiding when we make display of selection on map
                 // this.cursorHide();
