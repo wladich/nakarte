@@ -21,8 +21,6 @@ const GridLayerGrabMixin = {
                 for (let i = tileRange.min.x; i <= tileRange.max.x; i++) {
                     let coords = new L.Point(i, j);
                     coords.z = this._tileZoom;
-                    coords = this._wrapCoords(coords);
-
                     if (!this._isValidTile(coords)) {
                         continue;
                     }
@@ -31,7 +29,7 @@ const GridLayerGrabMixin = {
                     coordsPlusOne.z = coords.z;
                     const tileSize = this._getTilePos(coordsPlusOne).subtract(tilePos);
                     tilePos = tilePos.add(this._level.origin).subtract(topLeft);
-                    let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(coords, printOptions);
+                    let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(this._wrapCoords(coords), printOptions);
                     yield {
                         tilePromise: tilePromise.then((image) => {
                                 return {image, tilePos, tileSize};
