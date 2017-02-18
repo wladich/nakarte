@@ -2,6 +2,7 @@ import L from 'leaflet';
 import './elevation-profile.css';
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
+import 'lib/leaflet.control.commons';
 
 function createSvg(tagName, attributes, parent) {
     var element = document.createElementNS('http://www.w3.org/2000/svg', tagName);
@@ -218,13 +219,7 @@ L.Control.ElevationProfile = L.Class.extend({
         addTo: function(map) {
             this._map = map;
             var container = this._container = L.DomUtil.create('div', 'elevation-profile-container');
-            if (!L.Browser.touch) {
-                L.DomEvent
-                    .disableClickPropagation(container)
-                    .disableScrollPropagation(container);
-            } else {
-                L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
-            }
+            L.Control.prototype._stopContainerEvents.call(this);
             this._map._controlContainer.appendChild(container);
             this.setupContainerLayout();
             this.updateGraph();

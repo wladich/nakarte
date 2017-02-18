@@ -12,6 +12,7 @@ import {makePdf} from './pdf';
 import {saveAs} from 'browser-filesaver';
 import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.hashState/leaflet.hashState';
+import 'lib/leaflet.control.commons';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -87,10 +88,7 @@ L.Control.PrintPages = L.Control.extend({
             this._map = map;
             const container = this._container =
                 L.DomUtil.create('div', 'leaflet-control control-form control-print-pages');
-            L.DomEvent.disableClickPropagation(container);
-            if (!L.Browser.touch) {
-                L.DomEvent.disableScrollPropagation(container);
-            }
+            this._stopContainerEvents();
 
             map.on('move', this.updateFormZooms, this);
             container.innerHTML = formHtml;

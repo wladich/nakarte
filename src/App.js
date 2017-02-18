@@ -22,6 +22,7 @@ import enableLayersConfig from 'lib/leaflet.control.layers.configure';
 import hashState from 'lib/leaflet.hashState/hashState';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
+import 'lib/leaflet.control.layers.events';
 
 
 

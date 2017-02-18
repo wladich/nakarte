@@ -3,6 +3,7 @@ import './track-list';
 import './ruler.css';
 import 'lib/controls-styles/controls-styles.css';
 import './track-list';
+import 'lib/leaflet.control.commons';
 
 L.Control.TrackList.Ruler = L.Control.extend({
     options: {
@@ -16,11 +17,8 @@ L.Control.TrackList.Ruler = L.Control.extend({
 
     onAdd: function(map) {
         this._map = map;
-        const container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-ruler');
-        L.DomEvent.disableClickPropagation(container);
-        if (!L.Browser.touch) {
-            L.DomEvent.disableScrollPropagation(container);
-        }
+        const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-ruler');
+        this._stopContainerEvents();
         L.DomEvent.on(container, 'click', this.onClick, this);
         return container;
     },

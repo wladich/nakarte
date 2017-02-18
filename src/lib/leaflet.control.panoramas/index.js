@@ -3,6 +3,7 @@ import './style.css';
 import 'lib/controls-styles/controls-styles.css';
 import getGoogle from 'lib/googleMapsApi';
 import 'lib/leaflet.hashState/leaflet.hashState';
+import 'lib/leaflet.control.commons';
 
 L.Control.Panoramas = L.Control.extend({
         includes: L.Mixin.Events,
@@ -25,12 +26,9 @@ L.Control.Panoramas = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            const container = L.DomUtil.create('a', 'leaflet-control leaflet-control-button leaflet-contol-panoramas');
+            const container = this._container = L.DomUtil.create('a', 'leaflet-control leaflet-control-button leaflet-contol-panoramas');
+            this._stopContainerEvents();
             container.title = 'Show panoramas';
-            L.DomEvent.disableClickPropagation(container);
-            if (!L.Browser.touch) {
-                L.DomEvent.disableScrollPropagation(container);
-            }
             L.DomEvent.on(container, 'click', this.onButtonClick, this);
 
             map.createPane('rasterOverlay').style.zIndex = 300;

@@ -17,6 +17,7 @@ import 'lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
 import 'lib/controls-styles/controls-styles.css';
 import 'lib/leaflet.control.elevation-profile';
+import 'lib/leaflet.control.commons';
 
 var MeasuredEditableLine = L.MeasuredLine.extend({});
 MeasuredEditableLine.include(L.Polyline.EditMixin);
@@ -42,10 +43,7 @@ L.Control.TrackList = L.Control.extend({
             this.map = map;
             this.tracks.removeAll();
             var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-tracklist');
-            L.DomEvent.disableClickPropagation(container);
-            if (!L.Browser.touch) {
-                L.DomEvent.disableScrollPropagation(container);
-            }
+            this._stopContainerEvents();
 
             container.innerHTML = `
                 <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"></div>

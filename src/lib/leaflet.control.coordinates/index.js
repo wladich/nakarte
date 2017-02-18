@@ -2,6 +2,7 @@ import L from 'leaflet'
 import './coordinates.css';
 import copyToClipboard from 'lib/clipboardCopy';
 import Contextmenu from 'lib/contextmenu';
+import 'lib/leaflet.control.commons';
 
 function pad(s, n) {
     var j = s.indexOf('.');
@@ -23,15 +24,11 @@ L.Control.Coordinates = L.Control.extend({
         onAdd: function(map) {
             this._map = map;
             var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
-            L.DomEvent.disableClickPropagation(container);
-            if (!L.Browser.touch) {
-                L.DomEvent.disableScrollPropagation(container);
-            }
+            this._stopContainerEvents();
             this._field_lat = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
             this._field_lon = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
             L.DomEvent
                 .on(container, {
-                        'dblclick': L.DomEvent.stop,
                         'click': this.onClick
                     }, this);
             map.on('mousemove', this.onMouseMove, this);
