@@ -3,6 +3,7 @@ import './elevation-profile.css';
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
 import 'lib/leaflet.control.commons';
+import {formatXhrError, notify} from 'lib/notifications';
 
 function createSvg(tagName, attributes, parent) {
     var element = document.createElementNS('http://www.w3.org/2000/svg', tagName);
@@ -207,11 +208,15 @@ L.Control.ElevationProfile = L.Class.extend({
             this.horizZoom = 1;
             this.dragStart = null;
 
-            this._getElevation(samples).then(function(values) {
-                    self.values = values;
-                    self.updateGraph();
-                }
-            );
+            this._getElevation(samples)
+                .then(function(values) {
+                        self.values = values;
+                        self.updateGraph();
+                    }
+                )
+                .catch((e) => {
+                    notify(e);
+                });
             this.values = null;
 
         },
@@ -553,6 +558,9 @@ L.Control.ElevationProfile = L.Class.extend({
         },
 
         setCursorPosition: function(ind) {
+            if (!this._map || !this.values) {
+                return;
+            }
             var distance = this.options.samplingInterval * ind;
             distance = (distance / 1000).toFixed(2);
             var gradient = (this.values[Math.ceil(ind)] - this.values[Math.floor(ind)]) / this.options.samplingInterval;
@@ -699,9 +707,10 @@ L.Control.ElevationProfile = L.Class.extend({
 
 
         setupGraph: function() {
-            if (!this._map) {
+            if (!this._map || !this.values) {
                 return;
             }
+
 
             while (this.svg.hasChildNodes()) {
                 this.svg.removeChild(this.svg.lastChild);
@@ -773,11 +782,10 @@ L.Control.ElevationProfile = L.Class.extend({
                 .then(
                     function(xhr) {
                         return parseResponse(xhr.responseText);
-                    },
-                    function() {
-                        alert('Failed to plot elevation profile, server error');
                     }
-                );
+                ).catch((xhr) => {
+                    throw new Error(formatXhrError(xhr, 'elevation data'))
+                });
         },
         onCloseButtonClick: function() {
             this.removeFrom(this._map);
