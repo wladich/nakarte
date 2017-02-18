@@ -171,7 +171,9 @@ async function* iterateLayersTiles(layers, latLngBounds, zooms) {
         let map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
         map.addLayer(layer);
         let {iterateTilePromises, count} = await layer.getTilesInfo({xhrOptions: defaultXHROptions, pixelBounds});
+        let lastPromise;
         for (let tilePromise of iterateTilePromises()) {
+            lastPromise = tilePromise.tilePromise;
             tilePromise.tilePromise =
                 tilePromise.tilePromise.then((tileInfo) => Object.assign(tileInfo, {zoom, progressInc: 1 / count}));
             doStop = yield tilePromise;
@@ -180,9 +182,13 @@ async function* iterateLayersTiles(layers, latLngBounds, zooms) {
                 break;
             }
         }
-        disposeMap(map);
         if (doStop) {
+            disposeMap(map);
             break;
+        } else {
+            if (lastPromise) {
+                lastPromise.then(() => disposeMap(map));
+            }
         }
     }
 }

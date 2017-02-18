@@ -147,11 +147,14 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             }
         },
 
-        createTile: function(coords) {
+        createTile: function(coords, done) {
             const canvas = L.DomUtil.create('canvas', 'leaflet-tile');
             canvas.width = this.options.tileSize;
             canvas.height = this.options.tileSize;
-            L.Util.requestAnimFrame(() => this.drawTile(canvas, coords));
+            L.Util.requestAnimFrame(() => {
+                this.drawTile(canvas, coords);
+                done(null, canvas);
+            });
             return canvas;
         },
 

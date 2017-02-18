@@ -85,7 +85,7 @@ const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
             tilePromise = Promise.resolve(tile);
         } else {
             tilePromise = new Promise((resolve) => {
-                return this.createTile(coords, resolve);
+                return this.createTile(coords, (_, canvas) => resolve(canvas));
             });
         }
 
