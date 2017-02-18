@@ -1018,8 +1018,8 @@ L.Control.TrackList = L.Control.extend({
             if (this._elevationControl) {
                 this._elevationControl.removeFrom(this._map);
             }
-            this._elevationControl = new L.Control.ElevationProfile(path, {
-                    samplingInterval: this.calcSamplingInterval(track.length())
+            this._elevationControl = new L.Control.ElevationProfile(this._map, path, {
+                    samplingInterval: this.calcSamplingInterval(new L.MeasuredLine(path).getLength())
                 }
             ).addTo(this._map);
 
