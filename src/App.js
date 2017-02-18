@@ -69,10 +69,12 @@ function setUp() {
 
     /////////// controls bottom-left corner
 
-    new L.Control.PrintPages({position: 'bottomleft'})
+    const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
-        .enableHashState('p')
-        .setMinimized();
+        .enableHashState('p');
+    if (!printControl.hasPages()) {
+        printControl.setMinimized();
+    }
 
     /////////// controls bottom-right corner
 

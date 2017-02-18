@@ -346,6 +346,10 @@ L.Control.PrintPages = L.Control.extend({
             this.fire('change');
         },
 
+        hasPages: function() {
+            return !!this.pages.length
+        },
+
         serializeState: function() {
             const pages = this.pages;
             let state = null;
@@ -396,8 +400,6 @@ L.Control.PrintPages = L.Control.extend({
                 this.addPage(!!rotated, L.latLng(lat, lng));
             }
             return true;
-
-
         }
     }
 );
