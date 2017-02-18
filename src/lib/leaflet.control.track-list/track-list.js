@@ -18,6 +18,7 @@ import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
 import 'lib/controls-styles/controls-styles.css';
 import 'lib/leaflet.control.elevation-profile';
 import 'lib/leaflet.control.commons';
+import {blobFromString} from 'lib/binary-strings';
 
 var MeasuredEditableLine = L.MeasuredLine.extend({});
 MeasuredEditableLine.include(L.Polyline.EditMixin);
@@ -464,7 +465,7 @@ L.Control.TrackList = L.Control.extend({
             var fileText = exporter(lines, name, points);
             var filename = name + extension;
             // FIXME: make function stringToBlob: convert string to byteArray first
-            saveAs(new Blob([fileText], {type: 'application/download'}), filename);
+            saveAs(blobFromString(fileText), filename);
         },
 
         renameTrack: function(track) {
