@@ -1,5 +1,5 @@
 function notify(message, level) {
-    window.alert(message);
+    setTimeout(() => window.alert(message), 0);
 }
 
 function prompt(message, value) {
