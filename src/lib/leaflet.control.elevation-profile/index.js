@@ -200,7 +200,7 @@ L.Control.ElevationProfile = L.Class.extend({
             samplingInterval: 50
         },
 
-        initialize: function(latlngs, options) {
+        initialize: function(map, latlngs, options) {
             L.setOptions(this, options);
             this.path = latlngs;
             var samples = this.samples = pathRegularSamples(this.path, this.options.samplingInterval);
@@ -211,7 +211,7 @@ L.Control.ElevationProfile = L.Class.extend({
             this._getElevation(samples)
                 .then(function(values) {
                         self.values = values;
-                        self.updateGraph();
+                        self._addTo(map);
                     }
                 )
                 .catch((e) => {
@@ -221,7 +221,7 @@ L.Control.ElevationProfile = L.Class.extend({
 
         },
 
-        addTo: function(map) {
+        _addTo: function(map) {
             this._map = map;
             var container = this._container = L.DomUtil.create('div', 'elevation-profile-container');
             L.Control.prototype._stopContainerEvents.call(this);

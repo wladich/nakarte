@@ -999,10 +999,10 @@ L.Control.TrackList = L.Control.extend({
                 this._elevationControl.removeFrom(this._map);
             }
             this.stopEditLine();
-            this._elevationControl = new L.Control.ElevationProfile(line.getLatLngs(), {
+            this._elevationControl = new L.Control.ElevationProfile(this._map, line.getLatLngs(), {
                     samplingInterval: this.calcSamplingInterval(line.getLength())
                 }
-            ).addTo(this._map);
+            );
         },
 
         showElevationProfileForTrack: function(track) {
@@ -1021,7 +1021,7 @@ L.Control.TrackList = L.Control.extend({
             this._elevationControl = new L.Control.ElevationProfile(this._map, path, {
                     samplingInterval: this.calcSamplingInterval(new L.MeasuredLine(path).getLength())
                 }
-            ).addTo(this._map);
+            );
 
         }
 
