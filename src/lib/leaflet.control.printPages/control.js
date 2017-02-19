@@ -32,11 +32,11 @@ ko.extenders.checkNumberRange = function(target, range) {
 function savePagesPdf(imagesInfo, resolution) {
     let pdf = makePdf(imagesInfo, resolution);
     pdf = blobFromString(pdf);
-    saveAs(pdf, 'map.pdf');
+    saveAs(pdf, 'map.pdf', true);
 }
 
 function savePageJpg(page) {
-    saveAs(blobFromString(page.data), 'map.jpg');
+    saveAs(blobFromString(page.data), 'map.jpg', true);
 }
 
 L.Control.PrintPages = L.Control.extend({

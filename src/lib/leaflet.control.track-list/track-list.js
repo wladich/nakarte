@@ -464,8 +464,7 @@ L.Control.TrackList = L.Control.extend({
 
             var fileText = exporter(lines, name, points);
             var filename = name + extension;
-            // FIXME: make function stringToBlob: convert string to byteArray first
-            saveAs(blobFromString(fileText), filename);
+            saveAs(blobFromString(fileText), filename, true);
         },
 
         renameTrack: function(track) {

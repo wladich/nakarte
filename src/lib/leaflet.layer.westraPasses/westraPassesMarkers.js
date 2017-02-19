@@ -68,7 +68,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 </gpx>
             `;
             var filename = marker.properties.name || 'Без названия';
-            saveAs(new Blob([gpx], {type: 'application/gpx+xml'}), filename + '.gpx');
+            saveAs(new Blob([gpx], {type: 'application/gpx+xml'}), filename + '.gpx', true);
         },
 
         _passToKml: function(marker) {
@@ -91,7 +91,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 </kml>
             `;
             var filename = marker.properties.name || 'Без названия';
-            saveAs(new Blob([kml], {type: 'application/vnd.google-earth.kml+xml'}), filename + '.kml');
+            saveAs(new Blob([kml], {type: 'application/vnd.google-earth.kml+xml'}), filename + '.kml', true);
         },
 
         _makeIcon: function(marker) {
