@@ -20,7 +20,7 @@ L.Layer.CanvasMarkers.include({
         },
 
         cloneForPrint: function(options) {
-            options = L.Util.extend({}, this.options, {iconScale: 1.5, labelFontSize: 14});
+            options = L.Util.extend({}, this.options, {iconScale: 1, labelFontSize: 12});
             return new L.Layer.CanvasMarkers(this.cloneMarkers(), options);
 
         }
