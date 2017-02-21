@@ -85,6 +85,13 @@ function setUp() {
     }
     tracklist.enableHashState('nktk');
 
+    if (L.Browser.mobile) {
+        layersControl.setMinimized();
+        if (!tracklist.hasTracks()) {
+            tracklist.setMinimized();
+        }
+    }
+
     raiseControlsOnFocus(map);
 
     L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());

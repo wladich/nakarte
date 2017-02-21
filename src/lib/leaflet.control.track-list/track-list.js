@@ -1034,8 +1034,10 @@ L.Control.TrackList = L.Control.extend({
                     samplingInterval: this.calcSamplingInterval(new L.MeasuredLine(path).getLength())
                 }
             );
+        },
 
+        hasTracks: function() {
+            return !!this.tracks().length;
         }
-
     }
 );
