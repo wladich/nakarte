@@ -58,6 +58,38 @@ function getLayersForPrint(map, xhrQueue) {
     return layers;
 }
 
+function blendMultiplyCanvas(src, dest) {
+    var s_data = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
+    var d_image_data = dest.getContext('2d').getImageData(0, 0, src.width, src.height);
+    var d_data = d_image_data.data;
+    var data_length = s_data.length,
+        sr, sg, sb, sa,
+        dr, dg, db,
+        l;
+    for (var i = 0; i < data_length; i += 4) {
+        sa = s_data[i + 3];
+        if (sa) {
+            sr = s_data[i];
+            sg = s_data[i + 1];
+            sb = s_data[i + 2];
+            dr = d_data[i];
+            dg = d_data[i + 1];
+            db = d_data[i + 2];
+
+            l = (dr + dg + db) / 3;
+            l = l / 255 * 192 + 63;
+            dr = sr / 255 * l;
+            dg = sg / 255 * l;
+            db = sb / 255 * l;
+
+            d_data[i] = dr;
+            d_data[i + 1] = dg;
+            d_data[i + 2] = db;
+        }
+    }
+    dest.getContext('2d').putImageData(d_image_data, 0, 0);
+}
+
 class PageComposer {
     constructor(destSize, pixelBoundsAtZoom24) {
         this.destSize = destSize;
@@ -74,36 +106,59 @@ class PageComposer {
         return canvas;
     }
 
-    putTile({image, tilePos, tileSize, zoom}) {
-        if (image === null) {
+    putTile(tileInfo) {
+        if (tileInfo.image === null) {
             return;
+        }
+        let zoom;
+        if (tileInfo.isOverlay) {
+            zoom = 'overlay';
+        } else {
+            zoom = tileInfo.zoom;
         }
         if (zoom !== this.currentZoom) {
             this.mergeCurrentCanvas();
             this.setupCurrentCanvas(zoom);
         }
-        this.currentCanvas.getContext('2d').drawImage(image, tilePos.x, tilePos.y, tileSize.x, tileSize.y);
+        if (tileInfo.isOverlay) {
+            tileInfo.draw(this.currentCanvas);
+        } else {
+            const ctx = this.currentCanvas.getContext('2d');
+            const {tilePos, tileSize} = tileInfo;
+            ctx.drawImage(tileInfo.image, tilePos.x, tilePos.y, tileSize.x, tileSize.y);
+        }
     }
 
+
     setupCurrentCanvas(zoom) {
-        const q = 1 << (24 - zoom);
-        const
-            topLeft = this.projectedBounds.min.divideBy(q).round(),
-            bottomRight = this.projectedBounds.max.divideBy(q).round(),
+        let size;
+        if (zoom === 'overlay') {
+            size = this.destSize;
+        } else {
+            const q = 1 << (24 - zoom);
+            const
+                topLeft = this.projectedBounds.min.divideBy(q).round(),
+                bottomRight = this.projectedBounds.max.divideBy(q).round();
             size = bottomRight.subtract(topLeft);
+        }
         this.currentCanvas = this.createCanvas(size);
         this.currentZoom = zoom;
-        // this.currentOffset = topLeft;
     }
 
     mergeCurrentCanvas() {
+        console.time('merge canvas');
         if (!this.currentCanvas) {
             return;
         }
-        this.targetCanvas.getContext('2d').drawImage(this.currentCanvas, 0, 0,
-            this.destSize.x, this.destSize.y
-        );
+        if (this.currentZoom === 'overlay') {
+            blendMultiplyCanvas(this.currentCanvas, this.targetCanvas);
+        } else {
+            this.targetCanvas.getContext('2d').drawImage(this.currentCanvas, 0, 0,
+                this.destSize.x, this.destSize.y
+            );
+        }
         this.currentCanvas = null;
+        console.timeEnd('merge canvas');
     }
 
     getDataUrl() {
@@ -150,7 +205,7 @@ function disposeMap(map) {
     L.DomUtil.remove(container);
 }
 
-async function* iterateLayersTiles(layers, latLngBounds, zooms) {
+async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms) {
     const defaultXHROptions = {
         responseType: 'blob',
         timeout: 10000,
@@ -170,12 +225,21 @@ async function* iterateLayersTiles(layers, latLngBounds, zooms) {
         );
         let map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
         map.addLayer(layer);
-        let {iterateTilePromises, count} = await layer.getTilesInfo({xhrOptions: defaultXHROptions, pixelBounds});
+        let {iterateTilePromises, count} = await layer.getTilesInfo({
+                xhrOptions: defaultXHROptions,
+                pixelBounds,
+                latLngBounds,
+                destPixelSize,
+                resolution,
+                scale,
+                zoom
+            }
+        );
         let lastPromise;
         for (let tilePromise of iterateTilePromises()) {
             lastPromise = tilePromise.tilePromise;
             tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign(tileInfo, {zoom, progressInc: 1 / count}));
+                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc: 1 / count}, tileInfo));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
@@ -224,7 +288,7 @@ async function* promiseQueueBuffer(source, maxActive) {
 }
 
 
-async function renderPages({map, pages, zooms, resolution, progressCallback}) {
+async function renderPages({map, pages, zooms, resolution, scale, progressCallback}) {
     const xhrQueue = new XHRQueue();
     const layers = getLayersForPrint(map, xhrQueue);
     const progressRange = pages.length * layers.length;
@@ -237,11 +301,10 @@ async function renderPages({map, pages, zooms, resolution, progressCallback}) {
         );
 
         const composer = new PageComposer(destPixelSize, pixelBounds);
-        let tilesIterator = await iterateLayersTiles(layers, page.latLngBounds, zooms);
+        let tilesIterator = await iterateLayersTiles(layers, page.latLngBounds, destPixelSize, resolution, scale, zooms);
         let queuedTilesIterator = promiseQueueBuffer(tilesIterator, 20);
         while (true) {
             let {value: tilePromise, done} = await queuedTilesIterator.next();
-            iterateLayersTiles(layers, page.latLngBounds, zooms);
             if (done) {
                 break;
             }

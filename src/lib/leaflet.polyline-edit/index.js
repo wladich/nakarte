@@ -1,9 +1,9 @@
 import L from 'leaflet';
 import './edit_line.css';
 
-function cloneLatLng(ll) {
-    return L.latLng(ll.lat, ll.lng);
-}
+L.Polyline.EditMixinOptions = {
+    className: 'leaflet-editable-line'
+};
 
 L.Polyline.EditMixin = {
     _nodeMarkersZOffset: 10000,
@@ -167,7 +167,7 @@ L.Polyline.EditMixin = {
 
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
-            marker = L.marker(cloneLatLng(node), {
+            marker = L.marker(node.clone(), {
                     icon: L.divIcon(
                         {className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}
                     ),
@@ -252,7 +252,7 @@ L.Polyline.EditMixin = {
         var nodes = this.getLatLngs(),
             isAddingLeft = (index === 1 && this._drawingDirection === -1),
             isAddingRight = (index === nodes.length - 1 && this._drawingDirection === 1);
-        latlng = cloneLatLng(latlng);
+        latlng = latlng.clone();
         this.spliceLatLngs(index, 0, latlng);
         this.makeNodeMarker(index);
         if (!isAddingLeft && (index >= 1)) {
@@ -300,7 +300,7 @@ L.Polyline.EditMixin = {
         this._map.removeLayer(oldNode._nodeMarker);
         delete oldNode._nodeMarker;
         delete oldMarker._lineNode;
-        latlng = cloneLatLng(latlng);
+        latlng = latlng.clone();
         this.spliceLatLngs(index, 1, latlng);
         this.makeNodeMarker(index);
         if (oldNode._segmentOverlay) {

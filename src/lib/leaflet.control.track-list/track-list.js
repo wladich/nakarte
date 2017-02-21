@@ -10,8 +10,6 @@ import {fetch} from 'lib/xhr-promise';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
 import {saveAs} from 'browser-filesaver';
-import 'lib/leaflet.polyline-edit';
-import 'lib/leaflet.polyline-measure';
 import 'lib/leaflet.layer.canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
@@ -19,9 +17,23 @@ import 'lib/controls-styles/controls-styles.css';
 import 'lib/leaflet.control.elevation-profile';
 import 'lib/leaflet.control.commons';
 import {blobFromString} from 'lib/binary-strings';
+import 'lib/leaflet.polyline-edit';
+import 'lib/leaflet.polyline-measure';
 
-var MeasuredEditableLine = L.MeasuredLine.extend({});
-MeasuredEditableLine.include(L.Polyline.EditMixin);
+
+
+const TrackSegment = L.MeasuredLine.extend({
+    includes: L.Polyline.EditMixin,
+
+    options: {
+        weight: 6,
+        lineCap: 'butt',
+        opacity: 0.5,
+
+    }
+});
+TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
+
 
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
@@ -604,12 +616,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         addTrackSegment: function(track, sourcePoints) {
-            var polyline = new MeasuredEditableLine(sourcePoints || [], {
-                    weight: 6,
+            var polyline = new TrackSegment(sourcePoints || [], {
                     color: this.colors[track.color()],
-                    lineCap: 'butt',
-                    className: 'leaflet-editable-line',
-                    opacity: 0.5,
+                    print: true
                 }
             );
             polyline._parentTrack = track;

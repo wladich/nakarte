@@ -197,6 +197,7 @@ L.Control.PrintPages = L.Control.extend({
                     pages,
                     zooms: this.zoomForPrint(),
                     resolution,
+                    scale: this.scale(),
                     progressCallback: this.incrementProgress.bind(this)
                 }
             ).then((images) => {
@@ -226,6 +227,7 @@ L.Control.PrintPages = L.Control.extend({
                     pages,
                     zooms: this.zoomForPrint(),
                     resolution: this.resolution(),
+                    scale: this.scale(),
                     progressCallback: this.incrementProgress.bind(this)
                 }
             )

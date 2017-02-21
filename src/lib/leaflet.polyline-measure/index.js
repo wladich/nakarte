@@ -10,11 +10,12 @@ function pointOnSegmentAtDistance(p1, p2, dist) {
 
 }
 
-function sinCosFromSegment(segment) {
-    var p1 = segment[0],
-        p2 = segment[1],
+function sinCosFromLatLonSegment(segment) {
+    const
+        p1 = L.CRS.EPSG3857.project(segment[0]),
+        p2 = L.CRS.EPSG3857.project(segment[1]),
         dx = p2.x - p1.x,
-        dy = p2.y - p1.y,
+        dy = p1.y - p2.y,
         len = Math.sqrt(dx * dx + dy * dy),
         sin = dy / len,
         cos = dx / len;
@@ -80,19 +81,14 @@ L.MeasuredLine = L.Polyline.extend({
         },
 
         getTicksPositions: function(minTicksIntervalMeters, bounds) {
-            if (!this._map) {
-                return [];
-            }
             var steps = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000];
-            var ticks = [],
-                self = this;
+            var ticks = [];
 
             function addTick(position, segment, distanceValue) {
                 if (bounds && (!bounds.contains(position))) {
                     return;
                 }
-                segment = [self._map.project(segment[0], 1), self._map.project(segment[1], 1)];
-                var sinCos = sinCosFromSegment(segment),
+                var sinCos = sinCosFromLatLonSegment(segment),
                     sin = sinCos[0], cos = sinCos[1],
                     transformMatrix;
 
