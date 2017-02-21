@@ -361,7 +361,11 @@ L.Control.TrackList = L.Control.extend({
                     }
                 );
                 if (bounds.isValid()) {
-                    this.map.flyToBounds(bounds);
+                    if (L.Browser.mobile) {
+                        this.map.fitBounds(bounds);
+                    } else {
+                        this.map.flyToBounds(bounds);
+                    }
                 }
 
             }
