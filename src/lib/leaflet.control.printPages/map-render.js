@@ -146,7 +146,6 @@ class PageComposer {
     }
 
     mergeCurrentCanvas() {
-        console.time('merge canvas');
         if (!this.currentCanvas) {
             return;
         }
@@ -158,7 +157,6 @@ class PageComposer {
             );
         }
         this.currentCanvas = null;
-        console.timeEnd('merge canvas');
     }
 
     getDataUrl() {
