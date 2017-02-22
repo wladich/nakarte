@@ -190,7 +190,7 @@ function getTempMap(zoom, fullSize, pixelBounds) {
             position: 'absolute',
             left: '0',
             top: '0',
-            visibility: 'hidden'
+            visibility: 'hidden',
         }
     );
 
