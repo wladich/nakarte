@@ -233,9 +233,9 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
                 zoom
             }
         );
-        let lastPromise;
+        let layerPromises = [];
         for (let tilePromise of iterateTilePromises()) {
-            lastPromise = tilePromise.tilePromise;
+            layerPromises.push(tilePromise.tilePromise);
             tilePromise.tilePromise =
                 tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc: 1 / count}, tileInfo));
             doStop = yield tilePromise;
@@ -248,9 +248,7 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
             disposeMap(map);
             break;
         } else {
-            if (lastPromise) {
-                lastPromise.then(() => disposeMap(map));
-            }
+            Promise.all(layerPromises).then(() => disposeMap(map));
         }
     }
 }
