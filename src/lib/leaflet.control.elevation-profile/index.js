@@ -36,6 +36,9 @@ function gradientToAngle(g) {
 }
 
 function pathRegularSamples(latlngs, step) {
+    if (!latlngs.length) {
+        return [];
+    }
     var samples = [],
         lastSampleDist = 0,
         lastPointDistance = 0,
@@ -204,10 +207,13 @@ L.Control.ElevationProfile = L.Class.extend({
             L.setOptions(this, options);
             this.path = latlngs;
             var samples = this.samples = pathRegularSamples(this.path, this.options.samplingInterval);
+            if (!samples.length) {
+                notify('Track is empty');
+                return;
+            }
             var self = this;
             this.horizZoom = 1;
             this.dragStart = null;
-
             this._getElevation(samples)
                 .then(function(values) {
                         self.values = values;
