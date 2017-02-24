@@ -112,7 +112,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
-                        {code: 'N', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
+                        {code: 'N', tms: true, scaleDependent: false, maxNativeZoom: 12, print: true, jnx: true}
                     )
                 },
                 {
