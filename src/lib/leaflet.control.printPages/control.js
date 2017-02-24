@@ -207,7 +207,7 @@ L.Control.PrintPages = L.Control.extend({
                 }
             ).catch((e) => {
                     if (e.status !== undefined) {
-                        notifyXhrError(e, 'map');
+                        notifyXhrError(e, 'map tile');
                     } else {
                         notify(e);
                     }
