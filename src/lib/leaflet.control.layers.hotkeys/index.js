@@ -14,7 +14,7 @@ function extendLayerName(name, layer) {
 function enableHotKeys(control) {
     const originalOnAdd = control.onAdd;
     const originalOnRemove = control.onRemove;
-    const originalAddLayer = control._addLayer;
+    const originalAddItem = control._addItem;
 
     if (control._hotKeysEnabled) {
         return control;
@@ -23,9 +23,10 @@ function enableHotKeys(control) {
     L.Util.extend(control, {
             _hotKeysEnabled: true,
 
-            _addLayer: function(layer, name, overlay) {
-                name = extendLayerName(name, layer);
-                return originalAddLayer.call(this, layer, name, overlay);
+            _addItem: function(obj) {
+                obj = L.Util.extend({}, obj);
+                obj.name = extendLayerName(obj.name, obj.layer);
+                return originalAddItem.call(this, obj);
             },
 
             onAdd: function(map) {
