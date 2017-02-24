@@ -23,7 +23,8 @@ import hashState from 'lib/leaflet.hashState/hashState';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
 import 'lib/leaflet.control.layers.events';
-
+import 'lib/leaflet.control.jnx';
+import 'lib/leaflet.control.jnx/hash-state';
 
 
 function setUp() {
@@ -76,6 +77,10 @@ function setUp() {
     if (!printControl.hasPages()) {
         printControl.setMinimized();
     }
+
+    new L.Control.JNX(layersControl, {position: 'bottomleft'})
+        .addTo(map)
+        .enableHashState('j');
 
     /////////// controls bottom-right corner
 

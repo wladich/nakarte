@@ -27,12 +27,17 @@ const GridLayerGrabMixin = {
                     let tilePos = this._getTilePos(coords);
                     const coordsPlusOne = coords.add(L.point(1, 1));
                     coordsPlusOne.z = coords.z;
-                    const tileSize = this._getTilePos(coordsPlusOne).subtract(tilePos);
+                    const tilePlusOne = this._getTilePos(coordsPlusOne)
+                    const tileSize = tilePlusOne.subtract(tilePos);
+                    const latLngBounds = L.latLngBounds(
+                        this._map.unproject(tilePos.add(this._level.origin)),
+                        this._map.unproject(tilePlusOne.add(this._level.origin)));
                     tilePos = tilePos.add(this._level.origin).subtract(topLeft);
-                    let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(this._wrapCoords(coords), printOptions);
+                    let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(
+                        this._wrapCoords(coords), printOptions);
                     yield {
                         tilePromise: tilePromise.then((image) => {
-                                return {image, tilePos, tileSize};
+                                return {image, tilePos, tileSize, latLngBounds};
                             }
                         ),
                         abortLoading
@@ -59,8 +64,9 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
                 url = urlViaCorsProxy(url);
             }
             let promise = this.options.xhrQueue.put(url, xhrOptions);
+
             return {
-                tilePromise: promise.then(imgFromDataString),
+                tilePromise: printOptions.rawData ? promise : promise.then(imgFromDataString),
                 abortLoading: () => promise.abort()
             }
         }
