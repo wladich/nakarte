@@ -262,7 +262,7 @@ L.Control.PrintPages = L.Control.extend({
                 '-',
                 {text: 'Delete', callback: this.removePage.bind(this, page)},
                 '-',
-                {text: 'Save image', callback: this.savePageJpg.bind(this, page)}
+                {text: 'Save image', callback: this.savePageJpg.bind(this, page), disabled: this.makingPdf()}
             ];
             if (this.pages.length > 1) {
                 items.push({text: 'Change order', separator: true});
