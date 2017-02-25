@@ -46,8 +46,8 @@ L.Control.TrackList = L.Control.extend({
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
             this.readingFiles = ko.observable(false);
-            this.readProgressRange = ko.observable(10);
-            this.readProgressDone = ko.observable(2);
+            this.readProgressRange = ko.observable();
+            this.readProgressDone = ko.observable();
             this._lastTrackColor = 0;
             this.trackListHeight = ko.observable(0);
         },
@@ -191,6 +191,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         loadFilesFromFilesObject: function(files) {
+            this.readProgressDone(undefined);
+            this.readProgressRange(1);
+            this.readingFiles(true);
+
             readFiles(files).then(function(fileDataArray) {
                     var geodataArray = fileDataArray.map(function(fileData) {
                             return parseGeoFile(fileData.filename, fileData.data);
