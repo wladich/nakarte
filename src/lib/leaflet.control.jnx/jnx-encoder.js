@@ -35,6 +35,17 @@ const JnxWriter = L.Class.extend({
                 LEVEL_INFO_SIZE = 17,
                 TILE_INFO_SIZE = 28;
 
+            let totalTilesCount = 0;
+            for (let levelTiles of Object.values(this.tiles)) {
+                totalTilesCount += levelTiles.length;
+            }
+            if (totalTilesCount === 0) {
+                throw new Error('No tiles collected, JNX is empty');
+            }
+            if (totalTilesCount > 50000) {
+                throw new Error('Too many tiles found (more then 50000)');
+            }
+
             let west = 1e10,
                 east = -1e10,
                 north = -1e10,
