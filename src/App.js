@@ -90,11 +90,16 @@ function setUp() {
     }
     tracklist.enableHashState('nktk');
 
+
     if (L.Browser.mobile) {
         layersControl.setMinimized();
         if (!tracklist.hasTracks()) {
             tracklist.setMinimized();
         }
+    }
+
+    if (L.Browser.mobile) {
+        map.on('mousedown dragstart', () => layersControl.setMinimized())
     }
 
     raiseControlsOnFocus(map);
