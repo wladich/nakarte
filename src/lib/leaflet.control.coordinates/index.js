@@ -24,6 +24,7 @@ L.Control.Coordinates = L.Control.extend({
         onAdd: function(map) {
             this._map = map;
             var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
+            container.title = "Show coordinates at cursor";
             this._stopContainerEvents();
             this._field_lat = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
             this._field_lon = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);

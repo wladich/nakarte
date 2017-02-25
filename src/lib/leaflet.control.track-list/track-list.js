@@ -59,7 +59,8 @@ L.Control.TrackList = L.Control.extend({
             this._stopContainerEvents();
 
             container.innerHTML = `
-                <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"></div>
+                <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"
+                 title="Load, edit and save tracks"></div>
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint">
@@ -73,7 +74,7 @@ L.Control.TrackList = L.Control.extend({
                     ><input type="text" class="input-url" placeholder="Track URL"
                         data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: onFileInputRightClick}"
                     ><a class="button download-url" title="Download URL" data-bind="click: loadFilesFromUrl"></a
-                    ><a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}"></a>
+                    ><a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}" title="Menu"></a>
                 </div>
                 <div style="text-align: center">
                     <div data-bind="

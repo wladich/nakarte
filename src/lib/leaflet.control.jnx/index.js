@@ -105,7 +105,8 @@ L.Control.JNX = L.Control.extend({
             this._map = map;
             const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-jnx');
             container.innerHTML = `
-                <a class="button" data-bind="visible: !makingJnx(), click: onButtonClicked">JNX</a>
+                <a class="button" data-bind="visible: !makingJnx(), click: onButtonClicked"
+                 title="Make JNX for Garmin receivers">JNX</a>
                 <div data-bind="
                     component:{
                         name: 'progress-indicator',

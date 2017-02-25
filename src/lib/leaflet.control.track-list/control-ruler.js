@@ -18,6 +18,7 @@ L.Control.TrackList.Ruler = L.Control.extend({
     onAdd: function(map) {
         this._map = map;
         const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-ruler');
+        container.title = "Measure distance";
         this._stopContainerEvents();
         L.DomEvent.on(container, 'click', this.onClick, this);
         return container;

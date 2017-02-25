@@ -30,6 +30,7 @@ function enableMinimize(control) {
                 const minimizeButton = L.DomUtil.create('div', 'button-minimize');
                 this._topRow.appendChild(minimizeButton);
                 const expandButton = L.DomUtil.create('div', 'leaflet-control-button-toggle', container);
+                expandButton.title = 'Select layers';
                 L.DomEvent.on(expandButton, 'click', this.setExpanded, this);
                 L.DomEvent.on(minimizeButton, 'click', this.setMinimized, this);
             },
