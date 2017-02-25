@@ -1,4 +1,8 @@
 (function (GLOBAL) {
+    function decodeUTF8(s){
+        return decodeURIComponent(escape(s));
+    }
+
     var JSUnzip = function (fileContents) {
         this.fileContents = new JSUnzip.BigEndianBinaryStream(fileContents);
     }
@@ -39,9 +43,6 @@
             throw "File contains encrypted entry. Not supported.";
         }
 
-        if (this.isUsingUtf8()) {
-            throw "File is using UTF8. Not supported.";
-        }
 
         this.crc32              = binaryStream.getNextBytesAsNumber(4);
         this.compressedSize     = binaryStream.getNextBytesAsNumber(4);
@@ -64,6 +65,11 @@
             }
             binaryStream.getNextBytesAsNumber(16);  //Skip the descriptor and move to beginning of next ZipEntry
         }
+
+        if (this.isUsingUtf8()) {
+            this.fileName = decodeUTF8(this.fileName);
+        }
+
     }
 
     JSUnzip.ZipEntry.prototype = {
