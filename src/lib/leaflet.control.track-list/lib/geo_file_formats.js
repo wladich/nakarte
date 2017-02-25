@@ -275,7 +275,11 @@ function parseKml(txt, name) {
 
 function parseKmz(txt, name) {
     var uncompressed;
-    var unzipper = new JSUnzip(txt);
+    try {
+        var unzipper = new JSUnzip(txt);
+    } catch (e) {
+        return null;
+    }
     var tracks = [],
         points = [],
         geodata,
@@ -284,7 +288,11 @@ function parseKmz(txt, name) {
     if (!unzipper.isZipFile()) {
         return null;
     }
-    unzipper.readEntries();
+    try {
+        unzipper.readEntries();
+    } catch (e) {
+        return null;
+    }
     var i, entry;
     for (i = 0; i < unzipper.entries.length; i++) {
         entry = unzipper.entries[i];
@@ -355,11 +363,19 @@ function parseYandexRulerUrl(s) {
 
 
 function parseZip(txt, name) {
-    var unzipper = new JSUnzip(txt);
+    try {
+        var unzipper = new JSUnzip(txt);
+    } catch (e) {
+        return null;
+    }
     if (!unzipper.isZipFile()) {
         return null;
     }
-    unzipper.readEntries();
+    try {
+        unzipper.readEntries();
+    } catch (e) {
+        return null;
+    }
     var geodata_array = [];
     for (var i = 0; i < unzipper.entries.length; i++) {
         var entry = unzipper.entries[i];
