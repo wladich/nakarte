@@ -246,7 +246,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                        {code: 'Otm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true}
+                        {code: 'Otm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true, noCors: true}
                     )
                 },
                 {
@@ -291,7 +291,8 @@ export default function getLayers() {
                             maxNativeZoom: 15,
                             print: true,
                             jnx: true,
-                            scaleDependent: false
+                            scaleDependent: false,
+                            noCors: true
                         }
                     )
                 }]
@@ -306,7 +307,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
-                        {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true}
+                        {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
                 {
@@ -333,7 +334,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_sommer/{z}/{x}/{y}.png",
-                        {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true}
+                        {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
                 {
@@ -342,7 +343,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_vinter/{z}/{x}/{y}.png",
-                        {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true}
+                        {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
                 {
@@ -353,7 +354,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("http://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
-                        {code: 'Nr', tms: false, print: true, jnx: true, scaleDependent: true}
+                        {code: 'Nr', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 }]
         },
