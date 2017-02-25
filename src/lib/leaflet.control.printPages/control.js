@@ -64,8 +64,8 @@ L.Control.PrintPages = L.Control.extend({
             this.pageHeight = ko.observable(297).extend({checkNumberRange: [10, 9999]});
             this.settingsExpanded = ko.observable(false);
             this.makingPdf = ko.observable(false);
-            this.downloadProgressRange = ko.observable(undefined);
-            this.downloadProgressDone = ko.observable(undefined);
+            this.downloadProgressRange = ko.observable();
+            this.downloadProgressDone = ko.observable();
             this.marginLeft = ko.observable(3).extend({checkNumberRange: [0, 99]});
             this.marginRight = ko.observable(3).extend({checkNumberRange: [0, 99]});
             this.marginTop = ko.observable(3).extend({checkNumberRange: [0, 99]});
@@ -182,7 +182,8 @@ L.Control.PrintPages = L.Control.extend({
             if (!this._map) {
                 return;
             }
-            this.downloadProgressDone(0);
+            this.downloadProgressRange(1000);
+            this.downloadProgressDone(undefined);
             this.makingPdf(true);
             const pages = this.pages.map((page) => {
                     return {
@@ -220,7 +221,8 @@ L.Control.PrintPages = L.Control.extend({
                 latLngBounds: page.getLatLngBounds(),
                 printSize: page.getPrintSize()
             }];
-            this.downloadProgressDone(0);
+            this.downloadProgressRange(1000);
+            this.downloadProgressDone(undefined);
             this.makingPdf(true);
             renderPages({
                     map: this._map,
