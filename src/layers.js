@@ -251,13 +251,24 @@ export default function getLayers() {
                 },
                 {
                     title: 'OpenCycleMap',
+                    description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     order: 12,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {code: 'Ocm', scaleDependent: true, print: true, jnx: true}
                     )
-                }]
+                },
+                {
+                    title: 'OSM Outdoors',
+                    order: 13,
+                    isOverlay: false,
+                    isDefault: false,
+                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                        {code: 'Oso', scaleDependent: true, print: true, jnx: true}
+                    )
+                },
+            ]
         },
         {
             group: 'Topo maps',

@@ -4,5 +4,6 @@ export default {
     bingKey: 'AhZy06XFi8uAADPQvWNyVseFx4NHYAOH-7OTMKDPctGtYo86kMfx2T0zUrF5AAaM',
     westraDataBaseUrl: 'http://nakarte.tk/westraPasses/',
     CORSProxyUrl: 'http://proxy.nakarte.tk/',
-    elevationsServer: 'http://elevation.nakarte.tk/'
+    elevationsServer: 'http://elevation.nakarte.tk/',
+    thunderforestKey: 'cf99c28b955f493eb805df0e9f4c7c30'
 }
