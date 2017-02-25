@@ -4,7 +4,7 @@ import './style.css';
 import 'lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import Contextmenu from 'lib/contextmenu';
-import {makeJnxFromLayer} from './jnx-maker';
+import {makeJnxFromLayer, minZoom} from './jnx-maker';
 import {saveAs} from 'browser-filesaver';
 import {notify} from 'lib/notifications';
 
@@ -41,11 +41,15 @@ L.Control.JNX = L.Control.extend({
 
         },
 
-        estimateTilesNumber: function(zoom) {
+        estimateTilesCount: function(maxZoom) {
+            let tilesCount = 0;
             const bounds = this._selector.getBounds();
-            const topLeftTile = this._map.project(bounds.getNorthWest(), zoom).divideBy(256).floor();
-            const bottomRightTile = this._map.project(bounds.getSouthEast(), zoom).divideBy(256).ceil();
-            return Math.ceil((bottomRightTile.x - topLeftTile.x) * (bottomRightTile.y - topLeftTile.y) * 4 / 3);
+            for (let zoom=minZoom(maxZoom); zoom <= maxZoom; zoom++) {
+                const topLeftTile = this._map.project(bounds.getNorthWest(), zoom).divideBy(256).floor();
+                const bottomRightTile = this._map.project(bounds.getSouthEast(), zoom).divideBy(256).ceil();
+                tilesCount += Math.ceil((bottomRightTile.x - topLeftTile.x) * (bottomRightTile.y - topLeftTile.y));
+            }
+            return tilesCount;
         },
 
         makeMenuItems: function() {
@@ -63,13 +67,16 @@ L.Control.JNX = L.Control.extend({
 
             const items = [{text: `<b>${layerName}</b>`}];
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
-                let tilesCount = this.estimateTilesNumber(zoom);
+                let tilesCount = this.estimateTilesCount(zoom);
                 let fileSizeMb = tilesCount * 0.02;
-                items.push({
-                        text: `Zoom ${zoom} (${metersPerPixel.toFixed(2)} m/pixel) &mdash; ${tilesCount} (~${fileSizeMb.toFixed(1)} Mb)`,
-                        callback: () => this.makeJnx(layer, layerName, zoom)
-                    }
-                );
+                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
+                let resolutionString = metersPerPixel.toFixed(2);
+                let sizeString = fileSizeMb.toFixed(1);
+                let item = {
+                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
+                    callback: () => this.makeJnx(layer, layerName, zoom)
+                };
+                items.push(item);
                 metersPerPixel *= 2;
             }
             return items;

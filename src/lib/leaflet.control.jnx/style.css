@@ -53,3 +53,6 @@
     cursor: e-resize !important;
 }
 
+.jnx-menu-warning {
+    color: red;
+}

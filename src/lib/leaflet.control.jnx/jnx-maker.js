@@ -11,6 +11,10 @@ const defaultXHROptions = {
     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
 };
 
+function minZoom(maxZoom) {
+    return Math.max(maxZoom - 4, 0);
+}
+
 function imageFromarrayBuffer(arr) {
     const dataUrl = 'data:image/png;base64,' + btoa(arrayBufferToString(arr));
     const image = new Image();
@@ -60,7 +64,7 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
     const xhrQueue = new XHRQueue();
     let doStop = false;
     let error;
-    const minZoomLevel = Math.max(maxZoomLevel - 4, 0);
+    const minZoomLevel = minZoom(maxZoomLevel);
     let progressWeight = 1;
     for (let zoom = maxZoomLevel; zoom >= minZoomLevel; zoom--) {
         let pixelBounds = L.bounds(
@@ -115,4 +119,4 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
 }
 
 
-export {makeJnxFromLayer};
+export {makeJnxFromLayer, minZoom};
