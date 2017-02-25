@@ -47,7 +47,7 @@ class Contextmenu {
         container.className = 'contextmenu';
         container.style.zIndex = 10000;
 
-        window.addEventListener('keydown', this.onKeyDown);
+        window.addEventListener('keydown', this.onKeyDown, true);
         window.addEventListener('mousedown', this.onMouseDown, true);
 
         for (let item of this.createItems()) {
@@ -63,7 +63,7 @@ class Contextmenu {
         document.body.removeChild(this._container);
         this._container = null;
 
-        window.removeEventListener('keydown', this.onKeyDown);
+        window.removeEventListener('keydown', this.onKeyDown, true);
         window.removeEventListener('mousedown', this.onMouseDown, true);
     }
 
