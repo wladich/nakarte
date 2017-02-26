@@ -2,6 +2,7 @@ import L from 'leaflet';
 import 'lib/leaflet.polyline-measure';
 
 L.Polyline.include({
+        _printProgressWeight: 0.1,
         printWidthMm: 1,
 
         cloneForPrint: function(options) {

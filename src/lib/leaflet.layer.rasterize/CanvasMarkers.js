@@ -4,6 +4,8 @@ import {CanvasLayerGrabMixin} from './TileLayer';
 
 L.Layer.CanvasMarkers.include(CanvasLayerGrabMixin);
 L.Layer.CanvasMarkers.include({
+        _printProgressWeight: 0.1,
+
         cloneMarkers: function() {
             const markers = this.rtree.all();
 

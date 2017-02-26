@@ -200,8 +200,9 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
         let layerPromises = [];
         for (let tilePromise of iterateTilePromises()) {
             layerPromises.push(tilePromise.tilePromise);
+            let progressInc = (layer._printProgressWeight || 1) / count;
             tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc: 1 / count}, tileInfo));
+                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc}, tileInfo));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
@@ -251,7 +252,11 @@ async function* promiseQueueBuffer(source, maxActive) {
 async function renderPages({map, pages, zooms, resolution, scale, progressCallback}) {
     const xhrQueue = new XHRQueue();
     const layers = getLayersForPrint(map, xhrQueue);
-    const progressRange = pages.length * layers.length;
+    let progressRange = 0;
+    for (let layer of layers) {
+        progressRange += layer._printProgressWeight || 1;
+    }
+    progressRange *= pages.length;
     const pageImagesInfo = [];
     for (let page of pages) {
         let destPixelSize = page.printSize.multiplyBy(resolution / 25.4).round();
