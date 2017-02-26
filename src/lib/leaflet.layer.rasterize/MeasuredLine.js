@@ -86,7 +86,7 @@ L.MeasuredLine.include({
             const ticks = this.getTicksPositions(minTicksIntervalMeters);
             const ticksPixelSize = this.tickFontSizeMm / 25.4 * printOptions.resolution;
             const transform = this._makelatLngToCanvasPixelTransformer(printOptions);
-            ctx.font = ticksPixelSize + 'px verdana';
+            ctx.font = `${ticksPixelSize}px verdana`;
             ctx.fillStyle = this.options.color;
             for (let tick of ticks) {
                 let m = tick.transformMatrix;
