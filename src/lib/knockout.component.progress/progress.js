@@ -1,4 +1,4 @@
-import ko from 'knockout';
+import ko from 'vendored/knockout';
 import './style.css'
 
 ko.components.register('progress-indicator', {

@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import ko from 'knockout';
+import ko from 'vendored/knockout';
 import Contextmenu from 'lib/contextmenu';
 import 'lib/knockout.component.progress/progress';
 import './track-list.css';
