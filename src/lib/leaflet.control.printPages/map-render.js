@@ -29,7 +29,7 @@ function getLayersForPrint(map, xhrQueue) {
         const order = [];
         while (el !== layer._map._container) {
             order.push(getZIndex(el));
-            el = el.parentElement;
+            el = el.parentNode;
         }
         return order.reverse()
     }

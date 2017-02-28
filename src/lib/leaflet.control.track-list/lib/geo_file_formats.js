@@ -74,7 +74,11 @@ function parseGpx(txt, name) {
     txt = stripBom(txt);
     // remove namespaces
     txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
-    var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+    try {
+        var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+    } catch (e) {
+        return null;
+    }
     if (dom.documentElement.nodeName === 'parsererror') {
         return null;
     }
@@ -262,7 +266,11 @@ function parseKml(txt, name) {
 
     txt = stripBom(txt);
     txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
-    var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+    try {
+        var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+    } catch (e) {
+        return null;
+    }
     if (dom.documentElement.nodeName === 'parsererror') {
         return null;
     }

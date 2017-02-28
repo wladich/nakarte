@@ -190,7 +190,7 @@ L.Wikimapia = L.GridLayer.extend({
             const place = this.getPlaceAtMousePos(e);
             if (place) {
                 const url = `http://wikimapia.org/${place.id}/ru/`;
-                openPopupWindow(url, 568, 'wikimapia-details');
+                openPopupWindow(url, 564, 'wikimapia-details');
             }
         },
 

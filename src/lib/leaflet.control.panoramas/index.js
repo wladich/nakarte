@@ -5,6 +5,12 @@ import getGoogle from 'lib/googleMapsApi';
 import 'lib/leaflet.hashState/leaflet.hashState';
 import 'lib/leaflet.control.commons';
 
+function fireRefreshEventOnWindow() {
+    const evt = document.createEvent("HTMLEvents");
+    evt.initEvent('resize', true, false);
+    window.dispatchEvent(evt);
+}
+
 L.Control.Panoramas = L.Control.extend({
         includes: L.Mixin.Events,
 
@@ -52,7 +58,7 @@ L.Control.Panoramas = L.Control.extend({
             }
             L.DomUtil.addClass(this._panoramaContainer, 'enabled');
             this.getGoogleApi().then((api) => api.panorama.setVisible(true));
-            window.dispatchEvent(new Event('resize'));
+            fireRefreshEventOnWindow();
             this.marker.addTo(this._map);
             this.panoramaVisible = true;
             this.notifyChanged();
@@ -64,7 +70,7 @@ L.Control.Panoramas = L.Control.extend({
             }
             this.getGoogleApi().then((api) => api.panorama.setVisible(false));
             L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
-            window.dispatchEvent(new Event('resize'));
+            fireRefreshEventOnWindow();
             this._map.removeLayer(this.marker);
             this.panoramaVisible = false;
             this.notifyChanged();

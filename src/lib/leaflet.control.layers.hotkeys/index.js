@@ -67,7 +67,7 @@ function enableHotKeys(control) {
                     let layerId = L.stamp(layer.layer);
                     if (layer.layer.options && layer.layer.options.code && layer.layer.options.code.toUpperCase() === key) {
                         const inputs = this._form.getElementsByTagName('input');
-                        for (let input of inputs) {
+                        for (let input of [...inputs]) {
                             if (input.layerId === layerId) {
                                 input.click();
                                 break;

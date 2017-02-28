@@ -282,7 +282,7 @@ ${buttonsHtml}`;
                         tms: form.tms.checked,
                         scaleDependent: form.scaleDependent.checked,
                         maxZoom: form.maxZoom.value,
-                        isOverlay: form.overlay.value === 'yes'
+                        isOverlay: form.querySelector('input[name="overlay"]:checked').value === 'yes'
                     };
                     callback(fieldValues);
                 }

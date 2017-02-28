@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import './style.css';
 
 function fixAll() {
     fixPanAnimationBug();
@@ -22,7 +23,7 @@ function fixPanAnimationBug() {
 }
 
 function fixTouchDetection() {
-    L.Browser.touch &= (navigator.pointerEnabled || navigator.maxTouchPoints)
+    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints)
 }
 
 export {fixAll}
