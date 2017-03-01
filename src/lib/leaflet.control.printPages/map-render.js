@@ -59,35 +59,44 @@ function getLayersForPrint(map, xhrQueue) {
 }
 
 function blendMultiplyCanvas(src, dest) {
-    var s_data = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
-    var d_image_data = dest.getContext('2d').getImageData(0, 0, src.width, src.height);
-    var d_data = d_image_data.data;
-    var data_length = s_data.length,
-        sr, sg, sb, sa,
-        dr, dg, db,
-        l;
-    for (var i = 0; i < data_length; i += 4) {
-        sa = s_data[i + 3];
-        if (sa) {
-            sr = s_data[i];
-            sg = s_data[i + 1];
-            sb = s_data[i + 2];
-            dr = d_data[i];
-            dg = d_data[i + 1];
-            db = d_data[i + 2];
-
-            l = (dr + dg + db) / 3;
-            l = l / 255 * 192 + 63;
-            dr = sr / 255 * l;
-            dg = sg / 255 * l;
-            db = sb / 255 * l;
-
-            d_data[i] = dr;
-            d_data[i + 1] = dg;
-            d_data[i + 2] = db;
-        }
+    if (src.width !== dest.width || src.height !== dest.height) {
+        throw new Error('Canvas size mismatch');
     }
-    dest.getContext('2d').putImageData(d_image_data, 0, 0);
+    const height = src.height;
+    let srcContext = src.getContext('2d');
+    let destContext = dest.getContext('2d');
+    for (let y = 0; y < height; y++) {
+        let s_data = srcContext.getImageData(0, y, src.width, 1).data;
+        let d_image_data = destContext.getImageData(0, y, src.width, 1);
+        let d_data = d_image_data.data;
+        let data_length = s_data.length,
+            sr, sg, sb, sa,
+            dr, dg, db,
+            l;
+            for (let i = 0; i < data_length; i += 4) {
+                sa = s_data[i + 3];
+                if (sa) {
+                    sr = s_data[i];
+                    sg = s_data[i + 1];
+                    sb = s_data[i + 2];
+                    dr = d_data[i];
+                    dg = d_data[i + 1];
+                    db = d_data[i + 2];
+
+                    l = (dr + dg + db) / 3;
+                    l = l / 255 * 192 + 63;
+                    dr = sr / 255 * l;
+                    dg = sg / 255 * l;
+                    db = sb / 255 * l;
+
+                    d_data[i] = dr;
+                    d_data[i + 1] = dg;
+                    d_data[i + 2] = db;
+                }
+            }
+            dest.getContext('2d').putImageData(d_image_data, 0, y);
+
+    }
 }
 
 class PageComposer {
