@@ -165,12 +165,16 @@ class PageComposer {
                 this.destSize.x, this.destSize.y
             );
         }
+        this.currentCanvas.width = 0;
+        this.currentCanvas.height = 0;
         this.currentCanvas = null;
     }
 
     getDataUrl() {
         this.mergeCurrentCanvas();
         const dataUrl = this.targetCanvas.toDataURL("image/jpeg");
+        this.targetCanvas.width = 0;
+        this.targetCanvas.height = 0;
         this.targetCanvas = null;
         return dataUrl;
     }
