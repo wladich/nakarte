@@ -6,7 +6,8 @@ const yandexCrs = L.CRS.EPSG3395;
 L.Layer.Yandex = L.TileLayer.extend({
         options: {
             subdomains: '1234',
-            className: 'yandex-tile-layer'
+            className: L.Browser.retina ? '' : 'yandex-tile-layer',
+            yandexScale: L.Browser.retina ? 2 : 1
         },
 
         initialize: function(mapType, options) {
@@ -15,7 +16,7 @@ L.Layer.Yandex = L.TileLayer.extend({
             if (mapType === 'sat') {
                 url = 'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}';
             } else {
-                url = 'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}';
+                url = 'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}';
             }
 
             L.TileLayer.prototype.initialize.call(this, url, options);
