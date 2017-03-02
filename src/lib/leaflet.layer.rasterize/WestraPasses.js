@@ -1,32 +1,8 @@
 import L from "leaflet";
 import 'lib/leaflet.layer.westraPasses';
 import {WestraPassesMarkers} from 'lib/leaflet.layer.westraPasses/westraPassesMarkers';
-import {CanvasLayerGrabMixin} from './TileLayer';
 import 'lib/leaflet.layer.canvasMarkers'
-
-const WestraPrint = L.Layer.CanvasMarkers.extend({
-    includes: CanvasLayerGrabMixin,
-
-    initialize: function(srcLayer, options) {
-        this.srcLayer = srcLayer;
-        L.Layer.CanvasMarkers.prototype.initialize.call(this, null, options);
-    },
-
-    waitTilesReadyToGrab: function() {
-        let promise;
-        if (this.srcLayer._dataLoaded) {
-            promise = Promise.resolve(null);
-        } else {
-            // FIXME: handle data load errors
-            promise = new Promise((resolve) => {
-                this.srcLayer.once('data-loaded', resolve);
-            })
-        }
-        return promise.then(() => {
-            this.addMarkers(this.srcLayer.rtree.all());
-        })
-    },
-});
+import './CanvasMarkers';
 
 L.Layer.WestraPasses.addInitHook(function() {
     this.markers.options.print = this.options.print;
@@ -34,8 +10,22 @@ L.Layer.WestraPasses.addInitHook(function() {
 });
 
 WestraPassesMarkers.include({
+    waitDataReady: function() {
+        if (this._dataLoaded) {
+            return Promise.resolve()
+        }
+        return new Promise((resolve) => {
+           this.on('data-loaded', resolve);
+        });
+    },
+
     cloneForPrint: function (options) {
-        return new WestraPrint(this, L.Util.extend(
-            {}, this.options, {iconScale: 1.5, labelFontSize: 14}, options));
+        options = L.Util.extend({}, options);
+        return new WestraPassesMarkers(this._baseUrl, options);
+    },
+
+    getTilesInfo: async function(printOptions) {
+        await this.waitDataReady();
+        return await L.Layer.CanvasMarkers.prototype.getTilesInfo.call(this, printOptions);
     }
 });

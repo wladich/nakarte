@@ -17,6 +17,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         initialize: function(baseUrl, options) {
             L.Layer.CanvasMarkers.prototype.initialize.call(this, null, options);
             this.on('markerclick', this.showPassDescription, this);
+            this._baseUrl = baseUrl;
             this.url = baseUrl + this.options.filePasses;
         },
 

@@ -121,7 +121,7 @@ class PageComposer {
         }
         let zoom;
         if (tileInfo.isOverlay) {
-            zoom = 'overlay';
+            zoom = tileInfo.overlaySolid ? 'solidOverlay' : 'overlay';
         } else {
             zoom = tileInfo.zoom;
         }
@@ -141,7 +141,7 @@ class PageComposer {
 
     setupCurrentCanvas(zoom) {
         let size;
-        if (zoom === 'overlay') {
+        if (zoom === 'overlay' || zoom === 'solidOverlay') {
             size = this.destSize;
         } else {
             const q = 1 << (24 - zoom);
