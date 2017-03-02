@@ -51,7 +51,7 @@ L.Control.PrintPages = L.Control.extend({
             {'name': 'A2', width: 420, height: 594},
             {'name': 'A3', width: 297, height: 420},
             {'name': 'A4', width: 210, height: 297},
-            {'name': 'A5', width: 594, height: 210}
+            {'name': 'A5', width: 148, height: 210}
         ],
 
         initialize: function(options) {
