@@ -90,7 +90,7 @@ L.MeasuredLine.include({
             ctx.fillStyle = this.options.color;
             for (let tick of ticks) {
                 let m = tick.transformMatrix;
-                let label = '\u2014 ' + Math.round((tick.distanceValue / 10)) / 100 + ' km';
+                let label = '\u2501\u2501 ' + Math.round((tick.distanceValue / 10)) / 100 + ' km';
                 let position = transform(tick.position);
                 ctx.setTransform(m[0], m[1], m[2], m[3], position.x, position.y);
                 ctx.fillText(label, 0, ticksPixelSize * 0.3);
