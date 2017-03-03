@@ -174,11 +174,11 @@ L.Wikimapia = L.GridLayer.extend({
                             color: '#E6B800'
                         }
                     ),
-                    label: L.tooltip({className: 'wikimapia-tooltip'}, null)
+                    label: L.tooltip({className: 'wikimapia-tooltip-wrapper'}, null)
                 };
                 this.highlightedPlace.label.setLatLng(e.latlng);
                 this.highlightedPlace.polygon.addTo(this._map);
-                this.highlightedPlace.label.setContent(place.title);
+                this.highlightedPlace.label.setContent(`<div class="wikimapia-tooltip">${place.title}</div>`);
                 this._map.addLayer(this.highlightedPlace.label);
             }
             if (this.highlightedPlace) {

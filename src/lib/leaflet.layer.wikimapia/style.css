@@ -1,21 +1,31 @@
+.wikimapia-tooltip-wrapper {
+    width: 500px;
+    border: 0;
+    padding: 0;
+    background: 0;
+    box-shadow: none;
+    opacity: 1 !important;
+}
+
 .wikimapia-tooltip {
     background-color: #FFFFA3;
     font-size: 10pt;
     line-height: 1;
     border: 1px solid #777;
     border-radius: 4px;
-    white-space: nowrap;
+    white-space: normal;
     padding: 4px 6px;
-    position: absolute;
-    z-index: 10000;
-    max-width: 500px;
+    display: inline-block;
     box-sizing: border-box;
     margin-top: -6px;
-    /*box-shadow: none !important;*/
 }
 
-.wikimapia-tooltip:before {
+.wikimapia-tooltip-wrapper:before {
     border: none !important;
+}
+
+.leaflet-tooltip-left .wikimapia-tooltip {
+    float: right;
 }
 
 .leaflet-tooltip-right {
