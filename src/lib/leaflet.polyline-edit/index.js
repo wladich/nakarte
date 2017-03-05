@@ -82,8 +82,11 @@ L.Polyline.EditMixin = {
 
     onMapClick: function(e) {
         if (this._drawingDirection) {
-            var newNodeIndex = this._drawingDirection === -1 ? 1 : this.getLatLngs().length - 1;
-            this.addNode(newNodeIndex, e.latlng);
+            // click event on map can be from keypress with keycode=13 in which case it doesnot have position
+            if (e.latlng) {
+                var newNodeIndex = this._drawingDirection === -1 ? 1 : this.getLatLngs().length - 1;
+                this.addNode(newNodeIndex, e.latlng);
+            }
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit();
