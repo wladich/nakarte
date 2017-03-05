@@ -1,10 +1,10 @@
-export default {
+import secrets from './secrets';
+
+export default Object.assign({
     email: 'nakarte@nakarte.tk',
     googleApiUrl: 'https://maps.googleapis.com/maps/api/js?v=3',
-    bingKey: 'AhZy06XFi8uAADPQvWNyVseFx4NHYAOH-7OTMKDPctGtYo86kMfx2T0zUrF5AAaM',
     westraDataBaseUrl: 'http://nakarte.tk/westraPasses/',
     CORSProxyUrl: 'http://proxy.nakarte.tk/',
     elevationsServer: 'http://elevation.nakarte.tk/',
     newsUrl: 'http://about.nakarte.tk'
-    thunderforestKey: 'cf99c28b955f493eb805df0e9f4c7c30'
-}
+}, secrets);
