@@ -5,5 +5,6 @@ export default {
     westraDataBaseUrl: 'http://nakarte.tk/westraPasses/',
     CORSProxyUrl: 'http://proxy.nakarte.tk/',
     elevationsServer: 'http://elevation.nakarte.tk/',
+    newsUrl: 'http://about.nakarte.tk'
     thunderforestKey: 'cf99c28b955f493eb805df0e9f4c7c30'
 }

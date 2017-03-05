@@ -44,7 +44,7 @@ function setUp() {
 
     /////////// controls top-left corner
 
-    new L.Control.Caption(`<a href="http://about.nakarte.tk">News</a> | <a href=mailto:${config.email}">nakarte@nakarte.tk</a>`, {
+    new L.Control.Caption(`<a href="${config.newsUrl}">News</a> | <a href=mailto:${config.email}">nakarte@nakarte.tk</a>`, {
             position: 'topleft'
         }
     ).addTo(map);
