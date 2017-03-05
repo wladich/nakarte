@@ -44,7 +44,6 @@ L.Layer.CanvasMarkers.include({
             }
             const zoom = crs.zoom((1 / scale) * crs.scale(printOptions.zoom));
             const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom, false);
-            console.log(iconUrls, markerJobs, pointsForLabels);
             await this.preloadIcons(iconUrls);
             return {
                 iterateTilePromises: (function*() {
