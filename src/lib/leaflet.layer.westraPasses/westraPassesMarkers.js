@@ -5,8 +5,8 @@ import escapeHtml from 'escape-html';
 import {saveAs} from 'browser-filesaver';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
 import {fetch} from 'lib/xhr-promise';
-import {notifyXhrError} from 'lib/notifications';
-
+import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {
@@ -29,9 +29,19 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             fetch(this.url, {responseType: 'json'})
                 .then(
                     (xhr) => this._loadMarkers(xhr),
-                    (xhr) => notifyXhrError(xhr, 'westra passes data')
+                    (e) => {
+                        this._downloadStarted = false;
+                        logging.captureException(e, {
+                                extra: {
+                                    description: 'failed to get westra passes',
+                                    url: this.url,
+                                    status: e.xhr.status
+                                }
+                            }
+                        );
+                        notify('Failed to get Westra passes data');
+                    }
                 );
-
         },
 
         onAdd: function(map) {

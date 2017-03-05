@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import {fetch} from 'lib/xhr-promise';
-import {notifyXhrError} from 'lib/notifications';
+import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 L.Layer.GeoJSONAjax = L.GeoJSON.extend({
         options: {
@@ -20,7 +21,14 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
             fetch(this.url, {responseType: 'json', timeout: this.options.requestTimeout})
                 .then(
                     (xhr) => this.addData(xhr.response),
-                    (xhr) => notifyXhrError(xhr, `GeoJSON data from ${this.url}`)
+                    (e) => {
+                        logging.captureException(e, {extra: {
+                            description: 'failed to get geojson',
+                            url: this.url,
+                            status: e.xhr.status
+                        }});
+                        notify(`Failed to get GeoJSON data from ${this.url}: ${e.message}`);
+                    }
                 )
         },
 

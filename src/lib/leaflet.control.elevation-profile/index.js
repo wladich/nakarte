@@ -3,7 +3,8 @@ import './elevation-profile.css';
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
 import 'lib/leaflet.control.commons';
-import {formatXhrError, notify} from 'lib/notifications';
+import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 function createSvg(tagName, attributes, parent) {
     var element = document.createElementNS('http://www.w3.org/2000/svg', tagName);
@@ -221,7 +222,8 @@ L.Control.ElevationProfile = L.Class.extend({
                     }
                 )
                 .catch((e) => {
-                    notify(e);
+                    logging.captureException(e, {extra: {description: 'while getting elevation'}});
+                    notify(`Failed to get elevation data: ${e.message}`);
                 });
             this.values = null;
 
@@ -789,9 +791,7 @@ L.Control.ElevationProfile = L.Class.extend({
                     function(xhr) {
                         return parseResponse(xhr.responseText);
                     }
-                ).catch((xhr) => {
-                    throw new Error(formatXhrError(xhr, 'elevation data'))
-                });
+                );
         },
         onCloseButtonClick: function() {
             this.removeFrom(this._map);

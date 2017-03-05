@@ -7,12 +7,13 @@ import PageFeature from './pageFeature';
 import Contextmenu from 'lib/contextmenu';
 import {renderPages} from './map-render'
 import formHtml from './form.html';
-import {notify, notifyXhrError} from 'lib/notifications';
+import {notify} from 'lib/notifications';
 import {makePdf} from './pdf';
 import {saveAs} from 'browser-filesaver';
 import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.hashState/leaflet.hashState';
 import 'lib/leaflet.control.commons';
+import logging from 'lib/logging';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -179,6 +180,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         savePdf: function() {
+            logging.captureBreadcrumbWithUrl({message: 'start save pdf'});
             if (!this._map) {
                 return;
             }
@@ -207,16 +209,14 @@ L.Control.PrintPages = L.Control.extend({
                     }
                 }
             ).catch((e) => {
-                    if (e.status !== undefined) {
-                        notifyXhrError(e, 'map tile');
-                    } else {
-                        notify(e);
-                    }
+                    logging.captureException(e);
+                    notify(`Failed to create PDF: ${e.message}`);
                 }
             ).then(() => this.makingPdf(false));
         },
 
         savePageJpg: function(page) {
+            logging.captureBreadcrumbWithUrl({message: 'start save page jpg', data: {pageNumber: page.getLabel()}});
             const pages = [{
                 latLngBounds: page.getLatLngBounds(),
                 printSize: page.getPrintSize()
@@ -235,12 +235,8 @@ L.Control.PrintPages = L.Control.extend({
             )
                 .then((images) => savePageJpg(images[0]))
                 .catch((e) => {
-                        // throw e;
-                        if (e.status !== undefined) {
-                            notifyXhrError(e, 'map');
-                        } else {
-                            notify(e);
-                        }
+                        logging.captureException(e);
+                        notify(`Failed to create JPEG from page: ${e.message}`);
                     }
                 ).then(() => this.makingPdf(false));
         },

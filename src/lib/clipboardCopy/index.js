@@ -1,4 +1,5 @@
 import './style.css';
+import logging from 'lib/logging';
 
 function showNotification(message, mouseEvent) {
     var el = document.createElement('div');
@@ -32,6 +33,7 @@ function copyToClipboard(s, mouseEvent) {
         document.execCommand('copy');
         showNotification('Copied', mouseEvent);
     } catch (e) {
+        logging.captureException(e, {extra: {description: 'clipborad to copy failed'}});
         prompt("Copy to clipboard: Ctrl+C, Enter", s);
     } finally {
         document.body.removeChild(ta);

@@ -1,14 +1,11 @@
 import L from 'leaflet';
 import {fetch} from 'lib/xhr-promise';
-import {formatXhrError, notify} from 'lib/notifications';
+import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 function parseResponse(s) {
     let data;
-    try {
-        data = JSON.parse(s);
-    } catch (e) {
-        throw new Error('invalid JSON');
-    }
+    data = JSON.parse(s);
     if (!data.token) {
         throw new Error('no token in response');
     }
@@ -21,12 +18,15 @@ function getToken() {
                 try {
                     return {token: parseResponse(xhr.responseText)}
                 } catch (e) {
-                    console.log(e);
+                    logging.captureException(e, {extra: {
+                        description: 'Invalid baat token',
+                        response: xhr.responseText.toString().slice(0, 100)}});
                     return {error: 'Server returned invalid token for Norway map'}
                 }
             },
-            function(xhr) {
-                return {error: formatXhrError(xhr, 'token for Norway map')}
+            function(e) {
+                logging.captureException(e, {extra: {description: 'failed to download baat token'}});
+                return {error: `Failed to token for Norway map: ${e.message}`};
             }
         );
 }
