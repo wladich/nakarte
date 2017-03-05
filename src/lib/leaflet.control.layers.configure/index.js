@@ -3,6 +3,7 @@ import './style.css';
 import enableTopRow from 'lib/leaflet.control.layers.top-row';
 import ko from 'vendored/knockout';
 import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 
 function enableConfig(control, layers) {
@@ -46,6 +47,9 @@ function enableConfig(control, layers) {
                         try {
                             storedLayersEnabled = JSON.parse(serialized);
                         } catch (e) {
+                            logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
+                                extra: {"localstorage.layersEnabled": serialized.slice(0, 1000)}
+                            })
                         }
                     }
                 }

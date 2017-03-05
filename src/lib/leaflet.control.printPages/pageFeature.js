@@ -72,6 +72,10 @@ const PageFeature = L.Marker.extend({
             this._icon.innerHTML = s;
         },
 
+        getLabel: function() {
+            return this._icon.innerHTML;
+        },
+
         setSize: function(paperSize, scale) {
             this.paperSize = paperSize;
             this.scale = scale;

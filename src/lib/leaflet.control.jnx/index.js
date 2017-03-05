@@ -7,6 +7,7 @@ import Contextmenu from 'lib/contextmenu';
 import {makeJnxFromLayer, minZoom} from './jnx-maker';
 import {saveAs} from 'browser-filesaver';
 import {notify} from 'lib/notifications';
+import logging from 'lib/logging';
 
 L.Control.JNX = L.Control.extend({
         includes: L.Mixin.Events,
@@ -89,6 +90,7 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeJnx: function(layer, layerName, zoom) {
+            logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
             this.makingJnx(true);
             this.downloadProgressDone(0);
 
@@ -97,7 +99,11 @@ L.Control.JNX = L.Control.extend({
             const fileName = `nakarte.tk_${sanitizedLayerName}_z${zoom}.jnx`;
             makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => saveAs(fileData, fileName, true))
-                .catch((e) => notify(e.message))
+                .catch((e) => {
+                        logging.captureException(e);
+                        notify(`Failed to create JNX: ${e.message}`);
+                    }
+                )
                 .then(() => this.makingJnx(false));
         },
 

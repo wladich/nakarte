@@ -3,7 +3,6 @@ import {JnxWriter} from './jnx-encoder';
 import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
 import {XHRQueue} from 'lib/xhr-promise';
 import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
-import {formatXhrError} from 'lib/notifications';
 
 const defaultXHROptions = {
     responseType: 'arraybuffer',
@@ -89,8 +88,8 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
             let imageRec;
             try {
                 imageRec = await tilePromise;
-            } catch (xhr) {
-                error = new Error(formatXhrError(xhr, 'map tile'));
+            } catch (e) {
+                error = e;
                 doStop = true;
                 break;
             }

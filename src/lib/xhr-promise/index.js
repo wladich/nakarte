@@ -8,6 +8,16 @@ function retryIfNetworkErrorOrServerError(xhr) {
     return (xhr.status === 0 || xhr.status >= 500);
 }
 
+class XMLHttpRequestPromiseError extends Error {
+    constructor(xhr) {
+        super();
+        this.xhr = xhr;
+        this.name = 'XMLHttpRequestPromiseError';
+
+        this.message = xhr.status === 0 ? 'network error' : `server response is ${xhr.status}`;
+    }
+}
+
 class XMLHttpRequestPromise {
     constructor(
         url, {method='GET', data=null, responseType='', timeout=30000, maxTries=3, retryTimeWait=1000,
@@ -62,7 +72,7 @@ class XMLHttpRequestPromise {
                     this._timerId = setTimeout(() => this.send(), this._retryTimeWait);
                 } else {
                     // console.log('failed', this.url);
-                    this._reject(xhr);
+                    this._reject(new XMLHttpRequestPromiseError(xhr));
                 }
             }
         }

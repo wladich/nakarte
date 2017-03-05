@@ -19,7 +19,8 @@ import 'lib/leaflet.control.commons';
 import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
-
+import logging from 'lib/logging';
+import {notify} from 'lib/notifications';
 
 
 const TrackSegment = L.MeasuredLine.extend({
@@ -214,11 +215,13 @@ L.Control.TrackList = L.Control.extend({
         },
 
         loadFilesFromDisk: function() {
+            logging.captureBreadcrumb({message: 'load track from disk'});
             selectFiles(true).then(this.loadFilesFromFilesObject.bind(this));
         },
 
         loadFilesFromUrl: function() {
             var url = this.url().trim();
+            logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
             try {
                 url = decodeURIComponent(url);
             } catch (e) {
@@ -293,7 +296,8 @@ L.Control.TrackList = L.Control.extend({
             );
             this.readingFiles(false);
             if (messages.length) {
-                alert(messages.join('\n'));
+                logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n')}});
+                notify(messages.join('\n'));
             }
         },
 
@@ -483,7 +487,7 @@ L.Control.TrackList = L.Control.extend({
             }
 
             if (lines.length === 0 && points.length === 0) {
-                alert('Track is empty, nothing to save');
+                notify('Track is empty, nothing to save');
                 return;
             }
 
