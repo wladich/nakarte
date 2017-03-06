@@ -89,7 +89,10 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         onMapClick: function(e) {
-            this.showPanoramaAtPos(e.latlng);
+            // click event on map can be from keypress with keycode=13 in which case it doesnot have position
+            if (e.latlng) {
+                this.showPanoramaAtPos(e.latlng);
+            }
         },
 
         showPanoramaAtPos: function(latlng, pov) {
