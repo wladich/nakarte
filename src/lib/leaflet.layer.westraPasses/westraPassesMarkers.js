@@ -26,7 +26,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 return;
             }
             this._downloadStarted = true;
-            fetch(this.url, {responseType: 'json'})
+            fetch(this.url)
                 .then(
                     (xhr) => this._loadMarkers(xhr),
                     (e) => {
@@ -118,7 +118,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
 
         _loadMarkers: function(xhr) {
             var markers = [],
-                features = xhr.response,
+                features = JSON.parse(xhr.response),
                 feature, i, marker;
             for (i = 0; i < features.length; i++) {
                 feature = features[i];

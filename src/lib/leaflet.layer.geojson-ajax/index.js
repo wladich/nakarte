@@ -13,14 +13,18 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
             this.url = url;
         },
 
+
+        // Promise can be rejected if json invalid or addData fails
         loadData: function() {
             if (this._loadStarted) {
                 return;
             }
             this._loadStarted = true;
-            fetch(this.url, {responseType: 'json', timeout: this.options.requestTimeout})
+            fetch(this.url, {timeout: this.options.requestTimeout})
                 .then(
-                    (xhr) => this.addData(xhr.response),
+                    (xhr) => {
+                        this.addData(JSON.parse(xhr.response));
+                    },
                     (e) => {
                         logging.captureException(e, {extra: {
                             description: 'failed to get geojson',
