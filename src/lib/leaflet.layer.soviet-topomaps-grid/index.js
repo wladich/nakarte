@@ -206,7 +206,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             this.addLayer(marker);
             objects.push(marker);
             this._quads[id] = objects;
-            marker.on('click', this._showContextMenu.bind(this, scale, titles));
+            marker.on('click contextmenu', this._showContextMenu.bind(this, scale, titles));
         },
 
         _showContextMenu: function(scale, titles, e) {
