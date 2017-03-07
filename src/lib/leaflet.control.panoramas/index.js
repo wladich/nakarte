@@ -221,7 +221,8 @@ L.Control.Panoramas.include({
                 state.push(this.panoramaPosition.lng.toFixed(5));
                 state.push(this.panoramaAngle.heading.toFixed(1));
                 state.push(this.panoramaAngle.pitch.toFixed(1));
-                state.push(this.panoramaAngle.zoom.toFixed(1));
+                // in safari zoom is undefined
+                state.push((this.panoramaAngle.zoom || 0).toFixed(1));
             }
             return state;
         },
