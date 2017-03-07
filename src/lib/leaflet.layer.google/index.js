@@ -111,7 +111,7 @@ L.Layer.Google = L.GridLayer.extend({
         _collectMapImageElements: function() {
             const images = this._googleMapContainer.getElementsByTagName('img');
             const tiles = {};
-            for (let image of images) {
+            for (let image of [...images]) {
                 let url = image.src;
                 let match, coords;
                 match = url.match(this._roadRegexp);
