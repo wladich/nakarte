@@ -8,15 +8,17 @@ L.Control.Layers.include({
         stateChangeEventsSource: '_map',
 
         serializeState: function(e) {
-            const state = [];
 
+            const keys = [];
             this._map.eachLayer((layer) => {
                     let key = layer.options.code;
                     if (key) {
-                        state.push(key);
+                        keys.push([key, layer.options.zIndex]);
                     }
                 }
             );
+            keys.sort((k1, k2) => k1[1] - k2[1]);
+            const state = keys.map((k) => k[0]);
             return state;
         },
 
