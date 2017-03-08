@@ -172,9 +172,9 @@ function enableConfig(control, layers) {
             },
 
             updateEnabledLayers: function() {
-                [...this._layers].forEach((l) => this.removeLayer(l.layer));
                 const disabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
+                [...this._layers].forEach((l) => this.removeLayer(l.layer));
 
                 let hasBaselayerOnMap = false;
                 const enabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => l.enabled);
