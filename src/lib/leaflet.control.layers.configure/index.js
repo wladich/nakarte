@@ -214,8 +214,11 @@ function enableConfig(control, layers) {
 
             unserializeState: function(values) {
                 if (values) {
-                    values.forEach((code) => this.loadCustomLayerFromString(code));
-                    for (let layer of this._allLayers) {
+                    values = values.map((code) => {
+                        let newCode = this.loadCustomLayerFromString(code);
+                        return newCode || code;
+                    });
+                    for (let layer of [...this._allLayers, ...this._customLayers()]) {
                         if (layer.layer.options && values.includes(layer.layer.options.code)) {
                             layer.enabled = true;
                         }
@@ -323,7 +326,7 @@ ${buttonsHtml}`;
                         .replace(/\//g, '_');
                 }
 
-                return encodeUrlSafeBase64(s);
+                return '-cs' + encodeUrlSafeBase64(s);
             },
 
             customLayerExists: function(fieldValues, ignoreLayer) {
@@ -380,7 +383,7 @@ ${buttonsHtml}`;
                         scaleDependent: fieldValues.scaleDependent,
                         print: true,
                         jnx: true,
-                        code: '-cs' + serialized,
+                        code: serialized,
                         noCors: true
                     }
                 );
@@ -459,18 +462,23 @@ ${buttonsHtml}`;
             },
 
             loadCustomLayerFromString: function(s) {
-                var m, fieldValues;
-                m = s.match(/^-cs(.+)$/);
+                let fieldValues;
+                const m = s.match(/^-cs(.+)$/);
                 if (m) {
                     s = m[1].replace(/-/g, '+').replace(/_/g, '/');
                     try {
                         s = atob(s);
                         fieldValues = JSON.parse(s);
+                    } catch (e) {
+                    }
+
+                    if (fieldValues) {
                         if (!this.customLayerExists(fieldValues)) {
                             this._customLayers.push(this.createCustomLayer(fieldValues));
                         }
-                    } catch (e) {
+                        return this.serializeCustomLayer(fieldValues);
                     }
+
                 }
             }
 
