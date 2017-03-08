@@ -519,6 +519,7 @@ L.Control.TrackList = L.Control.extend({
 
         stopEditLine: function() {
             if (this._editedLine) {
+                this.stopLineJoinSelection();
                 this._editedLine.stopEdit();
                 this._editedLine = null;
             }
@@ -539,7 +540,7 @@ L.Control.TrackList = L.Control.extend({
 
         startEditTrackSegement: function(track, polyline) {
             if (this._editedLine && this._editedLine !== polyline) {
-                this._editedLine.stopEdit();
+                this.stopEditLine();
             }
             polyline.startEdit();
             this._editedLine = polyline;
