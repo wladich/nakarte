@@ -456,6 +456,7 @@ ${buttonsHtml}`;
             },
 
             onCustomLayerDeletelClicked: function(layer) {
+                this._map.removeLayer(layer.layer);
                 this._customLayers.remove(layer);
                 this.updateEnabledLayers();
                 this.hideCustomLayerForm();
