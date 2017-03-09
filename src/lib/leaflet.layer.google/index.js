@@ -82,8 +82,11 @@ L.Layer.Google = L.GridLayer.extend({
                 return;
             }
             let center = this._map.getCenter();
+            let googleCenter = new this.google.maps.LatLng(center.lat, center.lng);
             setTimeout(() => {
-                    let googleCenter = new this.google.maps.LatLng(center.lat, center.lng);
+                    if (!this._googleMap) {
+                        return;
+                    }
                     this._googleMap.setCenter(googleCenter);
                     this._googleMap.setZoom(this._map.getZoom());
                 }, 0
@@ -95,8 +98,11 @@ L.Layer.Google = L.GridLayer.extend({
                 return;
             }
             let center = e.center;
+            let googleCenter = new this.google.maps.LatLng(center.lat, center.lng);
             setTimeout(() => {
-                    let googleCenter = new this.google.maps.LatLng(center.lat, center.lng);
+                    if (!this._googleMap) {
+                        return;
+                    }
                     this._googleMap.setCenter(googleCenter);
                     this._googleMap.setZoom(Math.round(e.zoom));
                 }, 0
