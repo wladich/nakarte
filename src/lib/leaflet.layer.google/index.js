@@ -91,9 +91,12 @@ L.Layer.Google = L.GridLayer.extend({
         },
 
         _onZoom: function(e) {
+            if (!this.google) {
+                return;
+            }
             let center = e.center;
             setTimeout(() => {
-                    let googleCenter = new window.google.maps.LatLng(center.lat, center.lng);
+                    let googleCenter = new this.google.maps.LatLng(center.lat, center.lng);
                     this._googleMap.setCenter(googleCenter);
                     this._googleMap.setZoom(Math.round(e.zoom));
                 }, 0
