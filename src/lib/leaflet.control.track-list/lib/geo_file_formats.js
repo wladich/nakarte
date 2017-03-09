@@ -319,7 +319,7 @@ function parseKmz(txt, name) {
             if (entry.compressionMethod === 0) {
                 uncompressed = entry.data;
             } else if (entry.compressionMethod === 8) {
-                uncompressed = window.RawDeflate.inflate(entry.data);
+                uncompressed = RawDeflate.inflate(entry.data);
             } else {
                 return null;
             }
