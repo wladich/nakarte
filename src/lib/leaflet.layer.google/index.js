@@ -78,7 +78,7 @@ L.Layer.Google = L.GridLayer.extend({
         },
 
         _syncPosition: function() {
-            if (!this.google) {
+            if (!this.google || !this._map) {
                 return;
             }
             let center = this._map.getCenter();
