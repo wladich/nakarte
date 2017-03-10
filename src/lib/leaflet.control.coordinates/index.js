@@ -3,6 +3,7 @@ import './coordinates.css';
 import copyToClipboard from 'lib/clipboardCopy';
 import Contextmenu from 'lib/contextmenu';
 import 'lib/leaflet.control.commons';
+import safeLocalStorage from 'lib/safe-localstorage';
 
 function pad(s, n) {
     var j = s.indexOf('.');
@@ -51,20 +52,15 @@ L.Control.Coordinates = L.Control.extend({
         loadStateFromStorage: function() {
             var active = false,
                 fmt = 'D';
-            if (window.Storage && window.localStorage) {
-                active = localStorage.leafletCoordinatesActive === '1';
-                fmt = localStorage.leafletCoordinatesFmt || fmt;
-            }
+            active = safeLocalStorage.leafletCoordinatesActive === '1';
+            fmt = safeLocalStorage.leafletCoordinatesFmt || fmt;
             this.setEnabled(active);
             this.setFormat(fmt);
         },
 
         saveStateToStorage: function() {
-            if (!(window.Storage && window.localStorage)) {
-                return;
-            }
-            localStorage.leafletCoordinatesActive = this.isEnabled() ? '1' : '0';
-            localStorage.leafletCoordinatesFmt = this.fmt;
+            safeLocalStorage.leafletCoordinatesActive = this.isEnabled() ? '1' : '0';
+            safeLocalStorage.leafletCoordinatesFmt = this.fmt;
         },
 
         formatCoodinate: function(value, isLat) {

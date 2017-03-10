@@ -2,6 +2,7 @@ import L from 'leaflet';
 import {fetch} from 'lib/xhr-promise';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
+import safeLocalStorage from 'lib/safe-localstorage';
 
 function parseResponse(s) {
     let data;
@@ -43,17 +44,13 @@ L.TileLayer.Nordeskart = L.TileLayer.extend({
 
         baatTokenUpToDate: function() {
             let nextUpdate = 0;
-            if (window.localStorage) {
-                nextUpdate = parseInt(localStorage.getItem('baatTokenNextUpdate'), 10) || 0;
-            }
-            return Date.now() < nextUpdate && localStorage.getItem('baatToken');
+            nextUpdate = parseInt(safeLocalStorage.getItem('baatTokenNextUpdate'), 10) || 0;
+            return Date.now() < nextUpdate && safeLocalStorage.getItem('baatToken');
         },
 
         storeBaatToken: function(token) {
-            if (window.localStorage) {
-                localStorage.setItem('baatToken', token);
-                localStorage.setItem('baatTokenNextUpdate', Date.now().toString() + this.options.tokenUpdateInterval);
-            }
+            safeLocalStorage.setItem('baatToken', token);
+            safeLocalStorage.setItem('baatTokenNextUpdate', Date.now().toString() + this.options.tokenUpdateInterval);
         },
 
         periodicTokenUpdate: function() {
