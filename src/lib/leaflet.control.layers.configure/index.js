@@ -4,7 +4,7 @@ import enableTopRow from 'lib/leaflet.control.layers.top-row';
 import ko from 'vendored/knockout';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
-
+import safeLocalStorage from 'lib/safe-localstorage';
 
 function enableConfig(control, layers) {
     const originalOnAdd = control.onAdd;
@@ -41,16 +41,14 @@ function enableConfig(control, layers) {
 
             _initializeLayersState: function() {
                 let storedLayersEnabled = {};
-                if (window.localStorage) {
-                    const serialized = window.localStorage.getItem('layersEnabled');
-                    if (serialized) {
-                        try {
-                            storedLayersEnabled = JSON.parse(serialized);
-                        } catch (e) {
-                            logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
-                                extra: {"localstorage.layersEnabled": serialized.slice(0, 1000)}
-                            })
-                        }
+                const serialized = safeLocalStorage.getItem('layersEnabled');
+                if (serialized) {
+                    try {
+                        storedLayersEnabled = JSON.parse(serialized);
+                    } catch (e) {
+                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
+                            extra: {"localstorage.layersEnabled": serialized.slice(0, 1000)}
+                        })
                     }
                 }
                 // restore custom layers
@@ -199,9 +197,6 @@ function enableConfig(control, layers) {
             },
 
             storeEnabledLayers: function() {
-                if (!window.localStorage) {
-                    return;
-                }
                 const layersState = {};
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
                     if (layer.isDefault || layer.enabled || layer.isCustom) {
@@ -209,7 +204,7 @@ function enableConfig(control, layers) {
                     }
                 }
                 const serialized = JSON.stringify(layersState);
-                localStorage.setItem('layersEnabled', serialized);
+                safeLocalStorage.setItem('layersEnabled', serialized);
             },
 
             unserializeState: function(values) {

@@ -1,21 +1,19 @@
 import './track-list'
 import L from 'leaflet';
 import {parseGeoFile} from './lib/geo_file_formats';
+import safeLocalStorage from 'lib/safe-localstorage';
 
 L.Control.TrackList.include({
         maxLocalStorageSessions: 5,
 
         saveTracksToStorage: function() {
-            if (!(window.localStorage)) {
-                return;
-            }
             var tracks = this.tracks(),
                 serialized = [],
                 maxKey = -1,
                 i, track, s, key, m, keys = [];
 
-            for (i = 0; i < localStorage.length; i++) {
-                key = localStorage.key(i);
+            for (i = 0; i < safeLocalStorage.length; i++) {
+                key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
                     if (+m[1] > maxKey) {
@@ -26,7 +24,7 @@ L.Control.TrackList.include({
             key = 'trackList_' + (maxKey + 1);
 
             if (tracks.length === 0) {
-                localStorage.setItem(key, '');
+                safeLocalStorage.setItem(key, '');
                 return;
             }
             for (i = 0; i < tracks.length; i++) {
@@ -39,11 +37,11 @@ L.Control.TrackList.include({
             }
             s = '#nktk=' + serialized.join('/');
 
-            localStorage.setItem(key, s);
+            safeLocalStorage.setItem(key, s);
 
             //cleanup stale records
-            for (i = 0; i < localStorage.length; i++) {
-                key = localStorage.key(i);
+            for (i = 0; i < safeLocalStorage.length; i++) {
+                key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
                     keys.push(+m[1]);
@@ -56,21 +54,18 @@ L.Control.TrackList.include({
                 );
                 for (i = 0; i < keys.length - this.maxLocalStorageSessions; i++) {
                     key = 'trackList_' + keys[i];
-                    localStorage.removeItem(key);
+                    safeLocalStorage.removeItem(key);
                 }
             }
         },
 
         loadTracksFromStorage: function() {
-            if (!(window.localStorage)) {
-                return;
-            }
             var i, key, m, s,
                 geodata,
                 maxKey = -1;
 
-            for (i = 0; i < localStorage.length; i++) {
-                key = localStorage.key(i);
+            for (i = 0; i < safeLocalStorage.length; i++) {
+                key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
                     if (+m[1] > maxKey) {
@@ -80,8 +75,8 @@ L.Control.TrackList.include({
             }
             if (maxKey > -1) {
                 key = 'trackList_' + maxKey;
-                s = localStorage.getItem(key);
-                localStorage.removeItem(key);
+                s = safeLocalStorage.getItem(key);
+                safeLocalStorage.removeItem(key);
                 if (s) {
                     geodata = parseGeoFile('', s);
                     this.addTracksFromGeodataArray(geodata);
