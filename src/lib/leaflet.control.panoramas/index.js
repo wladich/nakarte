@@ -245,7 +245,7 @@ L.Control.Panoramas.include({
             const heading = parseFloat(state[2]);
             const pitch = parseFloat(state[3]);
             const zoom = parseFloat(state[4]);
-            if (!isNaN(lat) && !isNaN(lng) && !isNaN(heading) && !isNaN(pitch)) {
+            if (!isNaN(lat) && !isNaN(lng) && !isNaN(heading) && !isNaN(pitch) && !isNaN(zoom)) {
                 this.showCoverage();
                 this.showPanoramaAtPos(L.latLng(lat, lng), {heading, pitch, zoom});
                 return true;
