@@ -216,10 +216,13 @@ L.Polyline.EditMixin = {
     },
 
     makeSegmentOverlay: function(nodeIndex) {
-        var latlngs = this.getLatLngs(),
+        const latlngs = this.getLatLngs(),
             p1 = latlngs[nodeIndex],
-            p2 = latlngs[nodeIndex + 1],
-            segmentOverlay = L.polyline([p1, p2], {weight: 10, opacity: 0.0});
+            p2 = latlngs[nodeIndex + 1];
+        if (!p2) {
+            return;
+        }
+        const segmentOverlay = L.polyline([p1, p2], {weight: 10, opacity: 0.0});
         segmentOverlay.on('mousedown', this.onSegmentMouseDownAddNode, this);
         segmentOverlay.on('contextmenu', function(e) {
                 this.stopDrawingLine();
