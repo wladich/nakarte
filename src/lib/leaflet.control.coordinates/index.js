@@ -22,9 +22,17 @@ L.Control.Coordinates = L.Control.extend({
             position: 'bottomleft'
         },
 
+        formatNames: {
+            'd': 'ddd.ddddd',
+            'D': 'ddd.ddddd&deg',
+            'DM': 'ddd&deg;mm.mmm\'',
+            'DMS': 'ddd&deg;mm\'ss.s"'
+        },
+
         onAdd: function(map) {
             this._map = map;
-            var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
+            var container = this._container =
+                L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
             container.title = "Show coordinates at cursor";
             this._stopContainerEvents();
             this._field_lat = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
@@ -32,10 +40,11 @@ L.Control.Coordinates = L.Control.extend({
             L.DomEvent
                 .on(container, {
                         'click': this.onClick
-                    }, this);
+                    }, this
+                );
             map.on('mousemove', this.onMouseMove, this);
             this.menu = new Contextmenu([
-                    {text: 'Click to copy to clipboard', callback: this.prepareForClickOnMap.bind(this)},
+                    {text: 'Click map to copy to clipboard', callback: this.prepareForClickOnMap.bind(this)},
                     '-',
                     {text: '&plusmn;ddd.ddddd', callback: this.onMenuSelect.bind(this, 'd')},
                     {text: 'ddd.ddddd&deg;', callback: this.onMenuSelect.bind(this, 'D')},
@@ -63,37 +72,37 @@ L.Control.Coordinates = L.Control.extend({
             safeLocalStorage.leafletCoordinatesFmt = this.fmt;
         },
 
-        formatCoodinate: function(value, isLat) {
+        formatCoodinate: function(value, isLat, fmt) {
             if (value === undefined) {
                 return '-------';
             }
-
+            fmt = fmt || this.fmt;
             var h, d, m, s;
             if (isLat) {
                 h = (value < 0) ? 'S' : 'N';
             } else {
                 h = (value < 0) ? 'W' : 'E';
             }
-            if (this.fmt === 'd') {
+            if (fmt === 'd') {
                 d = value.toFixed(5);
                 d = pad(d, isLat ? 2 : 3);
                 return d;
             }
 
             value = Math.abs(value);
-            if (this.fmt === 'D') {
+            if (fmt === 'D') {
                 d = value.toFixed(5);
                 d = pad(d, isLat ? 2 : 3);
                 return `${h} ${d}&deg;`;
             }
-            if (this.fmt === 'DM') {
+            if (fmt === 'DM') {
                 d = Math.floor(value).toString();
                 d = pad(d, isLat ? 2 : 3);
                 m = ((value - d) * 60).toFixed(3);
                 m = pad(m, 2);
                 return `${h} ${d}&deg;${m}'`
             }
-            if (this.fmt === 'DMS') {
+            if (fmt === 'DMS') {
                 d = Math.floor(value).toString();
                 d = pad(d, isLat ? 2 : 3);
                 m = Math.floor((value - d) * 60).toString();
@@ -130,10 +139,31 @@ L.Control.Coordinates = L.Control.extend({
             if (enabled) {
                 L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'coordinates-control-active');
+                this._map.on('contextmenu', this.onMapRightClick, this);
             } else {
                 L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'coordinates-control-active');
+                this._map.off('contextmenu', this.onMapRightClick, this);
             }
+        },
+
+        onMapRightClick: function(e) {
+            const items = [{text: 'Copy coordinates to clipboard', disabled: true}, '-'];
+
+            for (let fmt of ['d', 'D', 'DM', 'DMS']) {
+                let lat = this.formatCoodinate(e.latlng.lat, true, fmt);
+                let lng = this.formatCoodinate(e.latlng.lng, false, fmt);
+                let s = `${lat} ${lng}`;
+                items.push({
+                        text: `${s} <span class="leaflet-coordinates-menu-fmt">${this.formatNames[fmt]}</span>`,
+                        callback: () => {
+                            copyToClipboard(s.replace(/&deg;/g, '°'), e.originalEvent);
+                        }
+                    }
+                )
+            }
+            const menu = new Contextmenu(items);
+            menu.show(e);
         },
 
         isEnabled: function() {
