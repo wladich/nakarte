@@ -17,6 +17,11 @@ L.Control.Caption = L.Control.extend({
         this._container = L.DomUtil.create('div', this.options.className);
         this._stopContainerEvents();
         this._container.innerHTML = this._contents;
+        L.DomEvent.on(this._container, 'contextmenu', (e) => {
+            L.DomEvent.stopPropagation(e);
+            e.returnValue = true;
+            return true;
+        });
         return this._container;
     }
 
