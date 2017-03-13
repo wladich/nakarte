@@ -44,7 +44,7 @@ L.Control.Coordinates = L.Control.extend({
                 );
             map.on('mousemove', this.onMouseMove, this);
             this.menu = new Contextmenu([
-                    {text: 'Click map to copy to clipboard', callback: this.prepareForClickOnMap.bind(this)},
+                    {text: 'Click map to copy coordinates to clipboard', callback: this.prepareForClickOnMap.bind(this)},
                     '-',
                     {text: '&plusmn;ddd.ddddd', callback: this.onMenuSelect.bind(this, 'd')},
                     {text: 'ddd.ddddd&deg;', callback: this.onMenuSelect.bind(this, 'D')},
