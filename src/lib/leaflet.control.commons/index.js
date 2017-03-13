@@ -5,7 +5,7 @@ L.Control.include({
         const container = this._container;
         L.DomEvent.disableClickPropagation(container);
         L.DomEvent.disableScrollPropagation(container);
-        L.DomEvent.on(container, 'mousemove', L.DomEvent.stop);
+        L.DomEvent.on(container, 'mousemove contextmenu', L.DomEvent.stop);
 
     }
 });
