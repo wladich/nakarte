@@ -43,7 +43,11 @@ class WikimapiaLoader extends TiledDataLoader {
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
             }
-        } else {
+        }
+        else {
+            if (z < 0) {
+                return {z: 0, x: 0, y: 0};
+            }
             return {z, x: layerTileCoords.x, y: layerTileCoords.y}
         }
     }
