@@ -35,7 +35,8 @@ function setUp() {
             fadeAnimation: false,
             attributionControl: false,
             inertiaMaxSpeed: 1500,
-            worldCopyJump: true
+            worldCopyJump: true,
+            maxZoom: 18
         }
     );
     map.enableHashState('m', [10, 55.75185, 37.61856]);

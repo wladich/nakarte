@@ -32,7 +32,7 @@ function getTempMap(zoom, fullSize, pixelBounds) {
         }
     );
 
-    const map = L.map(container, {fadeAnimation: false, zoomAnimation: false, inertia: false});
+    const map = L.map(container, {fadeAnimation: false, zoomAnimation: false, inertia: false, maxZoom: 18});
     map.setView(center, zoom);
     return map;
 }
