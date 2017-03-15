@@ -317,11 +317,13 @@ L.Control.PrintPages = L.Control.extend({
             }
             let targetMetersPerPixel = scale / (resolution / 2.54);
             let mapUnitsPerPixel = targetMetersPerPixel / Math.cos(referenceLat * Math.PI / 180);
-            const satZoom = Math.ceil(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
+            let satZoom = Math.ceil(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
 
             targetMetersPerPixel = scale / (90 / 2.54) / 1.5;
             mapUnitsPerPixel = targetMetersPerPixel / Math.cos(referenceLat * Math.PI / 180);
-            const mapZoom = Math.round(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
+            let mapZoom = Math.round(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
+            mapZoom = Math.min(mapZoom, 18);
+            satZoom = Math.min(satZoom, 18);
             return {mapZoom, satZoom};
         },
 
