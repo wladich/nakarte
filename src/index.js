@@ -3,7 +3,11 @@ import './index.css';
 import App from './App'
 import config from './config';
 
-Raven.config(config.sentryDSN).install();
+/* eslint-disable no-undef */
+if (NODE_ENV === 'production') {
+/* eslint-enable no-undef */
+    Raven.config(config.sentryDSN).install();
+}
 
 const oldOnunhandledrejection = window.onunhandledrejection;
 
