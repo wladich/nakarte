@@ -180,7 +180,7 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
     let doStop;
     for (let layer of layers) {
         let zoom;
-        if (layer.options.scaleDependent) {
+        if (layer.options && layer.options.scaleDependent) {
             zoom = zooms.mapZoom;
         } else {
             zoom = zooms.satZoom;
@@ -189,8 +189,11 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
             L.CRS.EPSG3857.latLngToPoint(latLngBounds.getNorthWest(), zoom).round(),
             L.CRS.EPSG3857.latLngToPoint(latLngBounds.getSouthEast(), zoom).round()
         );
-        let map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
-        map.addLayer(layer);
+        let map;
+        if (!layer._layerDummy) {
+            map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
+            map.addLayer(layer);
+        }
         let {iterateTilePromises, count} = await layer.getTilesInfo({
                 xhrOptions: defaultXHROptions,
                 pixelBounds,
@@ -213,11 +216,13 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
                 break;
             }
         }
-        if (doStop) {
-            disposeMap(map);
-            break;
-        } else {
-            Promise.all(layerPromises).then(() => disposeMap(map));
+        if (!layer._layerDummy) {
+            if (doStop) {
+                disposeMap(map);
+                break;
+            } else {
+                Promise.all(layerPromises).then(() => disposeMap(map));
+            }
         }
     }
 }
@@ -253,9 +258,10 @@ async function* promiseQueueBuffer(source, maxActive) {
 }
 
 
-async function renderPages({map, pages, zooms, resolution, scale, progressCallback}) {
+async function renderPages({map, pages, zooms, resolution, scale, progressCallback, decorationLayers}) {
     const xhrQueue = new XHRQueue();
     const layers = getLayersForPrint(map, xhrQueue);
+    layers.push(...decorationLayers);
     let progressRange = 0;
     for (let layer of layers) {
         progressRange += layer._printProgressWeight || 1;
