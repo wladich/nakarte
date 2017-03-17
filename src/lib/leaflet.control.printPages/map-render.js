@@ -171,7 +171,7 @@ class PageComposer {
     }
 }
 
-async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms) {
+async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms, pageLabel, pagesCount) {
     const defaultXHROptions = {
         responseType: 'blob',
         timeout: 20000,
@@ -201,7 +201,9 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
                 destPixelSize,
                 resolution,
                 scale,
-                zoom
+                zoom,
+                pageLabel,
+                pagesCount
             }
         );
         let layerPromises = [];
@@ -276,7 +278,8 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
         );
 
         const composer = new PageComposer(destPixelSize, pixelBounds);
-        let tilesIterator = await iterateLayersTiles(layers, page.latLngBounds, destPixelSize, resolution, scale, zooms);
+        let tilesIterator = await iterateLayersTiles(layers, page.latLngBounds, destPixelSize, resolution, scale, zooms,
+            page.label, pages.length);
         let queuedTilesIterator = promiseQueueBuffer(tilesIterator, 20);
         while (true) {
             let {value: tilePromise, done} = await queuedTilesIterator.next();
