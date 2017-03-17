@@ -15,6 +15,7 @@ import 'lib/leaflet.hashState/leaflet.hashState';
 import 'lib/leaflet.control.commons';
 import logging from 'lib/logging';
 import  {MagneticMeridians} from './decoration.magnetic-meridians';
+import {OverlayScale} from './decoration.scale';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -200,7 +201,8 @@ L.Control.PrintPages = L.Control.extend({
             const pages = this.pages.map((page) => {
                     return {
                         latLngBounds: page.getLatLngBounds(),
-                        printSize: page.getPrintSize()
+                        printSize: page.getPrintSize(),
+                        label: page.getLabel()
                     }
                 }
             );
@@ -209,6 +211,7 @@ L.Control.PrintPages = L.Control.extend({
             if (this.magneticMerisiansdOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
+            decorationLayers.push(new OverlayScale());
             renderPages({
                     map: this._map,
                     pages,
@@ -234,12 +237,14 @@ L.Control.PrintPages = L.Control.extend({
             logging.captureBreadcrumbWithUrl({message: 'start save page jpg', data: {pageNumber: page.getLabel()}});
             const pages = [{
                 latLngBounds: page.getLatLngBounds(),
-                printSize: page.getPrintSize()
+                printSize: page.getPrintSize(),
+                label: page.getLabel()
             }];
             const decorationLayers = [];
             if (this.magneticMerisiansdOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
+            decorationLayers.push(new OverlayScale());
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
