@@ -14,6 +14,7 @@ import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.hashState/leaflet.hashState';
 import 'lib/leaflet.control.commons';
 import logging from 'lib/logging';
+import  {MagneticMeridians} from './decoration.magnetic-meridians';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -79,12 +80,16 @@ L.Control.PrintPages = L.Control.extend({
             this.pageSizeDescription = ko.pureComputed(this._displayPageSize, this);
             this.pagesNum = ko.observable(0);
             this.pagesNumLabel = ko.pureComputed(this._pagesNumLabel, this);
+            this.gridOn = ko.observable(false);
+            this.magneticMerisiansdOn = ko.observable(false);
 
             //hash state notifications
             this.scale.subscribe(this.notifyChange, this);
             this.printSize.subscribe(this.notifyChange, this);
             this.resolution.subscribe(this.notifyChange, this);
             this.zoomLevel.subscribe(this.notifyChange, this);
+            this.gridOn.subscribe(this.notifyChange, this);
+            this.magneticMerisiansdOn.subscribe(this.notifyChange, this);
         },
 
         onAdd: function(map) {
@@ -200,12 +205,17 @@ L.Control.PrintPages = L.Control.extend({
                 }
             );
             const resolution = this.resolution();
+            const decorationLayers = [];
+            if (this.magneticMerisiansdOn()) {
+                decorationLayers.push(new MagneticMeridians());
+            }
             renderPages({
                     map: this._map,
                     pages,
                     zooms: this.zoomForPrint(),
                     resolution,
                     scale: this.scale(),
+                    decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
             ).then((images) => {
@@ -226,6 +236,10 @@ L.Control.PrintPages = L.Control.extend({
                 latLngBounds: page.getLatLngBounds(),
                 printSize: page.getPrintSize()
             }];
+            const decorationLayers = [];
+            if (this.magneticMerisiansdOn()) {
+                decorationLayers.push(new MagneticMeridians());
+            }
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
@@ -235,6 +249,7 @@ L.Control.PrintPages = L.Control.extend({
                     zooms: this.zoomForPrint(),
                     resolution: this.resolution(),
                     scale: this.scale(),
+                    decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
             )
@@ -392,6 +407,11 @@ L.Control.PrintPages = L.Control.extend({
                     state.push(latLng.lng.toFixed(5));
                     state.push(page._rotated ? '1' : '0');
                 }
+                let flags =
+                    (this.magneticMerisiansdOn() ? 1 : 0) |
+                    (this.gridOn() ? 2 : 0);
+                state.push(flags);
+
             }
             return state;
         },
@@ -420,6 +440,13 @@ L.Control.PrintPages = L.Control.extend({
                     break;
                 }
                 this.addPage(!!rotated, L.latLng(lat, lng));
+            }
+            if (state.length) {
+                const flags = parseInt(state.shift(), 10);
+                if (flags >= 0  && flags <= 3) {
+                    this.magneticMerisiansdOn(!!(flags & 1));
+                    this.gridOn(!!(flags & 2));
+                }
             }
             return true;
         }
