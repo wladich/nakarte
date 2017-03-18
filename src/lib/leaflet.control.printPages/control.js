@@ -305,7 +305,7 @@ L.Control.PrintPages = L.Control.extend({
             let referenceLat;
             if (this.pages.length > 0) {
                 let absLats = this.pages.map((page) => {
-                        return Math.abs(page.getLatLngBounds().getSouth())
+                        return Math.abs(page.getLatLngBounds().getCenter().lat);
                     }
                 );
                 referenceLat = Math.min(...absLats);
