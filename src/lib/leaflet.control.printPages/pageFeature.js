@@ -17,12 +17,11 @@ const PageFeature = L.Marker.extend({
 
         onAdd: function(map) {
             L.Marker.prototype.onAdd.call(this, map);
-            map.on('viewreset', this.updateView, this);
-            this.rectangle = L.rectangle(this.getLatLngBounds(),
+            map.on('viewreset', () => this.updateView());
+            this.rectangle = L.rectangle([[0, 0], [0, 0]],
                 {color: '#ff7800', weight: 2, opacity: 0.7, fillOpacity: 0.2}
             ).addTo(map);
             this.updateView();
-
         },
 
         onRemove: function(map) {
@@ -32,12 +31,19 @@ const PageFeature = L.Marker.extend({
         },
 
         getLatLngBounds: function() {
-            let {lat, lng} = this.getLatLng();
-            var width = this.paperSize[0] * this.scale / 10 / 111319.49 / Math.cos(lat * Math.PI / 180);
-            var height = this.paperSize[1] * this.scale / 10 / 111319.49;
-            var latlng_sw = [lat - height / 2, lng - width / 2];
-            var latlng_ne = [lat + height / 2, lng + width / 2];
-            return L.latLngBounds([latlng_sw, latlng_ne]);
+            return this.latLngBounds;
+        },
+
+        _getLatLngBounds: function() {
+            const centerLatLng = this.getLatLng();
+            const centerMerc = L.Projection.SphericalMercator.project(centerLatLng);
+            const mercatorScale = Math.cos(centerLatLng.lat * Math.PI / 180);
+            const mercatorPageSize = L.point(...this.paperSize).multiplyBy(this.scale / 10 / mercatorScale);
+            let sw = centerMerc.subtract(mercatorPageSize.divideBy(2));
+            let ne = centerMerc.add(mercatorPageSize.divideBy(2));
+            sw = L.Projection.SphericalMercator.unproject(sw);
+            ne = L.Projection.SphericalMercator.unproject(ne);
+            return L.latLngBounds([sw, ne]);
         },
 
         _animateZoom: function(e) {
@@ -52,7 +58,7 @@ const PageFeature = L.Marker.extend({
             if (newZoom === undefined) {
                 newZoom = this._map.getZoom();
             }
-            var bounds = this.getLatLngBounds();
+            var bounds = this.latLngBounds = this._getLatLngBounds();
             var pixel_sw = this._map.project(bounds.getSouthWest(), newZoom);
             var pixel_ne = this._map.project(bounds.getNorthEast(), newZoom);
             var pixel_center = this._map.project(this.getLatLng(), newZoom);
