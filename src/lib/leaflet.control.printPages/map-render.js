@@ -183,7 +183,7 @@ class PageComposer {
 async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms) {
     const defaultXHROptions = {
         responseType: 'blob',
-        timeout: 10000,
+        timeout: 20000,
         isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
     };
     let doStop;

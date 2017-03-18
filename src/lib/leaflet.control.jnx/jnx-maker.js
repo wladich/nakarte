@@ -6,7 +6,7 @@ import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
 
 const defaultXHROptions = {
     responseType: 'arraybuffer',
-    timeout: 10000,
+    timeout: 20000,
     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
 };
 
