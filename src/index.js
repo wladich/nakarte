@@ -5,8 +5,8 @@ import config from './config';
 
 /* eslint-disable no-undef */
 if (NODE_ENV === 'production') {
+    Raven.config(config.sentryDSN, {release: RELEASE_VER}).install();
 /* eslint-enable no-undef */
-    Raven.config(config.sentryDSN).install();
 }
 
 const oldOnunhandledrejection = window.onunhandledrejection;

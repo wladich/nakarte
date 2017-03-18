@@ -249,7 +249,10 @@ module.exports = {
           return module.resource && (/node_modules|vendored/).test(module.resource)
       },
     }),
-    new webpack.DefinePlugin({'NODE_ENV': JSON.stringify(process.env.NODE_ENV)}),
+    new webpack.DefinePlugin({
+      'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER),
+    }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
