@@ -324,6 +324,8 @@ L.Control.PrintPages = L.Control.extend({
             let mapZoom = Math.round(Math.log(40075016.4 / 256 / mapUnitsPerPixel) / Math.LN2);
             mapZoom = Math.min(mapZoom, 18);
             satZoom = Math.min(satZoom, 18);
+            mapZoom = Math.max(mapZoom, 0);
+            satZoom = Math.max(satZoom, 0);
             return {mapZoom, satZoom};
         },
 
