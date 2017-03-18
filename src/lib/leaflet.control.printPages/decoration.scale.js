@@ -1,5 +1,45 @@
 import {PrintStaticLayer} from './decorations';
 
+
+function pageScaleRange(printOptions) {
+    const pageSize = printOptions.destPixelSize.divideBy(printOptions.resolution / 25.4);
+    const bounds = printOptions.latLngBounds;
+    const southLen = bounds.getSouthEast().distanceTo(bounds.getSouthWest());
+    const northLen = bounds.getNorthEast().distanceTo(bounds.getNorthWest());
+    const nScale = Math.round(northLen / pageSize.x * 10);
+    const sScale = Math.round(southLen / pageSize.x * 10);
+    return {
+        min: Math.min(nScale, sScale, printOptions.scale),
+        max: Math.max(nScale, sScale, printOptions.scale)
+    }
+}
+
+function formatScale(nominalScale, scaleRange) {
+    const threshold = 0.05;
+    if (Math.abs(nominalScale - scaleRange.min) / nominalScale > threshold || Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold) {
+        let unit;
+        scaleRange = Object.assign({}, scaleRange);
+        if (scaleRange.min >= 1000) {
+            scaleRange.min /= 1000;
+            scaleRange.max /= 1000;
+            unit = 'km'
+        } else {
+            unit = 'm'
+        }
+        return `${scaleRange.min} – ${scaleRange.max} ${unit} in 1 cm`;
+    } else {
+        let unit;
+        if (nominalScale >= 1000) {
+            nominalScale /= 1000;
+            unit = 'km';
+        } else {
+            unit = 'm';
+        }
+        return `${nominalScale} ${unit} in 1 cm`;
+    }
+}
+
+
 class OverlayScale extends PrintStaticLayer {
     fontSizeMm = 3;
     font = 'verdana';
@@ -7,13 +47,7 @@ class OverlayScale extends PrintStaticLayer {
 
     _drawRaster(canvas, printOptions) {
         const ctx = canvas.getContext('2d');
-        let scale = Math.round(printOptions.scale);
-        let unit = 'm';
-        if (scale >= 1000) {
-            scale /= 1000;
-            unit = 'km'
-        }
-        let caption = `${scale} ${unit} in 1 cm`;
+        let caption = formatScale(printOptions.scale, pageScaleRange(printOptions));
         if (printOptions.pagesCount > 1) {
             caption += ` | Page ${printOptions.pageLabel} / ${printOptions.pagesCount}`;
         }
