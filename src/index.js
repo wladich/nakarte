@@ -26,5 +26,9 @@ window.onunhandledrejection = (e) => {
     return result;
 };
 
+/* eslint-disable no-undef */
+console.log('Version:', RELEASE_VER);
+/* eslint-enable no-undef */
+
 App.setUp();
 
