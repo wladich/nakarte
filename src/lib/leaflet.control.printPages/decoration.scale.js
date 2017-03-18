@@ -21,7 +21,6 @@ class OverlayScale extends PrintStaticLayer {
         ctx.fillRect(0, 0, textWidth + 2 * padding, fontSize + 2 * padding);
         ctx.fillStyle = '#000000';
         ctx.fillText(caption, padding, fontSize + padding);
-
     }
 }
 

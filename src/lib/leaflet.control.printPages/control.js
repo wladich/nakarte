@@ -16,6 +16,7 @@ import 'lib/leaflet.control.commons';
 import logging from 'lib/logging';
 import  {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
+import {Grid} from './decoration.grid';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -208,6 +209,9 @@ L.Control.PrintPages = L.Control.extend({
             );
             const resolution = this.resolution();
             const decorationLayers = [];
+            if (this.gridOn()) {
+                decorationLayers.push(new Grid());
+            }
             if (this.magneticMerisiansdOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
@@ -241,6 +245,9 @@ L.Control.PrintPages = L.Control.extend({
                 label: page.getLabel()
             }];
             const decorationLayers = [];
+            if (this.gridOn()) {
+                decorationLayers.push(new Grid());
+            }
             if (this.magneticMerisiansdOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
