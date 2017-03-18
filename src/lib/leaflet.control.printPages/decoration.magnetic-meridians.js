@@ -29,6 +29,7 @@ class MagneticMeridians extends PrintStaticLayer {
     _drawRaster(canvas, printOptions) {
         const toLatLng = this._makeCanvasToLatLngTransformer(printOptions);
         const ctx = canvas.getContext('2d');
+        ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.lineThicknessMm / 25.4 * printOptions.resolution;
         const intervalPx = this.lineIntervalMm / 25.4 * printOptions.resolution;
