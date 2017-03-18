@@ -20,7 +20,7 @@ class XMLHttpRequestPromiseError extends Error {
 
 class XMLHttpRequestPromise {
     constructor(
-        url, {method='GET', data=null, responseType='', timeout=30000, maxTries=3, retryTimeWait=1000,
+        url, {method='GET', data=null, responseType='', timeout=30000, maxTries=3, retryTimeWait=500,
             isResponseSuccess=successIfStatus200, responseNeedsRetry=retryIfNetworkErrorOrServerError} = {}) {
         // console.log('promise constructor', url);
         const promise = new Promise((resolve, reject) => {
