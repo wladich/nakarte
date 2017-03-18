@@ -7,8 +7,13 @@ class OverlayScale extends PrintStaticLayer {
 
     _drawRaster(canvas, printOptions) {
         const ctx = canvas.getContext('2d');
-        const scale = Math.round(printOptions.scale);
-        let caption = `${scale} m in 1 cm`;
+        let scale = Math.round(printOptions.scale);
+        let unit = 'm';
+        if (scale >= 1000) {
+            scale /= 1000;
+            unit = 'km'
+        }
+        let caption = `${scale} ${unit} in 1 cm`;
         if (printOptions.pagesCount > 1) {
             caption += ` | Page ${printOptions.pageLabel} / ${printOptions.pagesCount}`;
         }
