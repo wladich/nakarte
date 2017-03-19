@@ -77,6 +77,8 @@ L.Control.PrintPages = L.Control.extend({
             this.scale.subscribe(this.onPageSizeChanged, this);
             this.resolution.subscribe(this.onPageSizeChanged, this);
             this.pageSizeDescription = ko.pureComputed(this._displayPageSize, this);
+            this.pagesNum = ko.observable(0);
+            this.pagesNumLabel = ko.pureComputed(this._pagesNumLabel, this);
 
             //hash state notifications
             this.scale.subscribe(this.notifyChange, this);
@@ -120,6 +122,7 @@ L.Control.PrintPages = L.Control.extend({
             page._rotated = isLandsacape;
             page.addTo(this._map);
             this.pages.push(page);
+            this.pagesNum(this.pages.length);
             let cm = new Contextmenu(this.makePageContexmenuItems.bind(this, page));
             page.on('contextmenu', cm.show, cm);
             page.on('click', this.rotatePage.bind(this, page));
@@ -141,6 +144,7 @@ L.Control.PrintPages = L.Control.extend({
         removePage: function(page) {
             let i = this.pages.indexOf(page);
             this.pages.splice(i, 1);
+            this.pagesNum(this.pages.length);
             this._map.removeLayer(page);
             for (; i < this.pages.length; i++) {
                 this.pages[i].setLabel((i + 1).toString());
@@ -152,6 +156,7 @@ L.Control.PrintPages = L.Control.extend({
         removePages: function() {
             this.pages.forEach((page) => page.removeFrom(this._map));
             this.pages = [];
+            this.pagesNum(this.pages.length);
             this.notifyChange();
             this.updateFormZooms();
         },
@@ -350,6 +355,21 @@ L.Control.PrintPages = L.Control.extend({
 
         hasPages: function() {
             return !!this.pages.length
+        },
+
+        _pagesNumLabel: function() {
+            const n = this.pagesNum();
+            let label = '';
+            if (n) {
+                label += n;
+            } else {
+                label = 'No';
+            }
+            label += ' page';
+            if (n === 0 || n > 1) {
+                label += 's';
+            }
+            return label;
         },
 
         serializeState: function() {
