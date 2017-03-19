@@ -121,6 +121,6 @@
     position: relative;
 }
 
-.control-print-pages .leaflet-control-button-toggle {
+.icon-printer {
     background-image: url("images/printer.svg");
 }

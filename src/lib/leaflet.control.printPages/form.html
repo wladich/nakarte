@@ -1,5 +1,6 @@
-<div class="leaflet-control-button-toggle" data-bind="click: setExpanded"
-    title="Print map"></div>
+<div class="leaflet-control-button-toggle" title="Print map"
+     data-bind="click: setExpanded, css: {'icon-spinner-nuclear': makingPdf, 'icon-printer': !makingPdf()}">
+    </div>
 <div class="leaflet-control-content">
 <table class="layout">
     <tbody>
