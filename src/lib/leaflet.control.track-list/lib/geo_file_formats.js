@@ -16,7 +16,7 @@ function xmlGetNodeText(node) {
 }
 
 
-function parseGpx(txt, name) {
+function parseGpx(txt, name, preferNameFromFile) {
     var error;
 
     function getSegmentPoints(segment_element) {
@@ -84,6 +84,18 @@ function parseGpx(txt, name) {
     }
     if (dom.getElementsByTagName('gpx').length === 0) {
         return null;
+    }
+    if (preferNameFromFile) {
+        for (let trk of [...dom.getElementsByTagName('trk')]) {
+            let trkName = trk.getElementsByTagName('name')[0];
+            if (trkName) {
+                trkName = utf8_decode(xmlGetNodeText(trkName));
+                if (trkName.length) {
+                    name = trkName;
+                    break;
+                }
+            }
+        }
     }
     return [{
         name: name,
@@ -670,7 +682,7 @@ function parseNakarteUrl(s) {
     return geodataArray;
 }
 
-function parseGeoFile(name, data) {
+function parseGeoFile(name, data, preferNameFromFile) {
     var parsers = [
         parseTrackUrl,
         parseNakarteUrl,
@@ -684,7 +696,7 @@ function parseGeoFile(name, data) {
 //            parseYandexMap
     ];
     for (var i = 0; i < parsers.length; i++) {
-        var parsed = parsers[i](data, name);
+        var parsed = parsers[i](data, name, preferNameFromFile);
         if (parsed !== null) {
             return parsed;
         }

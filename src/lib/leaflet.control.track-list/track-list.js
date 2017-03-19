@@ -21,6 +21,7 @@ import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
+import {isGpsiesUrl, gpsiesXhrOptions} from './lib/gpsies';
 
 
 const TrackSegment = L.MeasuredLine.extend({
@@ -235,16 +236,24 @@ L.Control.TrackList = L.Control.extend({
                 if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
                     this.addTracksFromGeodataArray(geodata);
                 } else {
-                    var url_for_request = urlViaCorsProxy(url);
                     var name = url
                         .split('#')[0]
                         .split('?')[0]
                         .replace(/\/*$/, '')
                         .split('/')
                         .pop();
-                    fetch(url_for_request, {responseType: 'binarystring'})
+                    let url_for_request, xhrOptions, preferNameFromFile;
+                    if (isGpsiesUrl(url)) {
+                        [url_for_request, xhrOptions] = gpsiesXhrOptions(url);
+                        preferNameFromFile = true;
+                    } else {
+                        url_for_request = urlViaCorsProxy(url);
+                        xhrOptions = {responseType: 'binarystring'};
+                        preferNameFromFile = false;
+                    }
+                    fetch(url_for_request, xhrOptions)
                         .then(function(xhr) {
-                                var geodata = parseGeoFile(name, xhr.responseBinaryText);
+                                var geodata = parseGeoFile(name, xhr.responseBinaryText, preferNameFromFile);
                                 this.addTracksFromGeodataArray(geodata);
                             }.bind(this),
                             function() {
