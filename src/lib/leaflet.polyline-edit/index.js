@@ -74,6 +74,9 @@ L.Polyline.EditMixin = {
     },
 
     onNodeMarkerDblClickedRemoveNode: function(e) {
+        if (this.getLatLngs().length < 2 || (this._drawingDirection && this.getLatLngs().length === 2)) {
+            return;
+        }
         var marker = e.target,
             nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         this.removeNode(nodeIndex);
