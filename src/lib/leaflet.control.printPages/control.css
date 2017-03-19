@@ -6,6 +6,11 @@
     width: 3.2em;
 }
 
+.control-print-pages .pages-num {
+    vertical-align: middle;
+    margin-left: 1.5em;
+}
+
 .control-print-pages .page-size {
     width: 2.1em;
 }
@@ -21,10 +26,12 @@
 .button-add-page-horiz {
     background-image: url("images/add-page-horiz.png");
     margin-left: 2mm;
+    vertical-align: middle;
 }
 
 .button-add-page-vert {
     background-image: url("images/add-page-vert.png");
+    vertical-align: middle;
 }
 
 .button-remove-pages {
