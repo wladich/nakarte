@@ -158,6 +158,16 @@ L.Polyline.EditMixin = {
                 }
                 L.DomEvent.stop(e);
                 break;
+            case 8:
+            case 46:
+                if (this._drawingDirection && this.getLatLngs().length > 2) {
+                    const nodeIndex = this._drawingDirection === 1 ? this.getLatLngs().length - 2 : 1;
+                    this.removeNode(nodeIndex);
+                    this.fire('nodeschanged');
+                    L.DomEvent.preventDefault(e);
+                }
+                break;
+
             default:
         }
     },
