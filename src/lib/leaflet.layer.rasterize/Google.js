@@ -27,6 +27,9 @@ const GooglePrint = L.Layer.Google.extend({
     },
 
     _fullfillPendingTiles: function() {
+        if (!Object.keys(this._readyTiles).length) {
+            return;
+        }
         this._tilesReadyToGrab();
     },
 
