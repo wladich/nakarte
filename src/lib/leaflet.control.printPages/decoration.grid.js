@@ -7,7 +7,7 @@ function radians(degrees) {
 }
 
 class Grid extends PrintStaticLayer {
-    lineThicknessMm = 0.2;
+    lineThicknessMm = 0.15;
     minGridIntervalMm = 15;
 
     fontSizeMm = 3;
@@ -53,7 +53,7 @@ class Grid extends PrintStaticLayer {
         ctx.beginPath();
         const lineThickness = this.lineThicknessMm / 25.4 * printOptions.resolution;
         ctx.lineWidth = lineThickness;
-        ctx.strokeStyle = '#ccc';
+        ctx.strokeStyle = '#c8c';
 
         const intervalM = this.getGridInterval(printOptions);
         const width = printOptions.destPixelSize.x;
