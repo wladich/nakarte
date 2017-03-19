@@ -20,10 +20,19 @@ L.Layer.Google = L.GridLayer.extend({
             this._googleMapContainer.style.visibility = 'hidden';
             this._googleMapContainer.style.pointerEvents = 'none';
             getGoogle().then((google) => {
+                    let zoom, center;
+                    if (map) {
+                        zoom = map.getZoom();
+                        center = map.getCenter;
+                        center = new google.maps.LatLng(center.lat, center.lng);
+                    } else {
+                        zoom = 0;
+                        center = new google.maps.LatLng(0, 0);
+                    }
                     this.google = google;
                     this._googleMap = new google.maps.Map(this._googleMapContainer, {
-                            center: new google.maps.LatLng(0, 0),
-                            zoom: 0,
+                            center: center,
+                            zoom: zoom,
                             tilt: 0,
                             mapTypeId: google.maps.MapTypeId[this.mapType],
                             disableDefaultUI: true,
