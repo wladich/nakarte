@@ -114,3 +114,7 @@
 .leaflet-control.minimized .leaflet-control-button-toggle {
     display: block;
 }
+
+.icon-spinner-nuclear {
+    background-image: url('images/spinner.gif');
+}
