@@ -66,7 +66,7 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint">
-                        GPX Ozi GoogleEarth ZIP YandexMaps
+                        GPX Ozi GoogleEarth ZIP YandexMaps GPSies
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
