@@ -12,7 +12,10 @@ L.Control.TrackList.include({
         unserializeState: function(values) {
             if (values && values.length) {
                 var geodata = parseGeoFile('', window.location.href);
-                this.addTracksFromGeodataArray(geodata);
+                const notEmpty = this.addTracksFromGeodataArray(geodata);
+                if (notEmpty) {
+                    this.setExpanded();
+                }
             }
             return false;
         }

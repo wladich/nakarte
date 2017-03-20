@@ -267,6 +267,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         addTracksFromGeodataArray: function(geodata_array) {
+            let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
                 messages.push('No tracks loaded');
@@ -281,6 +282,7 @@ L.Control.TrackList = L.Control.extend({
                                 }
                             );
                         }
+                        hasData = true;
                         this.addTrack(geodata);
                     }
                     var error_messages = {
@@ -308,6 +310,7 @@ L.Control.TrackList = L.Control.extend({
                 logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n')}});
                 notify(messages.join('\n'));
             }
+            return hasData;
         },
 
 
