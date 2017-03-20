@@ -382,7 +382,7 @@ L.Control.ElevationProfile = L.Class.extend({
 
         onSvgMouseWheel: function(e) {
             var oldHorizZoom = this.horizZoom;
-            this.horizZoom += L.DomEvent.getWheelDelta(e);
+            this.horizZoom += L.DomEvent.getWheelDelta(e) > 0 ? 1 : -1;
             if (this.horizZoom < 1) {
                 this.horizZoom = 1;
             }
