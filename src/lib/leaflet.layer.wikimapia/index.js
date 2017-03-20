@@ -146,6 +146,9 @@ L.Wikimapia = L.GridLayer.extend({
         },
 
         getPlaceAtMousePos: function(e) {
+            if (!e.layerPoint) {
+                return;
+            }
             const tileCoords = this._tileCoordsFromEvent(e);
             let tile = this._tiles[this._tileCoordsToKey(tileCoords)];
             if (!tile) {
