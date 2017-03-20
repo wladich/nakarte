@@ -25,6 +25,7 @@ L.Control.TrackList.Ruler = L.Control.extend({
     },
 
     onClick: function() {
+        this._trackList.setExpanded();
         this._trackList.addNewTrack('Ruler').measureTicksShown(true);
     }
 
