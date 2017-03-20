@@ -4,6 +4,7 @@ import './style.css';
 function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
+    fixMapKeypressEvent();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -24,6 +25,17 @@ function fixPanAnimationBug() {
 
 function fixTouchDetection() {
     L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints)
+}
+
+function fixMapKeypressEvent() {
+    const originalHandleDOMEvent = L.Map.prototype._handleDOMEvent;
+    L.Map.prototype._handleDOMEvent = function(e) {
+        if (e.type === 'keypress' && e.keyCode === 13) {
+            this._fireDOMEvent(e, e.type);
+        } else {
+            originalHandleDOMEvent.call(this, e);
+        }
+    }
 }
 
 export {fixAll}
