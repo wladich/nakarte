@@ -17,9 +17,9 @@
         <td class="label">Print scale</td>
         <td>
             <div class="preset-values" >
-                <a data-bind="click: function() {$root.scale(100)}">100 m</a>
-                <a data-bind="click: function() {$root.scale(500)}">500 m</a>
-                <a data-bind="click: function() {$root.scale(1000)}">1 km</a>
+                <a data-bind="click: function() {scale(100)}, css: {selected: scale() === 100}">100 m</a>
+                <a data-bind="click: function() {scale(500)}, css: {selected: scale() === 500}">500 m</a>
+                <a data-bind="click: function() {scale(1000)}, css: {selected: scale() === 1000}">1 km</a>
             </div>
             <input type="text" class="scale" maxlength="6" data-bind="value: scale">&nbsp;m in 1 cm
         </td>
