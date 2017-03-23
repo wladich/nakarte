@@ -4,6 +4,7 @@ import copyToClipboard from 'lib/clipboardCopy';
 import Contextmenu from 'lib/contextmenu';
 import 'lib/leaflet.control.commons';
 import safeLocalStorage from 'lib/safe-localstorage';
+import 'lib/controls-styles/controls-styles.css';
 
 function pad(s, n) {
     var j = s.indexOf('.');
@@ -42,7 +43,6 @@ L.Control.Coordinates = L.Control.extend({
                         'click': this.onClick
                     }, this
                 );
-            map.on('mousemove', this.onMouseMove, this);
             this.menu = new Contextmenu([
                     {text: 'Click map to copy coordinates to clipboard', callback: this.prepareForClickOnMap.bind(this)},
                     '-',
@@ -124,9 +124,6 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         onMouseMove: function(e) {
-            if (!this.isEnabled()) {
-                return;
-            }
             var lat, lng;
             if (e) {
                 ({lat, lng} = e.latlng);
@@ -136,14 +133,19 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         setEnabled: function(enabled) {
+            if (!!enabled === this.isEnabled()) {
+                return;
+            }
             if (enabled) {
                 L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'coordinates-control-active');
+                this._map.on('mousemove', this.onMouseMove, this);
                 this._map.on('contextmenu', this.onMapRightClick, this);
             } else {
                 L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'coordinates-control-active');
                 this._map.off('contextmenu', this.onMapRightClick, this);
+                this._map.off('mousemove', this.onMouseMove, this);
             }
         },
 
