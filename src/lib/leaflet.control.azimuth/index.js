@@ -204,7 +204,8 @@ L.Control.Azimuth = L.Control.extend({
 
             const dist = this.points.start.distanceTo(this.points.end);
             this.elevationControl = new ElevationProfile(this._map, [this.points.start, this.points.end], {
-                samplingInterval: calcSamplingInterval(dist)
+                samplingInterval: calcSamplingInterval(dist),
+                sightLine: true
             });
             this.elevationControl.on('remove', () => this.elevationControl = null);
 
