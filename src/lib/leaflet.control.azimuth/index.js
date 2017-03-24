@@ -5,8 +5,7 @@ import layout from './control.html';
 import 'lib/controls-styles/controls-styles.css';
 import './style.css';
 import {getDeclination} from 'lib/magnetic-declination';
-//FIXME: replace with vendored version
-import 'leaflet-rotatedmarker';
+import 'vendored/github.com/bbecquet/Leaflet.RotatedMarker/leaflet.rotatedMarker';
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
