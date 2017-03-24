@@ -59,6 +59,7 @@
     "image-promise": "^4.0.1",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
+    "leaflet-rotatedmarker": "^0.1.2",
     "load-script": "^1.0.0",
     "raven-js": "^3.12.0",
     "rbush": "^2.0.1",

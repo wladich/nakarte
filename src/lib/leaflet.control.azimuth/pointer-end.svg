@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 30 30" xml:space="preserve">
+<defs>
+    <radialGradient id="grad1">
+      <stop offset="20%" stop-color="#ff0000" stop-opacity="0.6"/>
+      <stop offset="75%" stop-color="#ff0000" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff0000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+    <g>
+        <ellipse ry="15" rx="15" id="svg_1" cy="15" cx="15" fill="url(#grad1)"/>
+        <line x1="15" y1="15" x2="22" y2="25" stroke="#3388ff" stroke-width="1.5"/>
+        <line x1="15" y1="15" x2="8" y2="25" stroke="#3388ff" stroke-width="1.5"/>
+        <line x1="15" y1="15" x2="15" y2="30" stroke="#3388ff" stroke-width="1.5"/>
+    </g>
+</svg>

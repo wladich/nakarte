@@ -25,7 +25,7 @@ import getLayers from 'layers';
 import 'lib/leaflet.control.layers.events';
 import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
-
+import 'lib/leaflet.control.azimuth';
 
 function setUp() {
     fixAll();
@@ -61,6 +61,8 @@ function setUp() {
         .enableHashState('n');
 
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
+
+    new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
     /////////// controls top-right corner
 
