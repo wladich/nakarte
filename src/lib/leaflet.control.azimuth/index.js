@@ -220,6 +220,16 @@ L.Control.Azimuth = L.Control.extend({
 
         onProfileButtonClick: function() {
             this.showProfile();
+        },
+
+        onReverseButtonClick: function() {
+            if (this.points.end && this.points.start) {
+                this.setPoints({start: this.points.end, end: this.points.start});
+                if (this.elevationControl) {
+                    this.showProfile();
+                }
+
+            }
         }
 
     }
