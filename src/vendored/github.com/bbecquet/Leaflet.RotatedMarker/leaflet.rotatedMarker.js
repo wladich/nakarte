@@ -1,3 +1,5 @@
+import L from 'leaflet';
+
 (function() {
     // save these original methods before they are overwritten
     var proto_initIcon = L.Marker.prototype._initIcon;
