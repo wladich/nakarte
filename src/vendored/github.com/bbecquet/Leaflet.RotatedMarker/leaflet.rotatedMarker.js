@@ -4,7 +4,6 @@ import L from 'leaflet';
     // save these original methods before they are overwritten
     var proto_initIcon = L.Marker.prototype._initIcon;
     var proto_setPos = L.Marker.prototype._setPos;
-    var proto_onDrag = L.Handler.MarkerDrag.prototype._onDrag;
 
     var oldIE = (L.DomUtil.TRANSFORM === 'msTransform');
 
@@ -54,11 +53,4 @@ import L from 'leaflet';
             return this;
         }
     });
-
-    L.Handler.MarkerDrag.include({
-        _onDrag: function (e) {
-            proto_onDrag.call(this, e);
-            this._marker._applyRotation();
-        }
-    })
 })();
