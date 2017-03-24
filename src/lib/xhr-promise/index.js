@@ -65,6 +65,7 @@ class XMLHttpRequestPromise {
         const xhr = this.xhr;
         if (xhr.readyState === 4 && !this._aborted) {
             // console.log('ready state 4', this.url);
+            xhr.responseBinaryText = '';
             if (this.responseType === 'binarystring' && xhr.response && xhr.response.byteLength) {
                 xhr.responseBinaryText = arrayBufferToString(xhr.response);
             }
