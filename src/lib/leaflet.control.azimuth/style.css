@@ -20,14 +20,19 @@
     background-image: none;
     width: auto;
     height: auto;
-    padding: 4px 8px;
+    padding: 6px 6px;
     overflow: hidden;
+}
+
+.leaflet-control-azimuth .button-minimize {
+    float: left;
 }
 
 .leaflet-control-azimuth table{
     border-collapse: collapse;
     line-height: 16px;
     float: left;
+    margin-left: 4px;
 }
 
 .leaflet-control-azimuth td:last-child {
@@ -35,24 +40,50 @@
     text-align: center;
 }
 
-.icon-elevation {
-    background-image: url('elevation.png');
-    background-size: 30px;
-}
-
-.icon-arrow-left {
-    background-image: url('1490240499_Arrow_Back.svg');
-    background-size: 16px;
-}
-
-
-.leaflet-control-azimuth .image-button {
+.leaflet-control-azimuth .buttons {
     float: left;
-    margin-left: 6px;
-    vertical-align: middle;
-    top: 12px;
-    position: relative;
+    margin-left: 8px;
 }
+
+.leaflet-control-azimuth .button {
+    height: 18px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 0 8px;
+    line-height: 18px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+}
+
+.leaflet-control-azimuth .button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-azimuth .button:first-child {
+    margin-top: 2px;
+    margin-bottom: 8px;
+}
+
+/*.icon-elevation {*/
+    /*background-image: url('elevation.png');*/
+    /*background-size: 30px;*/
+/*}*/
+
+/*.icon-arrow-left {*/
+    /*background-image: url('1490240499_Arrow_Back.svg');*/
+    /*background-size: 16px;*/
+/*}*/
+
+
+/*.leaflet-control-azimuth .image-button {*/
+    /*float: left;*/
+    /*margin-left: 6px;*/
+    /*vertical-align: middle;*/
+    /*top: 12px;*/
+    /*position: relative;*/
+/*}*/
 
 .azimuth-control-active {
     cursor: crosshair;
