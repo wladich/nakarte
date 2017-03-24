@@ -217,7 +217,8 @@ var DragEvents = L.Class.extend({
 const ElevationProfile = L.Class.extend({
         options: {
             elevationsServer: config.elevationsServer,
-            samplingInterval: 50
+            samplingInterval: 50,
+            sightLine: false
         },
 
         includes: L.Mixin.Events,
@@ -761,7 +762,7 @@ const ElevationProfile = L.Class.extend({
             for (i = 0; i < gridValues.length; i++) {
                 y = Math.round(i * gridStep - 0.5) + 0.5 + paddingTop;
                 path = L.Util.template('M{x1} {y} L{x2} {y}', {x1: 0, x2: this.svgWidth * this.horizZoom, y: y});
-                createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'green', fill: 'none'}, svg);
+                createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'green', fill: 'none', 'stroke-opacity': '0.5'}, svg);
 
                 label = L.DomUtil.create('div', 'elevation-profile-grid-label', this.leftAxisLables);
                 label.innerHTML = gridValues[gridValues.length - i - 1];
@@ -773,15 +774,31 @@ const ElevationProfile = L.Class.extend({
                 (this.svgHeight - paddingTop - paddingBottom) / (gridValues[gridValues.length - 1] - gridValues[0]);
 
             path = [];
+            const valueToSvgCoord = (el) => {
+                const y = (el - gridValues[0]) * verticalMultiplier;
+                return this.svgHeight - y - paddingBottom;
+            };
+
             for (i = 0; i < this.values.length; i++) {
                 path.push(i ? 'L' : 'M');
                 x = i * horizStep;
-                y = (this.values[i] - gridValues[0]) * verticalMultiplier;
-                y = this.svgHeight - y - paddingBottom;
+                y = valueToSvgCoord(this.values[i]);
                 path.push(x + ' ' + y + ' ');
             }
             path = path.join('');
             createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'brown', fill: 'none'}, svg);
+            // sightline
+            if (this.options.sightLine) {
+                path = L.Util.template('M{x1} {y1} L{x2} {y2}', {
+                        x1: 0, x2: this.svgWidth * this.horizZoom,
+                        y1: valueToSvgCoord(this.values[0]),
+                        y2: valueToSvgCoord(this.values[this.values.length - 1])
+                    }
+                );
+                createSvg('path',
+                    {d: path, 'stroke-width': '3px', stroke: '#94b1ff', fill: 'none', 'stroke-opacity': '0.5'}, svg
+                );
+            }
         },
 
         _getElevation: function(latlngs) {
