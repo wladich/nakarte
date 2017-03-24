@@ -16,6 +16,7 @@ class MagneticMeridians extends PrintStaticLayer {
     lineIntervalMm = 50;
     samplingIntervalMm = 15;
     color = '#99d5ff';
+    overlaySolid = false;
 
     _makeCanvasToLatLngTransformer(printOptions) {
         const projectedBounds = printOptions.pixelBounds;

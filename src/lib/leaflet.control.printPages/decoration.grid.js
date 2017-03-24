@@ -47,7 +47,7 @@ class Grid extends PrintStaticLayer {
         return `${x} ${unit}`;
     }
 
-    _drawRaster(canvas, printOptions) {
+    _drawGrid(canvas, printOptions) {
         const metersPerDegree = L.Projection.SphericalMercator.R * Math.PI / 180;
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
@@ -105,18 +105,51 @@ class Grid extends PrintStaticLayer {
             }
         }
         ctx.stroke();
-
+    }
+    _drawLabel(canvas, printOptions) {
+        const intervalM = this.getGridInterval(printOptions);
+        const height = printOptions.destPixelSize.y;
+        const ctx = canvas.getContext('2d');
         const caption = 'Grid ' + this.formatDistance(intervalM);
         const fontSize = this.fontSizeMm / 25.4 * printOptions.resolution;
         const padding = this.paddingMm / 25.4 * printOptions.resolution;
         ctx.font = `${fontSize}px ${this.font}`;
         const textWidth = ctx.measureText(caption).width;
         ctx.textBaseline = 'bottom';
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fillRect(0, height - fontSize - 2 * padding, textWidth + 2 * padding, fontSize + 2 * padding);
         ctx.fillStyle = '#000000';
         ctx.fillText(caption, padding, height - padding);
     }
+
+    async getTilesInfo(printOptions) {
+        return {
+            iterateTilePromises: (function*() {
+                yield {
+                    tilePromise: Promise.resolve({
+                            draw: (canvas) => this._drawGrid(canvas, printOptions),
+                            isOverlay: true,
+                            overlaySolid: false
+                        }
+                    ),
+                    abortLoading: () => {
+                    }
+                };
+                yield {
+                    tilePromise: Promise.resolve({
+                            draw: (canvas) => this._drawLabel(canvas, printOptions),
+                            isOverlay: true,
+                            overlaySolid: true
+                        }
+                    ),
+                    abortLoading: () => {
+                    }
+                }
+            }).bind(this),
+            count: 2
+        };
+    }
+
 }
 
 export {Grid};

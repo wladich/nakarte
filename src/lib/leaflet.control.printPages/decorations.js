@@ -22,7 +22,7 @@ class PrintStaticLayer {
                     tilePromise: Promise.resolve({
                             draw: (canvas) => this._drawRaster(canvas, printOptions),
                             isOverlay: true,
-                            overlaySolid: false
+                            overlaySolid: this.overlaySolid
                         }
                     ),
                     abortLoading: () => {
