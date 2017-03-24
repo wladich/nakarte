@@ -6,6 +6,22 @@ import 'lib/leaflet.control.commons';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
 
+function calcSamplingInterval(length) {
+    var targetPointsN = 2000;
+    var maxPointsN = 9999;
+    var samplingIntgerval = length / targetPointsN;
+    if (samplingIntgerval < 10) {
+        samplingIntgerval = 10;
+    }
+    if (samplingIntgerval > 50) {
+        samplingIntgerval = 50;
+    }
+    if (length / samplingIntgerval > maxPointsN) {
+        samplingIntgerval = length / maxPointsN;
+    }
+    return samplingIntgerval;
+}
+
 function createSvg(tagName, attributes, parent) {
     var element = document.createElementNS('http://www.w3.org/2000/svg', tagName);
     if (attributes) {
@@ -198,11 +214,13 @@ var DragEvents = L.Class.extend({
     }
 );
 
-L.Control.ElevationProfile = L.Class.extend({
+const ElevationProfile = L.Class.extend({
         options: {
             elevationsServer: config.elevationsServer,
             samplingInterval: 50
         },
+
+        includes: L.Mixin.Events,
 
         initialize: function(map, latlngs, options) {
             L.setOptions(this, options);
@@ -224,6 +242,7 @@ L.Control.ElevationProfile = L.Class.extend({
                 .catch((e) => {
                     logging.captureException(e, {extra: {description: 'while getting elevation'}});
                     notify(`Failed to get elevation data: ${e.message}`);
+                    self._addTo(map);
                 });
             this.values = null;
 
@@ -287,6 +306,7 @@ L.Control.ElevationProfile = L.Class.extend({
             map.removeLayer(this.trackMarker);
             map.removeLayer(this.polyLineSelection);
             this._map = null;
+            this.fire('remove');
             return this;
         },
 
@@ -798,3 +818,5 @@ L.Control.ElevationProfile = L.Class.extend({
         }
     }
 );
+
+export {ElevationProfile, calcSamplingInterval};

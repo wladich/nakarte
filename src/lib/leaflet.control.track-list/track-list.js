@@ -14,7 +14,7 @@ import 'lib/leaflet.layer.canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
 import 'lib/controls-styles/controls-styles.css';
-import 'lib/leaflet.control.elevation-profile';
+import {ElevationProfile, calcSamplingInterval} from 'lib/leaflet.control.elevation-profile';
 import 'lib/leaflet.control.commons';
 import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.polyline-edit';
@@ -1016,22 +1016,6 @@ L.Control.TrackList = L.Control.extend({
                 );
         },
 
-        calcSamplingInterval: function(length) {
-            var targetPointsN = 2000;
-            var maxPointsN = 9999;
-            var samplingIntgerval = length / targetPointsN;
-            if (samplingIntgerval < 10) {
-                samplingIntgerval = 10;
-            }
-            if (samplingIntgerval > 50) {
-                samplingIntgerval = 50;
-            }
-            if (length / samplingIntgerval > maxPointsN) {
-                samplingIntgerval = length / maxPointsN;
-            }
-            return samplingIntgerval;
-        },
-
         showElevationProfileForSegment: function(line) {
             if (this._elevationControl) {
                 this._elevationControl.removeFrom(this._map);
@@ -1056,8 +1040,8 @@ L.Control.TrackList = L.Control.extend({
             if (this._elevationControl) {
                 this._elevationControl.removeFrom(this._map);
             }
-            this._elevationControl = new L.Control.ElevationProfile(this._map, path, {
-                    samplingInterval: this.calcSamplingInterval(new L.MeasuredLine(path).getLength())
+            this._elevationControl = new ElevationProfile(this._map, path, {
+                    samplingInterval: calcSamplingInterval(new L.MeasuredLine(path).getLength())
                 }
             );
         },
