@@ -7,7 +7,8 @@ import './style.css';
 import {getDeclination} from 'lib/magnetic-declination';
 //FIXME: replace with vendored version
 import 'leaflet-rotatedmarker';
-import iconPointerStart from './pointer.svg';
+import iconPointer from './pointer.svg';
+import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
 import 'lib/leaflet.control.elevation-profile';
 
@@ -60,9 +61,13 @@ L.Control.Azimuth = L.Control.extend({
                 start: null,
                 end: null
             };
-            const iconStart = L.icon({iconUrl: iconPointerStart, iconSize: [30, 30]});
-            const iconEnd = L.icon({iconUrl: iconPointerEnd, iconSize: [30, 30]});
+            const iconSingle = L.icon({iconUrl: iconPointer, iconSize: [30, 30]});
+            const iconStart = L.icon({iconUrl: iconPointerStart, iconSize: [40, 40]});
+            const iconEnd = L.icon({iconUrl: iconPointerEnd, iconSize: [40, 40]});
             this.markers = {
+                single: L.marker([0, 0], {icon: iconSingle, draggable: true, which: 'start'})
+                    .on('drag', this.onMarkerDrag, this)
+                    .on('click', L.DomEvent.stopPropagation),
                 start: L.marker([0, 0], {icon: iconStart, draggable: true, which: 'start', rotationOrigin: 'center center'})
                     .on('drag', this.onMarkerDrag, this)
                     .on('click', L.DomEvent.stopPropagation),
@@ -122,31 +127,29 @@ L.Control.Azimuth = L.Control.extend({
         setPoints: function(points) {
             Object.assign(this.points, points);
             points = this.points;
-            if (points.start) {
-                this.markers.start
+            if (points.start && !points.end) {
+                this.markers.single
                     .setLatLng(points.start)
                     .addTo(this._map);
             } else {
-                this.markers.start.removeFrom(this._map);
-            }
-            if (points.end) {
-                this.markers.end
-                    .setLatLng(points.end)
-                    .addTo(this._map);
-            } else {
-                this.markers.end.removeFrom(this._map);
+                this.markers.single.removeFrom(this._map);
             }
             if (points.start && points.end) {
                 const angle = calcAngle(points.start, points.end);
                 this.markers.start
+                    .setLatLng(points.start)
+                    .addTo(this._map)
                     .setRotationAngle(angle);
                 this.markers.end
+                    .setLatLng(points.end)
+                    .addTo(this._map)
                     .setRotationAngle(angle);
                 this.azimuthLine
                     .setLatLngs([[points.start, points.end]])
                     .addTo(this._map);
             } else {
-                this.markers.start.setRotationAngle(0);
+                this.markers.start.removeFrom(this._map);
+                this.markers.end.removeFrom(this._map);
                 this.azimuthLine.removeFrom(this._map);
             }
             this.updateValuesDisplay();
