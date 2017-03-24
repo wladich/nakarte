@@ -53,7 +53,7 @@ L.Layer.CanvasMarkers.include({
                                     this.drawSelectedMarkers(canvas, pixelExtents, markerJobs, pointsForLabels, zoom);
                                 },
                                 isOverlay: true,
-                                overlaySolid: true
+                                overlaySolid: !this.options.printTransparent
                             }
                         ),
                         abortLoading: () => {

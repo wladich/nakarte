@@ -118,7 +118,8 @@ L.Control.TrackList = L.Control.extend({
             this._markerLayer = new L.Layer.CanvasMarkers(null, {
                 print: true,
                 scaleDependent: true,
-                zIndex: 1000
+                zIndex: 1000,
+                printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
             map.on('resize', this._setAdaptiveHeight, this);
