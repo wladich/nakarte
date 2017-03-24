@@ -44,6 +44,7 @@ class OverlayScale extends PrintStaticLayer {
     fontSizeMm = 3;
     font = 'verdana';
     paddingMm = 1;
+    overlaySolid = true;
 
     _drawRaster(canvas, printOptions) {
         const ctx = canvas.getContext('2d');
@@ -56,7 +57,7 @@ class OverlayScale extends PrintStaticLayer {
         ctx.font = `${fontSize}px ${this.font}`;
         const textWidth = ctx.measureText(caption).width;
         ctx.textBaseline = 'bottom';
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fillRect(0, 0, textWidth + 2 * padding, fontSize + 2 * padding);
         ctx.fillStyle = '#000000';
         ctx.fillText(caption, padding, fontSize + padding);
