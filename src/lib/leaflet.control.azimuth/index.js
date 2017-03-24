@@ -10,7 +10,7 @@ import 'leaflet-rotatedmarker';
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
-import 'lib/leaflet.control.elevation-profile';
+import {ElevationProfile, calcSamplingInterval} from 'lib/leaflet.control.elevation-profile';
 
 function radians(x) {
     return x / 180 * Math.PI;
@@ -70,10 +70,12 @@ L.Control.Azimuth = L.Control.extend({
                     .on('click', L.DomEvent.stopPropagation),
                 start: L.marker([0, 0], {icon: iconStart, draggable: true, which: 'start', rotationOrigin: 'center center'})
                     .on('drag', this.onMarkerDrag, this)
-                    .on('click', L.DomEvent.stopPropagation),
+                    .on('click', L.DomEvent.stopPropagation)
+                    .on('dragend', this.onMarkerDragEnd, this),
                 end: L.marker([0, 0], {icon: iconEnd, draggable: true, which: 'end', rotationOrigin: 'center center'})
                     .on('drag', this.onMarkerDrag, this)
                     .on('click', L.DomEvent.stopPropagation)
+                    .on('dragend', this.onMarkerDragEnd, this)
             };
             this.azimuthLine = L.polyline([], {interactive: false, weight: 1.5});
         },
@@ -103,6 +105,12 @@ L.Control.Azimuth = L.Control.extend({
             this.setPoints({[marker.options.which]: marker.getLatLng()});
         },
 
+        onMarkerDragEnd: function() {
+            if (this.elevationControl) {
+                this.showProfile();
+            }
+        },
+
         setEnabled: function(enabled) {
             if (!!enabled === this.isEnabled()) {
                 return;
@@ -116,8 +124,8 @@ L.Control.Azimuth = L.Control.extend({
                 L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
                 this._map.off('click', this.onMapClick, this);
                 this.setPoints({start: null, end: null});
+                this.hideProfile();
             }
-
         },
 
         isEnabled: function() {
@@ -181,19 +189,36 @@ L.Control.Azimuth = L.Control.extend({
             } else if (this.points.start && !this.points.end) {
                 this.setPoints({end: e.latlng})
             } else if (this.points.start && this.points.end) {
+                this.hideProfile();
                 this.setPoints({start: e.latlng, end: null})
             }
         },
 
-        onProfileButtonClick: function() {
+        showProfile: function() {
+            if (!this.points.end) {
+                return;
+            }
             if (this.elevationControl) {
                 this.elevationControl.removeFrom(this._map);
             }
 
-            this.elevationControl = new L.Control.ElevationProfile(this._map, [this.points.start, this.points.end ], {
-                    samplingInterval: 100
-                }
-            );
+            const dist = this.points.start.distanceTo(this.points.end);
+            this.elevationControl = new ElevationProfile(this._map, [this.points.start, this.points.end], {
+                samplingInterval: calcSamplingInterval(dist)
+            });
+            this.elevationControl.on('remove', () => this.elevationControl = null);
+
+        },
+
+        hideProfile: function() {
+            if (this.elevationControl) {
+                this.elevationControl.removeFrom(this._map);
+            }
+            this.elevationControl = null;
+        },
+
+        onProfileButtonClick: function() {
+            this.showProfile();
         }
 
     }
