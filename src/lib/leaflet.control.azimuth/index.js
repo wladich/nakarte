@@ -96,7 +96,7 @@ L.Control.Azimuth = L.Control.extend({
             this.setEnabled(true);
         },
 
-        onMinimizeButonClick: function(e) {
+        onMinimizeButtonClick: function(e) {
             setTimeout(() => this.setEnabled(false), 0);
         },
 
