@@ -7,6 +7,6 @@
         <line x1="20" y1="20" x2="23" y2="24" stroke="#3388ff" stroke-width="1.5"/>
         <line x1="20" y1="20" x2="17" y2="24" stroke="#3388ff" stroke-width="1.5"/>
 
-        <line x1="20" y1="20" x2="20" y2="0" stroke="#3388ff" stroke-width="1.5"/>
+        <line x1="20" y1="20" x2="20" y2="7" stroke="#3388ff" stroke-width="1.5"/>
     </g>
 </svg>
