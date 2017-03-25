@@ -62,7 +62,7 @@ function setUp() {
 
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
 
-    new L.Control.Azimuth({position: 'topleft'}).addTo(map);
+    const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
     /////////// controls top-right corner
 
@@ -110,6 +110,12 @@ function setUp() {
     raiseControlsOnFocus(map);
 
     L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
+
+    tracklist.on('startedit elevation-shown', () => azimuthControl.setEnabled(false));
+    azimuthControl.on('enabled', () => {
+        tracklist.stopEditLine();
+        tracklist.hideElevationProfile();
+    })
 }
 
 export default {setUp};

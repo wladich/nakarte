@@ -51,6 +51,8 @@ L.Control.Azimuth = L.Control.extend({
             position: 'bottomleft'
         },
 
+        includes: L.Mixin.Events,
+
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
             this.trueAzimuth = ko.observable(null);
@@ -118,6 +120,7 @@ L.Control.Azimuth = L.Control.extend({
                 L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'azimuth-control-active');
                 this._map.on('click', this.onMapClick, this);
+                this.fire('enabled');
             } else {
                 L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
