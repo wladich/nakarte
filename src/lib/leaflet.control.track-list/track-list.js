@@ -39,6 +39,7 @@ TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
+        includes: L.Mixin.Events,
 
         colors: ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'],
 
@@ -560,6 +561,7 @@ L.Control.TrackList = L.Control.extend({
                     setTimeout(this.onLineEditEnd.bind(this, track, polyline), 0);
                 }.bind(this)
             );
+            this.fire('startedit');
         },
 
         placeNewPoint: function(track) {
@@ -576,6 +578,7 @@ L.Control.TrackList = L.Control.extend({
             this._editedPoint = marker;
             this.map.on('click', this.placePoint, this);
             L.DomEvent.on(document, 'keyup', this.stopPlacingPointOnEscPressed, this);
+            this.fire('startedit');
         },
 
         placePoint: function(e) {
@@ -1017,14 +1020,13 @@ L.Control.TrackList = L.Control.extend({
         },
 
         showElevationProfileForSegment: function(line) {
-            if (this._elevationControl) {
-                this._elevationControl.removeFrom(this._map);
-            }
+            this.hideElevationProfile();
             this.stopEditLine();
-            this._elevationControl = new L.Control.ElevationProfile(this._map, line.getLatLngs(), {
-                    samplingInterval: this.calcSamplingInterval(line.getLength())
+            this._elevationControl = new ElevationProfile(this._map, line.getLatLngs(), {
+                    samplingInterval: calcSamplingInterval(line.getLength())
                 }
             );
+            this.fire('elevation-shown');
         },
 
         showElevationProfileForTrack: function(track) {
@@ -1037,13 +1039,19 @@ L.Control.TrackList = L.Control.extend({
                 }
                 path = path.concat(lines[i].getLatLngs());
             }
-            if (this._elevationControl) {
-                this._elevationControl.removeFrom(this._map);
-            }
+            this.hideElevationProfile();
             this._elevationControl = new ElevationProfile(this._map, path, {
                     samplingInterval: calcSamplingInterval(new L.MeasuredLine(path).getLength())
                 }
             );
+            this.fire('elevation-shown');
+        },
+
+        hideElevationProfile: function() {
+            if (this._elevationControl) {
+                this._elevationControl.removeFrom(this._map);
+            }
+            this._elevationControl = null;
         },
 
         hasTracks: function() {
