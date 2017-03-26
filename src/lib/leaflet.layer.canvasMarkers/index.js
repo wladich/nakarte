@@ -387,6 +387,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
         },
 
         onClick: function(e) {
+            if (this._map.clickLocked) {
+                return;
+            }
             const marker = this.findMarkerFromMouseEvent(e);
             if (marker) {
                 L.extend(e, {marker: marker});

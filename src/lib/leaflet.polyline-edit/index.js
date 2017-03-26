@@ -125,6 +125,7 @@ L.Polyline.EditMixin = {
 
         this._map.on('mousemove', this.onMouseMoveFollowEndNode, this);
         L.DomUtil.addClass(this._map._container, 'leaflet-line-drawing');
+        this._map.clickLocked = true;
     },
 
 
@@ -138,6 +139,7 @@ L.Polyline.EditMixin = {
         this.fire('nodeschanged');
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
+        this._map.clickLocked = false;
 
     },
 

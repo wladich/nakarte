@@ -139,6 +139,7 @@ L.Control.Azimuth = L.Control.extend({
                 L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
                 this._map.off('click', this.onMapClick, this);
             }
+            this._map.clickLocked = enabled;
             this._enabled(!!enabled);
         },
 
