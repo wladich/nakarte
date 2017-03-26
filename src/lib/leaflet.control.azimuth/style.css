@@ -78,25 +78,6 @@
     margin-bottom: 8px;
 }
 
-/*.icon-elevation {*/
-    /*background-image: url('elevation.png');*/
-    /*background-size: 30px;*/
-/*}*/
-
-/*.icon-arrow-left {*/
-    /*background-image: url('1490240499_Arrow_Back.svg');*/
-    /*background-size: 16px;*/
-/*}*/
-
-
-/*.leaflet-control-azimuth .image-button {*/
-    /*float: left;*/
-    /*margin-left: 6px;*/
-    /*vertical-align: middle;*/
-    /*top: 12px;*/
-    /*position: relative;*/
-/*}*/
-
 .azimuth-control-active {
     cursor: crosshair;
 }
