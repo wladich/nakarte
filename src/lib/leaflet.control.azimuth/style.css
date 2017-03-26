@@ -24,8 +24,19 @@
     overflow: hidden;
 }
 
-.leaflet-control-azimuth .button-minimize {
+.leaflet-control-azimuth .left-buttons {
     float: left;
+}
+
+.leaflet-control-azimuth .icon-on-off {
+    background-image: url('on-off-power-button.svg') !important;
+    background-size: 14px;
+    position: relative;
+    top: 10px;
+}
+
+.leaflet-control-azimuth .state-on {
+    background-color: #99d5ff;
 }
 
 .leaflet-control-azimuth table{
@@ -38,6 +49,7 @@
 .leaflet-control-azimuth td:last-child {
     padding-left: 4px;
     text-align: center;
+    width: 5.5em;
 }
 
 .leaflet-control-azimuth .buttons {

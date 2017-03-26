@@ -1,5 +1,9 @@
 <div class="contents">
-    <div class="button-minimize" data-bind="click: onMinimizeButtonClick"></div>
+    <div class="left-buttons">
+        <div class="button-minimize" data-bind="click: onMinimizeButtonClick"></div>
+        <div class="button-minimize icon-on-off"
+             data-bind="click: onEnableButtonClick, css: {'state-on': _enabled()}"></div>
+    </div>
     <table>
         <tr>
             <td>True azimuth</td>
