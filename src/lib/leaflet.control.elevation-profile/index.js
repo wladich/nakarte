@@ -299,6 +299,7 @@ const ElevationProfile = L.Class.extend({
         },
 
         removeFrom: function(map) {
+            this.abortLoading()
             if (!this._map) {
                 return;
             }
@@ -823,8 +824,9 @@ const ElevationProfile = L.Class.extend({
                 req.push(latlngs[i].lat.toFixed(6) + ' ' + latlngs[i].lng.toFixed(5));
             }
             req = req.join('\n');
-            return fetch(this.options.elevationsServer, {method: 'POST', data: req})
-                .then(
+            const xhrPromise = fetch(this.options.elevationsServer, {method: 'POST', data: req});
+            this.abortLoading = xhrPromise.abort.bind(xhrPromise);
+            return xhrPromise.then(
                     function(xhr) {
                         return parseResponse(xhr.responseText);
                     }
