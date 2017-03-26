@@ -15,7 +15,7 @@ class MagneticMeridians extends PrintStaticLayer {
     lineThicknessMm = 0.2;
     lineIntervalMm = 50;
     samplingIntervalMm = 15;
-    color = '#99d5ff';
+    color = '#66c2ff';
     overlaySolid = false;
 
     _makeCanvasToLatLngTransformer(printOptions) {
