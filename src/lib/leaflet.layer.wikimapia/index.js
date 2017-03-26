@@ -187,6 +187,9 @@ L.Wikimapia = L.GridLayer.extend({
         },
 
         onClick: function(e) {
+            if (this._map.clickLocked) {
+                return;
+            }
             const place = this.getPlaceAtMousePos(e);
             if (place) {
                 const url = `http://wikimapia.org/${place.id}/ru/`;
