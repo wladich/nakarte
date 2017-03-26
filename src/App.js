@@ -111,11 +111,12 @@ function setUp() {
 
     L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
 
-    tracklist.on('startedit elevation-shown', () => azimuthControl.setEnabled(false));
+    tracklist.on('startedit', () => azimuthControl.setEnabled(false));
+    tracklist.on('elevation-shown', () => azimuthControl.hideProfile());
     azimuthControl.on('enabled', () => {
         tracklist.stopEditLine();
-        tracklist.hideElevationProfile();
-    })
+    });
+    azimuthControl.on('elevation-shown', () => tracklist.hideElevationProfile());
 }
 
 export default {setUp};

@@ -55,6 +55,7 @@ L.Control.Azimuth = L.Control.extend({
 
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
+            this._enabled = ko.observable(false);
             this.trueAzimuth = ko.observable(null);
             this.magneticAzimuth = ko.observable(null);
             this.distance = ko.observable(null);
@@ -94,11 +95,11 @@ L.Control.Azimuth = L.Control.extend({
         },
 
         onClick: function() {
-            this.setEnabled(true);
+            this.setExpanded(true);
         },
 
         onMinimizeButtonClick: function(e) {
-            setTimeout(() => this.setEnabled(false), 0);
+            setTimeout(() => this.setExpanded(false), 0);
         },
 
         onMarkerDrag: function(e) {
@@ -112,25 +113,44 @@ L.Control.Azimuth = L.Control.extend({
             }
         },
 
+        setExpanded: function(expanded) {
+            if (!!expanded === this.isExpanded()) {
+                return;
+            }
+            if (expanded) {
+                L.DomUtil.addClass(this._container, 'expanded');
+            } else {
+                L.DomUtil.removeClass(this._container, 'expanded');
+                this.hideProfile();
+                this.setPoints({start: null, end: null});
+            }
+            this.setEnabled(expanded);
+        },
+
         setEnabled: function(enabled) {
             if (!!enabled === this.isEnabled()) {
                 return;
             }
             if (enabled) {
-                L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'azimuth-control-active');
                 this._map.on('click', this.onMapClick, this);
                 this.fire('enabled');
             } else {
-                L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
                 this._map.off('click', this.onMapClick, this);
-                this.setPoints({start: null, end: null});
-                this.hideProfile();
             }
+            this._enabled(!!enabled);
         },
 
         isEnabled: function() {
+            return !!this._enabled();
+        },
+
+        onEnableButtonClick: function() {
+            this.setEnabled(!this.isEnabled());
+        },
+
+        isExpanded: function() {
             return L.DomUtil.hasClass(this._container, 'expanded');
         },
 
@@ -210,6 +230,7 @@ L.Control.Azimuth = L.Control.extend({
                 sightLine: true
             });
             this.elevationControl.on('remove', () => this.elevationControl = null);
+            this.fire('elevation-shown');
 
         },
 
