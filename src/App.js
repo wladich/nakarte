@@ -96,6 +96,8 @@ function setUp() {
     tracklist.enableHashState('nktk');
 
 
+    ////////// adaptive layout
+
     if (L.Browser.mobile) {
         layersControl.setMinimized();
         if (!tracklist.hasTracks()) {
@@ -109,7 +111,11 @@ function setUp() {
 
     raiseControlsOnFocus(map);
 
+    //////////// save state at unload
+
     L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
+
+    ////////// track list and azimuth measure interaction
 
     tracklist.on('startedit', () => azimuthControl.setEnabled(false));
     tracklist.on('elevation-shown', () => azimuthControl.hideProfile());
