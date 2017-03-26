@@ -7,8 +7,9 @@ function radians(degrees) {
 }
 
 class Grid extends PrintStaticLayer {
-    lineThicknessMm = 0.15;
+    lineThicknessMm = 0.2;
     minGridIntervalMm = 15;
+    lineColor = '#cccccc';
 
     fontSizeMm = 3;
     font = 'verdana';
@@ -51,9 +52,10 @@ class Grid extends PrintStaticLayer {
         const metersPerDegree = L.Projection.SphericalMercator.R * Math.PI / 180;
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
-        const lineThickness = this.lineThicknessMm / 25.4 * printOptions.resolution;
+        const pixelsPerMm = 1 / 25.4 * printOptions.resolution;
+        const lineThickness = this.lineThicknessMm * pixelsPerMm;
         ctx.lineWidth = lineThickness;
-        ctx.strokeStyle = '#c8c';
+        ctx.strokeStyle = this.lineColor;
 
         const intervalM = this.getGridInterval(printOptions);
         const width = printOptions.destPixelSize.x;
