@@ -18,6 +18,10 @@ function pad(s, n) {
     return s;
 }
 
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
 L.Control.Coordinates = L.Control.extend({
         options: {
             position: 'bottomleft'
@@ -128,6 +132,7 @@ L.Control.Coordinates = L.Control.extend({
             if (e) {
                 ({lat, lng} = e.latlng);
             }
+            lng = mod(lng + 180, 360) - 180;
             this._field_lat.innerHTML = this.formatCoodinate(lat, true);
             this._field_lon.innerHTML = this.formatCoodinate(lng, false);
         },
