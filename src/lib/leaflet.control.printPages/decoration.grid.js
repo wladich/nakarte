@@ -51,7 +51,6 @@ class Grid extends PrintStaticLayer {
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
         const pixelsPerMm = 1 / 25.4 * printOptions.resolution;
-        const lineThickness = this.lineThicknessMm * pixelsPerMm;
         const intervalM = this.getGridInterval(printOptions);
         const width = printOptions.destPixelSize.x;
         const height = printOptions.destPixelSize.y;
