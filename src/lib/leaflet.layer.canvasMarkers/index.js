@@ -37,7 +37,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             labelFontSize: 10,
             iconScale: 1,
             pane: 'rasterMarker',
-            updateWhenZooming: !L.Browser.mobile
+            updateWhenZooming: !L.Browser.mobile,
+            iconsOpacity: 1
         },
 
         initialize: function(markers, options) {
@@ -289,6 +290,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.fillText(job.label, x, y + textHeight);
                 }
             }
+            ctx.globalAlpha = this.options.iconsOpacity;
             // draw icons
             for (let region of regionsInTile) {
                 if (!region.isLabel) {
@@ -300,6 +302,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.drawImage(job.img, x, y, job.iconSize[0], job.iconSize[1]);
                 }
             }
+            ctx.globalAlpha = 1;
         },
 
         drawTile: async function(canvas, coords) {
