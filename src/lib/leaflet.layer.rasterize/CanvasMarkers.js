@@ -21,6 +21,9 @@ L.Layer.CanvasMarkers.include({
 
         cloneForPrint: function(options) {
             options = L.Util.extend({}, this.options);
+            if (options.printIconsOpacity !== undefined) {
+                options.iconsOpacity = options.printIconsOpacity;
+            }
             return new L.Layer.CanvasMarkers(this.cloneMarkers(), options);
 
         },
