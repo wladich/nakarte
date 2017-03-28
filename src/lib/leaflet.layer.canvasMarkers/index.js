@@ -282,8 +282,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.shadowColor = '#fff';
                     ctx.strokeStyle = '#fff';
                     ctx.fillStyle = '#000';
-                    ctx.lineWidth = 1;
-                    ctx.shadowBlur = 2;
+                    ctx.lineWidth = 1.2 * this.options.iconScale;
+                    ctx.shadowBlur = 1 * this.options.iconScale;
                     ctx.strokeText(job.label, x, y + textHeight);
                     ctx.shadowBlur = 0;
                     ctx.fillText(job.label, x, y + textHeight);
