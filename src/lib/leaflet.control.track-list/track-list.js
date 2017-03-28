@@ -119,8 +119,6 @@ L.Control.TrackList = L.Control.extend({
                 print: true,
                 scaleDependent: true,
                 zIndex: 1000,
-                iconsOpacity: 0.8,
-                printIconsOpacity: 1,
                 printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
