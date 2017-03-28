@@ -59,6 +59,9 @@ function getLayersForPrint(map, xhrQueue) {
 }
 
 function blendMultiplyCanvas(src, dest) {
+    if (src.width !== dest.width || src.height !== dest.height) {
+        throw new Error('Canvas size mismatch');
+    }
     var s_data = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
     var d_image_data = dest.getContext('2d').getImageData(0, 0, src.width, src.height);
     var d_data = d_image_data.data;
