@@ -7,9 +7,7 @@ function radians(degrees) {
 }
 
 class Grid extends PrintStaticLayer {
-    lineThicknessMm = 0.2;
     minGridIntervalMm = 15;
-    lineColor = '#cccccc';
 
     fontSizeMm = 3;
     font = 'verdana';
@@ -54,9 +52,6 @@ class Grid extends PrintStaticLayer {
         ctx.beginPath();
         const pixelsPerMm = 1 / 25.4 * printOptions.resolution;
         const lineThickness = this.lineThicknessMm * pixelsPerMm;
-        ctx.lineWidth = lineThickness;
-        ctx.strokeStyle = this.lineColor;
-
         const intervalM = this.getGridInterval(printOptions);
         const width = printOptions.destPixelSize.x;
         const height = printOptions.destPixelSize.y;
@@ -78,35 +73,43 @@ class Grid extends PrintStaticLayer {
             let yMerc2 = L.Projection.SphericalMercator.project(L.latLng(lat2, 0)).y;
             y = (mercatorBounds.max.y - yMerc2) / canvasToMercatorScale.y;
         }
-        for ({y} of rows) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(width, y);
-        }
-        const pageCanvasCenterX = printOptions.destPixelSize.x / 2;
-        for (let direction of [-1, 1]) {
-            let colN = 0;
-            while (true) {
-                let firstRow = true;
-                let hasPointInPage = false;
-                for (let {lat, y} of rows) {
-                    let dx = colN * intervalM / Math.cos(radians(lat)) / canvasToMercatorScale.x;
-                    if (dx < pageCanvasCenterX) {
-                        hasPointInPage = true;
-                    }
-                    if (firstRow) {
-                        ctx.moveTo(pageCanvasCenterX + dx * direction, y);
-                    } else {
-                        ctx.lineTo(pageCanvasCenterX + dx * direction, y);
-                    }
-                    firstRow = false;
-                }
-                if (!hasPointInPage) {
-                    break
-                }
-                colN += 1;
+        for (let {lineWidth, color} of [{lineWidth: 0.25, color: '#cccccc'}, {lineWidth: 0.1, color: '#8C8C8C'}]) {
+            ctx.beginPath();
+            let lineThickness = lineWidth * pixelsPerMm;
+            ctx.lineWidth = lineThickness;
+            ctx.strokeStyle = color;
+
+            for ({y} of rows) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
             }
+            const pageCanvasCenterX = printOptions.destPixelSize.x / 2;
+            for (let direction of [-1, 1]) {
+                let colN = 0;
+                while (true) {
+                    let firstRow = true;
+                    let hasPointInPage = false;
+                    for (let {lat, y} of rows) {
+                        let dx = colN * intervalM / Math.cos(radians(lat)) / canvasToMercatorScale.x;
+                        if (dx < pageCanvasCenterX) {
+                            hasPointInPage = true;
+                        }
+                        if (firstRow) {
+                            ctx.moveTo(pageCanvasCenterX + dx * direction, y);
+                        } else {
+                            ctx.lineTo(pageCanvasCenterX + dx * direction, y);
+                        }
+                        firstRow = false;
+                    }
+                    if (!hasPointInPage) {
+                        break
+                    }
+                    colN += 1;
+                }
+            }
+            ctx.stroke();
         }
-        ctx.stroke();
+
     }
     _drawLabel(canvas, printOptions) {
         const intervalM = this.getGridInterval(printOptions);
