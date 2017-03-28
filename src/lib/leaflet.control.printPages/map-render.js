@@ -66,11 +66,11 @@ function blendMultiplyCanvas(src, dest) {
     var d_image_data = dest.getContext('2d').getImageData(0, 0, src.width, src.height);
     var d_data = d_image_data.data;
     var data_length = s_data.length,
-        sr, sg, sb, sa,
+        sr, sg, sb, sa, sa1,
         dr, dg, db,
         l;
     for (var i = 0; i < data_length; i += 4) {
-        sa = s_data[i + 3];
+        sa = s_data[i + 3] / 255;
         if (sa) {
             sr = s_data[i];
             sg = s_data[i + 1];
@@ -80,10 +80,11 @@ function blendMultiplyCanvas(src, dest) {
             db = d_data[i + 2];
 
             l = (dr + dg + db) / 3;
-            l = l / 255 * 192 + 63;
-            dr = sr / 255 * l;
-            dg = sg / 255 * l;
-            db = sb / 255 * l;
+            l = l / 255 * 0.5 + 0.5;
+            sa1 = 1 - sa;
+            dr = sr * l * sa + sa1 * dr;
+            dg = sg * l * sa + sa1 * dg;
+            db = sb * l * sa + sa1 * db;
 
             d_data[i] = dr;
             d_data[i + 1] = dg;
