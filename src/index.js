@@ -19,7 +19,7 @@ window.onunhandledrejection = (e) => {
     }
     console.error('Uncaught in promise:', e.reason);
     const err = e.reason;
-    if (err.name) {
+    if (err && err.name) {
         err.name = 'Uncaught in promise: ' + err.name;
     }
     Raven.captureException(err);
