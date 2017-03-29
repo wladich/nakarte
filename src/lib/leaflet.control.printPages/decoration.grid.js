@@ -72,15 +72,17 @@ class Grid extends PrintStaticLayer {
             let yMerc2 = L.Projection.SphericalMercator.project(L.latLng(lat2, 0)).y;
             y = (mercatorBounds.max.y - yMerc2) / canvasToMercatorScale.y;
         }
-        for (let {lineWidth, color} of [{lineWidth: 0.25, color: '#cccccc'}, {lineWidth: 0.1, color: '#8C8C8C'}]) {
+        const lineWidthMm = 0.15;
+        let lineWidthPx = lineWidthMm * pixelsPerMm;
+        for (let {color, offset} of [{color: '#D9D9D9', offset: lineWidthPx / 2}, {color: '#8C8C8C', offset: -lineWidthPx / 2}]) {
             ctx.beginPath();
-            let lineThickness = lineWidth * pixelsPerMm;
-            ctx.lineWidth = lineThickness;
+
+            ctx.lineWidth = lineWidthPx;
             ctx.strokeStyle = color;
 
             for ({y} of rows) {
-                ctx.moveTo(0, y);
-                ctx.lineTo(width, y);
+                ctx.moveTo(0, y + offset);
+                ctx.lineTo(width, y + offset);
             }
             const pageCanvasCenterX = printOptions.destPixelSize.x / 2;
             for (let direction of [-1, 1]) {
@@ -94,9 +96,9 @@ class Grid extends PrintStaticLayer {
                             hasPointInPage = true;
                         }
                         if (firstRow) {
-                            ctx.moveTo(pageCanvasCenterX + dx * direction, y);
+                            ctx.moveTo(pageCanvasCenterX + dx * direction + offset, y);
                         } else {
-                            ctx.lineTo(pageCanvasCenterX + dx * direction, y);
+                            ctx.lineTo(pageCanvasCenterX + dx * direction + offset, y);
                         }
                         firstRow = false;
                     }
