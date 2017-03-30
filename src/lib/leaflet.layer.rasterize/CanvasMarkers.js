@@ -46,7 +46,7 @@ L.Layer.CanvasMarkers.include({
                 this._map = dummyMap;
             }
             const zoom = crs.zoom((1 / scale) * crs.scale(printOptions.zoom));
-            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom, false);
+            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom);
             await this.preloadIcons(iconUrls);
             return {
                 iterateTilePromises: (function*() {
