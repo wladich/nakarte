@@ -100,7 +100,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             return this.rtree.all();
         },
 
-        findLabelPosition: function(iconCenter, iconSize, textWidth, textHeight) {
+        findLabelPosition: function(iconCenter, iconSize, textWidth, textHeight, pixelExtents) {
             const
                 verticalPadding = 0,
                 xPositions = [iconCenter[0] + iconSize[0] / 2 + 2, iconCenter[0] - iconSize[0] / 2 - textWidth - 2],
@@ -113,10 +113,15 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 ];
 
             let minIntersectionSum = +Infinity;
-            let bestX, bestY;
+            let bestX = xPositions[0],
+                bestY = yPositions[0];
             for (let x of xPositions) {
                 for (let y of yPositions) {
                     const rect = {minX: x, minY: y, maxX: x + textWidth, maxY: y + textHeight};
+                    if (pixelExtents && (rect.minX < pixelExtents.tileW || rect.maxX > pixelExtents.tileE ||
+                        rect.minY < pixelExtents.tileN || rect.maxY > pixelExtents.tileS)) {
+                        continue;
+                    }
                     let intersectionSum = calcIntersectionSum(rect, this._regions.search(rect));
                     if (intersectionSum < minIntersectionSum) {
                         minIntersectionSum = intersectionSum;
@@ -159,16 +164,16 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             return canvas;
         },
 
-        selectMarkersForDraw: function({tileN, tileS, tileE, tileW}, zoom) {
+        selectMarkersForDraw: function({tileN, tileS, tileE, tileW}, zoom, withoutPadding) {
             // FIXME: padding should depend on options.iconScale and fontSize
             if (!this._map) {
                 return {};
             }
             const
-                iconsHorPad = 520,
-                iconsVertPad = 50,
-                labelsHorPad = 256,
-                labelsVertPad = 20;
+                iconsHorPad = withoutPadding ? 0 : 520,
+                iconsVertPad = withoutPadding ? 0 :  50,
+                labelsHorPad = withoutPadding ? 0 : 256,
+                labelsVertPad = withoutPadding ? 0 : 20;
             const
                 iconsBounds = L.latLngBounds(
                     this._map.unproject(L.point(tileW - iconsHorPad, tileS + iconsHorPad), zoom),
@@ -211,7 +216,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             return {iconUrls, markerJobs, pointsForLabels};
         },
 
-        drawSelectedMarkers: function(canvas, pixelExtents, markerJobs, pointsForLabels, zoom) {
+        drawSelectedMarkers: function(canvas, pixelExtents, markerJobs, pointsForLabels, zoom, limitLabelsToImage) {
             const {tileN, tileW, tileS, tileE} = pixelExtents;
             const textHeight = this.options.labelFontSize;
             if (this._labelPositionsZoom !== zoom) {
@@ -254,7 +259,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     job.label = label;
                     if (!(markerId in this._labelPositions)) {
                         const textWidth = ctx.measureText(label).width;
-                        const p = this.findLabelPosition(job.iconCenter, job.iconSize, textWidth, textHeight);
+                        const p = this.findLabelPosition(job.iconCenter, job.iconSize, textWidth, textHeight,
+                            limitLabelsToImage ? pixelExtents : null);
                         this._labelPositions[markerId] = p;
                         let [x, y] = p;
                         this._regions.insert({

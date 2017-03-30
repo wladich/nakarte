@@ -46,14 +46,16 @@ L.Layer.CanvasMarkers.include({
                 this._map = dummyMap;
             }
             const zoom = crs.zoom((1 / scale) * crs.scale(printOptions.zoom));
-            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom);
+            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom, true);
             await this.preloadIcons(iconUrls);
             return {
                 iterateTilePromises: (function*() {
                     yield {
                         tilePromise: Promise.resolve({
                                 draw: (canvas) => {
-                                    this.drawSelectedMarkers(canvas, pixelExtents, markerJobs, pointsForLabels, zoom);
+                                    this.resetLabels();
+                                    this.drawSelectedMarkers(canvas, pixelExtents, markerJobs, pointsForLabels, zoom,
+                                        true);
                                 },
                                 isOverlay: true,
                                 overlaySolid: !this.options.printTransparent
