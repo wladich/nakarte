@@ -27,7 +27,7 @@ function calcAzimuth(latlng1, latlng2) {
 
     const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
     const x = Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat2) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
     let brng = Math.atan2(y, x);
     brng = degrees(brng);
     return brng;
