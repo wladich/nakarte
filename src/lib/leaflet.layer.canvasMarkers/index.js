@@ -159,16 +159,16 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             return canvas;
         },
 
-        selectMarkersForDraw: function({tileN, tileS, tileE, tileW}, zoom, withPaddings) {
+        selectMarkersForDraw: function({tileN, tileS, tileE, tileW}, zoom) {
             // FIXME: padding should depend on options.iconScale and fontSize
             if (!this._map) {
                 return {};
             }
             const
-                iconsHorPad = withPaddings ? 520 : 0,
-                iconsVertPad = withPaddings ? 50 : 0,
-                labelsHorPad = withPaddings ? 256 : 0,
-                labelsVertPad = withPaddings ? 20 : 0;
+                iconsHorPad = 520,
+                iconsVertPad = 50,
+                labelsHorPad = 256,
+                labelsVertPad = 20;
             const
                 iconsBounds = L.latLngBounds(
                     this._map.unproject(L.point(tileW - iconsHorPad, tileS + iconsHorPad), zoom),
@@ -314,7 +314,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 tileS = tileN + tileSize,
                 tileE = tileW + tileSize;
             const pixelExtents = {tileN, tileS, tileE, tileW};
-            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom, true);
+            const {iconUrls, markerJobs, pointsForLabels} = this.selectMarkersForDraw(pixelExtents, zoom);
             if (!markerJobs) {
                 return;
             }
