@@ -219,7 +219,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         drawSelectedMarkers: function(canvas, pixelExtents, markerJobs, pointsForLabels, zoom, limitLabelsToImage) {
             const {tileN, tileW, tileS, tileE} = pixelExtents;
-            const textHeight = this.options.labelFontSize;
+            const textHeight = this.options.labelFontSize * this.options.iconScale;
             if (this._labelPositionsZoom !== zoom) {
                 this._labelPositionsZoom = zoom;
                 this.resetLabels();
