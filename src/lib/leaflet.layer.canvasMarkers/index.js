@@ -127,14 +127,15 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                         minIntersectionSum = intersectionSum;
                         bestX = x;
                         bestY = y;
-                        if (intersectionSum === 0) {
+                        if (minIntersectionSum === 0) {
                             break;
                         }
                     }
-                    if (intersectionSum === 0) {
-                        break;
-                    }
                 }
+                if (minIntersectionSum === 0) {
+                    break;
+                }
+
             }
             return [bestX, bestY];
         },
