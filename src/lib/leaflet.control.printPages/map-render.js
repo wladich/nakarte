@@ -63,7 +63,9 @@ function blendMultiplyCanvas(src, dest) {
         throw new Error('Canvas size mismatch');
     }
     var s_data = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
-    var d_image_data = dest.getContext('2d').getImageData(0, 0, src.width, src.height);
+    src.width = 0;
+    src.height = 0;
+    var d_image_data = dest.getContext('2d').getImageData(0, 0, dest.width, dest.height);
     var d_data = d_image_data.data;
     var data_length = s_data.length,
         sr, sg, sb, sa, sa1,
@@ -91,6 +93,7 @@ function blendMultiplyCanvas(src, dest) {
             d_data[i + 2] = db;
         }
     }
+    s_data = null;
     dest.getContext('2d').putImageData(d_image_data, 0, 0);
 }
 
@@ -132,7 +135,6 @@ class PageComposer {
             ctx.drawImage(tileInfo.image, tilePos.x, tilePos.y, tileSize.x, tileSize.y);
         }
     }
-
 
     setupCurrentCanvas(zoom) {
         let size;
