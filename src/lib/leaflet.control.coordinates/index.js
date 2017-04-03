@@ -77,7 +77,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         formatCoodinate: function(value, isLat, fmt) {
-            if (value === undefined) {
+            if (value === undefined || isNaN(value)) {
                 return '-------';
             }
             fmt = fmt || this.fmt;
