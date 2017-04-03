@@ -1,0 +1,10 @@
+track://...
+    only tracks
+1
+    color
+    distance measure on/off
+2
+    waypoints
+3
+    visibility on/off
+

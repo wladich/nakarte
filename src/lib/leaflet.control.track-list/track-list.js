@@ -484,7 +484,7 @@ L.Control.TrackList = L.Control.extend({
 
         copyLinkToClipboard: function(track, mouseEvent) {
             this.stopActiveDraw();
-            var s = this.trackToString(track);
+            var s = this.trackToString(track, true);
             var url = window.location + '&nktk=' + s;
             copyToClipboard(url, mouseEvent);
         },
@@ -844,7 +844,7 @@ L.Control.TrackList = L.Control.extend({
             var track = {
                 name: ko.observable(geodata.name),
                 color: ko.observable(color),
-                visible: ko.observable(true),
+                visible: ko.observable(!geodata.trackHidden),
                 length: ko.observable('empty'),
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
@@ -948,7 +948,7 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
-        trackToString: function(track) {
+        trackToString: function(track, forceVisible) {
             var lines = this.getTrackPolylines(track).map(function(line) {
                     var points = line.getLatLngs();
                     points = L.LineUtil.simplifyLatlngs(points, 360 / (1 << 24));
@@ -956,7 +956,7 @@ L.Control.TrackList = L.Control.extend({
                 }
             );
             return geoExporters.saveToString(lines, track.name(), track.color(), track.measureTicksShown(),
-                this.getTrackPoints(track)
+                this.getTrackPoints(track), forceVisible ? false : !track.visible()
             );
         },
 

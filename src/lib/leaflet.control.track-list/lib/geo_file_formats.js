@@ -555,7 +555,7 @@ function parseStringified(s, oldVersion) {
         arcUnit = ((1 << 24) - 1) / 360,
         x, y,
         error, version, midX, midY, /*symbol,*/ waypointName,
-        wayPoints = [], color, measureTicksShown;
+        wayPoints = [], color, measureTicksShown, trackHidden = false;
     s = decodeUrlSafeBase64(s);
     if (!s) {
         return [{name: 'Text encoded track', error: ['CORRUPT']}];
@@ -567,7 +567,7 @@ function parseStringified(s, oldVersion) {
         } else {
             version = s.readNumber();
         }
-        if (version !== 0 && version !== 1 && version !== 2) {
+        if (version !== 0 && version !== 1 && version !== 2 && version !== 3) {
             return [{name: 'Text encoded track', error: ['CORRUPT']}];
         }
         n = s.readNumber();
@@ -611,7 +611,18 @@ function parseStringified(s, oldVersion) {
             throw e;
         }
     }
-    if (version === 2) {
+    if (version >= 3) {
+        try {
+            trackHidden = !!(s.readNumber())
+        } catch (e) {
+            if (e.message.match('Unexpected end of line while unpacking number')) {
+                error = ['CORRUPT'];
+            } else {
+                throw e;
+            }
+        }
+    }
+    if (version >= 2) {
         try {
             pointsCount = s.readNumber();
             if (pointsCount) {
@@ -650,7 +661,8 @@ function parseStringified(s, oldVersion) {
         error: error,
         points: wayPoints,
         color: color,
-        measureTicksShown: measureTicksShown
+        measureTicksShown: measureTicksShown,
+        trackHidden: trackHidden
     };
     return [geoData];
 }
