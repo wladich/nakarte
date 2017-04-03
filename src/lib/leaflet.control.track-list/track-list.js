@@ -159,7 +159,10 @@ L.Control.TrackList = L.Control.extend({
         onFileDragDrop: function(e) {
             L.DomEvent.stopPropagation(e);
             L.DomEvent.preventDefault(e);
-            this.loadFilesFromFilesObject(e.dataTransfer.files);
+            const files  = e.dataTransfer.files;
+            if (files && files.length) {
+                this.loadFilesFromFilesObject(files);
+            }
         },
 
         onEnterPressedInInput: function(this_, e) {
