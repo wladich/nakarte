@@ -143,9 +143,9 @@ function encodeUrlSafeBase64(s) {
     );
 }
 
-function saveToString(segments, name, color, measureTicksShown, wayPoints) {
+function saveToString(segments, name, color, measureTicksShown, wayPoints, trackHidden) {
     var stringified = [];
-    stringified.push(packNumber(2)); // version
+    stringified.push(packNumber(3)); // version
     name = utf8.encode(name);
     stringified.push(packNumber(name.length));
     stringified.push(name);
@@ -179,6 +179,7 @@ function saveToString(segments, name, color, measureTicksShown, wayPoints) {
     );
     stringified.push(packNumber(+color || 0));
     stringified.push(packNumber(measureTicksShown ? 1 : 0));
+    stringified.push(packNumber(trackHidden ? 1 : 0));
 
     stringified.push(packNumber(wayPoints.length));
     if (wayPoints.length) {
