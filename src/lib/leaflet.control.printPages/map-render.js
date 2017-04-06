@@ -114,7 +114,7 @@ class PageComposer {
     }
 
     putTile(tileInfo) {
-        if (tileInfo.image === null) {
+        if (!tileInfo.image) {
             return;
         }
         let zoom;

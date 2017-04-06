@@ -34,7 +34,7 @@ const GooglePrint = L.Layer.Google.extend({
     },
 
     getTileUrl: function(coords) {
-        return this._readyTiles[this._tileCoordsToKey(coords)];
+        return this._readyTiles[this._tileCoordsToKey(coords)] || null;
     }
 });
 
