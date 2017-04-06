@@ -27,7 +27,7 @@ const GridLayerGrabMixin = {
                     let tilePos = this._getTilePos(coords);
                     const coordsPlusOne = coords.add(L.point(1, 1));
                     coordsPlusOne.z = coords.z;
-                    const tilePlusOne = this._getTilePos(coordsPlusOne)
+                    const tilePlusOne = this._getTilePos(coordsPlusOne);
                     const tileSize = tilePlusOne.subtract(tilePos);
                     const latLngBounds = L.latLngBounds(
                         this._map.unproject(tilePos.add(this._level.origin)),
@@ -60,6 +60,9 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
         tileImagePromiseFromCoords: function(coords, printOptions) {
             let {xhrOptions} = printOptions;
             let url = this.getTileUrl(coords);
+            if (!url) {
+                return {tilePromise: Promise.resolve(null), abortLoading: noop};
+            }
             if (this.options.noCors) {
                 url = urlViaCorsProxy(url);
             }
