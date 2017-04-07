@@ -49,7 +49,7 @@ L.Layer.Google = L.GridLayer.extend({
                 }
             );
             map.on({
-                    viewreset: this._clearTiles,
+                    viewreset: this._syncPosition,
                     resize: this._onResize,
                     move: this._syncPosition,
                     zoomanim: this._onZoom
