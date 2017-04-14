@@ -274,6 +274,16 @@ export default function getLayers() {
             group: 'Topo maps',
             layers: [
                 {
+                    title: 'Eurasia 25km',
+                    description: '1975-80',
+                    order: 1009,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
+                        {code: 'E25m', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
+                    )
+                },
+                {
                     title: 'Topo 250m',
                     order: 1095,
                     isOverlay: true,
@@ -281,7 +291,18 @@ export default function getLayers() {
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo250/{z}/{x}/{y}",
                         {code: 'T25', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
                     )
-                }]
+                },
+                {
+                    title: 'Montenegro topo 250m',
+                    description: '1970-72',
+                    order: 1096,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
+                        {code: 'MN25', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
+                    )
+                }
+            ]
         },
         {
             group: 'Mountains maps',
