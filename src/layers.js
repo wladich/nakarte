@@ -280,7 +280,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
-                        {code: 'E25m', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
+                        {code: 'E25m', tms: true, maxNativeZoom: 9, print: true, jnx: true, scaleDependent: false}
                     )
                 },
                 {
