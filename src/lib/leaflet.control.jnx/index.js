@@ -22,24 +22,17 @@ L.Control.JNX = L.Control.extend({
         },
 
         getLayerForJnx: function() {
-            let selectedLayer = null;
-            this._map.eachLayer((layer) => {
-                    if (layer.options && layer.options.jnx) {
-                        selectedLayer = layer;
+            let selectedLayer = {};
+            for (let layerRec of this._layersControl._layers) {
+                let layer = layerRec.layer;
+                if (this._map.hasLayer(layer) && layer.options && layer.options.jnx) {
+                    selectedLayer = {
+                        layer,
+                        layerName: layerRec.name
                     }
                 }
-            );
-            return selectedLayer;
-        },
-
-        getLayerName: function(layer) {
-            const layerRec = this._layersControl._getLayer(L.stamp(layer));
-            if (layerRec) {
-                return layerRec.name;
-            } else {
-                return 'Unknown layer';
             }
-
+            return selectedLayer;
         },
 
         estimateTilesCount: function(maxZoom) {
@@ -54,11 +47,10 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeMenuItems: function() {
-            const layer = this.getLayerForJnx();
+            const {layer, layerName} = this.getLayerForJnx();
             if (!layer) {
                 return [{text: 'No supported layer'}];
             }
-            const layerName = this.getLayerName(layer);
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
             const minLevel = Math.max(0, maxLevel - 6);
 
