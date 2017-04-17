@@ -94,7 +94,9 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
                 break;
             }
             let xhr = imageRec.image;
-            if (xhr === null || xhr.status !== 200) {
+
+            console.log(xhr.responseURL, xhr.response.byteLength);
+            if (xhr === null || xhr.status !== 200 || !xhr.response || !xhr.response.byteLength) {
                 continue;
             }
             let image = await ensureImageJpg(xhr.response);
