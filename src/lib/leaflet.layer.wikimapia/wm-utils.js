@@ -121,13 +121,16 @@ function asap() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-function simplifyPolygon(latlngs, tileCoords, projectObj) {
+function simplifyPolygon(latlngs, tileCoords, tileHasChildren, projectObj) {
     const
         x = tileCoords.x * 1024,
         y = tileCoords.y * 1024,
         p0 = projectObj.unproject([x, y]),
-        p1 = projectObj.unproject([x + 1, y + 1]),
-        pixelDegSize = p0.lat - p1.lat;
+        p1 = projectObj.unproject([x + 1, y + 1]);
+    let pixelDegSize = p0.lat - p1.lat;
+    if (!tileHasChildren && tileCoords.z < 15) {
+        pixelDegSize /= (1 << (15 - tileCoords.z));
+    }
     let points = [];
     for (let i = 0; i < latlngs.length; i++) {
         let ll = latlngs[i];
@@ -197,8 +200,8 @@ async function parseTile(s, projectObj) {
         if (coords.length < 3) {
             throw new Error(`Polygon has ${coords.length} points`);
         }
-        place.polygon = coords;
-        let polygon = simplifyPolygon(coords, tile.coords, projectObj);
+        let polygon = simplifyPolygon(coords, tile.coords, tile.hasChildren, projectObj);
+        place.polygon = polygon;
         place.localPolygon = makeCoordsLocal(polygon, tile.coords, projectObj);
         places.push(place);
     }
