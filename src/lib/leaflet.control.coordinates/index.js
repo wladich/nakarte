@@ -159,7 +159,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         onMapRightClick: function(e) {
-            const items = [{text: 'Copy coordinates to clipboard', disabled: true}, '-'];
+            const items = [{text: '<b>Copy coordinates to clipboard</b>', header: true}, '-'];
 
             const lat = e.latlng.lat,
                 lng = normalizeLongitude(e.latlng.lng);

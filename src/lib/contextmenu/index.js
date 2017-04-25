@@ -117,6 +117,9 @@ class Contextmenu {
         if (itemOptions.disabled) {
             className += ' disabled';
         }
+        if (itemOptions.header) {
+            className += ' header';
+        }
         el.className = className;
         el.innerHTML = itemOptions.text;
 
