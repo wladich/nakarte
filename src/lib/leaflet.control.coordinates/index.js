@@ -22,6 +22,10 @@ function mod(n, m) {
     return ((n % m) + m) % m;
 }
 
+function normalizeLongitude(lng) {
+    return mod(lng + 180, 360) - 180;
+}
+
 L.Control.Coordinates = L.Control.extend({
         options: {
             position: 'bottomleft'
@@ -132,7 +136,7 @@ L.Control.Coordinates = L.Control.extend({
             if (e) {
                 ({lat, lng} = e.latlng);
             }
-            lng = mod(lng + 180, 360) - 180;
+            lng = normalizeLongitude(lng);
             this._field_lat.innerHTML = this.formatCoodinate(lat, true);
             this._field_lon.innerHTML = this.formatCoodinate(lng, false);
         },
@@ -157,10 +161,13 @@ L.Control.Coordinates = L.Control.extend({
         onMapRightClick: function(e) {
             const items = [{text: 'Copy coordinates to clipboard', disabled: true}, '-'];
 
+            const lat = e.latlng.lat,
+                lng = normalizeLongitude(e.latlng.lng);
+
             for (let fmt of ['d', 'D', 'DM', 'DMS']) {
-                let lat = this.formatCoodinate(e.latlng.lat, true, fmt);
-                let lng = this.formatCoodinate(e.latlng.lng, false, fmt);
-                let s = `${lat} ${lng}`;
+                let strLat = this.formatCoodinate(lat, true, fmt);
+                let strLng = this.formatCoodinate(lng, false, fmt);
+                let s = `${strLat} ${strLng}`;
                 items.push({
                         text: `${s} <span class="leaflet-coordinates-menu-fmt">${this.formatNames[fmt]}</span>`,
                         callback: () => {
