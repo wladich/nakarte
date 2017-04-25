@@ -58,7 +58,7 @@ L.Control.JNX = L.Control.extend({
             const lat = this._selector.getBounds().getCenter().lat;
             let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
 
-            const items = [{text: `<b>${layerName}</b>`}];
+            const items = [{text: layerName, header: true}];
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
                 let tilesCount = this.estimateTilesCount(zoom);
                 let fileSizeMb = tilesCount * 0.02;

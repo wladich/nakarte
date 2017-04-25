@@ -48,3 +48,8 @@
 .contextmenu .disabled {
     color: #aaa;
 }
+
+.contextmenu .header {
+    color: #555555;
+    font-weight: bold;
+}

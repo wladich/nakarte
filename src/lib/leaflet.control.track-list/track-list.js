@@ -416,7 +416,7 @@ L.Control.TrackList = L.Control.extend({
         attachActionsMenu: function(track) {
             var items = [
                 function() {
-                    return {text: track.name(), disabled: true};
+                    return {text: `${track.name()}`, header: true};
                 },
                 '-',
                 {text: 'Rename', callback: this.renameTrack.bind(this, track)},
