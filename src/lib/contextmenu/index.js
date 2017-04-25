@@ -49,6 +49,7 @@ class Contextmenu {
 
         window.addEventListener('keydown', this.onKeyDown, true);
         window.addEventListener('mousedown', this.onMouseDown, true);
+        window.addEventListener('touchstart', this.onMouseDown, true);
 
         for (let item of this.createItems()) {
             container.appendChild(item);
@@ -65,6 +66,7 @@ class Contextmenu {
 
         window.removeEventListener('keydown', this.onKeyDown, true);
         window.removeEventListener('mousedown', this.onMouseDown, true);
+        window.removeEventListener('touchstart', this.onMouseDown, true);
     }
 
     onKeyDown = (e) => {
