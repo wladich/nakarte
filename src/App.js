@@ -2,6 +2,9 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'font-awesome/css/font-awesome.min.css';
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css';
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.js';
 import 'lib/leaflet.control.printPages/control'
 import 'lib/leaflet.control.caption'
 import config from './config'
@@ -51,6 +54,14 @@ function setUp() {
     ).addTo(map);
 
     new L.Control.Scale({imperial: false, position: 'topleft'}).addTo(map);
+
+    L.control.locate({
+        drawCircle: false,
+        icon: "fa fa-location-arrow",
+        strings: {
+            title: "Show My Location"
+        }
+    }).addTo(map);
 
     L.control.zoom().addTo(map);
 
