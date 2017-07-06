@@ -1,14 +1,6 @@
 import Pbf from 'pbf';
 import {Tile as TileProto} from './vector_tile_proto';
 
-function simlifyTagValue(obj) {
-    for (let v of Object.values(obj)) {
-        if (v) {
-            return v;
-        }
-    }
-}
-
 function decodeCoordinate(x) {
     return ((x >> 1) ^ (-(x & 1)));
 }
@@ -85,48 +77,30 @@ function parseGeometry(geometryType, ints, coordinatesScale) {
     switch (geometryType) {
         case TileProto.GeomType.POINT:
             if (lineStrings.length !== 1 || lineStrings[0].length !== 1) {
-                console.log(lineStrings);
                 throw new Error('Invalid coordinates number for point');
             }
             geometry.type = 'Point';
-            geometry.coordinats = lineStrings[0][0];
+            geometry.coordinates = lineStrings[0][0];
             break;
         case TileProto.GeomType.LINESTRING:
-            if (lineStrings.length !== 1) {
-                throw new Error('Invalid linestrings number for line');
-            }
-            geometry.type = 'LineString';
-            geometry.coordinats = lineStrings[0];
+            geometry.type = 'MultiLineString';
+            geometry.coordinates = lineStrings;
             break;
         case TileProto.GeomType.POLYGON:
             geometry.type = 'Polygon';
-            geometry.coordinats = lineStrings;
+            geometry.coordinates = lineStrings;
             break;
+        default:
     }
     return geometry;
 }
 
-function parseFeatureTags(tagsInts, layerKeys, layerValues) {
-    const tags = {};
-    if (tagsInts) {
-        let i = 0;
-        while (i < tagsInts.length) {
-            let key = layerKeys[tagsInts[i]];
-            let value = layerValues[tagsInts[i + 1]];
-            tags[key] = value;
-            i +=2;
-        }
-    }
-    return tags;
-}
 
 function parseFeatures(layer, coordinatesScale) {
     const features = [];
-    const tagValues = layer.values.map(simlifyTagValue);
     for (let feature of layer.features) {
-        const properties = parseFeatureTags(feature.tags, layer.keys, tagValues);
         const geometry = parseGeometry(feature.type, feature.geometry, coordinatesScale);
-        features.push({properties, geometry});
+        features.push({geometry});
     }
     return features;
 }
@@ -135,14 +109,15 @@ function decodeMvt(ar, tileExtent=256) {
     const
         pbf = new Pbf(new Uint8Array(ar)),
         tileData = TileProto.read(pbf);
-    const layers = tileData.layers.map((layer) => {
-        const scale = tileExtent / layer.extent;
-        return {
+    const parsedLayers = [];
+    for (let layer of tileData.layers) {
+        let scale = tileExtent / layer.extent;
+        parsedLayers.push({
             name: layer.name,
             features: parseFeatures(layer, scale)
-        }
-    });
-    return layers;
+        });
+    }
+    return parsedLayers;
 }
 
 export {decodeMvt};

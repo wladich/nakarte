@@ -1,15 +1,34 @@
 import L from 'leaflet';
 import './style.css';
 import 'lib/controls-styles/controls-styles.css';
-import getGoogle from 'lib/googleMapsApi';
-import 'lib/leaflet.hashState/leaflet.hashState';
-import 'lib/leaflet.control.commons';
+import ko from 'vendored/knockout';
+import googleProvider from './lib/google';
+import mapillaryProvider from './lib/mapillary';
+
 
 function fireRefreshEventOnWindow() {
     const evt = document.createEvent("HTMLEvents");
     evt.initEvent('resize', true, false);
     window.dispatchEvent(evt);
 }
+
+
+const PanoMarker = L.Marker.extend({
+    initialize: function() {
+        const icon = L.divIcon({
+                className: 'leaflet-panorama-marker-wraper',
+                html: '<div class="leaflet-panorama-marker"></div>'
+            }
+        );
+        L.Marker.prototype.initialize.call(this, [0, 0], {icon, interactive: false});
+    },
+
+    setHeading: function(angle) {
+        let markerIcon = this.getElement();
+        markerIcon = markerIcon.children[0];
+        markerIcon.style.transform = `rotate(${angle}deg)`;
+    }
+});
 
 L.Control.Panoramas = L.Control.extend({
         includes: L.Mixin.Events,
@@ -20,188 +39,235 @@ L.Control.Panoramas = L.Control.extend({
 
         initialize: function(panoramaContainer, options) {
             L.Control.prototype.initialize.call(this, options);
+            this.googleCoverageSelected = ko.observable(true);
+            this.mapillaryCoverageSelected = ko.observable(false);
+            this.googleCoverageSelected.subscribe(this.updateCoverageVisibility, this);
+            this.mapillaryCoverageSelected.subscribe(this.updateCoverageVisibility, this);
             this._panoramaContainer = panoramaContainer;
-
-            const icon = L.divIcon({
-                    className: 'leaflet-panorama-marker-wraper',
-                    html: '<div class="leaflet-panorama-marker"></div>'
-                }
-            );
-            this.marker = L.marker([0, 0], {icon: icon, interactive: false});
+            this._googlePanoramaContainer = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
+            this._mapillaryPanoramaContainer = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
         },
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create('a', 'leaflet-control leaflet-control-button leaflet-contol-panoramas');
+            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-contol-panoramas');
+            container.innerHTML = `
+                <a name="button" class="panoramas-button leaflet-control-button icon-panoramas" title="Show panoramas"
+                    data-bind="click: onButtonClick"></a>
+                <div class="panoramas-list control-form">
+                    <div><label><input type="checkbox" data-bind="checked: googleCoverageSelected">Google street view</label></div>
+                    <div><label><input type="checkbox" data-bind="checked: mapillaryCoverageSelected">Mapillary</label></div>
+                </div>
+            `;
             this._stopContainerEvents();
-            container.title = 'Show panoramas';
-            L.DomEvent.on(container, 'click', this.onButtonClick, this);
-
+            ko.applyBindings(this, container);
             map.createPane('rasterOverlay').style.zIndex = 300;
-            this._coverageLayer = L.tileLayer(
-                'https://maps.googleapis.com/maps/vt?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256!2m8!1e2!2ssvv!4m2!1scb_client!2sapiv3!4m2!1scc!2s*211m3*211e3*212b1*213e2*211m3*211e2*212b1*213e2!3m5!3sUS!12m1!1e40!12m1!1e18!4e0',
-                {pane: 'rasterOverlay'}
-            );
-
             return container;
         },
 
-        onRemove: function() {
-            this._map = null;
-            this.hideCoverage();
-            this.hidePanorama();
-        },
-
-        showPanorama: function() {
-            if (this.panoramaVisible) {
-                return;
-            }
-            L.DomUtil.addClass(this._panoramaContainer, 'enabled');
-            this.getGoogleApi().then((api) => api.panorama.setVisible(true));
-            fireRefreshEventOnWindow();
-            this.marker.addTo(this._map);
-            this.panoramaVisible = true;
-            this.notifyChanged();
-        },
-
-        hidePanorama: function() {
-            if (!this.panoramaVisible) {
-                return;
-            }
-            this.getGoogleApi().then((api) => api.panorama.setVisible(false));
-            L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
-            fireRefreshEventOnWindow();
-            this._map.removeLayer(this.marker);
-            this.panoramaVisible = false;
-            this.notifyChanged();
-        },
-
-        showCoverage: function() {
-            if (this.coverageVisible) {
-                return;
-            }
-            L.DomUtil.addClass(this.getContainer(), 'enabled');
-            L.DomUtil.addClass(this._map._container, 'panoramas-control-active');
-            this._coverageLayer.addTo(this._map);
-            this._map.on('click', this.onMapClick, this);
-            this.coverageVisible = true;
-            this.notifyChanged();
-        },
-
-        onMapClick: function(e) {
-            this.showPanoramaAtPos(e.latlng);
-        },
-
-        showPanoramaAtPos: function(latlng, pov) {
-            this.showPanorama();
-            const searchRadiusPx = 24;
-            const p = this._map.project(latlng).add([searchRadiusPx, 0]);
-            const searchRadiusMeters = latlng.distanceTo(this._map.unproject(p));
-
-            function setPanoramaPosition(api, panoData, status) {
-                if (status === api.google.maps.StreetViewStatus.OK) {
-                    api.panorama.setPosition(panoData.location.latLng);
-                }
-                if (pov) {
-                    api.panorama.setPov(pov);
-                }
-            }
-
-            this.getGoogleApi().then((api) => {
-                    api.service.getPanorama({
-                            location: latlng,
-                            radius: searchRadiusMeters,
-                            preference: api.google.maps.StreetViewPreference.NEAREST
-                        }, setPanoramaPosition.bind(null, api)
-                    );
-                }
-            );
-        },
-
-        hideCoverage: function() {
-            if (!this.coverageVisible) {
-                return;
-            }
-            L.DomUtil.removeClass(this.getContainer(), 'enabled');
-            L.DomUtil.removeClass(this._map._container, 'panoramas-control-active');
-            this._coverageLayer.removeFrom(this._map);
-            this._map.off('click', this.onMapClick, this);
-            this.coverageVisible = false;
-            this.notifyChanged();
-        },
-
         onButtonClick: function() {
-            if (!this.coverageVisible) {
-                this.showCoverage();
+            if (this.controlEnabled) {
+                this.disableControl();
             } else {
-                this.hideCoverage();
-                this.hidePanorama();
+                this.enableControl();
             }
         },
 
-        onPanoramaChangePosition: function() {
-            this.getGoogleApi().then((api) => {
-                    let pos = api.panorama.getPosition();
-                    if (pos) {
-                        pos = L.latLng([pos.lat(), pos.lng()]);
-                        this.marker.setLatLng(pos);
-                        if (!this._map.getBounds().contains(pos)) {
-                            this._map.panTo(pos);
-                        }
-                        this.panoramaPosition = pos;
-                    } else {
-                        this.panoramaPosition = null;
-                    }
-                    this.notifyChanged();
-                }
-            );
-        },
-
-        onPanoramaChangeView: function() {
-            let markerIcon = this.marker.getElement();
-            if (markerIcon) {
-                markerIcon = markerIcon.children[0]
+        enableControl: function() {
+            if (this.controlEnabled) {
+                return;
             }
-            this.getGoogleApi().then((api) => {
-                    const pov = api.panorama.getPov();
-                    if (markerIcon) {
-                        markerIcon.style.transform = `rotate(${pov.heading}deg)`;
-                    }
-                    this.panoramaAngle = pov;
-                    this.notifyChanged();
-                }
-            );
+            this.controlEnabled = true;
+            L.DomUtil.addClass(this._container, 'enabled');
+            this.updateCoverageVisibility();
+            this._map.on('click', this.onMapClick, this);
+            L.DomUtil.addClass(this._map._container, 'panoramas-control-active');
+            this.notifyChanged();
         },
 
+        disableControl: function() {
+            if (!this.controlEnabled) {
+                return;
+            }
+            this.controlEnabled = false;
+            L.DomUtil.removeClass(this._container, 'enabled');
+            this.updateCoverageVisibility();
+            this._map.off('click', this.onMapClick, this);
+            this.hidePanoViewer();
+            L.DomUtil.removeClass(this._map._container, 'panoramas-control-active');
+            this.notifyChanged();
+        },
+
+        updateCoverageVisibility: function() {
+            if (!this._map) {
+                return;
+            }
+            if (this.controlEnabled && this.googleCoverageSelected()) {
+                if (!this.googleCoverage) {
+                    this.googleCoverage = googleProvider.getCoverageLayer({pane: 'rasterOverlay', zIndex: 2});
+                }
+                this.googleCoverage.addTo(this._map);
+            } else {
+                if (this.googleCoverage) {
+                    this.googleCoverage.removeFrom(this._map)
+                }
+            }
+
+            if (this.controlEnabled && this.mapillaryCoverageSelected()) {
+                if (!this.mapillaryCoverage) {
+                    this.mapillaryCoverage = mapillaryProvider.getCoverageLayer({pane: 'rasterOverlay', opacity: 0.7,
+                        zIndex: 1});
+                }
+                this.mapillaryCoverage.addTo(this._map);
+            } else {
+                if (this.mapillaryCoverage) {
+                    this.mapillaryCoverage.removeFrom(this._map)
+                }
+            }
+            this.notifyChanged();
+        },
+
+        showPanoramaContainer: function() {
+            L.DomUtil.addClass(this._panoramaContainer, 'enabled');
+            fireRefreshEventOnWindow();
+        },
+
+        panoramaVisible: function() {
+            if (L.DomUtil.hasClass(this._panoramaContainer, 'enabled')) {
+                if (L.DomUtil.hasClass(this._googlePanoramaContainer, 'enabled')) {
+                    return 'google';
+                }
+                if (L.DomUtil.hasClass(this._mapillaryPanoramaContainer, 'enabled')) {
+                    return 'mapillary';
+                }
+            }
+            return false;
+        },
+
+        hidePanoGoogle: function() {
+            L.DomUtil.removeClass(this._googlePanoramaContainer, 'enabled');
+            if (this.googleViewer) {
+                this.googleViewer.deactivate();
+            }
+        },
+
+        hidePanoMapillary: function() {
+            L.DomUtil.removeClass(this._mapillaryPanoramaContainer, 'enabled');
+            if (this.mapillaryViewer) {
+                this.mapillaryViewer.deactivate();
+            }
+        },
+
+        showPanoGoogle: async function(data) {
+            this.hidePanoMapillary();
+            this.showPanoramaContainer();
+            L.DomUtil.addClass(this._googlePanoramaContainer, 'enabled');
+            if (!this.googleViewer) {
+                this.googleViewer = await googleProvider.getViewer(this._googlePanoramaContainer);
+                this.setupViewerEvents(this.googleViewer);
+            }
+            this.googleViewer.activate();
+            if (data) {
+                this.googleViewer.showPano(data);
+            }
+            this.notifyChanged();
+        },
+
+        showPanoMapillary: async function(data) {
+            this.showPanoramaContainer();
+            this.hidePanoGoogle();
+            L.DomUtil.addClass(this._mapillaryPanoramaContainer, 'enabled');
+            if (!this.mapillaryViewer) {
+                this.mapillaryViewer = await mapillaryProvider.getViewer(this._mapillaryPanoramaContainer);
+                this.setupViewerEvents(this.mapillaryViewer);
+            }
+            if (data) {
+                this.mapillaryViewer.showPano(data);
+            }
+            this.mapillaryViewer.activate();
+            this.notifyChanged();
+        },
+
+        setupViewerEvents: function(viewer) {
+            viewer.on({
+                'change': this.onPanoramaChangeView,
+                'closeclick': this.onPanoramaCloseClick
+            }, this);
+        },
+
+        hidePanoViewer: function() {
+            this.hidePanoGoogle();
+            this.hidePanoMapillary();
+            L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
+            this.hideMarker();
+            fireRefreshEventOnWindow();
+            this.notifyChanged();
+        },
+
+
+        placeMarker: function(latlng, heading) {
+            if (!this.panoramaVisible()) {
+                return;
+            }
+            if (!this.marker) {
+                this.marker = new PanoMarker();
+            }
+            this._map.addLayer(this.marker);
+            this.marker.setLatLng(latlng);
+            this.marker.setHeading(heading);
+        },
+
+        hideMarker: function() {
+            if (this.marker) {
+                this._map.removeLayer(this.marker);
+            }
+        },
         notifyChanged: function() {
             this.fire('panoramachanged');
         },
 
-        getGoogleApi: function() {
-            if (!this._googleApi) {
-                this._googleApi = getGoogle().then((google) => {
-                        const panorama = new google.maps.StreetViewPanorama(this._panoramaContainer, {
-                                enableCloseButton: true,
-                                imageDateControl: true
-                            }
-                        );
-                        panorama.addListener('position_changed', this.onPanoramaChangePosition.bind(this));
-                        panorama.addListener('pov_changed', this.onPanoramaChangeView.bind(this));
-                        panorama.addListener('closeclick', this.hidePanorama.bind(this));
-
-                        return {
-                            google,
-                            service: new google.maps.StreetViewService(),
-                            panorama
-
-                        }
-                    }
-                );
+        onPanoramaChangeView: function(e) {
+            if (!this._map.getBounds().pad(-0.05).contains(e.latlng)) {
+                this._map.panTo(e.latlng);
             }
-            return this._googleApi;
+            this.placeMarker(e.latlng, e.heading);
+            this.notifyChanged();
+        },
 
+        onPanoramaCloseClick: function(e) {
+            this.hidePanoViewer();
+        },
+
+        onMapClick: async function(e) {
+            let
+                googlePanoPromise, mapillaryPanoPromise;
+            const
+                searchRadiusPx = 24,
+                p = this._map.project(e.latlng).add([searchRadiusPx, 0]),
+                searchRadiusMeters = e.latlng.distanceTo(this._map.unproject(p));
+            if (this.googleCoverageSelected()) {
+                googlePanoPromise = googleProvider.getPanoramaAtPos(e.latlng, searchRadiusMeters);
+            }
+            if (this.mapillaryCoverageSelected()) {
+                mapillaryPanoPromise = mapillaryProvider.getPanoramaAtPos(e.latlng, searchRadiusMeters);
+            }
+            if (googlePanoPromise) {
+                let searchResult = await googlePanoPromise;
+                if (searchResult.found) {
+                    this.showPanoGoogle(searchResult.data);
+                    return;
+                }
+            }
+            if (mapillaryPanoPromise) {
+                let searchResult = await mapillaryPanoPromise;
+                if (searchResult.found) {
+                    this.showPanoMapillary(searchResult.data);
+                    return;
+                }
+
+            }
         }
-    }
+    },
 );
 
 L.Control.Panoramas.include(L.Mixin.HashState);
@@ -209,17 +275,29 @@ L.Control.Panoramas.include({
         stateChangeEvents: ['panoramachanged'],
 
         serializeState: function() {
-            if (!this.coverageVisible) {
-                return null;
-            }
-            const state = [];
-            if (this.panoramaVisible && this.panoramaPosition && this.panoramaAngle !== undefined) {
-                state.push(this.panoramaPosition.lat.toFixed(5));
-                state.push(this.panoramaPosition.lng.toFixed(5));
-                state.push(this.panoramaAngle.heading.toFixed(1));
-                state.push(this.panoramaAngle.pitch.toFixed(1));
-                // in safari zoom is undefined
-                state.push((this.panoramaAngle.zoom || 0).toFixed(1));
+            let state = null;
+            if (this.controlEnabled) {
+                state = [];
+                let coverageCode='_';
+                if (this.mapillaryCoverageSelected()) {
+                    coverageCode += 'm';
+                }
+                if (this.googleCoverageSelected()) {
+                    coverageCode += 'g';
+                }
+                state.push(coverageCode);
+                const panoramaVisible = this.panoramaVisible();
+                if (panoramaVisible) {
+                    let code = {'google': 'g', 'mapillary': 'm'}[panoramaVisible];
+                    let viewer = {'google': this.googleViewer, 'mapillary': this.mapillaryViewer}[panoramaVisible];
+                    if (viewer) {
+                        let viewerState = viewer.getState();
+                        if (viewerState) {
+                            state.push(code);
+                            state.push(...viewerState);
+                        }
+                    }
+                }
             }
             return state;
         },
@@ -227,28 +305,23 @@ L.Control.Panoramas.include({
         unserializeState: function(state) {
 
             if (!state) {
-                this.hidePanorama();
-                this.hideCoverage();
+                this.disableControl();
                 return true;
             }
-            if (state.length === 0) {
-                this.hidePanorama();
-                this.showCoverage();
-                return true;
+            this.enableControl();
+            const coverageCode = state[0];
+            this.googleCoverageSelected(coverageCode.includes('g'));
+            this.mapillaryCoverageSelected(coverageCode.includes('m'));
+            if (state.length > 2) {
+                const panoramaVisible = state[1];
+                if (panoramaVisible === 'g') {
+                    this.showPanoGoogle().then(() => this.googleViewer.setState(state.slice(2)));
+                }
+                if (panoramaVisible === 'm') {
+                    this.showPanoMapillary().then(() => this.mapillaryViewer.setState(state.slice(2)));
+                }
             }
-
-            const lat = parseFloat(state[0]);
-            const lng = parseFloat(state[1]);
-            const heading = parseFloat(state[2]);
-            const pitch = parseFloat(state[3]);
-            const zoom = parseFloat(state[4]);
-            if (!isNaN(lat) && !isNaN(lng) && !isNaN(heading) && !isNaN(pitch) && !isNaN(zoom)) {
-                this.showCoverage();
-                this.showPanoramaAtPos(L.latLng(lat, lng), {heading, pitch, zoom});
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 );

@@ -27,6 +27,7 @@ import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
 
+
 function setUp() {
     fixAll();
 
@@ -58,7 +59,7 @@ function setUp() {
 
     new L.Control.Panoramas(document.getElementById('street-view'))
         .addTo(map)
-        .enableHashState('n');
+        .enableHashState('n2');
 
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
 

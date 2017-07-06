@@ -96,7 +96,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'eslint',
         include: paths.appSrc,
-        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate|mapillary-js/,
       }
     ],
     loaders: [
@@ -112,7 +112,7 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        exclude: /augustl\/js-unzip|dankogai\/js-deflate/,
+        exclude: /augustl\/js-unzip|dankogai\/js-deflate|mapillary-js/,
         include: paths.appSrc,
         loader: 'babel',
       },
