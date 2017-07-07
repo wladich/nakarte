@@ -50,6 +50,7 @@ const Viewer = L.Evented.extend({
 
     showPano: function(data) {
         this.panorama.setPosition(data.location.latLng);
+        this.panorama.setZoom(1);
     },
 
     onPanoramaChangeView: function() {
