@@ -69,6 +69,16 @@ class XMLHttpRequestPromise {
             if (this.responseType === 'binarystring' && xhr.response && xhr.response.byteLength) {
                 xhr.responseBinaryText = arrayBufferToString(xhr.response);
             }
+            // IE doesnot support responseType=json
+            if (this.responseType === 'json' && (typeof xhr.response) === 'string') {
+                try {
+                    // xhr.response is readonly
+                    xhr.responseJSON = JSON.parse(xhr.response);
+                } catch (e) {
+                }
+            } else {
+                xhr.responseJSON = xhr.response;
+            }
             if (this._isResponseSuccess(xhr)) {
                 // console.log('success', this.url);
                 this._resolve(xhr);

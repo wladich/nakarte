@@ -21,8 +21,8 @@ function getMapillary() {
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     const url = `https://a.mapillary.com/v3/images?client_id=${config.mapillary}&closeto=${latlng.lng},${latlng.lat}&radius=${searchRadiusMeters}`;
     const resp = await fetch(url, {responseType: 'json', timeout: 10000});
-    if (resp.status === 200 && resp.response.features.length) {
-        return {found: true, data: resp.response.features[0].properties.key};
+    if (resp.status === 200 && resp.responseJSON.features.length) {
+        return {found: true, data: resp.responseJSON.features[0].properties.key};
     }
     return {found: false};
 }
