@@ -34,6 +34,9 @@ const MapillaryCoverage = L.GridLayer.extend({
         drawOverview: function(canvas) {
             const
                 tileData = canvas._tileData;
+            if (!tileData['mapillary-sequence-overview']) {
+                return;
+            }
             let {multiplier, offsetX, offsetY} = canvas._adjustment;
             const canvasCtx = canvas.getContext('2d');
             canvasCtx.fillStyle = this.options.color;
@@ -55,6 +58,9 @@ const MapillaryCoverage = L.GridLayer.extend({
                 tileData = canvas._tileData,
                 adjustment = canvas._adjustment;
 
+            if (!tileData['mapillary-sequences']) {
+                return;
+            }
             const canvasCtx = canvas.getContext('2d');
             canvasCtx.beginPath();
             canvasCtx.strokeStyle = this.options.color;
@@ -94,6 +100,9 @@ const MapillaryCoverage = L.GridLayer.extend({
             let
                 tileData = canvas._tileData,
                 adjustment = canvas._adjustment;
+            if (!tileData['mapillary-images']) {
+                return;
+            }
             let {multiplier, offsetX, offsetY} = adjustment;
             const canvasCtx = canvas.getContext('2d');
             canvasCtx.beginPath();
