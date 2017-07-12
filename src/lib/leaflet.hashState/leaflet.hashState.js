@@ -8,10 +8,12 @@ L.Mixin.HashState = {
         const eventSource = this.stateChangeEventsSource ? this[this.stateChangeEventsSource] : this;
 
         // setup event listeners
-        this.stateChangeEvents.forEach((event) => {
-                eventSource.on(event, this._onControlStateChanged, this);
-            }
-        );
+        if (this.stateChangeEvents) {
+            this.stateChangeEvents.forEach((event) => {
+                    eventSource.on(event, this._onControlStateChanged, this);
+                }
+            );
+        }
 
         hashState.addEventListener(key, (state) => this._onExternalStateChanged(state));
 

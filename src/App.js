@@ -57,9 +57,11 @@ function setUp() {
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
-    new L.Control.Panoramas(document.getElementById('street-view'))
+    const panoramas = new L.Control.Panoramas(document.getElementById('street-view'))
         .addTo(map)
         .enableHashState('n2');
+    L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
+
 
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
 

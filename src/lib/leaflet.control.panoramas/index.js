@@ -5,7 +5,6 @@ import ko from 'vendored/knockout';
 import googleProvider from './lib/google';
 import mapillaryProvider from './lib/mapillary';
 
-
 function fireRefreshEventOnWindow() {
     const evt = document.createEvent("HTMLEvents");
     evt.initEvent('resize', true, false);
@@ -308,8 +307,12 @@ L.Control.Panoramas.include({
                 this.disableControl();
                 return true;
             }
-            this.enableControl();
+
             const coverageCode = state[0];
+            if (!coverageCode || coverageCode[0] !== '_') {
+                return false;
+            }
+            this.enableControl();
             this.googleCoverageSelected(coverageCode.includes('g'));
             this.mapillaryCoverageSelected(coverageCode.includes('m'));
             if (state.length > 2) {
@@ -325,3 +328,27 @@ L.Control.Panoramas.include({
         }
     }
 );
+
+
+L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
+    return L.Util.extend({}, L.Mixin.HashState, {
+        unserializeState: function(oldState) {
+            if (oldState) {
+                console.log('Upgrading');
+                const upgradedState = ['_g'];
+                if (oldState.length) {
+                    upgradedState.push('g', ...oldState);
+                }
+                setTimeout(()=> panoramasControl.unserializeState(upgradedState), 0);
+            }
+            return false;
+        },
+
+        serializeState: function() {
+            return null;
+        },
+    });
+
+
+
+};
