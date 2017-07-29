@@ -14,6 +14,7 @@ L.Control.Caption = L.Control.extend({
     },
 
     onAdd: function (map) {
+        this._map = map;
         this._container = L.DomUtil.create('div', this.options.className);
         this._stopContainerEvents();
         this._container.innerHTML = this._contents;
@@ -23,6 +24,13 @@ L.Control.Caption = L.Control.extend({
             return true;
         });
         return this._container;
+    },
+
+    setContents: function(contents) {
+        this._contents = contents;
+        if (this._map) {
+            this._container.innerHTML = this._contents;
+        }
     }
 
 });
