@@ -1,0 +1,15 @@
+.photo-viewer-button-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0,0,0,1);
+    z-index: 1000;
+    opacity: 0.5;
+    background-image: url("close.svg");
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 50% 50%;
+    cursor: pointer;
+}

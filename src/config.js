@@ -6,5 +6,6 @@ export default Object.assign({
     westraDataBaseUrl: 'http://nakarte.tk/westraPasses/',
     CORSProxyUrl: 'http://proxy.nakarte.tk/',
     elevationsServer: 'http://elevation.nakarte.tk/',
-    newsUrl: 'http://about.nakarte.tk'
+    newsUrl: 'http://about.nakarte.tk',
+    wikimediaCommonsCoverageUrl: 'http://tiles.nakarte.tk/wikimedia_commons_images/{z}/{x}/{y}'
 }, secrets);

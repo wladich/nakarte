@@ -4,6 +4,7 @@ import 'lib/controls-styles/controls-styles.css';
 import ko from 'vendored/knockout';
 import googleProvider from './lib/google';
 import mapillaryProvider from './lib/mapillary';
+import wikimediaProvider from './lib/wikimedia';
 
 function fireRefreshEventOnWindow() {
     const evt = document.createEvent("HTMLEvents");
@@ -13,6 +14,10 @@ function fireRefreshEventOnWindow() {
 
 
 const PanoMarker = L.Marker.extend({
+    options: {
+        zIndexOffset: 10000
+    },
+
     initialize: function() {
         const icon = L.divIcon({
                 className: 'leaflet-panorama-marker-wraper',
@@ -22,10 +27,22 @@ const PanoMarker = L.Marker.extend({
         L.Marker.prototype.initialize.call(this, [0, 0], {icon, interactive: false});
     },
 
-    setHeading: function(angle) {
+    getIcon: function() {
         let markerIcon = this.getElement();
         markerIcon = markerIcon.children[0];
-        markerIcon.style.transform = `rotate(${angle}deg)`;
+        return markerIcon;
+    },
+
+    setHeading: function(angle) {
+        const markerIcon = this.getIcon();
+        markerIcon.style.transform = `rotate(${angle || 0}deg)`;
+    },
+
+    setType: function(markerType) {
+        const className = {
+            'slim': 'leaflet-panorama-marker-circle',
+            'normal': 'leaflet-panorama-marker-binocular'}[markerType]
+        this.getIcon().className = className;
     }
 });
 
@@ -36,15 +53,35 @@ L.Control.Panoramas = L.Control.extend({
             position: 'topleft'
         },
 
+        getProviders: function() {
+            return [
+                {name: 'google', title: 'Google street view', provider: googleProvider, layerOptions: {zIndex:10},
+                 code: 'g',
+                 selected: ko.observable(true),
+                 mapMarkerType: 'normal'},
+                {name: 'wikimedia', title: 'Wikimedia commons', provider: wikimediaProvider,
+                    layerOptions: {opacity: 0.7, zIndex: 9},
+                    code: 'w',
+                    selected: ko.observable(false),
+                    mapMarkerType: 'slim'
+                },
+                {name: 'mapillary', title: 'Mapillary', provider: mapillaryProvider,
+                    layerOptions: {opacity: 0.7, zIndex: 8},
+                    code: 'm',
+                    selected: ko.observable(false),
+                    mapMarkerType: 'normal'},
+            ]
+        },
+
         initialize: function(panoramaContainer, options) {
             L.Control.prototype.initialize.call(this, options);
-            this.googleCoverageSelected = ko.observable(true);
-            this.mapillaryCoverageSelected = ko.observable(false);
-            this.googleCoverageSelected.subscribe(this.updateCoverageVisibility, this);
-            this.mapillaryCoverageSelected.subscribe(this.updateCoverageVisibility, this);
             this._panoramaContainer = panoramaContainer;
-            this._googlePanoramaContainer = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
-            this._mapillaryPanoramaContainer = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
+            this.providers = this.getProviders();
+            for (let provider of this.providers) {
+                provider.selected.subscribe(this.updateCoverageVisibility, this);
+                provider.container = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
+            }
+            this.nearbyPoints = [];
         },
 
         onAdd: function(map) {
@@ -53,9 +90,8 @@ L.Control.Panoramas = L.Control.extend({
             container.innerHTML = `
                 <a name="button" class="panoramas-button leaflet-control-button icon-panoramas" title="Show panoramas"
                     data-bind="click: onButtonClick"></a>
-                <div class="panoramas-list control-form">
-                    <div><label><input type="checkbox" data-bind="checked: googleCoverageSelected">Google street view</label></div>
-                    <div><label><input type="checkbox" data-bind="checked: mapillaryCoverageSelected">Mapillary</label></div>
+                <div class="panoramas-list control-form" data-bind="foreach: providers">
+                    <div><label><input type="checkbox" data-bind="checked: selected"><span data-bind="text: title"></span></label></div>
                 </div>
             `;
             this._stopContainerEvents();
@@ -101,26 +137,17 @@ L.Control.Panoramas = L.Control.extend({
             if (!this._map) {
                 return;
             }
-            if (this.controlEnabled && this.googleCoverageSelected()) {
-                if (!this.googleCoverage) {
-                    this.googleCoverage = googleProvider.getCoverageLayer({pane: 'rasterOverlay', zIndex: 2});
-                }
-                this.googleCoverage.addTo(this._map);
-            } else {
-                if (this.googleCoverage) {
-                    this.googleCoverage.removeFrom(this._map)
-                }
-            }
-
-            if (this.controlEnabled && this.mapillaryCoverageSelected()) {
-                if (!this.mapillaryCoverage) {
-                    this.mapillaryCoverage = mapillaryProvider.getCoverageLayer({pane: 'rasterOverlay', opacity: 0.7,
-                        zIndex: 1});
-                }
-                this.mapillaryCoverage.addTo(this._map);
-            } else {
-                if (this.mapillaryCoverage) {
-                    this.mapillaryCoverage.removeFrom(this._map)
+            for (let provider of this.providers) {
+                if (this.controlEnabled && provider.selected()) {
+                    if (!provider.coverageLayer) {
+                        const options = L.extend({pane: 'rasterOverlay'}, provider.layerOptions);
+                        provider.coverageLayer = provider.provider.getCoverageLayer(options);
+                    }
+                    provider.coverageLayer.addTo(this._map);
+                } else {
+                    if (provider.coverageLayer) {
+                        this._map.removeLayer(provider.coverageLayer);
+                    }
                 }
             }
             this.notifyChanged();
@@ -133,70 +160,67 @@ L.Control.Panoramas = L.Control.extend({
 
         panoramaVisible: function() {
             if (L.DomUtil.hasClass(this._panoramaContainer, 'enabled')) {
-                if (L.DomUtil.hasClass(this._googlePanoramaContainer, 'enabled')) {
-                    return 'google';
-                }
-                if (L.DomUtil.hasClass(this._mapillaryPanoramaContainer, 'enabled')) {
-                    return 'mapillary';
+                for (let provider of this.providers) {
+                    if (L.DomUtil.hasClass(provider.container, 'enabled')) {
+                        return provider
+                    }
                 }
             }
             return false;
         },
 
-        hidePanoGoogle: function() {
-            L.DomUtil.removeClass(this._googlePanoramaContainer, 'enabled');
-            if (this.googleViewer) {
-                this.googleViewer.deactivate();
+        setupNearbyPoints: function(points) {
+            for (let point of this.nearbyPoints) {
+                this._map.removeLayer(point)
+            }
+            this.nearbyPoints = [];
+            if (points) {
+                const icon = L.divIcon({className: 'leaflet-panorama-marker-point'});
+                for (let latlng of points) {
+                    this.nearbyPoints.push(L.marker(latlng, {icon}).addTo(this._map));
+                }
             }
         },
 
-        hidePanoMapillary: function() {
-            L.DomUtil.removeClass(this._mapillaryPanoramaContainer, 'enabled');
-            if (this.mapillaryViewer) {
-                this.mapillaryViewer.deactivate();
+        hidePano: function(provider) {
+            L.DomUtil.removeClass(provider.container, 'enabled');
+            if (provider.viewer) {
+                provider.viewer.deactivate();
             }
+            this.setupNearbyPoints();
         },
 
-        showPanoGoogle: async function(data) {
-            this.hidePanoMapillary();
+        showPano: async function(provider, data) {
             this.showPanoramaContainer();
-            L.DomUtil.addClass(this._googlePanoramaContainer, 'enabled');
-            if (!this.googleViewer) {
-                this.googleViewer = await googleProvider.getViewer(this._googlePanoramaContainer);
-                this.setupViewerEvents(this.googleViewer);
+            for (let otherProvider of this.providers) {
+                if (otherProvider !== provider) {
+                    this.hidePano(otherProvider);
+                }
             }
-            this.googleViewer.activate();
+            L.DomUtil.addClass(provider.container, 'enabled');
+            if (!provider.viewer) {
+                provider.viewer = await provider.provider.getViewer(provider.container);
+                this.setupViewerEvents(provider);
+            }
             if (data) {
-                this.googleViewer.showPano(data);
+                // wait for panorama container become of right size, needed for viewer setup
+                setTimeout(() => provider.viewer.showPano(data), 0);
             }
+            provider.viewer.activate();
             this.notifyChanged();
         },
 
-        showPanoMapillary: async function(data) {
-            this.showPanoramaContainer();
-            this.hidePanoGoogle();
-            L.DomUtil.addClass(this._mapillaryPanoramaContainer, 'enabled');
-            if (!this.mapillaryViewer) {
-                this.mapillaryViewer = await mapillaryProvider.getViewer(this._mapillaryPanoramaContainer);
-                this.setupViewerEvents(this.mapillaryViewer);
-            }
-            if (data) {
-                this.mapillaryViewer.showPano(data);
-            }
-            this.mapillaryViewer.activate();
-            this.notifyChanged();
-        },
-
-        setupViewerEvents: function(viewer) {
-            viewer.on({
-                'change': this.onPanoramaChangeView,
+        setupViewerEvents: function(provider) {
+            provider.viewer.on({
+                'change': this.onPanoramaChangeView.bind(this, provider),
                 'closeclick': this.onPanoramaCloseClick
             }, this);
         },
 
         hidePanoViewer: function() {
-            this.hidePanoGoogle();
-            this.hidePanoMapillary();
+            for (let provider of this.providers) {
+                this.hidePano(provider);
+            }
             L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
             this.hideMarker();
             fireRefreshEventOnWindow();
@@ -225,11 +249,13 @@ L.Control.Panoramas = L.Control.extend({
             this.fire('panoramachanged');
         },
 
-        onPanoramaChangeView: function(e) {
+        onPanoramaChangeView: function(provider, e) {
             if (!this._map.getBounds().pad(-0.05).contains(e.latlng)) {
                 this._map.panTo(e.latlng);
             }
             this.placeMarker(e.latlng, e.heading);
+            this.marker.setType(provider.mapMarkerType);
+            this.setupNearbyPoints(e.latlngs);
             this.notifyChanged();
         },
 
@@ -238,32 +264,26 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         onMapClick: async function(e) {
-            let
-                googlePanoPromise, mapillaryPanoPromise;
             const
                 searchRadiusPx = 24,
                 p = this._map.project(e.latlng).add([searchRadiusPx, 0]),
-                searchRadiusMeters = e.latlng.distanceTo(this._map.unproject(p));
-            if (this.googleCoverageSelected()) {
-                googlePanoPromise = googleProvider.getPanoramaAtPos(e.latlng, searchRadiusMeters);
-            }
-            if (this.mapillaryCoverageSelected()) {
-                mapillaryPanoPromise = mapillaryProvider.getPanoramaAtPos(e.latlng, searchRadiusMeters);
-            }
-            if (googlePanoPromise) {
-                let searchResult = await googlePanoPromise;
-                if (searchResult.found) {
-                    this.showPanoGoogle(searchResult.data);
-                    return;
+                searchRadiusMeters = e.latlng.distanceTo(this._map.unproject(p)),
+                promises = [];
+            for (let provider of this.providers) {
+                if (provider.selected()) {
+                    promises.push({
+                        promise: provider.provider.getPanoramaAtPos(e.latlng, searchRadiusMeters),
+                        provider: provider
+                    });
                 }
             }
-            if (mapillaryPanoPromise) {
-                let searchResult = await mapillaryPanoPromise;
-                if (searchResult.found) {
-                    this.showPanoMapillary(searchResult.data);
-                    return;
-                }
 
+            for (let {promise, provider} of promises) {
+                let searchResult = await promise;
+                if (searchResult.found) {
+                    this.showPano(provider, searchResult.data);
+                    return;
+                }
             }
         }
     },
@@ -278,23 +298,18 @@ L.Control.Panoramas.include({
             if (this.controlEnabled) {
                 state = [];
                 let coverageCode='_';
-                if (this.mapillaryCoverageSelected()) {
-                    coverageCode += 'm';
-                }
-                if (this.googleCoverageSelected()) {
-                    coverageCode += 'g';
+                for (let provider of this.providers) {
+                    if (provider.selected()){
+                        coverageCode += provider.code;
+                    }
                 }
                 state.push(coverageCode);
-                const panoramaVisible = this.panoramaVisible();
-                if (panoramaVisible) {
-                    let code = {'google': 'g', 'mapillary': 'm'}[panoramaVisible];
-                    let viewer = {'google': this.googleViewer, 'mapillary': this.mapillaryViewer}[panoramaVisible];
-                    if (viewer) {
-                        let viewerState = viewer.getState();
-                        if (viewerState) {
-                            state.push(code);
-                            state.push(...viewerState);
-                        }
+                const provider = this.panoramaVisible();
+                if (provider && provider.viewer) {
+                    let viewerState = provider.viewer.getState();
+                    if (viewerState) {
+                        state.push(provider.code);
+                        state.push(...viewerState);
                     }
                 }
             }
@@ -302,7 +317,6 @@ L.Control.Panoramas.include({
         },
 
         unserializeState: function(state) {
-
             if (!state) {
                 this.disableControl();
                 return true;
@@ -313,15 +327,21 @@ L.Control.Panoramas.include({
                 return false;
             }
             this.enableControl();
-            this.googleCoverageSelected(coverageCode.includes('g'));
-            this.mapillaryCoverageSelected(coverageCode.includes('m'));
+            for (let provider of this.providers) {
+                provider.selected(coverageCode.includes(provider.code))
+            }
             if (state.length > 2) {
                 const panoramaVisible = state[1];
-                if (panoramaVisible === 'g') {
-                    this.showPanoGoogle().then(() => this.googleViewer.setState(state.slice(2)));
-                }
-                if (panoramaVisible === 'm') {
-                    this.showPanoMapillary().then(() => this.mapillaryViewer.setState(state.slice(2)));
+                for (let provider of this.providers) {
+                    if (panoramaVisible === provider.code) {
+                        this.showPano(provider).then(() => {
+                            const success = provider.viewer.setState(state.slice(2));
+                            if (!success) {
+                                this.hidePanoViewer();
+                            }
+                        });
+                        break;
+                    }
                 }
             }
             return true;

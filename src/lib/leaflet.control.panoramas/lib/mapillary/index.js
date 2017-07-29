@@ -2,7 +2,8 @@ import L from 'leaflet';
 import {MapillaryCoverage} from './mapillary-coverage-layer'
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
-
+import './style.css';
+import '../common/style.css';
 
 function getCoverageLayer(options) {
     return new MapillaryCoverage(options);
@@ -47,7 +48,7 @@ const Viewer = L.Evented.extend({
             viewer.on('nodechanged', this.onNodeChanged.bind(this));
             viewer.on('bearingchanged', this.onBearingChanged.bind(this));
             this.dateLabel = L.DomUtil.create('div', 'mapillary-viewer-date-overlay', container);
-            this.closeButton = L.DomUtil.create('div', 'mapillary-viewer-button-close', container);
+            this.closeButton = L.DomUtil.create('div', 'photo-viewer-button-close', container);
             L.DomEvent.on(this.closeButton, 'click', this.onCloseClick, this);
             this._bearing = 0;
             this._zoom = 0;

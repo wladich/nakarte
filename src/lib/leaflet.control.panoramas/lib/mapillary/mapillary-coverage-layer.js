@@ -153,7 +153,6 @@ const MapillaryCoverage = L.GridLayer.extend({
                     }, 1);
                 }
             );
-
             canvas._abortLoading = abortLoading;
             return canvas;
         },
