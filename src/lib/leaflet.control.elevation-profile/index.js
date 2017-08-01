@@ -299,7 +299,9 @@ const ElevationProfile = L.Class.extend({
         },
 
         removeFrom: function(map) {
-            this.abortLoading()
+            if (this.abortLoading) {
+                this.abortLoading();
+            }
             if (!this._map) {
                 return;
             }
