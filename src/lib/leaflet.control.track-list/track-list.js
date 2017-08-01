@@ -561,8 +561,8 @@ L.Control.TrackList = L.Control.extend({
             }
             polyline.startEdit();
             this._editedLine = polyline;
-            polyline.once('editend', function() {
-                    setTimeout(this.onLineEditEnd.bind(this, track, polyline), 0);
+            polyline.once('editend', function(e) {
+                    setTimeout(this.onLineEditEnd.bind(this, e, track, polyline), 0);
                 }.bind(this)
             );
             this.fire('startedit');
@@ -642,13 +642,16 @@ L.Control.TrackList = L.Control.extend({
 
         },
 
-        onLineEditEnd: function(track, polyline) {
+        onLineEditEnd: function(e, track, polyline) {
             if (polyline.getLatLngs().length < 2) {
                 track.feature.removeLayer(polyline);
             }
             this.onTrackLengthChanged(track);
             if (this._editedLine === polyline) {
                 this._editedLine = null;
+            }
+            if (!this.getTrackPolylines(track).length && !this.getTrackPoints(track).length && e.userCancelled) {
+                this.removeTrack(track);
             }
         },
 

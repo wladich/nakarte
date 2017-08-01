@@ -24,7 +24,7 @@ L.Polyline.EditMixin = {
         }
     },
 
-    stopEdit: function() {
+    stopEdit: function(userCancelled) {
         if (this._editing) {
             this.stopDrawingLine();
             this._editing = false;
@@ -36,7 +36,7 @@ L.Polyline.EditMixin = {
                 .off('dragend', this.onMapEndDrag, this);
             this.setStyle(this._storedStyle);
             L.DomUtil.removeClass(this._map._container, 'leaflet-line-editing');
-            this.fire('editend', {target: this});
+            this.fire('editend', {target: this, userCancelled});
         }
     },
 
@@ -89,7 +89,7 @@ L.Polyline.EditMixin = {
             this.addNode(newNodeIndex, e.latlng);
         } else {
             if (!this.preventStopEdit) {
-                this.stopEdit();
+                this.stopEdit(true);
             }
         }
     },
@@ -140,6 +140,7 @@ L.Polyline.EditMixin = {
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = false;
+        this.fire('drawend');
 
     },
 
@@ -155,7 +156,7 @@ L.Polyline.EditMixin = {
                     this.stopDrawingLine();
                 } else {
                     if (!this.preventStopEdit) {
-                        this.stopEdit();
+                        this.stopEdit(true);
                     }
                 }
                 L.DomEvent.stop(e);
