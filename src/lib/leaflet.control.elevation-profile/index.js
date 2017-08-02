@@ -479,7 +479,9 @@ const ElevationProfile = L.Class.extend({
             var ticksNs = [3, 4, 5],
                 tickSteps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
                 ticks = [],
-                i, j, k, ticksN, tickStep, tick1, tick2;
+                i, j, k, ticksN, tickStep, tick1, tick2,
+                matchFound=false;
+
             for (i = 0; i < tickSteps.length; i++) {
                 tickStep = tickSteps[i];
                 for (j = 0; j < ticksNs.length; j++) {
@@ -487,13 +489,19 @@ const ElevationProfile = L.Class.extend({
                     tick1 = Math.floor(minValue / tickStep);
                     tick2 = Math.ceil(maxValue / tickStep);
                     if ((tick2 - tick1) < ticksN) {
-                        for (k = tick1; k < tick1 + ticksN; k++) {
-                            ticks.push(k * tickStep);
-                        }
-                        return ticks;
+                        matchFound = true;
+                        break
                     }
                 }
+                if (matchFound) {
+                    break;
+                }
             }
+            for (k = tick1; k < tick1 + ticksN; k++) {
+                ticks.push(k * tickStep);
+            }
+            return ticks;
+
         },
 
         filterElevations: function(values, tolerance) {
