@@ -197,7 +197,10 @@ const Viewer = L.Evented.extend({
             this.map.removeLayer(this.imageLayer);
         }
         let image = this.images[imageIdx];
-        const mapSize = this.map.getSize();
+        let mapSize = this.map.getSize();
+        if (!mapSize.x || !mapSize.y) {
+            mapSize = {x: 500, y: 500}
+        }
         let maxZoom = Math.log2(Math.max(image.width / mapSize.x, image.height / mapSize.y)) + 2;
         if (maxZoom < 1) {
             maxZoom = 1;
