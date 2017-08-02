@@ -790,11 +790,18 @@ const ElevationProfile = L.Class.extend({
                 return this.svgHeight - y - paddingBottom;
             };
 
+            let startNewSegment = true;
             for (i = 0; i < this.values.length; i++) {
-                path.push(i ? 'L' : 'M');
+                let value = this.values[i];
+                if (value === null) {
+                    startNewSegment = true;
+                    continue;
+                }
+                path.push(startNewSegment ? 'M' : 'L');
                 x = i * horizStep;
-                y = valueToSvgCoord(this.values[i]);
+                y = valueToSvgCoord(value);
                 path.push(x + ' ' + y + ' ');
+                startNewSegment = false;
             }
             path = path.join('');
             createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'brown', fill: 'none'}, svg);
@@ -819,7 +826,7 @@ const ElevationProfile = L.Class.extend({
                 for (var i = 0; i < s.length; i++) {
                     if (s[i]) {
                         if (s[i] === 'NULL') {
-                            v = 0;
+                            v = null;
                         } else {
                             v = parseFloat(s[i]);
                         }
