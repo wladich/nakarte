@@ -338,7 +338,7 @@ export default function getLayers() {
                     order: 500,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
+                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
                         {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
@@ -365,7 +365,7 @@ export default function getLayers() {
                     order: 2000,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_sommer/{z}/{x}/{y}.png",
+                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
                         {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
@@ -374,7 +374,7 @@ export default function getLayers() {
                     order: 2001,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://dntutnotilesprod.cloudapp.net/tilestache/dnt_vinter/{z}/{x}/{y}.png",
+                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
                         {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 },
