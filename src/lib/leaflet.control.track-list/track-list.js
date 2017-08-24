@@ -579,7 +579,7 @@ L.Control.TrackList = L.Control.extend({
             L.DomUtil.addClass(this._map._container, 'leaflet-point-placing');
             this.isPlacingPoint = true;
             this.map.on('click', this.movePoint.bind(this, marker));
-            L.DomEvent.on(document, 'keyup', this.stopPlacingPointOnEscPressed, this);
+            L.DomEvent.on(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
             this.fire('startedit');
 
         },
@@ -593,7 +593,7 @@ L.Control.TrackList = L.Control.extend({
             L.DomUtil.addClass(this._map._container, 'leaflet-point-placing');
             this.isPlacingPoint = true;
             this.map.on('click', this.createNewPoint.bind(this, track));
-            L.DomEvent.on(document, 'keyup', this.stopPlacingPointOnEscPressed, this);
+            L.DomEvent.on(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
             this.fire('startedit');
 
         },
