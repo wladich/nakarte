@@ -619,7 +619,11 @@ L.Control.TrackList = L.Control.extend({
             // it is better to do it on 'load' event but when it is fired marker is not yet displayed
             setTimeout(() => {
                 this.renamePoint(marker);
-                this.beginPointCreate(parentTrack);
+                if (L.Browser.mobile) {
+                    this.stopPlacingPoint();
+                } else {
+                    this.beginPointCreate(parentTrack);
+                }
             }, 10);
         },
 
