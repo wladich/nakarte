@@ -284,6 +284,24 @@ export default function getLayers() {
                     )
                 },
                 {
+                    title: 'Caucasus 1km',
+                    order: 1061,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
+                        {code: 'NT1', tms: true, maxNativeZoom: 14, print: true, jnx: true, scaleDependent: false}
+                    )
+                },
+                {
+                    title: 'Caucasus 500m',
+                    order: 1081,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
+                        {code: 'NT5', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
+                    )
+                },
+                {
                     title: 'Topo 250m',
                     order: 1095,
                     isOverlay: true,
