@@ -255,3 +255,7 @@
 .leaflet-control-tracklist .leaflet-control-button-toggle {
     background-image: url("images/route.svg");
  }
+
+.join-line-selecting {
+    cursor: default;
+}

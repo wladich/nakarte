@@ -754,7 +754,7 @@ L.Control.TrackList = L.Control.extend({
             var p = this._editedLine.getLatLngs()[e.nodeIndex];
             p = [p.lat, p.lng];
             this._lineJoinCursor = L.polyline([p, e.mouseEvent.latlng], {
-                    clickable: false,
+                    interactive: false,
                     color: 'red',
                     weight: 1.5,
                     opacity: 1,
@@ -764,6 +764,7 @@ L.Control.TrackList = L.Control.extend({
                 .addTo(this.map);
             this.map.on('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
             this.map.on('click', this.stopLineJoinSelection, this);
+            L.DomUtil.addClass(this.map.getContainer(), 'join-line-selecting');
             L.DomEvent.on(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
             var self = this;
             setTimeout(function() {
@@ -814,6 +815,7 @@ L.Control.TrackList = L.Control.extend({
             if (this._lineJoinCursor) {
                 this.map.off('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
                 this.map.off('click', this.stopLineJoinSelection, this);
+                L.DomUtil.removeClass(this.map.getContainer(), 'join-line-selecting');
                 L.DomEvent.off(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
                 this.map.removeLayer(this._lineJoinCursor);
                 this._lineJoinCursor = null;
