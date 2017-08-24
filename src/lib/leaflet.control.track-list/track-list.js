@@ -54,6 +54,7 @@ L.Control.TrackList = L.Control.extend({
             this._lastTrackColor = 0;
             this.trackListHeight = ko.observable(0);
             this.isPlacingPoint = false;
+            this.trackAddingPoint = ko.observable(null);
         },
 
         onAdd: function(map) {
@@ -96,7 +97,7 @@ L.Control.TrackList = L.Control.extend({
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
                         <td><div class="button-length" data-bind="text: $parent.formatLength(track.length()), css: {'ticks-enabled': track.measureTicksShown}, click: $parent.switchMeasureTicksVisibility.bind($parent)"></div></td>
                         <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
-                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.beginPointCreate.bind($parent, track)"></div></td>
+                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
                 </tbody></table>
@@ -569,44 +570,46 @@ L.Control.TrackList = L.Control.extend({
             this.fire('startedit');
         },
 
-        beginPointMove: function(marker) {
-            const track = marker._parentTrack;
-            if (!track.visible()) {
-                return;
+        onAddPointClicked: function(track) {
+            if (this.trackAddingPoint() === track) {
+                this.stopPlacingPoint();
+            } else {
+                this.beginPointCreate(track);
             }
+        },
+
+        _beginPointEdit: function() {
             this.stopPlacingPoint();
             this.stopEditLine();
             L.DomUtil.addClass(this._map._container, 'leaflet-point-placing');
             this.isPlacingPoint = true;
-            this.map.on('click', this.movePoint.bind(this, marker));
             L.DomEvent.on(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
             this.fire('startedit');
+        },
 
+        beginPointMove: function(marker) {
+            this._beginPointEdit();
+            this._movingMarker = marker;
+            this.map.on('click', this.movePoint, this);
         },
 
         beginPointCreate: function(track) {
-            if (!track.visible()) {
-                return;
-            }
-            this.stopPlacingPoint();
-            this.stopEditLine();
-            L.DomUtil.addClass(this._map._container, 'leaflet-point-placing');
-            this.isPlacingPoint = true;
-            this.map.on('click', this.createNewPoint.bind(this, track));
-            L.DomEvent.on(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
-            this.fire('startedit');
-
+            this._beginPointEdit();
+            this.map.on('click', this.createNewPoint, this);
+            this.trackAddingPoint(track);
         },
 
-        movePoint: function(marker, e) {
+        movePoint: function(e) {
+            const marker = this._movingMarker;
             this._markerLayer.setMarkerPosition(marker, e.latlng);
             this.stopPlacingPoint();
         },
 
-        createNewPoint: function(parentTrack, e) {
+        createNewPoint: function(e) {
             if (!this.isPlacingPoint) {
                 return;
             }
+            const parentTrack = this.trackAddingPoint();
             parentTrack._pointAutoInc += 1;
             let name = parentTrack._pointAutoInc.toString();
             while (name.length < 3) {
@@ -634,10 +637,12 @@ L.Control.TrackList = L.Control.extend({
         },
 
         stopPlacingPoint: function() {
-            this.isPlacingPoint = true;
+            this.isPlacingPoint = false;
+            this.trackAddingPoint(null);
             L.DomUtil.removeClass(this._map._container, 'leaflet-point-placing');
-            L.DomEvent.off(document, 'keyup', this.stopPlacingPointOnEscPressed, this);
-            this.map.off('click', this.placePoint, this);
+            L.DomEvent.off(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
+            this.map.off('click', this.createNewPoint, this);
+            this.map.off('click', this.movePoint, this);
         },
 
         joinTrackSegments: function(newSegment) {

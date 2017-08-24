@@ -46,6 +46,10 @@
     background-color: #f4f4f4;
 }
 
+.leaflet-control-tracklist .button-add-point.active {
+    background-color: #ccc;
+}
+
 .leaflet-control-tracklist .input-url {
     display: inline-block;
     width: 176px;
