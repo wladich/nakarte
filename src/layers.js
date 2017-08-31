@@ -92,7 +92,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer(
-                        'http://144.76.234.107//cgi-bin/ta/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
+                        'http://144.76.234.108/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
                         {code: 'T', scaleDependent: false, maxNativeZoom: 13, noCors: true, print: true, jnx: true}
                     )
                 },
