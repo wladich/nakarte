@@ -5,6 +5,8 @@ import ko from 'vendored/knockout';
 import googleProvider from './lib/google';
 import mapillaryProvider from './lib/mapillary';
 import wikimediaProvider from './lib/wikimedia';
+import flickrProvider from './lib/flickr';
+
 
 function fireRefreshEventOnWindow() {
     const evt = document.createEvent("HTMLEvents");
@@ -70,6 +72,11 @@ L.Control.Panoramas = L.Control.extend({
                     code: 'm',
                     selected: ko.observable(false),
                     mapMarkerType: 'normal'},
+                {name: 'flickr', title: 'Flickr', provider: flickrProvider,
+                    layerOptions: {opacity: 0.7, zIndex: 8},
+                    code: 'f',
+                    selected: ko.observable(false),
+                    mapMarkerType: 'slim'},
             ]
         },
 

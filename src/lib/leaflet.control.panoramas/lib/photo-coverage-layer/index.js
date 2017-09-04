@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import {TiledDataLoader} from 'lib/tiled-data-loader';
 
+
 const MultiLayer = L.Layer.extend({
     initialize: function(layers) {
         this.layers = layers;
@@ -44,7 +45,8 @@ const MultiLayer = L.Layer.extend({
 
 });
 
-class WikimediaLoader extends TiledDataLoader {
+
+class PointsLoader extends TiledDataLoader {
     constructor(urlTemplate, zoom) {
         super();
         this.url = urlTemplate;
@@ -104,16 +106,16 @@ class WikimediaLoader extends TiledDataLoader {
     }
 }
 
-const WikimediaVectorCoverage = L.GridLayer.extend({
+const PointsCoverage = L.GridLayer.extend({
         options: {
             tileSize: 256,
             // updateWhenIdle: true,
-            color: '#ff00ff',
+            color: '#000000',
         },
 
-        initialize: function(url, options) {
+        initialize: function(url, pointsZoom, options) {
             L.GridLayer.prototype.initialize.call(this, options);
-            this.loader = new WikimediaLoader(url, 11);
+            this.loader = new PointsLoader(url, pointsZoom);
         },
 
         onAdd: function(map) {
@@ -178,4 +180,14 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
     }
 );
 
-export {MultiLayer, WikimediaVectorCoverage};
+
+function makeCoverageLayer(url, vectorLayerZoom, color, options) {
+    return new MultiLayer([
+        {layer: L.tileLayer(url, L.extend({}, options, {tms: true})),
+            minZoom: 0, maxZoom: vectorLayerZoom - 1},
+        {layer: new PointsCoverage(url, vectorLayerZoom, L.extend({color}, options)),
+            minZoom: vectorLayerZoom, maxZoom: 18}
+    ]);
+}
+
+export {makeCoverageLayer}
