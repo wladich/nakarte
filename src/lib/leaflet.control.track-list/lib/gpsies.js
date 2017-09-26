@@ -4,7 +4,7 @@ function urlEncode(d) {
     return Object.entries(d).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
 }
 
-const re = /^http:\/\/www\.gpsies\.com\/map\.do\?fileId=([a-z]+)/;
+const re = /^https?:\/\/www\.gpsies\.com\/map\.do\?fileId=([a-z]+)/;
 
 function isGpsiesUrl(url) {
     return re.test(url);
