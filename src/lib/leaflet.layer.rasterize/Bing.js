@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import 'lib/leaflet.layer.bing';
+import {BingLayer} from 'lib/leaflet.layer.bing';
 
-L.BingLayer.include({
+BingLayer.include({
         waitTilesReadyToGrab: function() {
             if (this._url) {
                 return Promise.resolve();
@@ -20,7 +20,7 @@ L.BingLayer.include({
         },
 
         cloneForPrint: function(options) {
-            return new L.BingLayer(this._key, L.Util.extend({}, this.options, options));
+            return new BingLayer(this._key, L.Util.extend({}, this.options, options));
         },
     }
 );

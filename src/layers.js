@@ -1,7 +1,8 @@
 import L from "leaflet";
 import 'lib/leaflet.layer.yandex';
 import 'lib/leaflet.layer.google';
-import 'lib/leaflet.layer.bing';
+import {BingLayer} from 'lib/leaflet.layer.bing';
+import {BingDates} from 'lib/leaflet.layer.bing/dates';
 import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses';
@@ -74,7 +75,7 @@ export default function getLayers() {
                     order: 70,
                     isOverlay: false,
                     isDefault: true,
-                    layer: L.bingLayer(config.bingKey, {code: 'I', scaleDependent: false, print: true, jnx: true})
+                    layer: new BingLayer(config.bingKey, {code: 'I', scaleDependent: false, print: true, jnx: true})
                 },
 
                 {
@@ -347,6 +348,26 @@ export default function getLayers() {
                     )
                 }]
         },
+        {
+            group: 'Satellite images',
+            layers: [
+                {
+                    title: 'Bing imagery acquisition dates',
+                    order: 1111,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: new BingDates({
+                        code: 'Bd',
+                        maxNativeZoom: 18,
+                        print: true,
+                        jnx: false,
+                        scaleDependent: false,
+                        noCors: true
+                    })
+                }
+            ]
+        },
+
         {
             group: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
             layers: [
