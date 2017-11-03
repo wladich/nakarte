@@ -906,7 +906,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerLabel: function(marker, label) {
-            if (label.match(/\d{3,}/)) {
+            if (label.match(/^\d{3,}/)) {
                 var n = parseInt(label, 10);
                 marker._parentTrack._pointAutoInc =
                     Math.max(n, marker._parentTrack._pointAutoInc | 0);
