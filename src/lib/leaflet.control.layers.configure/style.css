@@ -156,3 +156,12 @@
 .custom-layers-window a {
     color: #777;
 }
+
+.leaflet-layers-configure-just-added-1 {
+    background-color: #ff8d4d;
+}
+
+.leaflet-layers-configure-just-added-2 {
+    transition: background-color 7s ease-in;
+    background-color: rgba(0, 0, 0, 0);
+}

@@ -150,8 +150,18 @@ function enableConfig(control, layers) {
             },
 
             onSelectWindowOkClicked: function() {
-                [...this._allLayers, ...this._customLayers()].forEach(layer => layer.enabled = layer.checked());
-                this.updateEnabledLayers();
+                const newEnabledLayers = [];
+                for (let layer of [...this._allLayers, ...this._customLayers()]) {
+                    if (layer.checked()) {
+                        if (!layer.enabled) {
+                            newEnabledLayers.push(layer);
+                        }
+                        layer.enabled = true;
+                    } else {
+                        layer.enabled = false;
+                    }
+                }
+                this.updateEnabledLayers(newEnabledLayers);
                 this.hideSelectWindow();
             },
 
@@ -174,7 +184,7 @@ function enableConfig(control, layers) {
                 );
             },
 
-            updateEnabledLayers: function() {
+            updateEnabledLayers: function(addedLayers) {
                 const disabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
@@ -183,6 +193,7 @@ function enableConfig(control, layers) {
                 const enabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => l.enabled);
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
+                        l.layer._justAdded = addedLayers && addedLayers.includes(l);
                         l.isOverlay ? this.addOverlay(l.layer, l.title) : this.addBaseLayer(l.layer, l.title);
                         if (!l.isOverlay && this._map.hasLayer(l.layer)) {
                               hasBaselayerOnMap = true;
@@ -308,6 +319,12 @@ ${buttonsHtml}`;
                     const editButton = L.DomUtil.create('div', 'custom-layer-edit-button icon-edit', label.children[0]);
                     editButton.title = 'Edit layer';
                     L.DomEvent.on(editButton, 'click', (e) => this.onCustomLayerEditClicked(obj.layer.__customLayer, e));
+                }
+                if (obj.layer._justAdded) {
+                    L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-1');
+                    L.Util.requestAnimFrame(() => {
+                        L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-2');
+                    });
                 }
                 return label;
             },
