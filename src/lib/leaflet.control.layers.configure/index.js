@@ -15,6 +15,11 @@ function enableConfig(control, layers) {
     }
     enableTopRow(control);
 
+    control.options = L.Util.extend({
+        customBaseLayersOrder: 999,
+        customOverlaysOrder: 10000
+    }, control.options);
+
     L.Util.extend(control, {
             _configEnabled: true,
             _allLayersGroups: layers,
@@ -370,7 +375,7 @@ ${buttonsHtml}`;
             },
 
 
-            createCustomLayer: function(fieldValues, position, ignoreExists) {
+            createCustomLayer: function(fieldValues) {
                 const serialized = this.serializeCustomLayer(fieldValues);
                 const tileLayer = L.tileLayer(fieldValues.url, {
                         tms: fieldValues.tms,
@@ -390,7 +395,7 @@ ${buttonsHtml}`;
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: 10000,
+                    order: fieldValues.isOverlay ? this.options.customOverlaysOrder : this.options.customBaseLayersOrder,
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
