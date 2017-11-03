@@ -159,6 +159,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         onMapRightClick: function(e) {
+            L.DomEvent.stop(e);
             const items = [{text: '<b>Copy coordinates to clipboard</b>', header: true}, '-'];
 
             const lat = e.latlng.lat,

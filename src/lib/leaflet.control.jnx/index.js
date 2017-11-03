@@ -131,7 +131,10 @@ L.Control.JNX = L.Control.extend({
             this._selector = new RectangleSelect(bounds)
                 .addTo(this._map)
                 .on('change', () => this.fire('selectionchange'))
-                .on('click contextmenu', (e) => this.contextMenu.show(e));
+                .on('click contextmenu', (e) => {
+                    L.DomEvent.stop(e);
+                    this.contextMenu.show(e)
+                });
             this.fire('selectionchange');
         },
 
