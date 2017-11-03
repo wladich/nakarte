@@ -52,8 +52,6 @@ L.Control.Coordinates = L.Control.extend({
                     }, this
                 );
             this.menu = new Contextmenu([
-                    {text: 'Click map to copy coordinates to clipboard', callback: this.prepareForClickOnMap.bind(this)},
-                    '-',
                     {text: '&plusmn;ddd.ddddd', callback: this.onMenuSelect.bind(this, 'd')},
                     {text: 'ddd.ddddd&deg;', callback: this.onMenuSelect.bind(this, 'D')},
                     {text: 'ddd&deg;mm.mmm\'', callback: this.onMenuSelect.bind(this, 'DM')},
@@ -149,16 +147,16 @@ L.Control.Coordinates = L.Control.extend({
                 L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'coordinates-control-active');
                 this._map.on('mousemove', this.onMouseMove, this);
-                this._map.on('contextmenu', this.onMapRightClick, this);
+                this._map.on('contextmenu click', this.onMapClick, this);
             } else {
                 L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'coordinates-control-active');
-                this._map.off('contextmenu', this.onMapRightClick, this);
+                this._map.off('contextmenu click', this.onMapClick, this);
                 this._map.off('mousemove', this.onMouseMove, this);
             }
         },
 
-        onMapRightClick: function(e) {
+        onMapClick: function(e) {
             L.DomEvent.stop(e);
             const items = [{text: '<b>Copy coordinates to clipboard</b>', header: true}, '-'];
 
@@ -194,17 +192,6 @@ L.Control.Coordinates = L.Control.extend({
         onRightClick: function(e) {
             this.menu.show(e);
         },
-
-        onMapClick: function(e) {
-            var s = this.formatCoodinate(e.latlng.lat, true) + ' ' + this.formatCoodinate(e.latlng.lng, false);
-            s = s.replace(/&deg;/g, '°');
-            copyToClipboard(s, e.originalEvent);
-        },
-
-        prepareForClickOnMap: function() {
-            this._map.once('click', this.onMapClick, this);
-        }
-
 
 
         // TODO: onRemove
