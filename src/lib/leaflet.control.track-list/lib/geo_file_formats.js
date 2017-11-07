@@ -47,6 +47,34 @@ function parseGpx(txt, name, preferNameFromFile) {
         return segments;
     };
 
+    function getRoutePoints(rte_element) {
+        var points_elements = rte_element.getElementsByTagName('rtept');
+        var points = [];
+        for (var i = 0; i < points_elements.length; i++) {
+            var point_element = points_elements[i];
+            var lat = parseFloat(point_element.getAttribute('lat'));
+            var lng = parseFloat(point_element.getAttribute('lon'));
+            if (isNaN(lat) || isNaN(lng)) {
+                error = 'CORRUPT';
+                break;
+            }
+            points.push({lat: lat, lng: lng});
+        }
+        return points;
+    }
+
+    var getRoutes = function(xml) {
+        var routes = [];
+        var rte_elements = xml.getElementsByTagName('rte');
+        for (var i = 0; i < rte_elements.length; i++) {
+            var rte_points = getRoutePoints(rte_elements[i]);
+            if (rte_points.length) {
+                routes.push(rte_points);
+            }
+        }
+        return routes;
+    };
+
     var getWaypoints = function(xml) {
         var waypoint_elements = xml.getElementsByTagName('wpt');
         var waypoints = [];
@@ -99,7 +127,7 @@ function parseGpx(txt, name, preferNameFromFile) {
     }
     return [{
         name: name,
-        tracks: getTrackSegments(dom),
+        tracks: getTrackSegments(dom).concat(getRoutes(dom)),
         points: getWaypoints(dom),
         error: error
     }];
