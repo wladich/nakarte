@@ -2,6 +2,7 @@ import './track-list'
 import L from 'leaflet';
 import {parseGeoFile} from './lib/geo_file_formats';
 import safeLocalStorage from 'lib/safe-localstorage';
+import logging from 'lib/logging';
 
 L.Control.TrackList.include({
         maxLocalStorageSessions: 5,
@@ -78,8 +79,9 @@ L.Control.TrackList.include({
                 s = safeLocalStorage.getItem(key);
                 safeLocalStorage.removeItem(key);
                 if (s) {
+                    logging.captureBreadcrumb({message: 'load track from localStorage'});
                     geodata = parseGeoFile('', s);
-                    this.addTracksFromGeodataArray(geodata);
+                    this.addTracksFromGeodataArray(geodata, {localStorage: {key, value: s}});
                 }
             }
         }

@@ -209,15 +209,19 @@ L.Control.TrackList = L.Control.extend({
             this.readingFiles(true);
 
             readFiles(files).then(function(fileDataArray) {
-                    var geodataArray = fileDataArray.map(function(fileData) {
-                            return parseGeoFile(fileData.filename, fileData.data);
-                        }
-                    ).reduce(function(prev, next) {
-                            Array.prototype.push.apply(prev, next);
-                            return prev;
-                        }, []
-                    );
-                    this.addTracksFromGeodataArray(geodataArray);
+                const geodataArray = [];
+                const debugFileData = [];
+                for (let fileData of fileDataArray) {
+                        geodataArray.push(...parseGeoFile(fileData.filename, fileData.data));
+                        debugFileData.push({
+                            fileName: fileData.filename,
+                            size: fileData.data.length,
+                            content: fileData.data.length < 50000 ? btoa(fileData.data) : null
+                        });
+                    }
+
+
+                    this.addTracksFromGeodataArray(geodataArray, debugFileData);
                 }.bind(this)
             );
         },
@@ -273,7 +277,7 @@ L.Control.TrackList = L.Control.extend({
             this.url('');
         },
 
-        addTracksFromGeodataArray: function(geodata_array) {
+        addTracksFromGeodataArray: function(geodata_array, debugData) {
             let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
@@ -314,7 +318,7 @@ L.Control.TrackList = L.Control.extend({
             );
             this.readingFiles(false);
             if (messages.length) {
-                logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n')}});
+                logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n'), debugData}});
                 notify(messages.join('\n'));
             }
             return hasData;
