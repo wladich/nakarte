@@ -134,6 +134,43 @@ function parseGpx(txt, name, preferNameFromFile) {
 }
 
 
+function parseOziRte(txt, name) {
+    let error, segments = [];
+    const lines = txt.split('\n');
+    if (lines[0].indexOf('OziExplorer Route File') !== 0) {
+        return null;
+    }
+    let currentSegment = [];
+    for (let i=4; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (!line) {
+            continue;
+        }
+        let fields = line.split(',');
+        if (fields[0] === 'R') {
+            if (currentSegment.length) {
+                segments.push(currentSegment);
+            }
+            currentSegment = [];
+        } else if (fields[0] === 'W') {
+            let lat = parseFloat(fields[5]);
+            let lng = parseFloat(fields[6]);
+            if (isNaN(lat) || isNaN(lng)) {
+                error = 'CORRUPT';
+                break;
+            }
+            currentSegment.push({lat, lng});
+        } else {
+            error = 'CORRUPT';
+            break
+        }
+    }
+    if (currentSegment.length) {
+        segments.push(currentSegment);
+    }
+    return [{name, tracks: segments, error}];
+}
+
 function parseOziPlt(txt, name) {
     var error;
     var segments = [];
@@ -729,6 +766,7 @@ function parseGeoFile(name, data, preferNameFromFile) {
         parseKmz,
         parseZip,
         parseGpx,
+        parseOziRte,
         parseOziPlt,
         parseOziWpt,
         parseKml,
