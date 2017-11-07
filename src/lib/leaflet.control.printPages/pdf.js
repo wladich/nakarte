@@ -44,6 +44,7 @@ function recPage(serialNum, width, height) {
 /Parent 2 0 R
 /MediaBox [0 0 ${width} ${height}]
 /Contents ${contentRecId} 0 R
+/Rotate ${width > height ? 90 : 0}
 /Resources <<
     /XObject << /Im${serialNum} ${imageRecId} 0 R >>
     /ProcSet [ /PDF /Text /ImageC ] 
