@@ -261,7 +261,7 @@ function parseKml(txt, name) {
                 break;
             }
             try {
-                name = utf8_decode(xmlGetNodeText(name[0]).trim());
+                name = utf8_decode(xmlGetNodeText(name[0])).trim();
             } catch (e) {
                 error = 'CORRUPT';
                 break;
@@ -337,7 +337,7 @@ function parseKmz(txt, name) {
             }
             geodata = parseKml(uncompressed, 'dummmy');
             if (geodata) {
-                error = error || geodata.error;
+                error = error || geodata[0].error;
                 tracks.push.apply(tracks, geodata[0].tracks);
                 points.push.apply(points, geodata[0].points);
             }
