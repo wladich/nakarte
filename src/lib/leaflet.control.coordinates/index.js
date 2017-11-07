@@ -147,7 +147,7 @@ L.Control.Coordinates = L.Control.extend({
                 L.DomUtil.addClass(this._container, 'expanded');
                 L.DomUtil.addClass(this._map._container, 'coordinates-control-active');
                 this._map.on('mousemove', this.onMouseMove, this);
-                this._map.on('contextmenu', this.onMapClick, this);
+                this._map.on('contextmenu click', this.onMapClick, this);
             } else {
                 L.DomUtil.removeClass(this._container, 'expanded');
                 L.DomUtil.removeClass(this._map._container, 'coordinates-control-active');
