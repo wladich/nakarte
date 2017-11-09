@@ -216,7 +216,7 @@ L.Control.TrackList = L.Control.extend({
                         debugFileData.push({
                             fileName: fileData.filename,
                             size: fileData.data.length,
-                            content: fileData.data.length < 50000 ? btoa(fileData.data) : null
+                            content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
                         });
                     }
 
