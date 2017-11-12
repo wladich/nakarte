@@ -9,6 +9,7 @@ import 'lib/leaflet.layer.westraPasses';
 import 'lib/leaflet.layer.nordeskart';
 // import 'lib/leaflet.layer.tracks-collection';
 import 'lib/leaflet.layer.wikimapia';
+import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
 
 export default function getLayers() {
     const layers = [
@@ -349,7 +350,7 @@ export default function getLayers() {
                 }]
         },
         {
-            group: 'Satellite images',
+            group: 'Miscellaneous',
             layers: [
                 {
                     title: 'Bing imagery acquisition dates',
@@ -364,7 +365,18 @@ export default function getLayers() {
                         scaleDependent: false,
                         noCors: true
                     })
-                }
+                },
+                {
+                    title: 'geocaching.su',
+                    order: 1150,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: new GeocachingSu({
+                        code: 'Gc',
+                        print: true,
+                        jnx: false
+                    })
+                },
             ]
         },
 
