@@ -1,10 +1,12 @@
 import Raven from 'raven-js';
 
 function captureException(e, options) {
+    console.log('captureException', e, options);
     Raven.captureException(e, options)
 }
 
 function captureMessage(msg, options) {
+    console.log('captureMessage', msg, options);
     Raven.captureMessage(msg, options)
 }
 
