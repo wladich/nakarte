@@ -253,10 +253,10 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 const markerId = L.stamp(marker);
                 const job = markerJobs[markerId];
                 let label = job.marker.label;
+                if (typeof label === 'function') {
+                    label = label(job.marker, zoom);
+                }
                 if (label) {
-                    if (typeof label === 'function') {
-                        label = label(job.marker);
-                    }
                     job.label = label;
                     if (!(markerId in this._labelPositions)) {
                         const textWidth = ctx.measureText(label).width;
