@@ -4,18 +4,18 @@ import 'lib/leaflet.layer.canvasMarkers'
 L.Layer.CanvasMarkers.include({
         _printProgressWeight: 0.1,
 
+        cloneMarker: function(marker) {
+            return {
+                latlng: {lat: marker.latlng.lat, lng: marker.latlng.lng},
+                label: marker.label,
+                icon: marker.icon
+            }
+        },
+
         cloneMarkers: function() {
             const markers = this.rtree.all();
 
-            function cloneMarker(marker) {
-                return {
-                    latlng: {lat: marker.latlng.lat, lng: marker.latlng.lng},
-                    label: marker.label,
-                    icon: marker.icon
-                };
-            }
-
-            const markersCopy = markers.map(cloneMarker);
+            const markersCopy = markers.map(this.cloneMarker);
             return markersCopy;
         },
 
