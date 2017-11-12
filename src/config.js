@@ -8,5 +8,5 @@ export default Object.assign({
     elevationsServer: 'http://elevation.nakarte.tk/',
     newsUrl: 'http://about.nakarte.tk',
     wikimediaCommonsCoverageUrl: 'http://tiles.nakarte.tk/wikimedia_commons_images/{z}/{x}/{y}',
-    flickrCoverageUrl: 'http://tiles/flickr/{z}/{x}/{y}'
+    flickrCoverageUrl: 'http://tiles.nakarte.tk/flickr/{z}/{x}/{y}'
 }, secrets);
