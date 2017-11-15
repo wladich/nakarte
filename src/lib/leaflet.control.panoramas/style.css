@@ -51,11 +51,11 @@
 
 .leaflet-panorama-marker-circle {
     background-image: url("circle.svg");
-    background-size: 32px 32px;
-     width: 33px;
-    height: 33px;
-    margin-left: -17px;
-    margin-top: -17px;
+    background-size: 31px 31px;
+    width: 32px;
+    height: 32px;
+    margin-left: -16.5px;
+    margin-top: -16.5px;
     -webkit-backface-visibility: hidden;
 }
 

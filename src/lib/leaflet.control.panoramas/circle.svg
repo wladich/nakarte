@@ -3,6 +3,6 @@
      xml:space="preserve">
     <g>
         <ellipse ry="15" rx="15" cy="15" cx="15" fill="none" stroke="#00d000" stroke-width="2"/>
-        <ellipse ry="5" rx="5" cy="15" cx="15" fill="none" stroke="#00d000" stroke-width="2"/>
+        <ellipse ry="5.5" rx="5.5" cy="15" cx="15" fill="none" stroke="#00d000" stroke-width="2"/>
     </g>
 </svg>
