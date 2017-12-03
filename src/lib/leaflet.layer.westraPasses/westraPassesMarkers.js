@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'lib/leaflet.layer.canvasMarkers'
 import {openPopupWindow} from 'lib/popup-window';
 import escapeHtml from 'escape-html';
-import {saveAs} from 'browser-filesaver';
+import {saveAs} from 'file-saver';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
 import {fetch} from 'lib/xhr-promise';
 import {notify} from 'lib/notifications';

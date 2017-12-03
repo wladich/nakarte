@@ -9,7 +9,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 import {fetch} from 'lib/xhr-promise';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
-import {saveAs} from 'browser-filesaver';
+import {saveAs} from 'file-saver';
 import 'lib/leaflet.layer.canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';

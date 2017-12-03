@@ -9,7 +9,7 @@ import {renderPages} from './map-render'
 import formHtml from './form.html';
 import {notify} from 'lib/notifications';
 import {makePdf} from './pdf';
-import {saveAs} from 'browser-filesaver';
+import {saveAs} from 'file-saver';
 import {blobFromString} from 'lib/binary-strings';
 import 'lib/leaflet.hashState/leaflet.hashState';
 import 'lib/leaflet.control.commons';
