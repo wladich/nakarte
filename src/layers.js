@@ -190,6 +190,15 @@ export default function getLayers() {
                     )
                 },
                 {
+                    title: 'Races',
+                    order: 1105,
+                    isOverlay: true,
+                    isDefault: true,
+                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/adraces/{z}/{x}/{y}",
+                        {code: 'U', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
+                    )
+                },
+                {
                     title: 'O-sport',
                     order: 1110,
                     isOverlay: true,
