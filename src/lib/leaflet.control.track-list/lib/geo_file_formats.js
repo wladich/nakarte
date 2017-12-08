@@ -759,7 +759,7 @@ function parseNakarteUrl(s) {
     return geodataArray;
 }
 
-function parseGeoFile(name, data, preferNameFromFile) {
+function parseGeoFile(name, data) {
     var parsers = [
         parseTrackUrl,
         parseNakarteUrl,
@@ -774,7 +774,7 @@ function parseGeoFile(name, data, preferNameFromFile) {
 //            parseYandexMap
     ];
     for (var i = 0; i < parsers.length; i++) {
-        var parsed = parsers[i](data, name, preferNameFromFile);
+        var parsed = parsers[i](data, name);
         if (parsed !== null) {
             return parsed;
         }
@@ -782,4 +782,4 @@ function parseGeoFile(name, data, preferNameFromFile) {
     return [{name: name, error: 'UNSUPPORTED'}];
 }
 
-export {parseGeoFile};
+export {parseGeoFile, parseGpx};

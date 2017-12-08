@@ -21,8 +21,9 @@ import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
-import {isGpsiesUrl, gpsiesXhrOptions} from './lib/gpsies';
-
+import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './lib/gpsies';
+import {isStravaUrl, stravaXhrOptions, stravaParser} from './lib/strava';
+import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './lib/endomondo';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -36,6 +37,21 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+
+function simpleTrackFetchOptions(url) {
+    return [{
+        url: urlViaCorsProxy(url),
+        options: {responseType: 'binarystring'}
+    }];
+}
+
+
+function simpleTrackParser(name, responses) {
+    if (responses.length !== 1) {
+        throw new Error(`Invalid responses array length ${responses.length}`);
+    }
+    return parseGeoFile(name, responses[0].responseBinaryText);
+}
 
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
@@ -69,7 +85,7 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint">
-                        GPX Ozi GoogleEarth ZIP YandexMaps GPSies
+                        gpx kml Ozi zip YandexMaps GPSies Strava endomondo
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
@@ -238,7 +254,7 @@ L.Control.TrackList = L.Control.extend({
                 url = decodeURIComponent(url);
             } catch (e) {
             }
-            var geodata;
+            let geodata;
             if (url.length > 0) {
                 this.readingFiles(true);
                 this.readProgressDone(undefined);
@@ -253,25 +269,28 @@ L.Control.TrackList = L.Control.extend({
                         .replace(/\/*$/, '')
                         .split('/')
                         .pop();
-                    let url_for_request, xhrOptions, preferNameFromFile;
+
+                    let urlToRequest = simpleTrackFetchOptions;
+                    let parser = simpleTrackParser;
+
+
                     if (isGpsiesUrl(url)) {
-                        [url_for_request, xhrOptions] = gpsiesXhrOptions(url);
-                        preferNameFromFile = true;
-                    } else {
-                        url_for_request = urlViaCorsProxy(url);
-                        xhrOptions = {responseType: 'binarystring'};
-                        preferNameFromFile = false;
+                        urlToRequest = gpsiesXhrOptions;
+                        parser = gpsiesParser;
+                    } else if (isEndomondoUrl(url)) {
+                        urlToRequest = endomonXhrOptions;
+                        parser = endomondoParser;
+                    } else if (isStravaUrl(url)) {
+                        urlToRequest = stravaXhrOptions;
+                        parser = stravaParser;
                     }
-                    fetch(url_for_request, xhrOptions)
-                        .then(function(xhr) {
-                                var geodata = parseGeoFile(name, xhr.responseBinaryText, preferNameFromFile);
-                                this.addTracksFromGeodataArray(geodata);
-                            }.bind(this),
-                            function() {
-                                var geodata = [{name: url, error: 'NETWORK'}];
-                                this.addTracksFromGeodataArray(geodata);
-                            }.bind(this)
-                        );
+                    const requests = urlToRequest(url);
+                    Promise.all(requests.map((request) => fetch(request.url, request.options)))
+                        .then(
+                            (responses) => parser(name, responses),
+                            () => [{name: url, error: 'NETWORK'}]
+                        )
+                        .then((geodata) => this.addTracksFromGeodataArray(geodata));
                 }
             }
             this.url('');
