@@ -185,7 +185,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             var rect_options = {
                 smoothFactor: 0,
                 noClip: true,
-                clickable: false,
+                interactive: false,
                 fill: false,
                 opacity: {1: 0.7, 2: 0.4}[layer],
                 color: color,
