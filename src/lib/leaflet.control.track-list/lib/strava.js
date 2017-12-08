@@ -15,7 +15,7 @@ function stravaXhrOptions(url) {
     const trackId = m[1];
     return [
         {
-            url: urlViaCorsProxy(url),
+            url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}?hl=en-GB`),
             options: {responseType: 'binarystring'}
         },
         {
