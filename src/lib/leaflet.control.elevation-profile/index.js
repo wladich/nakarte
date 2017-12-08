@@ -256,7 +256,12 @@ const ElevationProfile = L.Class.extend({
             this._map._controlContainer.appendChild(container);
             this.setupContainerLayout();
             this.updateGraph();
-            this.trackMarker = L.marker([1000, 0], {clickable: false, icon: L.divIcon()});
+            const icon = L.divIcon({
+                    className: 'elevation-profile-marker',
+                    html: '<div class="elevation-profile-marker-icon"></div><div class="elevation-profile-marker-label"></div>'
+                }
+            );
+            this.trackMarker = L.marker([1000, 0], {interactive: false, icon: icon});
             this.polyline = L.polyline(this.path, {weight: 30, opacity: 0}).addTo(map);
             this.polyline.on('mousemove', this.onLineMouseMove, this);
             this.polyline.on('mouseover', this.onLineMouseEnter, this);
@@ -325,6 +330,14 @@ const ElevationProfile = L.Class.extend({
 
         xToIndex: function(x) {
             return x / (this.svgWidth - 1) * (this.values.length - 1);
+        },
+
+        setTrackMarkerLabel: function(label) {
+            const icon = this.trackMarker._icon;
+            if (!icon) {
+                return;
+            }
+            icon.getElementsByClassName('elevation-profile-marker-label')[0].innerHTML = label;
         },
 
         updateGraphSelection: function(e) {
@@ -638,13 +651,8 @@ const ElevationProfile = L.Class.extend({
             var label = L.Util.template('{ele} m<br>{dist} km<br>{angle}&deg;',
                 {ele: Math.round(elevation), dist: distance, grad: gradient, angle: angle}
             );
-            var icon = L.divIcon({
-                    className: 'elevation-profile-marker',
-                    html: '<div class="elevation-profile-marker-icon"></div><div class="elevation-profile-marker-label">' +
-                    label + '</div>'
-                }
-            );
-            this.trackMarker.setIcon(icon);
+
+            this.setTrackMarkerLabel(label);
         },
 
         onSvgMouseMove: function(e) {
