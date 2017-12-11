@@ -35,10 +35,10 @@ function stravaParser(_, responses) {
     try {
         data = JSON.parse(responses[1].responseBinaryText);
     } catch (e) {
-        return null;
+        return [{name: name, error: 'UNSUPPORTED'}];
     }
     if (!data.latlng) {
-        return null;
+        return [{name: name, error: 'UNSUPPORTED'}];
     }
 
     let name;

@@ -35,10 +35,10 @@ function endomondoParser(name, responses) {
     try {
         data = JSON.parse(responses[0].responseBinaryText)
     } catch (e) {
-        return null;
+        return [{name: name, error: 'UNSUPPORTED'}];
     }
     if (!data.points || !data.points.points) {
-        return null;
+        return [{error: 'Endomondo user disabled viewing this workout track'}];
     }
     const track = data.points.points
         .filter((p) => p.latitude)
@@ -49,11 +49,11 @@ function endomondoParser(name, responses) {
                 }
             }
         );
-    if (!track.length) {
-        return [{error: 'Endomondo user disabled viewing this workout track'}];
-    }
 
-    let trackName = `${data.local_start_time.split('T')[0]}, ${data.distance.toFixed(1)} km, ${data.author.name}, `;
+    let trackName = `${data.local_start_time.split('T')[0]}, ${data.distance.toFixed(1)} km`;
+    if (data.author && data.author.name) {
+        trackName += `, ${data.author.name} `;
+    };
     const geodata = {
         name: trackName,
         tracks: [track]
