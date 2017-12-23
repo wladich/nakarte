@@ -512,6 +512,7 @@ L.Control.TrackList = L.Control.extend({
             var s = this.trackToString(track, true);
             var url = window.location + '&nktk=' + s;
             copyToClipboard(url, mouseEvent);
+            logging.logEvent('copyLink', {'encodedSize': s.length});
         },
 
         saveTrackAsFile: function(track, exporter, extension) {
@@ -1024,6 +1025,7 @@ L.Control.TrackList = L.Control.extend({
             }
             var url = window.location + '&nktk=' + serialized.join('/');
             copyToClipboard(url, mouseEvent);
+            logging.logEvent('copyAllTracks', {'encodedSizes': serialized.map((s) => s.length)});
         },
 
         copyVisibleTracks: function(mouseEvent) {
@@ -1040,6 +1042,7 @@ L.Control.TrackList = L.Control.extend({
             }
             var url = window.location + '&nktk=' + serialized.join('/');
             copyToClipboard(url, mouseEvent);
+            logging.logEvent('copyAllTracks', {'encodedSizes': serialized.map((s) => s.length)});
         },
 
         exportTracks: function(minTicksIntervalMeters) {

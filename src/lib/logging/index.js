@@ -26,7 +26,18 @@ function captureBreadcrumbWithUrl(crumb) {
     const data = Object.assign(crumb.data || {}, {'url': window.location.toString()});
     crumb = Object.assign({}, crumb, {data});
     captureBreadcrumb(crumb);
-
 }
 
-export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb, captureMessageWithUrl}
+function logEvent(eventName, extra) {
+    const data = {event: eventName.toString()};
+    if (extra) {
+        data['data'] = extra;
+    }
+    const s = JSON.stringify(data);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://nakarte.tk/event');
+    xhr.send(s);
+}
+
+export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb,
+    captureMessageWithUrl, logEvent}
