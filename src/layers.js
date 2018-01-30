@@ -392,7 +392,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
-                        {code: 'Ot', scaleDependent: false, print: true, jnx: false}
+                        {code: 'Ot', scaleDependent: true, print: true, jnx: false}
                     )
                 },
                 {
@@ -401,8 +401,8 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px_=256',
-                        {code: 'Sa', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15}
+                        {code: 'Sa', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15, noCors: true}
                     )
                 },
                 {
@@ -411,8 +411,8 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sr', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15}
+                        {code: 'Sr', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15, noCors: true}
                     )
                 },
                 {
@@ -421,8 +421,8 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sb', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15}
+                        {code: 'Sb', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15, noCors: true}
                     )
                 },
                 {
@@ -431,8 +431,8 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sw', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15}
+                        {code: 'Sw', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15, noCors: true}
                     )
                 },
             ]
