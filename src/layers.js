@@ -400,7 +400,7 @@ export default function getLayers() {
                     order: 1113,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px_=256',
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sa', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 15, noCors: true}
                     )
