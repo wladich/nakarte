@@ -386,6 +386,55 @@ export default function getLayers() {
                         jnx: false
                     })
                 },
+                {
+                    title: 'OpenStreetMap GPS traces',
+                    order: 1112,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
+                        {code: 'Ot', scaleDependent: false, print: true, jnx: false}
+                    )
+                },
+                {
+                    title: 'Strava heatmap (all)',
+                    order: 1113,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px_=256',
+                        {code: 'Sa', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15}
+                    )
+                },
+                {
+                    title: 'Strava heatmap (run)',
+                    order: 1114,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sr', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15}
+                    )
+                },
+                {
+                    title: 'Strava heatmap (ride)',
+                    order: 1115,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sb', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15}
+                    )
+                },
+                {
+                    title: 'Strava heatmap (winter)',
+                    order: 1116,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sw', scaleDependent: false, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 15}
+                    )
+                },
             ]
         },
 
