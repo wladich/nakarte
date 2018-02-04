@@ -25,18 +25,23 @@ function showNotification(message, mouseEvent) {
 }
 
 function copyToClipboard(s, mouseEvent) {
+    let success = false;
     try {
         var ta = document.createElement('textarea');
         ta.value = s;
         document.body.appendChild(ta);
         ta.select();
-        document.execCommand('copy');
-        showNotification('Copied', mouseEvent);
+        success = document.execCommand('copy');
+        if (success) {
+            showNotification('Copied', mouseEvent);
+        }
     } catch (e) {
         logging.captureException(e, {extra: {description: 'clipborad to copy failed'}});
-        prompt("Copy to clipboard: Ctrl+C, Enter", s);
     } finally {
         document.body.removeChild(ta);
+    }
+    if (!success) {
+        prompt("Copy to clipboard: Ctrl+C, Enter", s);
     }
 }
 
