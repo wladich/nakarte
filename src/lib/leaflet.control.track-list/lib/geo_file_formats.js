@@ -783,43 +783,43 @@ function simpleTrackParser(name, responses) {
 
 
 function loadFromUrl(url) {
-    try {
-        url = decodeURIComponent(url);
-    } catch (e) {
-    }
     let geodata;
     geodata = parseGeoFile('', url);
     if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
         return Promise.resolve(geodata);
-    } else {
-        var name = url
-            .split('#')[0]
-            .split('?')[0]
-            .replace(/\/*$/, '')
-            .split('/')
-            .pop();
-
-        let urlToRequest = simpleTrackFetchOptions;
-        let parser = simpleTrackParser;
-
-
-        if (isGpsiesUrl(url)) {
-            urlToRequest = gpsiesXhrOptions;
-            parser = gpsiesParser;
-        } else if (isEndomondoUrl(url)) {
-            urlToRequest = endomonXhrOptions;
-            parser = endomondoParser;
-        } else if (isStravaUrl(url)) {
-            urlToRequest = stravaXhrOptions;
-            parser = stravaParser;
-        }
-        const requests = urlToRequest(url);
-        return Promise.all(requests.map((request) => fetch(request.url, request.options)))
-            .then(
-                (responses) => parser(name, responses),
-                () => [{name: url, error: 'NETWORK'}]
-            );
     }
+    // FIXME: check logs for loaded track urls, maybe we should use it only for names
+    try {
+        url = decodeURIComponent(url);
+    } catch (e) {
+    }
+    var name = url
+        .split('#')[0]
+        .split('?')[0]
+        .replace(/\/*$/, '')
+        .split('/')
+        .pop();
+
+    let urlToRequest = simpleTrackFetchOptions;
+    let parser = simpleTrackParser;
+
+
+    if (isGpsiesUrl(url)) {
+        urlToRequest = gpsiesXhrOptions;
+        parser = gpsiesParser;
+    } else if (isEndomondoUrl(url)) {
+        urlToRequest = endomonXhrOptions;
+        parser = endomondoParser;
+    } else if (isStravaUrl(url)) {
+        urlToRequest = stravaXhrOptions;
+        parser = stravaParser;
+    }
+    const requests = urlToRequest(url);
+    return Promise.all(requests.map((request) => fetch(request.url, request.options)))
+        .then(
+            (responses) => parser(name, responses),
+            () => [{name: url, error: 'NETWORK'}]
+        );
 }
 
 
