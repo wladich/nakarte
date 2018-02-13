@@ -4,9 +4,8 @@ import Contextmenu from 'lib/contextmenu';
 import 'lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from 'lib/file-read';
-import {parseGeoFile} from './lib/geo_file_formats';
-import urlViaCorsProxy from 'lib/CORSProxy';
-import {fetch} from 'lib/xhr-promise';
+import {parseGeoFile, loadFromUrl} from './lib/geo_file_formats';
+
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
 import {saveAs} from 'file-saver';
@@ -21,9 +20,6 @@ import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
-import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './lib/gpsies';
-import {isStravaUrl, stravaXhrOptions, stravaParser} from './lib/strava';
-import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './lib/endomondo';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -37,21 +33,6 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
-
-function simpleTrackFetchOptions(url) {
-    return [{
-        url: urlViaCorsProxy(url),
-        options: {responseType: 'binarystring'}
-    }];
-}
-
-
-function simpleTrackParser(name, responses) {
-    if (responses.length !== 1) {
-        throw new Error(`Invalid responses array length ${responses.length}`);
-    }
-    return parseGeoFile(name, responses[0].responseBinaryText);
-}
 
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
@@ -234,12 +215,11 @@ L.Control.TrackList = L.Control.extend({
                             size: fileData.data.length,
                             content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
                         });
-                    }
+                }
+                this.readingFiles(false);
 
-
-                    this.addTracksFromGeodataArray(geodataArray, debugFileData);
-                }.bind(this)
-            );
+                this.addTracksFromGeodataArray(geodataArray, debugFileData);
+            }.bind(this));
         },
 
         loadFilesFromDisk: function() {
@@ -249,50 +229,20 @@ L.Control.TrackList = L.Control.extend({
 
         loadFilesFromUrl: function() {
             var url = this.url().trim();
+            if (!url) {
+                return;
+            }
+
+            this.readingFiles(true);
+            this.readProgressDone(undefined);
+            this.readProgressRange(1);
+
             logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
-            try {
-                url = decodeURIComponent(url);
-            } catch (e) {
-            }
-            let geodata;
-            if (url.length > 0) {
-                this.readingFiles(true);
-                this.readProgressDone(undefined);
-                this.readProgressRange(1);
-                geodata = parseGeoFile('', url);
-                if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
+            loadFromUrl(url)
+                .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
-                } else {
-                    var name = url
-                        .split('#')[0]
-                        .split('?')[0]
-                        .replace(/\/*$/, '')
-                        .split('/')
-                        .pop();
-
-                    let urlToRequest = simpleTrackFetchOptions;
-                    let parser = simpleTrackParser;
-
-
-                    if (isGpsiesUrl(url)) {
-                        urlToRequest = gpsiesXhrOptions;
-                        parser = gpsiesParser;
-                    } else if (isEndomondoUrl(url)) {
-                        urlToRequest = endomonXhrOptions;
-                        parser = endomondoParser;
-                    } else if (isStravaUrl(url)) {
-                        urlToRequest = stravaXhrOptions;
-                        parser = stravaParser;
-                    }
-                    const requests = urlToRequest(url);
-                    Promise.all(requests.map((request) => fetch(request.url, request.options)))
-                        .then(
-                            (responses) => parser(name, responses),
-                            () => [{name: url, error: 'NETWORK'}]
-                        )
-                        .then((geodata) => this.addTracksFromGeodataArray(geodata));
-                }
-            }
+                    this.readingFiles(false)
+                });
             this.url('');
         },
 
@@ -335,7 +285,6 @@ L.Control.TrackList = L.Control.extend({
                     }
                 }.bind(this)
             );
-            this.readingFiles(false);
             if (messages.length) {
                 logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n'), debugData}});
                 notify(messages.join('\n'));

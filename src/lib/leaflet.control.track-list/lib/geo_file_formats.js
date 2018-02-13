@@ -3,6 +3,12 @@ import RawDeflate from 'vendored/github.com/dankogai/js-deflate/rawinflate';
 import stripBom from 'lib/stripBom';
 
 import {decode as utf8_decode} from 'utf8';
+import {fetch} from 'lib/xhr-promise';
+import urlViaCorsProxy from 'lib/CORSProxy';
+import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
+import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
+import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
+
 
 function xmlGetNodeText(node) {
     if (node) {
@@ -759,6 +765,64 @@ function parseNakarteUrl(s) {
     return geodataArray;
 }
 
+
+function simpleTrackFetchOptions(url) {
+    return [{
+        url: urlViaCorsProxy(url),
+        options: {responseType: 'binarystring'}
+    }];
+}
+
+
+function simpleTrackParser(name, responses) {
+    if (responses.length !== 1) {
+        throw new Error(`Invalid responses array length ${responses.length}`);
+    }
+    return parseGeoFile(name, responses[0].responseBinaryText);
+}
+
+
+function loadFromUrl(url) {
+    try {
+        url = decodeURIComponent(url);
+    } catch (e) {
+    }
+    let geodata;
+    geodata = parseGeoFile('', url);
+    if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
+        return Promise.resolve(geodata);
+    } else {
+        var name = url
+            .split('#')[0]
+            .split('?')[0]
+            .replace(/\/*$/, '')
+            .split('/')
+            .pop();
+
+        let urlToRequest = simpleTrackFetchOptions;
+        let parser = simpleTrackParser;
+
+
+        if (isGpsiesUrl(url)) {
+            urlToRequest = gpsiesXhrOptions;
+            parser = gpsiesParser;
+        } else if (isEndomondoUrl(url)) {
+            urlToRequest = endomonXhrOptions;
+            parser = endomondoParser;
+        } else if (isStravaUrl(url)) {
+            urlToRequest = stravaXhrOptions;
+            parser = stravaParser;
+        }
+        const requests = urlToRequest(url);
+        return Promise.all(requests.map((request) => fetch(request.url, request.options)))
+            .then(
+                (responses) => parser(name, responses),
+                () => [{name: url, error: 'NETWORK'}]
+            );
+    }
+}
+
+
 function parseGeoFile(name, data) {
     var parsers = [
         parseTrackUrl,
@@ -782,4 +846,4 @@ function parseGeoFile(name, data) {
     return [{name: name, error: 'UNSUPPORTED'}];
 }
 
-export {parseGeoFile, parseGpx};
+export {parseGeoFile, parseGpx, loadFromUrl};
