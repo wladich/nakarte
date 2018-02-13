@@ -788,18 +788,6 @@ function loadFromUrl(url) {
     if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
         return Promise.resolve(geodata);
     }
-    // FIXME: check logs for loaded track urls, maybe we should use it only for names
-    try {
-        url = decodeURIComponent(url);
-    } catch (e) {
-    }
-    var name = url
-        .split('#')[0]
-        .split('?')[0]
-        .replace(/\/*$/, '')
-        .split('/')
-        .pop();
-
     let urlToRequest = simpleTrackFetchOptions;
     let parser = simpleTrackParser;
 
@@ -817,7 +805,21 @@ function loadFromUrl(url) {
     const requests = urlToRequest(url);
     return Promise.all(requests.map((request) => fetch(request.url, request.options)))
         .then(
-            (responses) => parser(name, responses),
+            (responses) => {
+                let responseURL = responses[0].responseURL;
+                try {
+                    responseURL = decodeURIComponent(responseURL);
+                } catch (e) {
+                }
+
+                let name = responseURL
+                    .split('#')[0]
+                    .split('?')[0]
+                    .replace(/\/*$/, '')
+                    .split('/')
+                    .pop();
+                return parser(name, responses);
+            },
             () => [{name: url, error: 'NETWORK'}]
         );
 }
