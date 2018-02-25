@@ -1,5 +1,6 @@
 import utf8 from 'utf8';
 import escapeHtml from 'escape-html';
+import {saveNktk} from './nktk';
 
 function saveGpx(segments, name, points) {
     var gpx = [],
@@ -210,6 +211,5 @@ function saveToString(segments, name, color, measureTicksShown, wayPoints, track
     return encodeUrlSafeBase64(stringified.join(''));
 }
 
-
-export default {saveGpx, saveKml,saveToString};
+export default {saveGpx, saveKml, saveToString: saveNktk};
 

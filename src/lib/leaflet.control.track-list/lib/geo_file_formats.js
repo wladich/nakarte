@@ -8,6 +8,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
 import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
+import {parseTrackUrlData, parseNktk} from './nktk';
 
 
 function xmlGetNodeText(node) {
@@ -542,208 +543,13 @@ function parseZip(txt, name) {
 //     return [{name: name, error: error, tracks: segments}];
 // }
 
-function decodeUrlSafeBase64(s) {
-    var decoded;
-    s = s
-        .replace(/[\n\r \t]/g, '')
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
-    try {
-        decoded = atob(s);
-    } catch (e) {
-    }
-    if (decoded && decoded.length) {
-        return decoded;
-    }
-    return null;
-}
-
-function unpackNumber(s, position) {
-    var x,
-        n = 0;
-    x = s.charCodeAt(position);
-    if (isNaN(x)) {
-        throw new Error('Unexpected end of line while unpacking number');
-    }
-    if (x < 128) {
-        n = x - 64;
-        return [n, 1];
-    }
-    n = x & 0x7f;
-    x = s.charCodeAt(position + 1);
-    if (isNaN(x)) {
-        throw new Error('Unexpected end of line while unpacking number');
-    }
-    if (x < 128) {
-        n |= x << 7;
-        n -= 8192;
-        return [n, 2];
-    }
-    n |= (x & 0x7f) << 7;
-    x = s.charCodeAt(position + 2);
-    if (isNaN(x)) {
-        throw new Error('Unexpected end of line while unpacking number');
-    }
-    if (x < 128) {
-        n |= x << 14;
-        n -= 1048576;
-        return [n, 3];
-    }
-    n |= (x & 0x7f) << 14;
-    x = s.charCodeAt(position + 3);
-    if (isNaN(x)) {
-        throw new Error('Unexpected end of line while unpacking number');
-    }
-    n |= x << 21;
-    n -= 268435456;
-    return [n, 4];
-}
-
-function PackedStreamReader(s) {
-    this._string = s;
-    this.position = 0;
-}
-
-PackedStreamReader.prototype.readNumber = function() {
-    var n = unpackNumber(this._string, this.position);
-    this.position += n[1];
-    return n[0];
-};
-
-PackedStreamReader.prototype.readString = function(size) {
-    var s = this._string.slice(this.position, this.position + size);
-    this.position += size;
-    return s;
-};
-
-function parseStringified(s, oldVersion) {
-    var name,
-        n,
-        segments = [],
-        segment,
-        segmentsCount,
-        pointsCount,
-        arcUnit = ((1 << 24) - 1) / 360,
-        x, y,
-        error, version, midX, midY, /*symbol,*/ waypointName,
-        wayPoints = [], color, measureTicksShown, trackHidden = false;
-    s = decodeUrlSafeBase64(s);
-    if (!s) {
-        return [{name: 'Text encoded track', error: ['CORRUPT']}];
-    }
-    s = new PackedStreamReader(s);
-    try {
-        if (oldVersion) {
-            version = 0;
-        } else {
-            version = s.readNumber();
-        }
-        if (version !== 0 && version !== 1 && version !== 2 && version !== 3) {
-            return [{name: 'Text encoded track', error: ['CORRUPT']}];
-        }
-        n = s.readNumber();
-        name = s.readString(n);
-        name = utf8_decode(name);
-        segmentsCount = s.readNumber();
-        for (; segmentsCount--;) {
-            segment = [];
-            pointsCount = s.readNumber();
-            x = 0;
-            y = 0;
-            for (; pointsCount--;) {
-                x += s.readNumber();
-                y += s.readNumber();
-                segment.push({lng: x / arcUnit, lat: y / arcUnit});
-            }
-            segments.push(segment);
-            segment = null;
-        }
-    } catch (e) {
-        if (e.message.match('Unexpected end of line while unpacking number')) {
-            error = ['CORRUPT'];
-            if (segment) {
-                segments.push(segment);
-            }
-        } else {
-            throw e;
-        }
-    }
-    try {
-        color = s.readNumber();
-        measureTicksShown = s.readNumber();
-    } catch (e) {
-        if (e.message.match('Unexpected end of line while unpacking number')) {
-            color = 0;
-            measureTicksShown = 0;
-            if (version > 0) {
-                error = ['CORRUPT'];
-            }
-        } else {
-            throw e;
-        }
-    }
-    if (version >= 3) {
-        try {
-            trackHidden = !!(s.readNumber())
-        } catch (e) {
-            if (e.message.match('Unexpected end of line while unpacking number')) {
-                error = ['CORRUPT'];
-            } else {
-                throw e;
-            }
-        }
-    }
-    if (version >= 2) {
-        try {
-            pointsCount = s.readNumber();
-            if (pointsCount) {
-                midX = s.readNumber();
-                midY = s.readNumber();
-            }
-            for (; pointsCount--;) {
-                n = s.readNumber();
-                waypointName = s.readString(n);
-                waypointName = utf8_decode(waypointName);
-
-                // let symbol = s.readNumber();
-                s.readNumber();
-
-                x = s.readNumber() + midX;
-                y = s.readNumber() + midY;
-                wayPoints.push({
-                        name: waypointName,
-                        lat: y / arcUnit,
-                        lng: x / arcUnit,
-
-                    }
-                );
-            }
-        } catch (e) {
-            if (e.message.match('Unexpected end of line while unpacking number')) {
-                error = ['CORRUPT'];
-            } else {
-                throw e;
-            }
-        }
-    }
-    var geoData = {
-        name: name || "Text encoded track",
-        tracks: segments,
-        error: error,
-        points: wayPoints,
-        color: color,
-        measureTicksShown: measureTicksShown,
-        trackHidden: trackHidden
-    };
-    return [geoData];
-}
 
 function parseTrackUrl(s) {
     var i = s.indexOf('track://');
     if (i === -1) {
         return null;
     }
-    return parseStringified(s.substring(i + 8), true);
+    return parseTrackUrlData(s.substring(i + 8));
 }
 
 function parseNakarteUrl(s) {
@@ -759,7 +565,7 @@ function parseNakarteUrl(s) {
     var geodataArray = [];
     for (i = 0; i < s.length; i++) {
         if (s[i]) {
-            geodataArray.push.apply(geodataArray, parseStringified(s[i]));
+            geodataArray.push.apply(geodataArray, parseNktk(s[i]));
         }
     }
     return geodataArray;
