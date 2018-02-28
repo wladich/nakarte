@@ -121,9 +121,11 @@ function deltaDecodeSegment(deltaLats, deltaLons) {
 
 function saveNktk(segments, name, color, measureTicksShown, waypoints, trackHidden) {
     const trackView = {
-        color,
-        shown: !trackHidden,
-        ticksShown: measureTicksShown,
+        view: {
+            color,
+            shown: !trackHidden,
+            ticksShown: measureTicksShown,
+        }
     };
     const track = trackView.track = {name};
     if (segments && segments.length) {
@@ -285,23 +287,29 @@ function parseNktkOld(s, version) {
 
 function parseNktkProtobuf(s) {
     const pbf = new Pbf(stringToArrayBuffer(s));
-    const data = TrackView.read(pbf);
-    const geoData = {
-        name: data.track.name || "Text encoded track",
-        color: data.color,
-        trackHidden: !data.shown,
-        measureTicksShown: data.ticksShown,
-    };
-    if (data.track.segments && data.track.segments.length) {
-        geoData.tracks = data.track.segments.map((segment) => deltaDecodeSegment(segment.lats, segment.lons));
+    let trackView;
+    try {
+        trackView = TrackView.read(pbf);
+    } catch (e) {
+        return [{name: 'Text encoded track', error: ['CORRUPT']}];
     }
-    if (data.track.waypoints && data.track.waypoints.waypoints.length) {
+    const geoData = {
+        name: trackView.track.name || "Text encoded track",
+        color: trackView.view.color,
+        trackHidden: !trackView.view.shown,
+        measureTicksShown: trackView.view.ticksShown,
+    };
+    const segments = trackView.track.segments;
+    if (segments && segments.length) {
+        geoData.tracks = segments.map((segment) => deltaDecodeSegment(segment.lats, segment.lons));
+    }
+    if (trackView.track.waypoints && trackView.track.waypoints.waypoints.length) {
         const waypoints = geoData.points = [];
-        for (let waypoint of data.track.waypoints.waypoints) {
+        for (let waypoint of trackView.track.waypoints.waypoints) {
             waypoints.push({
                 name: waypoint.name,
-                lat: (waypoint.lat + data.track.waypoints.midLat) / arcUnit,
-                lng: (waypoint.lon + data.track.waypoints.midLon) / arcUnit
+                lat: (waypoint.lat + trackView.track.waypoints.midLat) / arcUnit,
+                lng: (waypoint.lon + trackView.track.waypoints.midLon) / arcUnit
             });
         }
     }
@@ -318,7 +326,7 @@ function parseNktk(s) {
     let version = reader.readNumber();
     if (version === 1 || version === 2 || version === 3) {
         return parseNktkOld(s.substring(reader.position), version);
-    } else if (version == 4) {
+    } else if (version === 4) {
         return parseNktkProtobuf(s.substring(reader.position));
     } else {
         return [{name: 'Text encoded track', error: ['CORRUPT']}];

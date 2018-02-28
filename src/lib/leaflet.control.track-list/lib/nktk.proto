@@ -23,11 +23,15 @@ message Track {
     Waypoints waypoints = 3;
 }
 
+message View {
+    int32 color = 1;
+    bool shown = 2;
+    bool ticksShown = 3;
+}
+
 message TrackView {
-    Track track = 1;
-    int32 color = 2;
-    bool shown = 3;
-    bool ticksShown = 4;
+    View view = 1;
+    Track track = 2;
 }
 
 

@@ -72,22 +72,36 @@ Track.write = function (obj, pbf) {
     if (obj.waypoints) pbf.writeMessage(3, Waypoints.write, obj.waypoints);
 };
 
+// View ========================================
+
+var View = self.View = {};
+
+View.read = function (pbf, end) {
+    return pbf.readFields(View._readField, {color: 0, shown: false, ticksShown: false}, end);
+};
+View._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.color = pbf.readVarint(true);
+    else if (tag === 2) obj.shown = pbf.readBoolean();
+    else if (tag === 3) obj.ticksShown = pbf.readBoolean();
+};
+View.write = function (obj, pbf) {
+    if (obj.color) pbf.writeVarintField(1, obj.color);
+    if (obj.shown) pbf.writeBooleanField(2, obj.shown);
+    if (obj.ticksShown) pbf.writeBooleanField(3, obj.ticksShown);
+};
+
 // TrackView ========================================
 
 var TrackView = self.TrackView = {};
 
 TrackView.read = function (pbf, end) {
-    return pbf.readFields(TrackView._readField, {track: null, color: 0, shown: false, ticksShown: false}, end);
+    return pbf.readFields(TrackView._readField, {view: null, track: null}, end);
 };
 TrackView._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.track = Track.read(pbf, pbf.readVarint() + pbf.pos);
-    else if (tag === 2) obj.color = pbf.readVarint(true);
-    else if (tag === 3) obj.shown = pbf.readBoolean();
-    else if (tag === 4) obj.ticksShown = pbf.readBoolean();
+    if (tag === 1) obj.view = View.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2) obj.track = Track.read(pbf, pbf.readVarint() + pbf.pos);
 };
 TrackView.write = function (obj, pbf) {
-    if (obj.track) pbf.writeMessage(1, Track.write, obj.track);
-    if (obj.color) pbf.writeVarintField(2, obj.color);
-    if (obj.shown) pbf.writeBooleanField(3, obj.shown);
-    if (obj.ticksShown) pbf.writeBooleanField(4, obj.ticksShown);
+    if (obj.view) pbf.writeMessage(1, View.write, obj.view);
+    if (obj.track) pbf.writeMessage(2, Track.write, obj.track);
 };
