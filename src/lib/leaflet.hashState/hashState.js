@@ -114,8 +114,19 @@ const hashState = {
     }
 };
 
+
+function bindHashStateReadOnly(key, target) {
+    function onChange() {
+        target(hashState.getState(key));
+        hashState.updateState(key, null);
+    }
+    hashState.addEventListener(key, onChange);
+    onChange();
+}
+
 window.addEventListener('hashchange', hashState.onHashChanged.bind(hashState));
 hashState.onHashChanged();
 
-export default hashState;
+
+export {hashState, bindHashStateReadOnly};
 
