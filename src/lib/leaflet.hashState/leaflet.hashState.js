@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import hashState from './hashState';
+import {hashState} from './hashState';
 import logging from 'lib/logging';
 
 L.Mixin.HashState = {
@@ -20,33 +20,24 @@ L.Mixin.HashState = {
         // initialize control state from hash
 
         const state = hashState.getState(key) || defaultInitialState;
-        this._ignoreStateChange = true;
-        if (!this.unserializeState(state) && !this.unserializeState(defaultInitialState)) { // state from hash is invalid, update hash from default state
-            hashState.updateState(key, this.serializeState());
+        if (!state || !this.unserializeState(state)) {
+            this.unserializeState(defaultInitialState)
         }
         hashState.updateState(this._hashStateKey, this.serializeState());
-        this._ignoreStateChange = false;
-
         return this;
     },
 
     _onControlStateChanged: function() {
-        if (this._ignoreStateChange) {
-            return;
-        }
         const state = this.serializeState();
         hashState.updateState(this._hashStateKey, state);
     },
 
     _onExternalStateChanged: function(state) {
-        this._ignoreStateChange = true;
         if (!this.unserializeState(state)) { // state from hash is invalid, update hash from component state
             logging.captureMessageWithUrl(`Invalid state in hash string (key "${this._hashStateKey}")`);
             hashState.updateState(this._hashStateKey, this.serializeState());
         }
-        this._ignoreStateChange = false;
     }
-
 
     // TODO: disableHashState
 };

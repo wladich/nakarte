@@ -81,11 +81,16 @@ const hashState = {
                 }
             }
         }
+        this._ignoreChanges = true;
         location.hash = stateItems.join('&');
+        this._ignoreChanges = false;
     },
 
 
     onHashChanged: function() {
+        if (this._ignoreChanges) {
+            return;
+        }
         const newState = this._parseHash();
         const changedKeys = {};
         for (let key of Object.keys(newState)) {
