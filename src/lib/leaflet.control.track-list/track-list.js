@@ -20,6 +20,9 @@ import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
+import {fetch} from 'lib/xhr-promise';
+import config from 'config';
+import md5 from './lib/md5';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -32,6 +35,7 @@ const TrackSegment = L.MeasuredLine.extend({
     }
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
+
 
 
 L.Control.TrackList = L.Control.extend({
@@ -107,7 +111,7 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.addListener(map.getContainer(), 'drop', this.onFileDragDrop, this);
             L.DomEvent.addListener(map.getContainer(), 'dragover', this.onFileDraging, this);
             this.menu = new Contextmenu([
-                    {text: 'Copy all tracks to clipboard', callback: this.copyAllTracks.bind(this)},
+                    {text: 'Copy all tracks to clipboard', callback: this.copyAllTracksToClipboard.bind(this)},
                     {text: 'Copy visible tracks to clipboard', callback: this.copyVisibleTracks.bind(this)},
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
@@ -402,7 +406,7 @@ L.Control.TrackList = L.Control.extend({
                 '-',
                 {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
                 {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
-                {text: 'Copy link to clipboard', callback: this.copyLinkToClipboard.bind(this, track)},
+                {text: 'Copy link to clipboard', callback: this.copyTrackLinkToClipboard.bind(this, track)},
             ];
             track._actionsMenu = new Contextmenu(items);
         },
@@ -456,12 +460,33 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        copyLinkToClipboard: function(track, mouseEvent) {
-            this.stopActiveDraw();
-            var s = this.trackToString(track, true);
-            var url = window.location + '&nktk=' + s;
+        copyTracksLinkToClipboard: function(tracks, mouseEvent) {
+            if (!tracks.length) {
+                notify('No tracks to copy');
+                return;
+            }
+            let serialized = tracks.map((track) => this.trackToString(track)).join('/');
+            const hashDigest = md5(serialized, null, true);
+            const key = btoa(hashDigest).replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
+            const url = window.location + '&nktl=' + key;
             copyToClipboard(url, mouseEvent);
-            logging.logEvent('copyLink', {'encodedSize': s.length});
+            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then((xhr) => {
+                },
+                (e) => {
+                    let message = e.message || e;
+                    if (e.xhr.status == 413) {
+                        message = 'track is too big';
+                    }
+                    logging.captureMessage('Failed to save track to server',
+                        {extra: {status: e.xhr.status, response: e.xhr.responseText}});
+                    alert('Error making link: ' + message);
+                }
+            );
+        },
+
+        copyTrackLinkToClipboard: function(track, mouseEvent) {
+            this.stopActiveDraw();
+            this.copyTracksLinkToClipboard([track], mouseEvent);
         },
 
         saveTrackAsFile: function(track, exporter, extension) {
@@ -962,36 +987,15 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        copyAllTracks: function(mouseEvent) {
+        copyAllTracksToClipboard: function(mouseEvent) {
             this.stopActiveDraw();
-            var tracks = this.tracks(),
-                serialized = [],
-                i, track, s;
-            for (i = 0; i < tracks.length; i++) {
-                track = tracks[i];
-                s = this.trackToString(track);
-                serialized.push(s);
-            }
-            var url = window.location + '&nktk=' + serialized.join('/');
-            copyToClipboard(url, mouseEvent);
-            logging.logEvent('copyAllTracks', {'encodedSizes': serialized.map((s) => s.length)});
+            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
         },
 
         copyVisibleTracks: function(mouseEvent) {
             this.stopActiveDraw();
-            var tracks = this.tracks(),
-                serialized = [],
-                i, track, s;
-            for (i = 0; i < tracks.length; i++) {
-                track = tracks[i];
-                if (track.visible()) {
-                    s = this.trackToString(track);
-                    serialized.push(s);
-                }
-            }
-            var url = window.location + '&nktk=' + serialized.join('/');
-            copyToClipboard(url, mouseEvent);
-            logging.logEvent('copyAllTracks', {'encodedSizes': serialized.map((s) => s.length)});
+            const tracks = this.tracks().filter((track) => track.visible());
+            this.copyTracksLinkToClipboard(tracks, mouseEvent);
         },
 
         exportTracks: function(minTicksIntervalMeters) {

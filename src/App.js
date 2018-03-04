@@ -19,14 +19,13 @@ import 'lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height';
 import enableLayersMinimize from 'lib/leaflet.control.layers.minimize';
 import enableLayersConfig from 'lib/leaflet.control.layers.configure';
-import hashState from 'lib/leaflet.hashState/hashState';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
 import 'lib/leaflet.control.layers.events';
 import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
-
+import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
 
 function setUp() {
     fixAll();
@@ -93,10 +92,11 @@ function setUp() {
     /////////// controls bottom-right corner
 
     tracklist.addTo(map);
-    if (!hashState.getState('nktk')) {
+    if (!hashState.getState('nktk') && !hashState.getState('nktl')) {
         tracklist.loadTracksFromStorage();
     }
-    tracklist.enableHashState('nktk');
+    bindHashStateReadOnly('nktk', tracklist.loadNktkFromHash.bind(tracklist));
+    bindHashStateReadOnly('nktl', tracklist.loadNktlFromHash.bind(tracklist));
 
 
     ////////// adaptive layout

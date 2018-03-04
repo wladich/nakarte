@@ -8,7 +8,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
 import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
-import {parseTrackUrlData, parseNktk} from './nktk';
+import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser} from './nktk';
 
 
 function xmlGetNodeText(node) {
@@ -552,25 +552,6 @@ function parseTrackUrl(s) {
     return parseTrackUrlData(s.substring(i + 8));
 }
 
-function parseNakarteUrl(s) {
-    var i = s.indexOf('#');
-    if (i === -1) {
-        return null;
-    }
-    i = s.indexOf('nktk=', i + 1);
-    if (i === -1) {
-        return null;
-    }
-    s = s.substring(i + 5).split('/');
-    var geodataArray = [];
-    for (i = 0; i < s.length; i++) {
-        if (s[i]) {
-            geodataArray.push.apply(geodataArray, parseNktk(s[i]));
-        }
-    }
-    return geodataArray;
-}
-
 
 function simpleTrackFetchOptions(url) {
     return [{
@@ -607,7 +588,11 @@ function loadFromUrl(url) {
     } else if (isStravaUrl(url)) {
         urlToRequest = stravaXhrOptions;
         parser = stravaParser;
+    } else if (isNakarteLinkUrl(url)) {
+        urlToRequest = nakarteLinkXhrOptions;
+        parser = nakarteLinkParser;
     }
+
     const requests = urlToRequest(url);
     return Promise.all(requests.map((request) => fetch(request.url, request.options)))
         .then(

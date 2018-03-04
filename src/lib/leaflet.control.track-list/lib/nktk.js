@@ -2,6 +2,7 @@ import Pbf from 'pbf';
 import {TrackView} from './nktk_pb';
 import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
 import utf8 from 'utf8';
+import config from 'config';
 
 const arcUnit = ((1 << 24) - 1) / 360;
 
@@ -317,7 +318,7 @@ function parseNktkProtobuf(s) {
 
 }
 
-function parseNktk(s) {
+function parseNktkFragment(s) {
     s = decodeUrlSafeBase64(s);
     if (!s) {
         return [{name: 'Text encoded track', error: ['CORRUPT']}];
@@ -333,4 +334,56 @@ function parseNktk(s) {
     }
 }
 
-export {saveNktk, parseTrackUrlData, parseNktk};
+function parseNktkSequence(s) {
+    if (typeof s === "string") {
+        s = s.split('/');
+    }
+    var geodataArray = [];
+    for (let i = 0; i < s.length; i++) {
+        if (s[i]) {
+            geodataArray.push.apply(geodataArray, parseNktkFragment(s[i]));
+        }
+    }
+    return geodataArray;
+}
+
+
+function parseNakarteUrl(s) {
+    let i = s.indexOf('#');
+    if (i === -1) {
+        return null;
+    }
+    i = s.indexOf('nktk=', i + 1);
+    if (i === -1) {
+        return null;
+    }
+    s = s.substring(i + 5);
+    return parseNktkSequence(s)
+}
+
+
+const nakarteLinkRe = /#.*nktl=([A-Z-a-z0-9_-]+)/;
+
+
+function isNakarteLinkUrl(url) {
+    return nakarteLinkRe.test(url);
+}
+
+
+function nakarteLinkXhrOptions(url) {
+    const m = nakarteLinkRe.exec(url);
+    if (!m) {
+        throw new Error('Invalid nakarteLink url');
+    }
+    const trackId = m[1];
+    return [{url: (`${config.tracksStorageServer}/track/${trackId}`), options: {responseType: 'binarystring'}}]
+}
+
+function nakarteLinkParser(_, responses) {
+    if (responses.length !== 1) {
+        throw new Error(`Invalid responses array length ${responses.length}`);
+    }
+    return parseNktkSequence(responses[0].responseBinaryText);
+}
+
+export {saveNktk, parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser, parseNktkSequence};
