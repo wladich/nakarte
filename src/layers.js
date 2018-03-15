@@ -402,7 +402,7 @@ export default function getLayers() {
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sa', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15, noCors: true}
+                         maxNativeZoom: 12, noCors: true}
                     )
                 },
                 {
@@ -412,7 +412,7 @@ export default function getLayers() {
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sr', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15, noCors: true}
+                         maxNativeZoom: 12, noCors: true}
                     )
                 },
                 {
@@ -422,7 +422,7 @@ export default function getLayers() {
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sb', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15, noCors: true}
+                         maxNativeZoom: 12, noCors: true}
                     )
                 },
                 {
@@ -432,7 +432,7 @@ export default function getLayers() {
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sw', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 15, noCors: true}
+                         maxNativeZoom: 12, noCors: true}
                     )
                 },
             ]
