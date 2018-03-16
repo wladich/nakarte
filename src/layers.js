@@ -503,7 +503,7 @@ export default function getLayers() {
             group: 'Czech <a href="http://mapy.cz">http://mapy.cz</a>',
             layers: [
                 {
-                    title: 'Czech basic',
+                    title: 'Czech base',
                     order: 504,
                     isOverlay: false,
                     isDefault: false,
@@ -512,11 +512,11 @@ export default function getLayers() {
                     )
                 },
                 {
-                    title: 'Czhch tourist',
+                    title: 'Czech tourist',
                     order: 505,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist-m/{z}-{x}-{y}",
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
                         {code: 'Czt', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
                     )
                 },
@@ -534,7 +534,7 @@ export default function getLayers() {
                     order: 507,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/wturist_winter-m/{z}-{x}-{y}",
+                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
                         {code: 'Czw', tms: false, print: true, jnx: true, subdomains: '1234', scaleDependent: true}
                     )
                 },
