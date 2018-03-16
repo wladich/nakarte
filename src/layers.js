@@ -33,7 +33,7 @@ export default function getLayers() {
                     isDefault: true,
                     layer: L.tileLayer(
                         'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                        {code: 'E', scaleDependent: false, maxNativeZoom: 17, print: true, jnx: true}
+                        {code: 'E', scaleDependent: false, maxNativeZoom: 18, print: true, jnx: true}
                     )
                 },
                 {
