@@ -20,6 +20,9 @@ import 'lib/leaflet.polyline-edit';
 import 'lib/leaflet.polyline-measure';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
+import {fetch} from 'lib/xhr-promise';
+import config from 'config';
+import md5 from './lib/md5';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -463,8 +466,22 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
             let serialized = tracks.map((track) => this.trackToString(track)).join('/');
-            const url = window.location + '&nktk=' + serialized;
+            const hashDigest = md5(serialized, null, true);
+            const key = btoa(hashDigest).replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
+            const url = window.location + '&nktl=' + key;
             copyToClipboard(url, mouseEvent);
+            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then((xhr) => {
+                },
+                (e) => {
+                    let message = e.message || e;
+                    if (e.xhr.status == 413) {
+                        message = 'track is too big';
+                    }
+                    logging.captureMessage('Failed to save track to server',
+                        {extra: {status: e.xhr.status, response: e.xhr.responseText}});
+                    alert('Error making link: ' + message);
+                }
+            );
         },
 
         copyTrackLinkToClipboard: function(track, mouseEvent) {
