@@ -25,7 +25,7 @@ function stravaXhrOptions(url) {
 }
 
 
-function stravaParser(_, responses) {
+function stravaParser(name, responses) {
     if (responses.length !== 2) {
         throw new Error(`Invalid responses array length ${responses.length}`);
     }
@@ -41,7 +41,6 @@ function stravaParser(_, responses) {
         return [{name: name, error: 'UNSUPPORTED'}];
     }
 
-    let name;
     let s = responses[0].responseBinaryText;
     s = utf8_decode(s);
     let m = s.match(/<meta [^>]*twitter:description[^>]*>/);
