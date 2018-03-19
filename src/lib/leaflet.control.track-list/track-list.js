@@ -474,7 +474,7 @@ L.Control.TrackList = L.Control.extend({
                 },
                 (e) => {
                     let message = e.message || e;
-                    if (e.xhr.status == 413) {
+                    if (e.xhr.status === 413) {
                         message = 'track is too big';
                     }
                     logging.captureMessage('Failed to save track to server',
