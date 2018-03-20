@@ -10,6 +10,7 @@ import 'lib/leaflet.layer.nordeskart';
 // import 'lib/leaflet.layer.tracks-collection';
 import 'lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
+import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
 
 export default function getLayers() {
     const layers = [
@@ -19,7 +20,7 @@ export default function getLayers() {
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
-                    order: 10,
+                    order: 100,
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -28,7 +29,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'ESRI Sat',
-                    order: 20,
+                    order: 200,
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer(
@@ -38,42 +39,42 @@ export default function getLayers() {
                 },
                 {
                     title: 'Yandex map',
-                    order: 30,
+                    order: 300,
                     isOverlay: false,
                     isDefault: true,
                     layer: new L.Layer.Yandex('map', {scaleDependent: true, code: 'Y', print: true, jnx: true})
                 },
                 {
                     title: 'Yandex Satellite',
-                    order: 40,
+                    order: 400,
                     isOverlay: false,
                     isDefault: true,
                     layer: new L.Layer.Yandex('sat', {scaleDependent: false, code: 'S', print: true, jnx: true})
                 },
                 {
                     title: 'Google',
-                    order: 50,
+                    order: 500,
                     isOverlay: false,
                     isDefault: true,
                     layer: new L.Layer.Google('ROADMAP', {code: 'G', scaleDependent: true, print: true, jnx: true})
                 },
                 {
                     title: 'Google Satellite',
-                    order: 60,
+                    order: 600,
                     isOverlay: false,
                     isDefault: true,
                     layer: new L.Layer.Google('SATELLITE', {code: 'L', scaleDependent: false, print: true, jnx: true})
                 },
                 {
                     title: 'Google Terrain',
-                    order: 65,
+                    order: 650,
                     isOverlay: false,
                     isDefault: true,
                     layer: new L.Layer.Google('TERRAIN', {code: 'P', scaleDependent: false, print: true, jnx: true})
                 },
                 {
                     title: 'Bing Sat',
-                    order: 70,
+                    order: 700,
                     isOverlay: false,
                     isDefault: true,
                     layer: new BingLayer(config.bingKey, {code: 'I', scaleDependent: false, print: true, jnx: true})
@@ -81,7 +82,7 @@ export default function getLayers() {
 
                 {
                     title: 'marshruty.ru',
-                    order: 80,
+                    order: 800,
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer('http://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
@@ -90,7 +91,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topomapper 1km',
-                    order: 90,
+                    order: 900,
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer(
@@ -101,7 +102,7 @@ export default function getLayers() {
 
                 {
                     title: 'Topo 10km',
-                    order: 1010,
+                    order: 10100,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
@@ -110,7 +111,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 2 km',
-                    order: 1020,
+                    order: 10200,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
@@ -119,7 +120,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'ArbaletMO',
-                    order: 1030,
+                    order: 10300,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
@@ -128,7 +129,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav mountains',
-                    order: 1040,
+                    order: 10400,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
@@ -137,7 +138,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 1km',
-                    order: 1050,
+                    order: 10500,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
@@ -146,7 +147,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 1km',
-                    order: 1060,
+                    order: 10600,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
@@ -155,7 +156,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 500m',
-                    order: 1070,
+                    order: 10700,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
@@ -164,7 +165,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 500m',
-                    order: 1080,
+                    order: 10800,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo500/{z}/{x}/{y}",
@@ -173,7 +174,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 250m',
-                    order: 1090,
+                    order: 10900,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
@@ -182,7 +183,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav map',
-                    order: 1100,
+                    order: 11000,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
@@ -191,7 +192,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Races',
-                    order: 1105,
+                    order: 11050,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/adraces/{z}/{x}/{y}",
@@ -200,7 +201,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'O-sport',
-                    order: 1110,
+                    order: 11100,
                     isOverlay: true,
                     isDefault: true,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/osport/{z}/{x}/{y}",
@@ -209,21 +210,21 @@ export default function getLayers() {
                 },
                 {
                     title: 'Soviet topo maps grid',
-                    order: 1120,
+                    order: 11200,
                     isOverlay: true,
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({code: 'Ng'})
                 },
                 {
                     title: 'Wikimapia',
-                    order: 1130,
+                    order: 11300,
                     isOverlay: true,
                     isDefault: true,
                     layer: new L.Wikimapia({code: 'W'}),
                 },
                 {
                     title: 'Mountain passes (Westra)',
-                    order: 1140,
+                    order: 11400,
                     isOverlay: true,
                     isDefault: true,
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
@@ -253,7 +254,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'OpenTopoMap',
-                    order: 11,
+                    order: 110,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
@@ -263,7 +264,7 @@ export default function getLayers() {
                 {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
-                    order: 12,
+                    order: 120,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
@@ -272,7 +273,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'OSM Outdoors',
-                    order: 13,
+                    order: 130,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
@@ -287,7 +288,7 @@ export default function getLayers() {
                 {
                     title: 'Eurasia 25km',
                     description: '1975-80',
-                    order: 1009,
+                    order: 10090,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
@@ -296,7 +297,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 1km',
-                    order: 1061,
+                    order: 10610,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
@@ -305,7 +306,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 500m',
-                    order: 1081,
+                    order: 10810,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
@@ -314,7 +315,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 250m',
-                    order: 1095,
+                    order: 10950,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo250/{z}/{x}/{y}",
@@ -324,7 +325,7 @@ export default function getLayers() {
                 {
                     title: 'Montenegro topo 250m',
                     description: '1970-72',
-                    order: 1096,
+                    order: 10960,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://{s}.tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
@@ -339,7 +340,7 @@ export default function getLayers() {
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
                     description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
-                    order: 1039,
+                    order: 10390,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("http://map.g-utka.ru/{z}/{x}/{y}.png",
@@ -363,7 +364,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Bing imagery acquisition dates',
-                    order: 1111,
+                    order: 11110,
                     isOverlay: true,
                     isDefault: false,
                     layer: new BingDates({
@@ -377,7 +378,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'geocaching.su',
-                    order: 1150,
+                    order: 11500,
                     isOverlay: true,
                     isDefault: false,
                     layer: new GeocachingSu({
@@ -388,7 +389,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'OpenStreetMap GPS traces',
-                    order: 1112,
+                    order: 11120,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
@@ -397,41 +398,81 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (all)',
-                    order: 1113,
+                    order: 11130,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sa', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 12, noCors: true}
+                         maxNativeZoom: 16, noCors: true}
                     )
                 },
                 {
                     title: 'Strava heatmap (run)',
-                    order: 1114,
+                    order: 11131,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sr', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 12, noCors: true}
+                         maxNativeZoom: 16, noCors: true}
                     )
                 },
                 {
                     title: 'Strava heatmap (ride)',
-                    order: 1115,
+                    order: 11132,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
                         {code: 'Sb', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
-                         maxNativeZoom: 12, noCors: true}
+                         maxNativeZoom: 16, noCors: true}
                     )
                 },
                 {
                     title: 'Strava heatmap (winter)',
-                    order: 1116,
+                    order: 11133,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sw', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 16, noCors: true}
+                    )
+                },
+                {
+                    title: 'Strava heatmap lowres (all)',
+                    order: 11134,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sal', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 12, noCors: true}
+                    )
+                },
+                {
+                    title: 'Strava heatmap lowres (run)',
+                    order: 11135,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Srl', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 12, noCors: true}
+                    )
+                },
+                {
+                    title: 'Strava heatmap lowres (ride)',
+                    order: 11136,
+                    isOverlay: true,
+                    isDefault: false,
+                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
+                        {code: 'Sbl', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                         maxNativeZoom: 12, noCors: true}
+                    )
+                },
+                {
+                    title: 'Strava heatmap lowres (winter)',
+                    order: 11137,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sw', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                        {code: 'Swl', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 12, noCors: true}
                     )
                 },
@@ -444,7 +485,7 @@ export default function getLayers() {
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway UT map',
-                    order: 500,
+                    order: 5000,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
@@ -453,7 +494,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway paper map',
-                    order: 1031,
+                    order: 10310,
                     isOverlay: true,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
@@ -462,7 +503,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway map',
-                    order: 1032,
+                    order: 10320,
                     isOverlay: true,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}&gkt={baatToken}',
@@ -471,7 +512,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway summer trails',
-                    order: 2000,
+                    order: 20000,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
@@ -480,7 +521,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway winter trails',
-                    order: 2001,
+                    order: 20010,
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
@@ -491,7 +532,7 @@ export default function getLayers() {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
                     description: '<a href="http://kart.finn.no/">http://kart.finn.no/</a>',
-                    order: 503,
+                    order: 5030,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("http://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
@@ -504,7 +545,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Czech base',
-                    order: 504,
+                    order: 5040,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
@@ -513,7 +554,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech tourist',
-                    order: 505,
+                    order: 5050,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
@@ -522,7 +563,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech summer',
-                    order: 506,
+                    order: 5060,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
@@ -531,7 +572,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech winter',
-                    order: 507,
+                    order: 5070,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
@@ -540,7 +581,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech geographical',
-                    order: 508,
+                    order: 5080,
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
