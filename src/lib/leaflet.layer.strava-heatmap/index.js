@@ -1,16 +1,18 @@
 import L from 'leaflet';
-import urlViaCorsProxy from 'lib/CORSProxy';
 import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
 
 const StravaHeatmap = L.TileLayer.extend({
 
     _checkUserLoggedIn: function() {
-        const message = `Для просмотра тепловой карты треков необходимо зарегистрироваться и залогиниться на сайте https://strava.com, после чего перезагрузить страницу. 
-Если вы не хотите регистририваться в сервисе Strava, вы можете выбрать в настройках слои с низким разрешением "Strava heatmap lowres", они доступны всем пользователям.
+        const message = `
+            Для просмотра тепловой карты треков необходимо зарегистрироваться и залогиниться на сайте
+            <a title="Откроется в новом окне" target="_blank" href="https://strava.com">https://strava.com</a>, после чего перезагрузить страницу.<br>
+            Если вы не хотите регистририваться в сервисе Strava, вы можете выбрать в настройках слои с низким 
+            разрешением "Strava&nbsp;heatmap&nbsp;lowres", они доступны всем пользователям.<br><br>
 
-You have to login at https://strava.com to be able to view tracks heatmap.
-Alternatively you can select low resolution layers in layers settings.`;
+            You have to login at <a title="Will open in new window" target="_blank" href="https://strava.com">https://strava.com</a> to be able to view tracks heatmap.
+            Alternatively you can select low resolution layers in layers settings.`;
 
         const data = {
             x: 4954,
@@ -19,21 +21,18 @@ Alternatively you can select low resolution layers in layers settings.`;
             s: this.options.subdomains[0],
         };
         const url = L.Util.template(this._url, data);
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', urlViaCorsProxy(url));
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 403) {
-                    notify(message);
-                    StravaHeatmap._loginChecked = true;
-                } else if (xhr.status === 200) {
-                    StravaHeatmap._loginChecked = true;
-                } else {
-                    logging.captureMessage('Unexpected state from strava layer', {extra: xhr});
-                }
-            }
+        const image = new Image();
+
+        image.onload = function() {
+            StravaHeatmap._loginChecked = true;
         };
-        xhr.send();
+
+        image.onerror = function() {
+            StravaHeatmap._loginChecked = true;
+            notify(message);
+        };
+
+        image.src = url;
 
     },
 
