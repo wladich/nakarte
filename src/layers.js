@@ -402,7 +402,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sa', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                        {code: 'Sa', scaleDependent: true, print: false, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 16, noCors: true}
                     )
                 },
@@ -412,7 +412,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sr', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                        {code: 'Sr', scaleDependent: true, print: false, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 16, noCors: true}
                     )
                 },
@@ -422,7 +422,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sb', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                        {code: 'Sb', scaleDependent: true, print: false, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 16, noCors: true}
                     )
                 },
@@ -432,7 +432,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
-                        {code: 'Sw', scaleDependent: true, print: true, jnx: false, subdomains: 'abc',
+                        {code: 'Sw', scaleDependent: true, print: false, jnx: false, subdomains: 'abc',
                          maxNativeZoom: 16, noCors: true}
                     )
                 },
