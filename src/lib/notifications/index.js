@@ -1,5 +1,8 @@
+import alertify from 'alertify.js';
+import './style.css';
+
 function notify(message, level) {
-    setTimeout(() => window.alert(message), 0);
+    alertify.alert(message);
 }
 
 function prompt(message, value) {

@@ -54,6 +54,7 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "alertify.js": "^1.0.12",
     "babel-polyfill": "^6.23.0",
     "browser-filesaver": "^1.1.1",
     "escape-html": "^1.0.3",
