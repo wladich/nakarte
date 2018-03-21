@@ -479,7 +479,7 @@ L.Control.TrackList = L.Control.extend({
                     }
                     logging.captureMessage('Failed to save track to server',
                         {extra: {status: e.xhr.status, response: e.xhr.responseText}});
-                    alert('Error making link: ' + message);
+                    notify('Error making link: ' + message);
                 }
             );
         },
