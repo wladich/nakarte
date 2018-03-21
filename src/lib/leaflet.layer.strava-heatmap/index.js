@@ -28,8 +28,10 @@ const StravaHeatmap = L.TileLayer.extend({
         };
 
         image.onerror = function() {
-            StravaHeatmap._loginChecked = true;
-            notify(message);
+            if (!StravaHeatmap._loginChecked) {
+                StravaHeatmap._loginChecked = true;
+                notify(message);
+            }
         };
 
         image.src = url;
