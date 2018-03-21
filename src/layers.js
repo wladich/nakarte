@@ -258,7 +258,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                        {code: 'Otm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true, noCors: true}
+                        {code: 'Otm', maxNativeZoom: 17, scaleDependent: true, print: true, jnx: true, noCors: false}
                     )
                 },
                 {
@@ -489,7 +489,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
-                        {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true, noCors: true}
+                        {code: 'Nu', tms: false, maxNativeZoom: 16, print: true, jnx: true, scaleDependent: true, noCors: false}
                     )
                 },
                 {
@@ -516,7 +516,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
-                        {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
+                        {code: 'Ns', tms: false, print: true, jnx: true, scaleDependent: true, noCors: false}
                     )
                 },
                 {
@@ -525,7 +525,7 @@ export default function getLayers() {
                     isOverlay: true,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
-                        {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
+                        {code: 'Nw', tms: false, print: true, jnx: true, scaleDependent: true, noCors: false}
                     )
                 },
                 {
