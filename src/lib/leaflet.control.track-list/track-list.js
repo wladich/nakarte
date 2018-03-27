@@ -8,7 +8,7 @@ import {parseGeoFile, loadFromUrl} from './lib/geo_file_formats';
 
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
-import {saveAs} from 'file-saver';
+import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
 import 'lib/leaflet.layer.canvasMarkers';
 import 'lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';

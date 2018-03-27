@@ -5,7 +5,7 @@ import 'lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import Contextmenu from 'lib/contextmenu';
 import {makeJnxFromLayer, minZoom} from './jnx-maker';
-import {saveAs} from 'file-saver';
+import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
 
