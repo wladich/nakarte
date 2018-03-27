@@ -129,6 +129,7 @@ export var saveAs = saveAs || (function(view) {
                     setImmediate(function() {
                         save_link.href = object_url;
                         save_link.download = name;
+                        save_link.target = '_self';
                         click(save_link);
                         dispatch_all();
                         revoke(object_url);
