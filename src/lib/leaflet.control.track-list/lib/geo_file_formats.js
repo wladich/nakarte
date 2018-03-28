@@ -481,7 +481,12 @@ function parseZip(txt, name) {
         }
         var file_name = entry.fileName;
         var geodata = parseGeoFile(file_name, uncompressed);
-        geodata_array.push.apply(geodata_array, geodata);
+        for (let item of geodata) {
+            if (item.error === 'UNSUPPORTED' && item.name.match(/\.pdf$|\.doc$|\.txt$\.jpg$/)) {
+                continue;
+            }
+            geodata_array.push(item)
+        }
     }
     return geodata_array;
 }
