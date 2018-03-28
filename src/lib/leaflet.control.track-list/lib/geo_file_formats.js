@@ -479,7 +479,7 @@ function parseZip(txt, name) {
         } else {
             return null;
         }
-        var file_name = name + '/' + entry.fileName;
+        var file_name = entry.fileName;
         var geodata = parseGeoFile(file_name, uncompressed);
         geodata_array.push.apply(geodata_array, geodata);
     }
