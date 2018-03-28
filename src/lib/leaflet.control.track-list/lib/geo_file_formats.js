@@ -232,6 +232,24 @@ function decodeCP1251(s) {
     return s2.join('');
 }
 
+function decode866(s) {
+    var c, i, s2 = [];
+    for (i = 0; i < s.length; i++) {
+        c = s.charCodeAt(i);
+        if (c >= 128 && c <= 175) {
+            c += (0x410 - 128);
+        } else if (c >= 224 && c <= 239) {
+            c += (0x440 - 224);
+        } else if (c === 240) {
+            c = 0x0401;
+        } else if (c === 241) {
+            c = 0x0451;
+        }
+        s2.push(String.fromCharCode(c));
+    }
+    return s2.join('');
+}
+
 function parseOziWpt(txt, name) {
     var points = [],
         error,
@@ -479,7 +497,7 @@ function parseZip(txt, name) {
         } else {
             return null;
         }
-        var file_name = entry.fileName;
+        var file_name = decode866(entry.fileName);
         var geodata = parseGeoFile(file_name, uncompressed);
         for (let item of geodata) {
             if (item.error === 'UNSUPPORTED' && item.name.match(/\.pdf$|\.doc$|\.txt$\.jpg$/)) {
