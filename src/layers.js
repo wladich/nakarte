@@ -105,7 +105,7 @@ export default function getLayers() {
                     order: 10100,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
                         {code: 'D', tms: true, scaleDependent: false, maxNativeZoom: 9, print: true, jnx: true}
                     )
                 },
@@ -114,7 +114,7 @@ export default function getLayers() {
                     order: 10200,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
                         {code: 'N', tms: true, scaleDependent: false, maxNativeZoom: 12, print: true, jnx: true}
                     )
                 },
@@ -123,7 +123,7 @@ export default function getLayers() {
                     order: 10300,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
                         {code: 'A', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
                     )
                 },
@@ -132,7 +132,7 @@ export default function getLayers() {
                     order: 10400,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
                         {code: 'Q', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
                     )
                 },
@@ -141,7 +141,7 @@ export default function getLayers() {
                     order: 10500,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
                         {code: 'J', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
                     )
                 },
@@ -150,7 +150,7 @@ export default function getLayers() {
                     order: 10600,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
                         {code: 'C', tms: true, scaleDependent: false, maxNativeZoom: 13, print: true, jnx: true}
                     )
                 },
@@ -159,7 +159,7 @@ export default function getLayers() {
                     order: 10700,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
                         {code: 'F', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
                     )
                 },
@@ -168,7 +168,7 @@ export default function getLayers() {
                     order: 10800,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo500/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/topo500/{z}/{x}/{y}",
                         {code: 'B', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
                     )
                 },
@@ -177,7 +177,7 @@ export default function getLayers() {
                     order: 10900,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
                         {code: 'K', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
                     )
                 },
@@ -186,7 +186,7 @@ export default function getLayers() {
                     order: 11000,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
                         {code: 'Z', tms: true, scaleDependent: false, maxNativeZoom: 14, print: true, jnx: true}
                     )
                 },
@@ -195,7 +195,7 @@ export default function getLayers() {
                     order: 11050,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/adraces/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/adraces/{z}/{x}/{y}",
                         {code: 'U', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
                     )
                 },
@@ -204,7 +204,7 @@ export default function getLayers() {
                     order: 11100,
                     isOverlay: true,
                     isDefault: true,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/osport/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/osport/{z}/{x}/{y}",
                         {code: 'R', tms: true, scaleDependent: false, maxNativeZoom: 17, print: true, jnx: true}
                     )
                 },
@@ -291,7 +291,7 @@ export default function getLayers() {
                     order: 10090,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
                         {code: 'E25m', tms: true, maxNativeZoom: 9, print: true, jnx: true, scaleDependent: false}
                     )
                 },
@@ -300,7 +300,7 @@ export default function getLayers() {
                     order: 10610,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
                         {code: 'NT1', tms: true, maxNativeZoom: 14, print: true, jnx: true, scaleDependent: false}
                     )
                 },
@@ -309,7 +309,7 @@ export default function getLayers() {
                     order: 10810,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
                         {code: 'NT5', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
                     )
                 },
@@ -318,7 +318,7 @@ export default function getLayers() {
                     order: 10950,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/topo250/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/topo250/{z}/{x}/{y}",
                         {code: 'T25', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
                     )
                 },
@@ -328,7 +328,7 @@ export default function getLayers() {
                     order: 10960,
                     isOverlay: true,
                     isDefault: false,
-                    layer: L.tileLayer("http://{s}.tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
+                    layer: L.tileLayer("http://tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
                         {code: 'MN25', tms: true, maxNativeZoom: 15, print: true, jnx: true, scaleDependent: false}
                     )
                 }
