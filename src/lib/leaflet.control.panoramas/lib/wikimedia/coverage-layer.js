@@ -83,7 +83,7 @@ class WikimediaLoader extends TiledDataLoader {
             url: this.getTileUrl(dataTileCoords),
             options: {
                 responseType: 'arraybuffer',
-                timeout: 5000,
+                timeout: 10000,
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
             }
         }
