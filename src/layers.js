@@ -497,7 +497,7 @@ export default function getLayers() {
                     order: 10310,
                     isOverlay: true,
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
                         {code: 'Np', maxNativeZoom: 16, tms: false, print: true, jnx: true, scaleDependent: true}
                     )
                 },
@@ -506,7 +506,7 @@ export default function getLayers() {
                     order: 10320,
                     isOverlay: true,
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=topo4&zoom={z}&x={x}&y={y}&gkt={baatToken}',
                         {code: 'Nm', tms: false, print: true, jnx: true, scaleDependent: true}
                     )
                 },
