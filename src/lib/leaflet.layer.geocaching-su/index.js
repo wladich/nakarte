@@ -13,9 +13,8 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
         scaleDependent: true
     },
 
-    dataUrl: 'https://nakarte.tk/geocachingSu/geocaching_su.json',
-
-    initialize: function(options) {
+    initialize: function(url, options) {
+        this.dataUrl = url;
         L.Layer.CanvasMarkers.prototype.initialize.call(this, null, options);
         this.on('markerclick', this.openCachePage, this);
     },

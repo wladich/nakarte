@@ -381,7 +381,7 @@ export default function getLayers() {
                     order: 11500,
                     isOverlay: true,
                     isDefault: false,
-                    layer: new GeocachingSu({
+                    layer: new GeocachingSu(config.geocachingSuUrl, {
                         code: 'Gc',
                         print: true,
                         jnx: false
