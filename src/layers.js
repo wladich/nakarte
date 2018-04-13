@@ -370,7 +370,7 @@ export default function getLayers() {
                     layer: new BingDates({
                         code: 'Bd',
                         maxNativeZoom: 18,
-                        print: true,
+                        print: false,
                         jnx: false,
                         scaleDependent: false,
                         noCors: true
