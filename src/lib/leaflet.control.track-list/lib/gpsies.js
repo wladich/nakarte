@@ -17,7 +17,7 @@ function gpsiesXhrOptions(url) {
         throw new Error('Invalid gpsies url');
     }
     const trackId = m[1];
-    const newUrl = urlViaCorsProxy('http://www.gpsies.com/download.do');
+    const newUrl = urlViaCorsProxy('https://www.gpsies.com/download.do');
     return [{
         url: newUrl,
         options: {
