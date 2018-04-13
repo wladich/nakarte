@@ -9,6 +9,7 @@ function imgFromDataString(xhr) {
                 };
                 image.onerror = () => {
                     reject(new Error('Image corrupt'));
+                    window.URL.revokeObjectURL(blobUrl);
                 }
             }
         );
