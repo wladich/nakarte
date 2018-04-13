@@ -23,7 +23,7 @@ export default function getLayers() {
                     order: 100,
                     isOverlay: false,
                     isDefault: true,
-                    layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {code: 'O', scaleDependent: true, print: true, jnx: true}
                     )
                 },
@@ -33,7 +33,7 @@ export default function getLayers() {
                     isOverlay: false,
                     isDefault: true,
                     layer: L.tileLayer(
-                        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                         {code: 'E', scaleDependent: false, maxNativeZoom: 18, print: true, jnx: true}
                     )
                 },
@@ -85,7 +85,7 @@ export default function getLayers() {
                     order: 800,
                     isOverlay: false,
                     isDefault: true,
-                    layer: L.tileLayer('http://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
+                    layer: L.tileLayer('https://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
                         {code: 'M', maxNativeZoom: 18, noCors: true, scaleDependent: true, print: true, jnx: true}
                     )
                 },
@@ -267,7 +267,7 @@ export default function getLayers() {
                     order: 120,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {code: 'Ocm', scaleDependent: true, print: true, jnx: true}
                     )
                 },
@@ -276,7 +276,7 @@ export default function getLayers() {
                     order: 130,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {code: 'Oso', scaleDependent: true, print: true, jnx: true}
                     )
                 },
@@ -531,17 +531,17 @@ export default function getLayers() {
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
-                    description: '<a href="http://kart.finn.no/">http://kart.finn.no/</a>',
+                    description: '<a href="https://kart.finn.no/">https://kart.finn.no/</a>',
                     order: 5030,
                     isOverlay: false,
                     isDefault: false,
-                    layer: L.tileLayer("http://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
+                    layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {code: 'Nr', tms: false, print: true, jnx: true, scaleDependent: true, noCors: true}
                     )
                 }]
         },
         {
-            group: 'Czech <a href="http://mapy.cz">http://mapy.cz</a>',
+            group: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
             layers: [
                 {
                     title: 'Czech base',

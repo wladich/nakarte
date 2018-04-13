@@ -54,7 +54,7 @@ const BingLayer = L.TileLayer.extend({
             }
             _this.initMetadata(meta);
         };
-        var urlScheme = (document.location.protocol === 'file:') ? 'http' : document.location.protocol.slice(0, -1);
+        var urlScheme = 'https';
         var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/'
             + this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
             '&key=' + this._key + '&UriScheme=' + urlScheme;
