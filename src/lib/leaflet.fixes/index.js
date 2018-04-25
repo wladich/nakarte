@@ -5,6 +5,7 @@ function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
     fixMapKeypressEvent();
+     fixVectorDrawWhileAnimation();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -36,6 +37,45 @@ function fixMapKeypressEvent() {
             originalHandleDOMEvent.call(this, e);
         }
     }
+}
+
+function fixVectorDrawWhileAnimation() {
+    if (L.Renderer.__animationFixed) {
+        return;
+    }
+
+    const resetInterval = 300;
+
+    const originalGetEvents = L.Renderer.prototype.getEvents;
+
+    const onZoom = function() {
+        const now = Date.now();
+        if (!this._lastReset || (now - this._lastReset > resetInterval)) {
+            this._reset();
+            this._lastReset = now;
+        } else {
+            L.Renderer.prototype._onZoom.call(this);
+        }
+
+    };
+
+    const onMove = function() {
+        const now = Date.now();
+        if (!this._lastReset || (now - this._lastReset > resetInterval)) {
+            this._reset();
+            this._lastReset = now;
+        }
+    };
+
+    const getEvents = function() {
+        const result = originalGetEvents.call(this);
+        result.move = onMove;
+        result.zoom = onZoom;
+        return result;
+    };
+
+    L.Renderer.prototype.getEvents = getEvents;
+    L.Renderer.__animationFixed = true;
 }
 
 export {fixAll}
