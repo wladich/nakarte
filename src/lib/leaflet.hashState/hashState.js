@@ -81,8 +81,10 @@ const hashState = {
                 }
             }
         }
+        const hash = stateItems.join('&');
+        const href = `${location.origin}${location.pathname}${location.search}#${hash}`;
         this._ignoreChanges = true;
-        location.hash = stateItems.join('&');
+        location.replace(href);
         this._ignoreChanges = false;
     },
 
