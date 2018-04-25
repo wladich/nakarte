@@ -26,6 +26,8 @@ import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
+import {MyLocate} from 'lib/leaflet.control.mylocation';
+
 
 function setUp() {
     fixAll();
@@ -61,10 +63,12 @@ function setUp() {
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
 
-
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
+
+    const location = new MyLocate();
+    location.addTo(map);
 
     /////////// controls top-right corner
 
