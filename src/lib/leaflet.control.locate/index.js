@@ -104,7 +104,7 @@ const LocateControl = L.Control.extend({
         //     if map not following marker -- center map at marker, start following   
 
         options: {
-            locationAcquireTimeoutMS: 10000,
+            locationAcquireTimeoutMS: Infinity,
             showError: ({message}) => {
                 alert(message);
             },
