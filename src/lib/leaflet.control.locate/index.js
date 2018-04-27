@@ -125,6 +125,7 @@ const LocateControl = L.Control.extend({
             );
             this._stopContainerEvents();
             const link = L.DomUtil.create('a', '', container);
+            link.title = 'Where am I?';
             L.DomUtil.create('div', 'icon-position', link);
             L.DomEvent.on(container, 'click', () => this._handleEvent(EVENT_BUTTON_CLICK));
             this._marker = new PositionMarker();
