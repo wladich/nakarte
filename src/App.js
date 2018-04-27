@@ -27,7 +27,13 @@ import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
 import {LocateControl} from 'lib/leaflet.control.locate';
+import {notify} from 'lib/notifications';
 
+const locationErrorMessage = {
+    0: 'Your browser does not support geolocation.',
+    1: 'Geolocation is blocked for this site. Please, enable in browser setting.',
+    2: 'Failed to acquire position for unknown reason.',
+};
 
 function setUp() {
     fixAll();
@@ -67,7 +73,16 @@ function setUp() {
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
-    new LocateControl({position: 'topleft'}).addTo(map);
+    new LocateControl({
+        position: 'topleft',
+        showError: function({code, message}) {
+            let customMessage = locationErrorMessage[code];
+            if (!customMessage) {
+                customMessage = `Geolocation error: ${message}`;
+            }
+            notify(customMessage);
+        }
+    }).addTo(map);
 
     /////////// controls top-right corner
 
