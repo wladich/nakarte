@@ -61,7 +61,6 @@
     "image-promise": "^4.0.1",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
-    "leaflet.locatecontrol": "^0.62.0",
     "load-script": "^1.0.0",
     "mapillary-js": "2.5.2",
     "pbf": "^3.0.5",

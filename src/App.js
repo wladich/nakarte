@@ -26,7 +26,7 @@ import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
-import {MyLocate} from 'lib/leaflet.control.mylocation';
+import {LocateControl} from 'lib/leaflet.control.locate';
 
 
 function setUp() {
@@ -67,8 +67,7 @@ function setUp() {
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
-    const location = new MyLocate();
-    location.addTo(map);
+    new LocateControl({position: 'topleft'}).addTo(map);
 
     /////////// controls top-right corner
 
