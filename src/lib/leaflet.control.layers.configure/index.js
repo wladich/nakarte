@@ -322,9 +322,9 @@ ${buttonsHtml}`;
                 }
                 if (obj.layer._justAdded) {
                     L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-1');
-                    L.Util.requestAnimFrame(() => {
+                    setTimeout(() => {
                         L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-2');
-                    });
+                    }, 0);
                 }
                 return label;
             },

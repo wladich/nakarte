@@ -204,7 +204,7 @@ L.Control.Panoramas = L.Control.extend({
             }
             if (data) {
                 // wait for panorama container become of right size, needed for viewer setup
-                L.Util.requestAnimFrame(() => provider.viewer.showPano(data));
+                setTimeout(() => provider.viewer.showPano(data), 0);
             }
             provider.viewer.activate();
             this.notifyChanged();
