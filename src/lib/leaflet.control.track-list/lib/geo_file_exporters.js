@@ -8,7 +8,16 @@ function saveGpx(segments, name, points) {
 
     gpx.push('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>');
     gpx.push(
-        '<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://nakarte.tk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">'
+        '<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://nakarte.tk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1">'
+    );
+    points.forEach(function(marker) {
+            var label = marker.label;
+            label = escapeHtml(label);
+            label = utf8.encode(label);
+            gpx.push('\t<wpt lat="' + marker.latlng.lat.toFixed(6) + '" lon="' + marker.latlng.lng.toFixed(6) + '">');
+            gpx.push('\t\t<name>' + label + '</name>');
+            gpx.push('\t</wpt>');
+        }
     );
     if (segments.length) {
         name = name || 'Track';
@@ -32,15 +41,6 @@ function saveGpx(segments, name, points) {
         );
         gpx.push('\t</trk>');
     }
-    points.forEach(function(marker) {
-            var label = marker.label;
-            label = escapeHtml(label);
-            label = utf8.encode(label);
-            gpx.push('\t<wpt lat="' + marker.latlng.lat.toFixed(6) + '" lon="' + marker.latlng.lng.toFixed(6) + '">');
-            gpx.push('\t\t<name>' + label + '</name>');
-            gpx.push('\t</wpt>');
-        }
-    );
     gpx.push('</gpx>');
     gpx = gpx.join('\n');
     return gpx;
