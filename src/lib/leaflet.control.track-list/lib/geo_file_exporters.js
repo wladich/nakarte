@@ -56,7 +56,7 @@ function saveKml(segments, name, points) {
     name = utf8.encode(name);
 
     kml.push('<?xml version="1.0" encoding="UTF-8"?>');
-    kml.push('<kml xmlns="http://earth.google.com/kml/2.2">');
+    kml.push('<kml xmlns="http://www.opengis.net/kml/2.2">');
     kml.push('\t<Document>');
     kml.push('\t\t<name>' + name + '</name>');
 
