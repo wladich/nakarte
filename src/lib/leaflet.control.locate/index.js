@@ -166,8 +166,10 @@ const LocateControl = L.Control.extend({
             this._marker.setLocation(this._latlng, this._accuracy);
         },
 
-        _updateMapPosition: function() {
-            this._map.panTo(this._latlng, {noMoveStart: true});
+        _updateMapPositionWhileFollowing: function() {
+            this._updateFollowingStartPosition = this._map.getCenter();
+            this._updateFollowingDestPosition = this._latlng;
+            this._map.panTo(this._latlng);
         },
 
         _setViewToLocation: function(preferAutoZoom) {
@@ -211,10 +213,21 @@ const LocateControl = L.Control.extend({
         _onMapMoveEnd: function() {
             const ll = this._map.getCenter();
             setTimeout(() => {
-               if (this._map.getCenter().equals(ll)) {
-                    this._handleEvent(EVENT_MAP_MOVE_END)
-                }
-            }, 100);
+                    if (this._map.getCenter().equals(ll)) {
+                        this._handleEvent(EVENT_MAP_MOVE_END)
+                    }
+                }, 100
+            );
+        },
+
+        _isMapOffsetFromFollowingSegment: function() {
+            if (this._updateFollowingStartPosition) {
+                const p = this._map.project(this._map.getCenter());
+                const p1 = this._map.project(this._updateFollowingStartPosition);
+                const p2 = this._map.project(this._updateFollowingDestPosition);
+                return L.LineUtil.pointToSegmentDistance(p, p1, p2) > 5;
+            }
+            return true;
         },
 
         _isMapCenteredAtLocation: function() {
@@ -281,7 +294,7 @@ const LocateControl = L.Control.extend({
                     } else if (state === STATE_MOVING_TO_FOLLOWING) {
                         this._setViewToLocation();
                     } else if (this._state === STATE_ENABLED_FOLLOWING || state === STATE_UPDATING_FOLLOWING) {
-                        this._updateMapPosition();
+                        this._updateMapPositionWhileFollowing();
                         this._setState(STATE_UPDATING_FOLLOWING)
                     }
                     break;
@@ -294,14 +307,20 @@ const LocateControl = L.Control.extend({
                     break;
                 case EVENT_MAP_MOVE:
                     if (state === STATE_ENABLED_FOLLOWING) {
-                        if (!this._isMapCenteredAtLocation()) {
+                        if (!this._isMapCenteredAtLocation() && this._isMapOffsetFromFollowingSegment()) {
                             this._setState(STATE_ENABLED);
                         }
                     }
                     break;
                 case EVENT_MAP_MOVE_END:
-                    if (state === STATE_MOVING_TO_FOLLOWING || state === STATE_UPDATING_FOLLOWING || state === STATE_MOVING_TO_FOLLOWING_FIRST) {
+                    if (state === STATE_MOVING_TO_FOLLOWING) {
                         if (this._isMapCenteredAtLocation()) {
+                            this._setState(STATE_ENABLED_FOLLOWING);
+                        } else {
+                            this._setState(STATE_ENABLED);
+                        }
+                    } else if (state === STATE_UPDATING_FOLLOWING || state === STATE_MOVING_TO_FOLLOWING_FIRST) {
+                        if (this._isMapCenteredAtLocation() || !this._isMapOffsetFromFollowingSegment()) {
                             this._setState(STATE_ENABLED_FOLLOWING);
                         } else {
                             this._setState(STATE_ENABLED);
@@ -317,7 +336,7 @@ const LocateControl = L.Control.extend({
             if (oldState === newState) {
                 return;
             }
-            console.log(`STATE: ${oldState} -> ${newState}`);
+            // console.log(`STATE: ${oldState} -> ${newState}`);
             switch (newState) {
                 case STATE_LOCATING:
                     this._startLocating();
