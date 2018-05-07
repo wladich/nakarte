@@ -5,7 +5,7 @@ function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
     fixMapKeypressEvent();
-     fixVectorDrawWhileAnimation();
+    fixVectorDrawWhileAnimation();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
