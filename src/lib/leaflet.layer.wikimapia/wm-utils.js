@@ -125,8 +125,8 @@ function simplifyPolygon(latlngs, tileCoords, tileHasChildren, projectObj) {
     const
         x = tileCoords.x * 1024,
         y = tileCoords.y * 1024,
-        p0 = projectObj.unproject([x, y]),
-        p1 = projectObj.unproject([x + 1, y + 1]);
+        p0 = projectObj.unproject([x, y], tileCoords.z + 2),
+        p1 = projectObj.unproject([x + 1, y + 1], tileCoords.z + 2);
     let pixelDegSize = p0.lat - p1.lat;
     if (!tileHasChildren && tileCoords.z < 15) {
         pixelDegSize /= (1 << (15 - tileCoords.z));
