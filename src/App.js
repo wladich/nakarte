@@ -47,7 +47,6 @@ function setUp() {
             maxZoom: 18
         }
     );
-    map.enableHashState('m', [10, 55.75185, 37.61856]);
 
     const tracklist = new L.Control.TrackList();
 
@@ -73,7 +72,7 @@ function setUp() {
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
-    new LocateControl({
+    const locateControl = new LocateControl({
         position: 'topleft',
         showError: function({code, message}) {
             let customMessage = locationErrorMessage[code];
@@ -84,6 +83,13 @@ function setUp() {
         }
     }).addTo(map);
 
+    const defaultLocation = L.latLng(55.75185, 37.61856);
+    const defaultZoom = 10;
+
+    let {lat, lng, zoom, valid} = map.validateState(hashState.getState('m'));
+    locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
+        valid ? L.latLng(lat, lng) : null, valid ? zoom : null);
+    map.enableHashState('m');
     /////////// controls top-right corner
 
     const layersControl = L.control.layers(null, null, {collapsed: false})

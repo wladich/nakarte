@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import 'lib/leaflet.control.commons'
 import './style.css';
+import localStorage from 'lib/safe-localstorage';
 
 const STATE_DISABLED = 'disabled';
 const STATE_LOCATING = 'locating';
@@ -17,6 +18,7 @@ const EVENT_LOCATION_ERROR = 'location_error';
 const EVENT_MAP_MOVE = 'user_move';
 const EVENT_MAP_MOVE_END = 'map_move_end';
 
+const LOCALSTORAGE_POSITION = 'leaflet_locate_position';
 
 const PositionMarker = L.LayerGroup.extend({
     initialize: function(options) {
@@ -133,6 +135,47 @@ const LocateControl = L.Control.extend({
             return container;
         },
 
+        moveMapToCurrentLocation: function(zoom, fallbackLatLng, forceLatLng, forceZoom) {
+            let storedPosition;
+            try {
+                storedPosition = JSON.parse(localStorage.getItem(LOCALSTORAGE_POSITION));
+                let {lat, lon} = storedPosition;
+                if (lat && lon) {
+                    storedPosition = L.latLng(lat, lon);
+                } else {
+                    storedPosition = null;
+                }
+            } catch (e) {}
+
+            if (storedPosition) {
+                this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {animate: false});
+                if (!('geolocation' in navigator)) {
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        this._storePositionToLocalStorage(pos);
+                        if (!forceLatLng) {
+                            // TODO: check if map has not moved
+                            this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {animate: false});
+                        }
+                    },
+                    (e) => {
+                        if (e.code === 1) {
+                            localStorage.removeItem(LOCALSTORAGE_POSITION);
+                        }
+                    }, {
+                    enableHighAccuracy: false,
+                    timeout: 500,
+                    maximumAge: 0
+                });
+            } else {
+                this._map.setView(forceLatLng ? forceLatLng : fallbackLatLng, forceZoom ? forceZoom : zoom,
+                    {animate: false});
+            }
+
+        },
+
         _startLocating: function() {
             if (!('geolocation' in navigator)) {
                 const error = {code: 0, message: 'Geolocation not supported'};
@@ -142,13 +185,29 @@ const LocateControl = L.Control.extend({
                 )
             }
             this._watchID = navigator.geolocation.watchPosition(
-                (pos) => this._handleEvent(EVENT_LOCATION_RECEIVED, pos),
-                (e) => this._handleEvent(EVENT_LOCATION_ERROR, e),
+                this._onLocationSuccess.bind(this), this._onLocationError.bind(this),
                 {
                     enableHighAccuracy: true,
                     timeout: this.options.locationAcquireTimeoutMS,
                 }
             );
+        },
+
+        _storePositionToLocalStorage: function(pos) {
+            const coords = {lat: pos.coords.latitude, lon: pos.coords.latitude};
+            localStorage.setItem(LOCALSTORAGE_POSITION, JSON.stringify(coords));
+        },
+
+        _onLocationSuccess: function(pos) {
+            this._handleEvent(EVENT_LOCATION_RECEIVED, pos);
+            this._storePositionToLocalStorage(pos);
+        },
+
+        _onLocationError: function(e) {
+            this._handleEvent(EVENT_LOCATION_ERROR, e);
+            if (e.code === 1) {
+                localStorage.removeItem(LOCALSTORAGE_POSITION);
+            }
         },
 
         _stopLocating: function() {
