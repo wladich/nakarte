@@ -114,7 +114,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /augustl\/js-unzip|dankogai\/js-deflate|mapillary-js/,
         include: paths.appSrc,
-        loader: 'babel',
+        loader: 'babel?cacheDirectory=node_modules/.cache/babel-loader',
       },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.
