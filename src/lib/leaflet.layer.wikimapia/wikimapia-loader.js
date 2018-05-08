@@ -4,6 +4,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 
 class WikimapiaLoader extends TiledDataLoader {
     maxZoom = 15;
+    minZoom = 1;
     tileSize = 1024;
 
     constructor(projectObj) {
@@ -44,10 +45,16 @@ class WikimapiaLoader extends TiledDataLoader {
                 z: z2
             }
         }
-        else {
-            if (z < 0) {
-                return {z: 0, x: 0, y: 0};
+        else if (z < this.minZoom) {
+            let z2 = this.minZoom,
+                multiplier = 1 / (1 << (z2 - z));
+            return {
+                x: Math.floor(layerTileCoords.x / multiplier),
+                y: Math.floor(layerTileCoords.y / multiplier),
+                z: z2
             }
+        }
+        else {
             return {z, x: layerTileCoords.x, y: layerTileCoords.y}
         }
     }
