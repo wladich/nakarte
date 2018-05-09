@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.control.commons'
+import {makeButton} from 'lib/leaflet.control.commons';
 import './style.css';
 import localStorage from 'lib/safe-localstorage';
 
@@ -122,14 +122,9 @@ const LocateControl = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create(
-                'div', 'leaflet-bar leaflet-control leaflet-control-locate'
-            );
-            this._stopContainerEvents();
-            const link = L.DomUtil.create('a', '', container);
-            link.title = 'Where am I?';
-            L.DomUtil.create('div', 'icon-position', link);
-            L.DomEvent.on(container, 'click', () => this._handleEvent(EVENT_BUTTON_CLICK));
+            const {container, link} = makeButton('leaflet-control-locate', 'Where am I?', 'icon-position');
+            this._container = container;
+            L.DomEvent.on(link, 'click', () => this._handleEvent(EVENT_BUTTON_CLICK));
             this._marker = new PositionMarker();
             this._handleEvent(EVENT_INIT);
             return container;
