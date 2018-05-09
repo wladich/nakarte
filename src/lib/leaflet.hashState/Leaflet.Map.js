@@ -18,18 +18,26 @@ L.Map.include({
             return state;
         },
 
-        unserializeState: function(values) {
+        validateState: function(values) {
             if (!values || values.length !== 3) {
-                return false;
+                return {valid: false};
             }
-            var zoom = parseInt(values[0], 10),
+            let zoom = parseInt(values[0], 10),
                 lat = parseFloat(values[1]),
                 lng = parseFloat(values[2]);
-            if (isNaN(zoom) || isNaN(lat) || isNaN(lng) || zoom < 0 || zoom > 32 || lat < -90 || lat > 90 ) {
-                return false;
+            if (isNaN(zoom) || isNaN(lat) || isNaN(lng) || zoom < 0 || zoom > 32 || lat < -90 || lat > 90) {
+                return {valid: false};
             }
-            this.setView([lat, lng], zoom);
-            return true;
+            return {lat, lng, zoom, valid: true};
+        },
+
+        unserializeState: function(values) {
+            let {lat, lng, zoom, valid} = this.validateState(values);
+            if (valid) {
+                this.setView([lat, lng], zoom);
+                return true;
+            }
+            return false;
         }
     }
 );

@@ -1,0 +1,33 @@
+.icon-position {
+    background-image: url("location-arrow.svg");
+    background-size: 61%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 100%;
+    height: 100%;
+}
+
+.following .icon-position {
+    background-image: url("location-arrow-active.svg");
+}
+
+.requesting .icon-position {
+    animation-name: spin;
+    animation-duration: 500ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-delay: 100ms;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.leaflet-control-locate.active a {
+    background-color: #cce8ff;
+}

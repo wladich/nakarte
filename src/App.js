@@ -26,6 +26,14 @@ import 'lib/leaflet.control.jnx';
 import 'lib/leaflet.control.jnx/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
+import {LocateControl} from 'lib/leaflet.control.locate';
+import {notify} from 'lib/notifications';
+
+const locationErrorMessage = {
+    0: 'Your browser does not support geolocation.',
+    1: 'Geolocation is blocked for this site. Please, enable in browser setting.',
+    2: 'Failed to acquire position for unknown reason.',
+};
 
 function setUp() {
     fixAll();
@@ -39,7 +47,6 @@ function setUp() {
             maxZoom: 18
         }
     );
-    map.enableHashState('m', [10, 55.75185, 37.61856]);
 
     const tracklist = new L.Control.TrackList();
 
@@ -61,11 +68,28 @@ function setUp() {
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
 
-
     new L.Control.Coordinates({position: 'topleft'}).addTo(map);
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
+    const locateControl = new LocateControl({
+        position: 'topleft',
+        showError: function({code, message}) {
+            let customMessage = locationErrorMessage[code];
+            if (!customMessage) {
+                customMessage = `Geolocation error: ${message}`;
+            }
+            notify(customMessage);
+        }
+    }).addTo(map);
+
+    const defaultLocation = L.latLng(55.75185, 37.61856);
+    const defaultZoom = 10;
+
+    let {lat, lng, zoom, valid} = map.validateState(hashState.getState('m'));
+    locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
+        valid ? L.latLng(lat, lng) : null, valid ? zoom : null);
+    map.enableHashState('m');
     /////////// controls top-right corner
 
     const layersControl = L.control.layers(null, null, {collapsed: false})
