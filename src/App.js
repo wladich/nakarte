@@ -144,7 +144,7 @@ function setUp() {
 
     ////////// track list and azimuth measure interaction
 
-    tracklist.on('startedit', () => azimuthControl.setEnabled(false));
+    tracklist.on('startedit', () => azimuthControl.disableControl());
     tracklist.on('elevation-shown', () => azimuthControl.hideProfile());
     azimuthControl.on('enabled', () => {
         tracklist.stopEditLine();
