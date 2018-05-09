@@ -44,3 +44,7 @@
 .azimuth-control-active {
     cursor: crosshair;
 }
+
+.leaflet-control-azimuth.active a {
+    background-color: #cce8ff;
+}
