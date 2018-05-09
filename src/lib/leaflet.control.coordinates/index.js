@@ -2,9 +2,11 @@ import L from 'leaflet'
 import './coordinates.css';
 import copyToClipboard from 'lib/clipboardCopy';
 import Contextmenu from 'lib/contextmenu';
-import 'lib/leaflet.control.commons';
+import {makeButtonWithBar} from 'lib/leaflet.control.commons';
 import safeLocalStorage from 'lib/safe-localstorage';
 import 'lib/controls-styles/controls-styles.css';
+
+
 
 function pad(s, n) {
     var j = s.indexOf('.');
@@ -40,17 +42,13 @@ L.Control.Coordinates = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            var container = this._container =
-                L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-coordinates');
-            container.title = "Show coordinates at cursor";
-            this._stopContainerEvents();
-            this._field_lat = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
-            this._field_lon = L.DomUtil.create('div', 'leaflet-control-coordinates-text', container);
-            L.DomEvent
-                .on(container, {
-                        'click': this.onClick
-                    }, this
-                );
+            const {container, link, barContainer} = makeButtonWithBar(
+                'leaflet-contol-coordinates', 'Show coordinates at cursor', 'icon-coordinates');
+            this._container = container;
+
+            this._coordinatesDisplayContainer = L.DomUtil.create('span', '', barContainer);
+
+            L.DomEvent.on(link, 'click', this.onClick, this);
             this.menu = new Contextmenu([
                     {text: 'Click map to copy coordinates to clipboard', callback: this.prepareForClickOnMap.bind(this)},
                     '-',
@@ -62,7 +60,7 @@ L.Control.Coordinates = L.Control.extend({
             );
             this.loadStateFromStorage();
             this.onMouseMove();
-            L.DomEvent.on(container, 'contextmenu', this.onRightClick, this);
+            L.DomEvent.on(barContainer, 'contextmenu', this.onRightClick, this);
             return container;
         },
 
@@ -137,25 +135,20 @@ L.Control.Coordinates = L.Control.extend({
                 ({lat, lng} = e.latlng);
             }
             lng = normalizeLongitude(lng);
-            this._field_lat.innerHTML = this.formatCoodinate(lat, true);
-            this._field_lon.innerHTML = this.formatCoodinate(lng, false);
+            this._coordinatesDisplayContainer.innerHTML = this.formatCoodinate(lat, true) + '&nbsp;&nbsp;&nbsp;' + this.formatCoodinate(lng, false);
         },
 
         setEnabled: function(enabled) {
             if (!!enabled === this.isEnabled()) {
                 return;
             }
-            if (enabled) {
-                L.DomUtil.addClass(this._container, 'expanded');
-                L.DomUtil.addClass(this._map._container, 'coordinates-control-active');
-                this._map.on('mousemove', this.onMouseMove, this);
-                this._map.on('contextmenu', this.onMapRightClick, this);
-            } else {
-                L.DomUtil.removeClass(this._container, 'expanded');
-                L.DomUtil.removeClass(this._map._container, 'coordinates-control-active');
-                this._map.off('contextmenu', this.onMapRightClick, this);
-                this._map.off('mousemove', this.onMouseMove, this);
-            }
+            const classFunc = enabled ? 'addClass' : 'removeClass';
+            const eventFunc = enabled ? 'on' : 'off';
+            L.DomUtil[classFunc](this._container, 'active');
+            L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
+            this._map[eventFunc]('mousemove', this.onMouseMove, this);
+            this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
+            this._isEnabled = !!enabled;
         },
 
         onMapRightClick: function(e) {
@@ -182,7 +175,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         isEnabled: function() {
-            return L.DomUtil.hasClass(this._container, 'expanded');
+            return !!this._isEnabled;
         },
 
         onClick: function(e) {

@@ -1,32 +1,10 @@
-.leaflet-control-coordinates {
+.icon-coordinates {
     background-image: url('coords16.png');
-    user-select: none;
+    background-size: 16px 16px !important;
 }
 
-.leaflet-control-coordinates.expanded {
-    background-image: none;
-    width: auto;
-    padding: 0 0.7em;
-    overflow: hidden;
-}
-
-.leaflet-control-coordinates.expanded:hover {
-    background-color: white;
-}
-
-.leaflet-control-coordinates-text {
-    display: none;
-    white-space: nowrap;
-    float: left;
-    line-height: 26px;
-}
-
-.leaflet-control-coordinates-text:first-child {
-    margin-right: 1em;
-}
-
-.leaflet-control-coordinates.expanded .leaflet-control-coordinates-text {
-    display: inline;
+.leaflet-touch .icon-coordinates {
+    background-size: 62% 62% !important;
 }
 
 .coordinates-control-active {
