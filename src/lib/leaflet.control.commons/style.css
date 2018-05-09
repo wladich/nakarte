@@ -23,3 +23,7 @@
 .button-with-bar.active .bar {
     display: block;
 }
+
+.highlight a, .highlight a:hover {
+    background-color: #cce8ff;
+}

@@ -115,6 +115,7 @@ L.Control.Azimuth = L.Control.extend({
 
         enableControl: function() {
             L.DomUtil.addClass(this._container, 'active');
+            L.DomUtil.addClass(this._container, 'highlight');
             L.DomUtil.addClass(this._map._container, 'azimuth-control-active');
             this._map.on('click', this.onMapClick, this);
             this.fire('enabled');
@@ -124,6 +125,7 @@ L.Control.Azimuth = L.Control.extend({
 
         disableControl: function() {
             L.DomUtil.removeClass(this._container, 'active');
+            L.DomUtil.removeClass(this._container, 'highlight');
             this.hideProfile();
             this.setPoints({start: null, end: null});
             L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');

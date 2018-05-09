@@ -401,16 +401,16 @@ const LocateControl = L.Control.extend({
                     this._stopLocating();
                     this._marker.removeFrom(this._map);
                     this._setEvents(false);
-                    this._updateButtonClasses([], ['active', 'following', 'requesting']);
+                    this._updateButtonClasses([], ['active', 'highlight', 'following', 'requesting']);
                     break;
                 case STATE_ENABLED:
-                    this._updateButtonClasses(['active'], ['following', 'requesting']);
+                    this._updateButtonClasses(['active', 'highlight',], ['following', 'requesting']);
                     break;
                 case STATE_MOVING_TO_FOLLOWING_FIRST:
                     this._marker.addTo(this._map);
                     break;
                 case STATE_ENABLED_FOLLOWING:
-                    this._updateButtonClasses(['active', 'following'], ['requesting']);
+                    this._updateButtonClasses(['active', 'highlight', 'following'], ['requesting']);
                     break;
                 default:
             }

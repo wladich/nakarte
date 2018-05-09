@@ -145,6 +145,7 @@ L.Control.Coordinates = L.Control.extend({
             const classFunc = enabled ? 'addClass' : 'removeClass';
             const eventFunc = enabled ? 'on' : 'off';
             L.DomUtil[classFunc](this._container, 'active');
+            L.DomUtil[classFunc](this._container, 'highlight');
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
