@@ -1,9 +1,8 @@
 import L from 'leaflet';
 import './track-list';
 import './ruler.css';
-import 'lib/controls-styles/controls-styles.css';
 import './track-list';
-import 'lib/leaflet.control.commons';
+import {makeButton} from 'lib/leaflet.control.commons';
 
 L.Control.TrackList.Ruler = L.Control.extend({
     options: {
@@ -17,9 +16,8 @@ L.Control.TrackList.Ruler = L.Control.extend({
 
     onAdd: function(map) {
         this._map = map;
-        const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-ruler');
-        container.title = "Measure distance";
-        this._stopContainerEvents();
+        let {container} = makeButton('', 'Measure distance', 'icon-ruler');
+        this._container = container;
         L.DomEvent.on(container, 'click', this.onClick, this);
         return container;
     },
