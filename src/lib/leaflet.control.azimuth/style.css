@@ -1,42 +1,5 @@
-.leaflet-control-azimuth {
+.icon-azimuth {
     background-image: url('compass-pointing-north-east.svg');
-    background-size: 16px 16px;
-    user-select: none;
-}
-
-.leaflet-control-azimuth.expanded:hover {
-    background-color: white;
-}
-
-.leaflet-control-azimuth .contents {
-    display: none;
-}
-
-.leaflet-control-azimuth.expanded .contents {
-    display: block;
-}
-
-.leaflet-control-azimuth.expanded {
-    background-image: none;
-    width: auto;
-    height: auto;
-    padding: 6px 6px;
-    overflow: hidden;
-}
-
-.leaflet-control-azimuth .left-buttons {
-    float: left;
-}
-
-.leaflet-control-azimuth .icon-on-off {
-    background-image: url('on-off-power-button.svg') !important;
-    background-size: 14px;
-    position: relative;
-    top: 10px;
-}
-
-.leaflet-control-azimuth .state-on {
-    background-color: #99d5ff;
 }
 
 .leaflet-control-azimuth table{

@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import ko from 'knockout';
-import 'lib/leaflet.control.commons';
+import {makeButtonWithBar} from 'lib/leaflet.control.commons';
 import layout from './control.html';
 import 'lib/controls-styles/controls-styles.css';
 import './style.css';
@@ -55,7 +55,6 @@ L.Control.Azimuth = L.Control.extend({
 
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
-            this._enabled = ko.observable(false);
             this.trueAzimuth = ko.observable(null);
             this.magneticAzimuth = ko.observable(null);
             this.distance = ko.observable(null);
@@ -84,23 +83,24 @@ L.Control.Azimuth = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container =
-                L.DomUtil.create('div', 'leaflet-control leaflet-control-button leaflet-control-azimuth');
-            this._stopContainerEvents();
-            container.innerHTML = layout;
-            container.title = "Measure bearing, display line of sight";
-            ko.applyBindings(this, container);
-            L.DomEvent.on(container, 'click', this.onClick, this);
+            const {container, link, barContainer} = makeButtonWithBar(
+                'leaflet-control-azimuth', 'Measure bearing, display line of sight', 'icon-azimuth');
+            this._container = container;
+            L.DomEvent.on(link, 'click', this.onClick, this);
+
+            barContainer.innerHTML = layout;
+            ko.applyBindings(this, barContainer);
             return container;
         },
 
         onClick: function() {
-            this.setExpanded(true);
+            if (this.isEnabled()) {
+                this.disableControl();
+            } else {
+                this.enableControl();
+            }
         },
 
-        onMinimizeButtonClick: function(e) {
-            setTimeout(() => this.setExpanded(false), 0);
-        },
 
         onMarkerDrag: function(e) {
             const marker = e.target;
@@ -113,46 +113,27 @@ L.Control.Azimuth = L.Control.extend({
             }
         },
 
-        setExpanded: function(expanded) {
-            if (!!expanded === this.isExpanded()) {
-                return;
-            }
-            if (expanded) {
-                L.DomUtil.addClass(this._container, 'expanded');
-            } else {
-                L.DomUtil.removeClass(this._container, 'expanded');
-                this.hideProfile();
-                this.setPoints({start: null, end: null});
-            }
-            this.setEnabled(expanded);
+        enableControl: function() {
+            L.DomUtil.addClass(this._container, 'active');
+            L.DomUtil.addClass(this._map._container, 'azimuth-control-active');
+            this._map.on('click', this.onMapClick, this);
+            this.fire('enabled');
+            this._map.clickLocked = true;
+            this._enabled = true;
         },
 
-        setEnabled: function(enabled) {
-            if (!!enabled === this.isEnabled()) {
-                return;
-            }
-            if (enabled) {
-                L.DomUtil.addClass(this._map._container, 'azimuth-control-active');
-                this._map.on('click', this.onMapClick, this);
-                this.fire('enabled');
-            } else {
-                L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
-                this._map.off('click', this.onMapClick, this);
-            }
-            this._map.clickLocked = enabled;
-            this._enabled(!!enabled);
+        disableControl: function() {
+            L.DomUtil.removeClass(this._container, 'active');
+            this.hideProfile();
+            this.setPoints({start: null, end: null});
+            L.DomUtil.removeClass(this._map._container, 'azimuth-control-active');
+            this._map.off('click', this.onMapClick, this);
+            this._map.clickLocked = false;
+            this._enabled = false;
         },
 
         isEnabled: function() {
-            return !!this._enabled();
-        },
-
-        onEnableButtonClick: function() {
-            this.setEnabled(!this.isEnabled());
-        },
-
-        isExpanded: function() {
-            return L.DomUtil.hasClass(this._container, 'expanded');
+            return !!this._enabled;
         },
 
         setPoints: function(points) {
