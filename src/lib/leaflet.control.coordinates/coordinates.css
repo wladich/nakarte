@@ -1,6 +1,5 @@
 .icon-coordinates {
-    background-image: url('coords16.png');
-    background-size: 16px 16px !important;
+    background-image: url('coords.svg');
 }
 
 .leaflet-touch .icon-coordinates {
