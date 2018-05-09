@@ -1,8 +1,10 @@
 import L from 'leaflet';
-import './style.css';
-import 'lib/controls-styles/controls-styles.css';
 import ko from 'vendored/knockout';
 import googleProvider from './lib/google';
+
+import './style.css';
+import 'lib/controls-styles/controls-styles.css';
+import {makeButtonWithBar} from 'lib/leaflet.control.commons';
 import mapillaryProvider from './lib/mapillary';
 import wikimediaProvider from './lib/wikimedia';
 
@@ -86,15 +88,20 @@ L.Control.Panoramas = L.Control.extend({
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-contol-panoramas');
-            container.innerHTML = `
-                <a name="button" class="panoramas-button leaflet-control-button icon-panoramas" title="Show panoramas"
-                    data-bind="click: onButtonClick"></a>
-                <div class="panoramas-list control-form" data-bind="foreach: providers">
-                    <div><label><input type="checkbox" data-bind="checked: selected"><span data-bind="text: title"></span></label></div>
-                </div>
-            `;
-            this._stopContainerEvents();
+            const {container, link, barContainer} = makeButtonWithBar(
+                'leaflet-contol-panoramas', 'Show panoramas', 'icon-panoramas');
+            this._container = container;
+            L.DomEvent.on(link, 'click', this.onButtonClick, this);
+            barContainer.innerHTML = `
+                 <div class="panoramas-list" data-bind="foreach: providers">
+                     <div>
+                         <label>
+                             <input type="checkbox" data-bind="checked: selected"><span data-bind="text: title"></span>
+                         </label>
+                     </div>
+                 </div>
+             `;
+
             ko.applyBindings(this, container);
             map.createPane('rasterOverlay').style.zIndex = 300;
             return container;
@@ -113,7 +120,7 @@ L.Control.Panoramas = L.Control.extend({
                 return;
             }
             this.controlEnabled = true;
-            L.DomUtil.addClass(this._container, 'enabled');
+            L.DomUtil.addClass(this._container, 'active');
             this.updateCoverageVisibility();
             this._map.on('click', this.onMapClick, this);
             L.DomUtil.addClass(this._map._container, 'panoramas-control-active');
@@ -125,7 +132,7 @@ L.Control.Panoramas = L.Control.extend({
                 return;
             }
             this.controlEnabled = false;
-            L.DomUtil.removeClass(this._container, 'enabled');
+            L.DomUtil.removeClass(this._container, 'active');
             this.updateCoverageVisibility();
             this._map.off('click', this.onMapClick, this);
             this.hidePanoViewer();

@@ -1,28 +1,18 @@
 .icon-panoramas {
     background-image: url('panoramas-off.png');
+    background-size: 17px 17px !important;
 }
 
-.leaflet-contol-panoramas.enabled .icon-panoramas {
+.leaflet-touch .icon-panoramas {
+    background-size: 62% 62% !important;
+}
+
+.leaflet-contol-panoramas.active .icon-panoramas {
     background-image: url('panoramas-on.png');
-}
-
-
-.panoramas-list, .panoramas-button {
-    float: left;
-}
-
-.panoramas-list {
-    margin-left: 6px;
-    padding-left: 6px !important;
-    display: none;
 }
 
 .panoramas-list input, .panoramas-list label {
     vertical-align: bottom;
-}
-
-.leaflet-contol-panoramas.enabled .panoramas-list {
-    display: block;
 }
 
 .panorama-container {
@@ -71,6 +61,4 @@
     background-size: 12px 12px;
     width: 12px !important;
     height: 12px !important;
-    /*margin-left: -5px;*/
-    /*margin-top: -5px;*/
 }
