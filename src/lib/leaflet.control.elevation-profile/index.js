@@ -247,6 +247,26 @@ const ElevationProfile = L.Class.extend({
                 });
             this.values = null;
 
+            this._setupWindowResize();
+        },
+
+        _setupWindowResize: function() {
+            let onWindowResize = this._onWindowResize.bind(this);
+            L.DomEvent.off(window, 'resize', onWindowResize, this);
+            L.DomEvent.on(window, 'resize', onWindowResize, this);
+            L.DomEvent.on(this, 'remove', function() {
+                L.DomEvent.off(window, 'resize', onWindowResize, this);
+            });
+        },
+
+        _onWindowResize: function() {
+            this._resizeGraph();
+        },
+
+        _resizeGraph: function() {
+            this.svgWidth = this.drawingContainer.clientWidth * this.horizZoom;
+            this.svg.setAttribute('width', this.svgWidth + 'px');
+            this.updateGraph();
         },
 
         _addTo: function(map) {

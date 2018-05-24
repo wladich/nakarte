@@ -6,6 +6,7 @@
     bottom: 0;
     z-index: 2000;
     cursor: default;
+    border-top: 1px solid #ddd;
 }
 
 .elevation-profile-properties {
@@ -13,7 +14,7 @@
     height: 100%;
     float: left;
     width: 240px;
-    border-right: 1px solid #dddddd;
+    border-right: 1px solid #ddd;
 }
 
 .elevation-profile-properties table {
@@ -52,6 +53,7 @@
     overflow-x: scroll;
     overflow-y: hidden;
     position: relative;
+    display: block;
 }
 
 .elevation-profile-grid-label {
@@ -115,11 +117,11 @@
 }
 
 .elevation-profile-cursor-hidden {
-    visibility: hidden;
+    display: none;
 }
 
 .elevation-profile-cursor-hidden-while-drag {
-    visibility: hidden;
+    display: none;
 }
 
 .elevation-profile-selection {
