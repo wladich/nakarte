@@ -295,7 +295,7 @@ const ElevationProfile = L.Class.extend({
             L.DomEvent.on(svg, 'mouseenter', this.onSvgEnter, this);
             L.DomEvent.on(svg, 'mouseleave', this.onSvgLeave, this);
             L.DomEvent.on(svg, 'mousewheel', this.onSvgMouseWheel, this);
-            this.svgDragEvents = new DragEvents(this.drawingContainer, null, {dragButtons: [0, 2]});
+            this.svgDragEvents = new DragEvents(this.svg, null, {dragButtons: [0, 2]});
             this.svgDragEvents.on('dragstart', this.onSvgDragStart, this);
             this.svgDragEvents.on('dragend', this.onSvgDragEnd, this);
             this.svgDragEvents.on('drag', this.onSvgDrag, this);
