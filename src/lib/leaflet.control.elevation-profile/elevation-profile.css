@@ -44,7 +44,7 @@
     position: relative;
     height: 100%;
     float: left;
-    width: 50px;
+    width: 35px;
 }
 
 .elevation-profile-drawingContainer {
@@ -53,6 +53,7 @@
     overflow-x: scroll;
     overflow-y: hidden;
     position: relative;
+    margin-right: 35px;
 }
 
 .elevation-profile-grid-label {
@@ -163,8 +164,7 @@
 
 .elevation-profile-close {
     position: absolute;
-    /*right: 0;*/
-    left: 244px;
+    right: 10px;
     width: 16px;
     height: 16px;
     background-image: url("close.png");

@@ -457,9 +457,11 @@ const ElevationProfile = L.Class.extend({
             this.drawingContainer.scrollLeft = newScrollLeft;
 
             this.cursorHide();
-            this.setCursorPosition(ind);
-            this.cursorShow();
-            this.updateGraphSelection();
+            var positioned = this.setCursorPosition(ind);
+            if (positioned) {
+                this.cursorShow();
+                this.updateGraphSelection();
+            }
         },
 
 
@@ -624,7 +626,7 @@ const ElevationProfile = L.Class.extend({
 
         setCursorPosition: function(ind) {
             if (!this._map || !this.values) {
-                return;
+                return false;
             }
             var distance = this.options.samplingInterval * ind;
             distance = (distance / 1000).toFixed(2);
@@ -634,6 +636,9 @@ const ElevationProfile = L.Class.extend({
 
             var x = Math.round(ind / (this.values.length - 1) * (this.svgWidth - 1));
             var indInt = Math.round(ind);
+            if (indInt >= this.values.length) {//out of range
+                return false;
+            }
             var elevation = this.values[indInt];
             this.graphCursorLabel.innerHTML = L.Util.template('{ele} m<br>{dist} km<br>{angle}&deg;',
                 {ele: Math.round(elevation), dist: distance, grad: gradient, angle: angle}
@@ -642,7 +647,7 @@ const ElevationProfile = L.Class.extend({
             this.graphCursor.style.left = x + 'px';
             this.graphCursorLabel.style.left = x + 'px';
             if (this.drawingContainer.getBoundingClientRect().left - this.drawingContainer.scrollLeft + x +
-                this.graphCursorLabel.offsetWidth >= this._container.getBoundingClientRect().right) {
+                this.graphCursorLabel.offsetWidth >= this.drawingContainer.getBoundingClientRect().right) {
                 L.DomUtil.addClass(this.graphCursorLabel, 'elevation-profile-cursor-label-left');
             } else {
                 L.DomUtil.removeClass(this.graphCursorLabel, 'elevation-profile-cursor-label-left');
@@ -665,6 +670,7 @@ const ElevationProfile = L.Class.extend({
             );
 
             this.setTrackMarkerLabel(label);
+            return true;
         },
 
         onSvgMouseMove: function(e) {
