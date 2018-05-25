@@ -457,11 +457,9 @@ const ElevationProfile = L.Class.extend({
             this.drawingContainer.scrollLeft = newScrollLeft;
 
             this.cursorHide();
-            var positioned = this.setCursorPosition(ind);
-            if (positioned) {
-                this.cursorShow();
-                this.updateGraphSelection();
-            }
+            this.setCursorPosition(ind);
+            this.cursorShow();
+            this.updateGraphSelection();
         },
 
 
@@ -626,7 +624,7 @@ const ElevationProfile = L.Class.extend({
 
         setCursorPosition: function(ind) {
             if (!this._map || !this.values) {
-                return false;
+                return;
             }
             var distance = this.options.samplingInterval * ind;
             distance = (distance / 1000).toFixed(2);
@@ -636,9 +634,6 @@ const ElevationProfile = L.Class.extend({
 
             var x = Math.round(ind / (this.values.length - 1) * (this.svgWidth - 1));
             var indInt = Math.round(ind);
-            if (indInt >= this.values.length) {//out of range
-                return false;
-            }
             var elevation = this.values[indInt];
             this.graphCursorLabel.innerHTML = L.Util.template('{ele} m<br>{dist} km<br>{angle}&deg;',
                 {ele: Math.round(elevation), dist: distance, grad: gradient, angle: angle}
@@ -670,15 +665,13 @@ const ElevationProfile = L.Class.extend({
             );
 
             this.setTrackMarkerLabel(label);
-            return true;
         },
 
         onSvgMouseMove: function(e) {
             if (!this.values) {
                 return;
             }
-            var x = offestFromEvent(e).offsetX;
-            var ind = (x / (this.svgWidth - 1) * (this.values.length - 1));
+            var ind = this.xToIndex(offestFromEvent(e).offsetX);
             this.setCursorPosition(ind);
         },
 
