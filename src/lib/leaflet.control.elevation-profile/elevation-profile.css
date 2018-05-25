@@ -53,7 +53,6 @@
     overflow-x: scroll;
     overflow-y: hidden;
     position: relative;
-    display: block;
 }
 
 .elevation-profile-grid-label {
@@ -117,10 +116,6 @@
 }
 
 .elevation-profile-cursor-hidden {
-    display: none;
-}
-
-.elevation-profile-cursor-hidden-while-drag {
     display: none;
 }
 

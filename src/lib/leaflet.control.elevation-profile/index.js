@@ -246,17 +246,6 @@ const ElevationProfile = L.Class.extend({
                     self._addTo(map);
                 });
             this.values = null;
-
-            this._setupWindowResize();
-        },
-
-        _setupWindowResize: function() {
-            let onWindowResize = this._onWindowResize.bind(this);
-            L.DomEvent.off(window, 'resize', onWindowResize, this);
-            L.DomEvent.on(window, 'resize', onWindowResize, this);
-            L.DomEvent.on(this, 'remove', function() {
-                L.DomEvent.off(window, 'resize', onWindowResize, this);
-            });
         },
 
         _onWindowResize: function() {
@@ -267,6 +256,7 @@ const ElevationProfile = L.Class.extend({
             this.svgWidth = this.drawingContainer.clientWidth * this.horizZoom;
             this.svg.setAttribute('width', this.svgWidth + 'px');
             this.updateGraph();
+            this.updateGraphSelection();
         },
 
         _addTo: function(map) {
@@ -321,6 +311,7 @@ const ElevationProfile = L.Class.extend({
             this.svgDragEvents.on('drag', this.onSvgDrag, this);
             this.svgDragEvents.on('click', this.onSvgClick, this);
             L.DomEvent.on(svg, 'dblclick', this.onSvgDblClick, this);
+            L.DomEvent.on(window, 'resize', this._onWindowResize, this);
         },
 
         removeFrom: function(map) {
@@ -334,6 +325,7 @@ const ElevationProfile = L.Class.extend({
             map.removeLayer(this.polyline);
             map.removeLayer(this.trackMarker);
             map.removeLayer(this.polyLineSelection);
+            L.DomEvent.off(window, 'resize', this._onWindowResize, this);
             this._map = null;
             this.fire('remove');
             return this;
