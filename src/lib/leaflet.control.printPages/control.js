@@ -33,14 +33,14 @@ ko.extenders.checkNumberRange = function(target, range) {
     ).extend({notify: 'always'});
 };
 
-function savePagesPdf(imagesInfo, resolution) {
+function savePagesPdf(imagesInfo, resolution, fileName) {
     let pdf = makePdf(imagesInfo, resolution);
     pdf = blobFromString(pdf);
-    saveAs(pdf, 'map.pdf', true);
+    saveAs(pdf, fileName, true);
 }
 
-function savePageJpg(page) {
-    saveAs(blobFromString(page.data), 'map.jpg', true);
+function savePageJpg(page, fileName) {
+    saveAs(blobFromString(page.data), fileName, true);
 }
 
 L.Control.PrintPages = L.Control.extend({
@@ -115,9 +115,9 @@ L.Control.PrintPages = L.Control.extend({
             L.DomUtil.addClass(this._container, 'minimized');
         },
 
-        addPage: function(isLandsacape, center) {
+        addPage: function(isLandscape, center) {
             let [pageWidth, pageHeight] = this.printSize();
-            if (isLandsacape) {
+            if (isLandscape) {
                 [pageWidth, pageHeight] = [pageHeight, pageWidth];
             }
             if (!center) {
@@ -126,7 +126,7 @@ L.Control.PrintPages = L.Control.extend({
             const page = new PageFeature(center, [pageWidth, pageHeight],
                 this.scale(), (this.pages.length + 1).toString()
             );
-            page._rotated = isLandsacape;
+            page._rotated = isLandscape;
             page.addTo(this._map);
             this.pages.push(page);
             this.pagesNum(this.pages.length);
@@ -208,6 +208,7 @@ L.Control.PrintPages = L.Control.extend({
                 }
             );
             const resolution = this.resolution();
+            const zooms = this.zoomForPrint();
             const decorationLayers = [];
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
@@ -219,15 +220,20 @@ L.Control.PrintPages = L.Control.extend({
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
+                    zooms,
                     resolution,
                     scale: this.scale(),
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
-            ).then((images) => {
+            ).then(({images, layers}) => {
                     if (images) {
-                        savePagesPdf(images, resolution)
+                        const fileName = this.getFileName({
+                          layers,
+                          zooms,
+                          extension: 'pdf'
+                        });
+                        savePagesPdf(images, resolution, fileName);
                     }
                 }
             ).catch((e) => {
@@ -244,6 +250,7 @@ L.Control.PrintPages = L.Control.extend({
                 printSize: page.getPrintSize(),
                 label: page.getLabel()
             }];
+            const zooms = this.zoomForPrint();
             const decorationLayers = [];
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
@@ -258,14 +265,21 @@ L.Control.PrintPages = L.Control.extend({
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
+                    zooms,
                     resolution: this.resolution(),
                     scale: this.scale(),
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
             )
-                .then((images) => savePageJpg(images[0]))
+                .then(({images, layers}) => {
+                  const fileName = this.getFileName({
+                    layers,
+                    zooms,
+                    extension: 'jpg'
+                  });
+                  savePageJpg(images[0], fileName);
+                })
                 .catch((e) => {
                         logging.captureException(e);
                         notify(`Failed to create JPEG from page: ${e.message}`);
@@ -461,6 +475,48 @@ L.Control.PrintPages = L.Control.extend({
                 }
             }
             return true;
+        },
+
+        getFileName: function({layers, zooms, extension}) {
+            let fileName = 'nakarte.tk_';
+
+            const width  = this.pageWidth();
+            const height = this.pageHeight();
+
+            const currentPageSize = this.pageSizes.find((pageSize) => {
+              return (width == pageSize.width) && (height == pageSize.height);
+            });
+
+            if (currentPageSize) {
+              fileName += currentPageSize.name;
+            } else {
+              fileName += `${width}x${height}`;
+            }
+
+            const layerZooms = new Set();
+
+            layers.map((layer) => {
+              const { options } = layer
+              if (options) {
+                const { code, scaleDependent } = options
+
+                if (code) {
+                  fileName += `_${code}`;
+                }
+                if (scaleDependent) {
+                  layerZooms.add(zooms.mapZoom);
+                } else {
+                  layerZooms.add(zooms.satZoom);
+                }
+              }
+            });
+
+            if (layerZooms.size > 0) {
+              let layerZoomsName = [...layerZooms].join('_');
+              fileName += `_Z${layerZoomsName}`;
+            }
+
+            return `${fileName}.${extension}`;
         }
     }
 );
