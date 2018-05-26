@@ -312,7 +312,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
         );
     }
-    return pageImagesInfo;
+    return { images: pageImagesInfo, layers };
 }
 
 
