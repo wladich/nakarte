@@ -17,6 +17,7 @@ import logging from 'lib/logging';
 import  {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';
+import getLayers from 'layers';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -208,7 +209,6 @@ L.Control.PrintPages = L.Control.extend({
                 }
             );
             const resolution = this.resolution();
-            const zooms = this.zoomForPrint();
             const decorationLayers = [];
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
@@ -220,18 +220,17 @@ L.Control.PrintPages = L.Control.extend({
             renderPages({
                     map: this._map,
                     pages,
-                    zooms,
+                    zooms: this.zoomForPrint(),
                     resolution,
                     scale: this.scale(),
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
-            ).then(({images, layers}) => {
+            ).then(({images, renderedLayerCodes}) => {
                     if (images) {
                         const fileName = this.getFileName({
-                          layers,
-                          zooms,
-                          extension: 'pdf'
+                            renderedLayerCodes,
+                            extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
                     }
@@ -250,7 +249,6 @@ L.Control.PrintPages = L.Control.extend({
                 printSize: page.getPrintSize(),
                 label: page.getLabel()
             }];
-            const zooms = this.zoomForPrint();
             const decorationLayers = [];
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
@@ -265,20 +263,19 @@ L.Control.PrintPages = L.Control.extend({
             renderPages({
                     map: this._map,
                     pages,
-                    zooms,
+                    zooms: this.zoomForPrint(),
                     resolution: this.resolution(),
                     scale: this.scale(),
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
             )
-                .then(({images, layers}) => {
-                  const fileName = this.getFileName({
-                    layers,
-                    zooms,
-                    extension: 'jpg'
-                  });
-                  savePageJpg(images[0], fileName);
+                .then(({images, renderedLayerCodes}) => {
+                    const fileName = this.getFileName({
+                        renderedLayerCodes,
+                        extension: 'jpg'
+                    });
+                    savePageJpg(images[0], fileName);
                 })
                 .catch((e) => {
                         logging.captureException(e);
@@ -477,43 +474,59 @@ L.Control.PrintPages = L.Control.extend({
             return true;
         },
 
-        getFileName: function({layers, zooms, extension}) {
-            let fileName = 'nakarte.tk_';
+        getFileName: function({renderedLayerCodes, extension}) {
+            let fileName = '';
+
+            const baseLayers = [];
+            const overlayLayers = [];
+            const transparentOverlayLayers = [];
+
+            getLayers().forEach(({ layers: layerGroup }) => {
+                layerGroup.forEach((layer) => {
+                    if (renderedLayerCodes.has(layer.layer.options.code)) {
+                        if (layer.isOverlay) {
+                            if (layer.isOverlayTransparent) {
+                                transparentOverlayLayers.push(layer);
+                            } else {
+                                overlayLayers.push(layer);
+                            }
+                        } else {
+                            baseLayers.push(layer);
+                        }
+                    }
+                });
+            });
+
+            const compare = (layer1, layer2) => {
+                if (layer1.order < layer2.order) return 1;
+                if (layer1.order > layer2.order) return -1;
+                return 0;
+            }
+            baseLayers.sort(compare);
+            overlayLayers.sort(compare);
+            transparentOverlayLayers.sort(compare);
+
+            const appendLayerShortName = (layer) => {
+                fileName += `${layer.shortName}_`;
+            }
+            if (overlayLayers.length > 0) {
+                appendLayerShortName(overlayLayers[0]);
+            } else if (baseLayers.length > 0) {
+                appendLayerShortName(baseLayers[0]);
+            }
+            transparentOverlayLayers.forEach(appendLayerShortName);
+
+            fileName += `${this.scale()}m`;
 
             const width  = this.pageWidth();
             const height = this.pageHeight();
 
             const currentPageSize = this.pageSizes.find((pageSize) => {
-              return (width == pageSize.width) && (height == pageSize.height);
+                return (width == pageSize.width) && (height == pageSize.height);
             });
 
             if (currentPageSize) {
-              fileName += currentPageSize.name;
-            } else {
-              fileName += `${width}x${height}`;
-            }
-
-            const layerZooms = new Set();
-
-            layers.map((layer) => {
-              const { options } = layer
-              if (options) {
-                const { code, scaleDependent } = options
-
-                if (code) {
-                  fileName += `_${code}`;
-                }
-                if (scaleDependent) {
-                  layerZooms.add(zooms.mapZoom);
-                } else {
-                  layerZooms.add(zooms.satZoom);
-                }
-              }
-            });
-
-            if (layerZooms.size > 0) {
-              let layerZoomsName = [...layerZooms].join('_');
-              fileName += `_Z${layerZoomsName}`;
+                fileName += `_${currentPageSize.name}`;
             }
 
             return `${fileName}.${extension}`;
