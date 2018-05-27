@@ -20,6 +20,7 @@ export default function getLayers() {
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
+                    shortName: 'osm',
                     order: 100,
                     isOverlay: false,
                     isDefault: true,
@@ -29,6 +30,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'ESRI Sat',
+                    shortName: 'esri',
                     order: 200,
                     isOverlay: false,
                     isDefault: true,
@@ -39,6 +41,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Yandex map',
+                    shortName: 'yandex',
                     order: 300,
                     isOverlay: false,
                     isDefault: true,
@@ -46,6 +49,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Yandex Satellite',
+                    shortName: 'yandex_sat',
                     order: 400,
                     isOverlay: false,
                     isDefault: true,
@@ -53,6 +57,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google',
+                    shortName: 'google',
                     order: 500,
                     isOverlay: false,
                     isDefault: true,
@@ -60,6 +65,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google Satellite',
+                    shortName: 'google_sat',
                     order: 600,
                     isOverlay: false,
                     isDefault: true,
@@ -67,6 +73,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google Terrain',
+                    shortName: 'google_terrain',
                     order: 650,
                     isOverlay: false,
                     isDefault: true,
@@ -74,6 +81,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Bing Sat',
+                    shortName: 'bing',
                     order: 700,
                     isOverlay: false,
                     isDefault: true,
@@ -82,6 +90,7 @@ export default function getLayers() {
 
                 {
                     title: 'marshruty.ru',
+                    shortName: 'marshruty',
                     order: 800,
                     isOverlay: false,
                     isDefault: true,
@@ -91,6 +100,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topomapper 1km',
+                    shortName: 'topomapper_1k',
                     order: 900,
                     isOverlay: false,
                     isDefault: true,
@@ -102,6 +112,7 @@ export default function getLayers() {
 
                 {
                     title: 'Topo 10km',
+                    shortName: 'topo_10k',
                     order: 10100,
                     isOverlay: true,
                     isDefault: true,
@@ -111,6 +122,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 2 km',
+                    shortName: 'ggc_2k',
                     order: 10200,
                     isOverlay: true,
                     isDefault: true,
@@ -120,6 +132,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'ArbaletMO',
+                    shortName: 'arbalet',
                     order: 10300,
                     isOverlay: true,
                     isDefault: true,
@@ -129,6 +142,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav mountains',
+                    shortName: 'slazav_mountains',
                     order: 10400,
                     isOverlay: true,
                     isDefault: true,
@@ -138,6 +152,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 1km',
+                    shortName: 'ggc_1k',
                     order: 10500,
                     isOverlay: true,
                     isDefault: true,
@@ -147,6 +162,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 1km',
+                    shortName: 'topo_1k',
                     order: 10600,
                     isOverlay: true,
                     isDefault: true,
@@ -156,6 +172,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 500m',
+                    shortName: 'ggc_500',
                     order: 10700,
                     isOverlay: true,
                     isDefault: true,
@@ -165,6 +182,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 500m',
+                    shortName: 'topo_500',
                     order: 10800,
                     isOverlay: true,
                     isDefault: true,
@@ -174,6 +192,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 250m',
+                    shortName: 'ggc_250',
                     order: 10900,
                     isOverlay: true,
                     isDefault: true,
@@ -183,6 +202,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav map',
+                    shortName: 'slazav',
                     order: 11000,
                     isOverlay: true,
                     isDefault: true,
@@ -192,8 +212,10 @@ export default function getLayers() {
                 },
                 {
                     title: 'Races',
+                    shortName: 'races',
                     order: 11050,
                     isOverlay: true,
+                    isOverlayTransparent: true,
                     isDefault: true,
                     layer: L.tileLayer("https://tiles.nakarte.tk/adraces/{z}/{x}/{y}",
                         {code: 'U', tms: true, scaleDependent: false, maxNativeZoom: 15, print: true, jnx: true}
@@ -201,8 +223,10 @@ export default function getLayers() {
                 },
                 {
                     title: 'O-sport',
+                    shortName: 'osport',
                     order: 11100,
                     isOverlay: true,
+                    isOverlayTransparent: true,
                     isDefault: true,
                     layer: L.tileLayer("https://tiles.nakarte.tk/osport/{z}/{x}/{y}",
                         {code: 'R', tms: true, scaleDependent: false, maxNativeZoom: 17, print: true, jnx: true}
@@ -210,6 +234,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Soviet topo maps grid',
+                    shortName: 'soviet_topo_grid',
                     order: 11200,
                     isOverlay: true,
                     isDefault: true,
@@ -217,6 +242,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Wikimapia',
+                    shortName: 'wikimapia',
                     order: 11300,
                     isOverlay: true,
                     isDefault: true,
@@ -224,8 +250,10 @@ export default function getLayers() {
                 },
                 {
                     title: 'Mountain passes (Westra)',
+                    shortName: 'westra',
                     order: 11400,
                     isOverlay: true,
+                    isOverlayTransparent: true,
                     isDefault: true,
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
                             code: 'Wp',
@@ -254,6 +282,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'OpenTopoMap',
+                    shortName: 'opentopo',
                     order: 110,
                     isOverlay: false,
                     isDefault: false,
@@ -263,6 +292,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'OpenCycleMap',
+                    shortName: 'ocm',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     order: 120,
                     isOverlay: false,
@@ -273,6 +303,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'OSM Outdoors',
+                    shortName: 'osm_outdoors',
                     order: 130,
                     isOverlay: false,
                     isDefault: false,
@@ -287,6 +318,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Eurasia 25km',
+                    shortName: 'eurasia_25k',
                     description: '1975-80',
                     order: 10090,
                     isOverlay: true,
@@ -297,6 +329,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 1km',
+                    shortName: 'caucasus_1k',
                     order: 10610,
                     isOverlay: true,
                     isDefault: false,
@@ -306,6 +339,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 500m',
+                    shortName: 'caucasus_500',
                     order: 10810,
                     isOverlay: true,
                     isDefault: false,
@@ -315,6 +349,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 250m',
+                    shortName: 'topo_250',
                     order: 10950,
                     isOverlay: true,
                     isDefault: false,
@@ -324,6 +359,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Montenegro topo 250m',
+                    shortName: 'montenegro_250',
                     description: '1970-72',
                     order: 10960,
                     isOverlay: true,
@@ -339,6 +375,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
+                    shortName: 'tsvetkov_mountains',
                     description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     order: 10390,
                     isOverlay: true,
@@ -364,6 +401,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Bing imagery acquisition dates',
+                    shortName: 'bind_dates',
                     order: 11110,
                     isOverlay: true,
                     isDefault: false,
@@ -378,6 +416,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'geocaching.su',
+                    shortName: 'geocaching',
                     order: 11500,
                     isOverlay: true,
                     isDefault: false,
@@ -389,6 +428,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'OpenStreetMap GPS traces',
+                    shortName: 'osm_gps_traces',
                     order: 11120,
                     isOverlay: true,
                     isDefault: false,
@@ -398,6 +438,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (all)',
+                    shortName: 'strava',
                     order: 11130,
                     isOverlay: true,
                     isDefault: false,
@@ -408,6 +449,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (run)',
+                    shortName: 'strava_run',
                     order: 11131,
                     isOverlay: true,
                     isDefault: false,
@@ -418,6 +460,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (ride)',
+                    shortName: 'strava_ride',
                     order: 11132,
                     isOverlay: true,
                     isDefault: false,
@@ -428,6 +471,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (winter)',
+                    shortName: 'strava_winter',
                     order: 11133,
                     isOverlay: true,
                     isDefault: false,
@@ -438,6 +482,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (all)',
+                    shortName: 'strava_lowres',
                     order: 11134,
                     isOverlay: true,
                     isDefault: false,
@@ -448,6 +493,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (run)',
+                    shortName: 'strava_lowres_run',
                     order: 11135,
                     isOverlay: true,
                     isDefault: false,
@@ -458,6 +504,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (ride)',
+                    shortName: 'strava_lowres_ride',
                     order: 11136,
                     isOverlay: true,
                     isDefault: false,
@@ -468,6 +515,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (winter)',
+                    shortName: 'strava_lowres_winter',
                     order: 11137,
                     isOverlay: true,
                     isDefault: false,
@@ -485,6 +533,7 @@ export default function getLayers() {
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway UT map',
+                    shortName: 'norway_ut',
                     order: 5000,
                     isOverlay: false,
                     isDefault: false,
@@ -494,6 +543,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway paper map',
+                    shortName: 'norway_paper',
                     order: 10310,
                     isOverlay: true,
                     isDefault: false,
@@ -503,6 +553,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway map',
+                    shortName: 'norway',
                     order: 10320,
                     isOverlay: true,
                     isDefault: false,
@@ -512,6 +563,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway summer trails',
+                    shortName: 'norway_summer',
                     order: 20000,
                     isOverlay: true,
                     isDefault: false,
@@ -521,6 +573,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway winter trails',
+                    shortName: 'norway_winter',
                     order: 20010,
                     isOverlay: true,
                     isDefault: false,
@@ -531,6 +584,7 @@ export default function getLayers() {
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
+                    shortName: 'norway_roads',
                     description: '<a href="https://kart.finn.no/">https://kart.finn.no/</a>',
                     order: 5030,
                     isOverlay: false,
@@ -545,6 +599,7 @@ export default function getLayers() {
             layers: [
                 {
                     title: 'Czech base',
+                    shortName: 'czech',
                     order: 5040,
                     isOverlay: false,
                     isDefault: false,
@@ -554,6 +609,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech tourist',
+                    shortName: 'czech_tourist',
                     order: 5050,
                     isOverlay: false,
                     isDefault: false,
@@ -563,6 +619,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech summer',
+                    shortName: 'czech_summer',
                     order: 5060,
                     isOverlay: false,
                     isDefault: false,
@@ -572,6 +629,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech winter',
+                    shortName: 'czech_winter',
                     order: 5070,
                     isOverlay: false,
                     isDefault: false,
@@ -581,6 +639,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech geographical',
+                    shortName: 'czech_geo',
                     order: 5080,
                     isOverlay: false,
                     isDefault: false,
@@ -593,6 +652,7 @@ export default function getLayers() {
     // TODO: move it to tests
     const codes = {};
     const orders = {};
+    const shortNames = new Set();
     for (let group of layers) {
         for (let layer of group.layers) {
             if (!layer.layer.options) {
@@ -614,6 +674,14 @@ export default function getLayers() {
                 throw new Error(`Duplicate layer order "${order}"`);
             }
             orders[order] = 1;
+            let shortName = layer.shortName;
+            if (!shortName) {
+                throw new Error('Layer without shortName: ' + layer.title);
+            }
+            if (shortNames.has(shortName)) {
+                throw new Error(`Duplicate layer shortName "${shortName}"`);
+            }
+            shortNames.add(shortName);
         }
     }
     return layers;
