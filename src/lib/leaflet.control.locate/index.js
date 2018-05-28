@@ -172,7 +172,7 @@ const LocateControl = L.Control.extend({
         },
 
         _startLocating: function() {
-            if (!('geolocation' in navigator)) {
+            if (!('geolocation' in navigator) || !('watchPosition' in navigator.geolocation)) {
                 const error = {code: 0, message: 'Geolocation not supported'};
                 setTimeout(() => {
                         this._onLocationError(error);
