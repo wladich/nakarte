@@ -185,7 +185,6 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
     };
     let doStop;
     for (let layer of layers) {
-        const layerCode = layer.options && layer.options.code;
         let zoom;
         if (layer.options && layer.options.scaleDependent) {
             zoom = zooms.mapZoom;
@@ -218,7 +217,7 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
             layerPromises.push(tilePromise.tilePromise);
             let progressInc = (layer._printProgressWeight || 1) / count;
             tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc, layerCode}, tileInfo));
+                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc, layer}, tileInfo));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
@@ -277,7 +276,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
     }
     progressRange *= pages.length;
     const pageImagesInfo = [];
-    const renderedLayerCodes = new Set();
+    const renderedLayers = new Set();
     for (let page of pages) {
         let destPixelSize = page.printSize.multiplyBy(resolution / 25.4).round();
         let pixelBounds = L.bounds(
@@ -304,7 +303,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             progressCallback(tileInfo.progressInc, progressRange);
             composer.putTile(tileInfo);
             if (tileInfo.image) {
-                renderedLayerCodes.add(tileInfo.layerCode);
+                renderedLayers.add(tileInfo.layer);
             }
         }
         const dataUrl = composer.getDataUrl();
@@ -317,7 +316,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
         );
     }
-    return { images: pageImagesInfo, renderedLayerCodes };
+    return { images: pageImagesInfo, renderedLayers };
 }
 
 
