@@ -17,7 +17,6 @@ import logging from 'lib/logging';
 import  {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';
-import getLayers from 'layers';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
@@ -226,10 +225,10 @@ L.Control.PrintPages = L.Control.extend({
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
-            ).then(({images, renderedLayerCodes}) => {
+            ).then(({images, renderedLayers}) => {
                     if (images) {
                         const fileName = this.getFileName({
-                            renderedLayerCodes,
+                            renderedLayers,
                             extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
@@ -270,9 +269,9 @@ L.Control.PrintPages = L.Control.extend({
                     progressCallback: this.incrementProgress.bind(this)
                 }
             )
-                .then(({images, renderedLayerCodes}) => {
+                .then(({images, renderedLayers}) => {
                     const fileName = this.getFileName({
-                        renderedLayerCodes,
+                        renderedLayers,
                         extension: 'jpg'
                     });
                     savePageJpg(images[0], fileName);
@@ -474,40 +473,34 @@ L.Control.PrintPages = L.Control.extend({
             return true;
         },
 
-        getFileName: function({renderedLayerCodes, extension}) {
+        getFileName: function({renderedLayers, extension}) {
             let fileName = '';
 
             const baseLayers = [];
             const overlayLayers = [];
             const transparentOverlayLayers = [];
 
-            getLayers().forEach(({ layers: layerGroup }) => {
-                layerGroup.forEach((layer) => {
-                    if (renderedLayerCodes.has(layer.layer.options.code)) {
-                        if (layer.isOverlay) {
-                            if (layer.isOverlayTransparent) {
-                                transparentOverlayLayers.push(layer);
-                            } else {
-                                overlayLayers.push(layer);
-                            }
-                        } else {
-                            baseLayers.push(layer);
-                        }
+            renderedLayers.forEach(layer => {
+                const {
+                    options: {
+                        isOverlay,
+                        isOverlayTransparent
                     }
-                });
+                } = layer;
+
+                if (isOverlay) {
+                    if (isOverlayTransparent) {
+                        transparentOverlayLayers.unshift(layer);
+                    } else {
+                        overlayLayers.unshift(layer);
+                    }
+                } else {
+                    baseLayers.unshift(layer);
+                }
             });
 
-            const compare = (layer1, layer2) => {
-                if (layer1.order < layer2.order) return 1;
-                if (layer1.order > layer2.order) return -1;
-                return 0;
-            }
-            baseLayers.sort(compare);
-            overlayLayers.sort(compare);
-            transparentOverlayLayers.sort(compare);
-
             const appendLayerShortName = (layer) => {
-                fileName += `${layer.shortName}_`;
+                fileName += `${layer.options.shortName}_`;
             }
             if (overlayLayers.length > 0) {
                 appendLayerShortName(overlayLayers[0]);
@@ -522,7 +515,7 @@ L.Control.PrintPages = L.Control.extend({
             const height = this.pageHeight();
 
             const currentPageSize = this.pageSizes.find((pageSize) => {
-                return (width == pageSize.width) && (height == pageSize.height);
+                return (width === pageSize.width) && (height === pageSize.height);
             });
 
             if (currentPageSize) {
