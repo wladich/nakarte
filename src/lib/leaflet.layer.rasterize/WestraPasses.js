@@ -20,7 +20,7 @@ WestraPassesMarkers.include({
     },
 
     cloneForPrint: function (options) {
-        options = L.Util.extend({}, options);
+        options = L.Util.extend({}, this.options, options);
         return new WestraPassesMarkers(this._baseUrl, options);
     },
 
