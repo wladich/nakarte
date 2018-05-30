@@ -178,6 +178,7 @@ function enableConfig(control, layers) {
                         url: '',
                         tms: false,
                         maxZoom: 18,
+                        isOverlay: false,
                         scaleDependent: false
                     }
                 );

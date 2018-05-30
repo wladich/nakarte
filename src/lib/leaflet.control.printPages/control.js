@@ -216,12 +216,15 @@ L.Control.PrintPages = L.Control.extend({
                 decorationLayers.push(new MagneticMeridians());
             }
             decorationLayers.push(new OverlayScale());
+            const scale = this.scale();
+            const width = this.pageWidth();
+            const height = this.pageHeight();
             renderPages({
                     map: this._map,
                     pages,
                     zooms: this.zoomForPrint(),
                     resolution,
-                    scale: this.scale(),
+                    scale,
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
@@ -229,6 +232,9 @@ L.Control.PrintPages = L.Control.extend({
                     if (images) {
                         const fileName = this.getFileName({
                             renderedLayers,
+                            scale,
+                            width,
+                            height,
                             extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
@@ -259,12 +265,15 @@ L.Control.PrintPages = L.Control.extend({
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
+            const scale = this.scale();
+            const width = this.pageWidth();
+            const height = this.pageHeight();
             renderPages({
                     map: this._map,
                     pages,
                     zooms: this.zoomForPrint(),
                     resolution: this.resolution(),
-                    scale: this.scale(),
+                    scale,
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
                 }
@@ -272,6 +281,9 @@ L.Control.PrintPages = L.Control.extend({
                 .then(({images, renderedLayers}) => {
                     const fileName = this.getFileName({
                         renderedLayers,
+                        scale,
+                        width,
+                        height,
                         extension: 'jpg'
                     });
                     savePageJpg(images[0], fileName);
@@ -473,46 +485,48 @@ L.Control.PrintPages = L.Control.extend({
             return true;
         },
 
-        getFileName: function({renderedLayers, extension}) {
+        getFileName: function({renderedLayers, scale, width, height, extension}) {
             let fileName = '';
 
-            const baseLayers = [];
-            const overlayLayers = [];
+            let baseLayer;
+            let overlayLayer;
             const transparentOverlayLayers = [];
 
             renderedLayers.forEach(layer => {
                 const {
                     options: {
                         isOverlay,
-                        isOverlayTransparent
+                        isOverlayTransparent,
+                        shortName
                     }
                 } = layer;
 
+                if (!shortName) {
+                    return;
+                }
+
                 if (isOverlay) {
                     if (isOverlayTransparent) {
-                        transparentOverlayLayers.unshift(layer);
+                        transparentOverlayLayers.push(layer);
                     } else {
-                        overlayLayers.unshift(layer);
+                        overlayLayer = layer;
                     }
                 } else {
-                    baseLayers.unshift(layer);
+                    baseLayer = layer;
                 }
             });
 
             const appendLayerShortName = (layer) => {
                 fileName += `${layer.options.shortName}_`;
             }
-            if (overlayLayers.length > 0) {
-                appendLayerShortName(overlayLayers[0]);
-            } else if (baseLayers.length > 0) {
-                appendLayerShortName(baseLayers[0]);
+            if (overlayLayer) {
+                appendLayerShortName(overlayLayer);
+            } else if (baseLayer) {
+                appendLayerShortName(baseLayer);
             }
             transparentOverlayLayers.forEach(appendLayerShortName);
 
-            fileName += `${this.scale()}m`;
-
-            const width  = this.pageWidth();
-            const height = this.pageHeight();
+            fileName += `${scale}m`;
 
             const currentPageSize = this.pageSizes.find((pageSize) => {
                 return (width === pageSize.width) && (height === pageSize.height);
