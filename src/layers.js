@@ -25,6 +25,7 @@ export default function getLayers() {
                     layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {
                             code: 'O',
+                            isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
@@ -40,6 +41,7 @@ export default function getLayers() {
                         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                         {
                             code: 'E',
+                            isOverlay: false,
                             scaleDependent: false,
                             maxNativeZoom: 18,
                             print: true,
@@ -56,6 +58,7 @@ export default function getLayers() {
                         {
                             scaleDependent: true,
                             code: 'Y',
+                            isOverlay: false,
                             print: true,
                             jnx: true,
                             shortName: 'yandex'
@@ -70,6 +73,7 @@ export default function getLayers() {
                         {
                             scaleDependent: false,
                             code: 'S',
+                            isOverlay: false,
                             print: true,
                             jnx: true,
                             shortName: 'yandex_sat'
@@ -83,6 +87,7 @@ export default function getLayers() {
                     layer: new L.Layer.Google('ROADMAP',
                         {
                             code: 'G',
+                            isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
@@ -97,6 +102,7 @@ export default function getLayers() {
                     layer: new L.Layer.Google('SATELLITE',
                         {
                             code: 'L',
+                            isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
@@ -111,6 +117,7 @@ export default function getLayers() {
                     layer: new L.Layer.Google('TERRAIN',
                         {
                             code: 'P',
+                            isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
@@ -125,10 +132,11 @@ export default function getLayers() {
                     layer: new BingLayer(config.bingKey,
                         {
                             code: 'I',
+                            isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'bing'
+                            shortName: 'bing_sat'
                         }
                     )
                 },
@@ -140,6 +148,7 @@ export default function getLayers() {
                     layer: L.tileLayer('https://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
                         {
                             code: 'M',
+                            isOverlay: false,
                             maxNativeZoom: 18,
                             noCors: true,
                             scaleDependent: true,
@@ -157,6 +166,7 @@ export default function getLayers() {
                         'http://144.76.234.108/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
                         {
                             code: 'T',
+                            isOverlay: false,
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             noCors: true,
@@ -175,6 +185,7 @@ export default function getLayers() {
                         {
                             code: 'D',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 9,
@@ -192,6 +203,7 @@ export default function getLayers() {
                         {
                             code: 'N',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 12,
@@ -209,6 +221,7 @@ export default function getLayers() {
                         {
                             code: 'A',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 13,
@@ -226,6 +239,7 @@ export default function getLayers() {
                         {
                             code: 'Q',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 13,
@@ -243,6 +257,7 @@ export default function getLayers() {
                         {
                             code: 'J',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 13,
@@ -260,6 +275,7 @@ export default function getLayers() {
                         {
                             code: 'C',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 13,
@@ -277,6 +293,7 @@ export default function getLayers() {
                         {
                             code: 'F',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 14,
@@ -294,6 +311,7 @@ export default function getLayers() {
                         {
                             code: 'B',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 14,
@@ -311,6 +329,7 @@ export default function getLayers() {
                         {
                             code: 'K',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 15,
@@ -328,6 +347,7 @@ export default function getLayers() {
                         {
                             code: 'Z',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 14,
@@ -345,7 +365,7 @@ export default function getLayers() {
                         {
                             code: 'U',
                             isOverlay: true,
-                            isOverlayTransparent: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 15,
@@ -363,7 +383,7 @@ export default function getLayers() {
                         {
                             code: 'R',
                             isOverlay: true,
-                            isOverlayTransparent: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
                             maxNativeZoom: 17,
@@ -379,8 +399,7 @@ export default function getLayers() {
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({
                         code: 'Ng',
-                        isOverlay: true,
-                        shortName: 'soviet_topo_grid'
+                        isOverlay: true
                     })
                 },
                 {
@@ -389,8 +408,7 @@ export default function getLayers() {
                     isDefault: true,
                     layer: new L.Wikimapia({
                         code: 'W',
-                        isOverlay: true,
-                        shortName: 'wikimapia'
+                        isOverlay: true
                     })
                 },
                 {
@@ -403,7 +421,7 @@ export default function getLayers() {
                             isOverlayTransparent: true,
                             print: true,
                             scaleDependent: true,
-                            shortName: 'westra'
+                            shortName: 'passes'
                         }
                     )
                 },
@@ -432,6 +450,7 @@ export default function getLayers() {
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
                         {
                             code: 'Otm',
+                            isOverlay: false,
                             maxNativeZoom: 17,
                             scaleDependent: true,
                             print: true,
@@ -449,10 +468,11 @@ export default function getLayers() {
                     layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
                             code: 'Ocm',
+                            isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'ocm'
+                            shortName: 'opencyclemap'
                         }
                     )
                 },
@@ -463,6 +483,7 @@ export default function getLayers() {
                     layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
                             code: 'Oso',
+                            isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
@@ -484,6 +505,7 @@ export default function getLayers() {
                         {
                             code: 'E25m',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             maxNativeZoom: 9,
                             print: true,
@@ -501,6 +523,7 @@ export default function getLayers() {
                         {
                             code: 'NT1',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             maxNativeZoom: 14,
                             print: true,
@@ -518,6 +541,7 @@ export default function getLayers() {
                         {
                             code: 'NT5',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
@@ -535,6 +559,7 @@ export default function getLayers() {
                         {
                             code: 'T25',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
@@ -553,6 +578,7 @@ export default function getLayers() {
                         {
                             code: 'MN25',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
@@ -577,6 +603,7 @@ export default function getLayers() {
                         {
                             code: 'Mt',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: false,
                             minZoom: 7,
                             minNativeZoom: 7,
@@ -614,6 +641,7 @@ export default function getLayers() {
                     layer: new GeocachingSu(config.geocachingSuUrl, {
                         code: 'Gc',
                         isOverlay: true,
+                        isOverlayTransparent: true,
                         print: true,
                         jnx: false,
                         shortName: 'geocaching'
@@ -627,6 +655,7 @@ export default function getLayers() {
                         {
                             code: 'Ot',
                             isOverlay: true,
+                            isOverlayTransparent: true,
                             scaleDependent: true,
                             print: true,
                             jnx: false,
@@ -784,6 +813,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
                         {
                             code: 'Nu',
+                            isOverlay: false,
                             tms: false,
                             maxNativeZoom: 16,
                             print: true,
@@ -802,6 +832,7 @@ export default function getLayers() {
                         {
                             code: 'Np',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             maxNativeZoom: 16,
                             tms: false,
                             print: true,
@@ -819,6 +850,7 @@ export default function getLayers() {
                         {
                             code: 'Nm',
                             isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -835,6 +867,7 @@ export default function getLayers() {
                         {
                             code: 'Ns',
                             isOverlay: true,
+                            isOverlayTransparent: true,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -852,6 +885,7 @@ export default function getLayers() {
                         {
                             code: 'Nw',
                             isOverlay: true,
+                            isOverlayTransparent: true,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -870,6 +904,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {
                             code: 'Nr',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -890,6 +925,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
                         {
                             code: 'Czb',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -906,6 +942,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
                         {
                             code: 'Czt',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -922,6 +959,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
                         {
                             code: 'Czs',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -938,6 +976,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
                         {
                             code: 'Czw',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -954,6 +993,7 @@ export default function getLayers() {
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
                         {
                             code: 'Czg',
+                            isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -978,7 +1018,9 @@ export default function getLayers() {
             const {
                 code,
                 shortName,
-                print
+                print,
+                isOverlay,
+                isOverlayTransparent
             } = options
             if (!code) {
                 throw new Error('Layer without code: ' + layer.title);
@@ -997,13 +1039,16 @@ export default function getLayers() {
             orders[order] = 1;
 
             if (print) {
-              if (!shortName) {
-                  throw new Error('Layer without shortName: ' + layer.title);
-              }
-              if (shortNames.has(shortName)) {
-                  throw new Error(`Duplicate layer shortName "${shortName}"`);
-              }
-              shortNames.add(shortName);
+                if (isOverlay && (isOverlayTransparent === undefined)) {
+                    throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
+                }
+                if (!shortName) {
+                    throw new Error('Layer without shortName: ' + layer.title);
+                }
+                if (shortNames.has(shortName)) {
+                    throw new Error(`Duplicate layer shortName "${shortName}"`);
+                }
+                shortNames.add(shortName);
             }
         }
     }

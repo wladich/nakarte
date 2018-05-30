@@ -302,8 +302,9 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
             progressCallback(tileInfo.progressInc, progressRange);
             composer.putTile(tileInfo);
-            if (tileInfo.image) {
-                renderedLayers.add(tileInfo.layer);
+            const {image, draw, layer} = tileInfo;
+            if ((image || draw) && !layer._layerDummy) {
+                renderedLayers.add(layer);
             }
         }
         const dataUrl = composer.getDataUrl();
@@ -316,7 +317,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
         );
     }
-    return { images: pageImagesInfo, renderedLayers };
+    return {images: pageImagesInfo, renderedLayers};
 }
 
 
