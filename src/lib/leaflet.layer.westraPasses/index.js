@@ -12,7 +12,7 @@ L.Layer.WestraPasses = L.Layer.extend({
 
         initialize: function(baseUrl, options) {
             L.setOptions(this, options);
-            this.markers = new WestraPassesMarkers(baseUrl);
+            this.markers = new WestraPassesMarkers(baseUrl, options.markersOptions);
             this.regions1 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileRegions1, {
                     className: 'westra-region-polygon',
                     onEachFeature: this._setRegionLabel.bind(this, 'regions1')
