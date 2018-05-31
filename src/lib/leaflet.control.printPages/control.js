@@ -83,7 +83,7 @@ L.Control.PrintPages = L.Control.extend({
             this.pagesNum = ko.observable(0);
             this.pagesNumLabel = ko.pureComputed(this._pagesNumLabel, this);
             this.gridOn = ko.observable(false);
-            this.magneticMerisiansdOn = ko.observable(false);
+            this.magneticMeridiansOn = ko.observable(false);
 
             //hash state notifications
             this.scale.subscribe(this.notifyChange, this);
@@ -91,7 +91,7 @@ L.Control.PrintPages = L.Control.extend({
             this.resolution.subscribe(this.notifyChange, this);
             this.zoomLevel.subscribe(this.notifyChange, this);
             this.gridOn.subscribe(this.notifyChange, this);
-            this.magneticMerisiansdOn.subscribe(this.notifyChange, this);
+            this.magneticMeridiansOn.subscribe(this.notifyChange, this);
         },
 
         onAdd: function(map) {
@@ -212,7 +212,7 @@ L.Control.PrintPages = L.Control.extend({
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
             }
-            if (this.magneticMerisiansdOn()) {
+            if (this.magneticMeridiansOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
             decorationLayers.push(new OverlayScale());
@@ -248,7 +248,7 @@ L.Control.PrintPages = L.Control.extend({
             if (this.gridOn()) {
                 decorationLayers.push(new Grid());
             }
-            if (this.magneticMerisiansdOn()) {
+            if (this.magneticMeridiansOn()) {
                 decorationLayers.push(new MagneticMeridians());
             }
             decorationLayers.push(new OverlayScale());
@@ -420,7 +420,7 @@ L.Control.PrintPages = L.Control.extend({
                     state.push(page._rotated ? '1' : '0');
                 }
                 let flags =
-                    (this.magneticMerisiansdOn() ? 1 : 0) |
+                    (this.magneticMeridiansOn() ? 1 : 0) |
                     (this.gridOn() ? 2 : 0);
                 state.push(flags);
 
@@ -456,7 +456,7 @@ L.Control.PrintPages = L.Control.extend({
             if (state.length) {
                 const flags = parseInt(state.shift(), 10);
                 if (flags >= 0  && flags <= 3) {
-                    this.magneticMerisiansdOn(!!(flags & 1));
+                    this.magneticMeridiansOn(!!(flags & 1));
                     this.gridOn(!!(flags & 2));
                 }
             }
