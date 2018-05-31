@@ -416,14 +416,16 @@ export default function getLayers() {
                     order: 11400,
                     isDefault: true,
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
-                            code: 'Wp',
+                        code: 'Wp',
+                        print: true,
+                        scaleDependent: true,
+                        isOverlay: true,
+                        markersOptions: {
                             isOverlay: true,
                             isOverlayTransparent: true,
-                            print: true,
-                            scaleDependent: true,
                             shortName: 'passes'
                         }
-                    )
+                    })
                 },
                 // {
                 //     title: 'Tracks',
