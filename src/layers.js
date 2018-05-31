@@ -420,6 +420,8 @@ export default function getLayers() {
                         print: true,
                         scaleDependent: true,
                         isOverlay: true,
+                        isOverlayTransparent: true,
+                        shortName: 'passes',
                         markersOptions: {
                             isOverlay: true,
                             isOverlayTransparent: true,
