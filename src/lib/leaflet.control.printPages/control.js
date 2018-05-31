@@ -488,8 +488,7 @@ L.Control.PrintPages = L.Control.extend({
         getFileName: function({renderedLayers, scale, width, height, extension}) {
             let fileName = '';
 
-            let baseLayer;
-            let overlayLayer;
+            let opaqueLayer;
             const transparentOverlayLayers = [];
 
             renderedLayers.forEach(layer => {
@@ -509,20 +508,18 @@ L.Control.PrintPages = L.Control.extend({
                     if (isOverlayTransparent) {
                         transparentOverlayLayers.push(layer);
                     } else {
-                        overlayLayer = layer;
+                        opaqueLayer = layer;
                     }
-                } else {
-                    baseLayer = layer;
+                } else if (!opaqueLayer) {
+                    opaqueLayer = layer;
                 }
             });
 
             const appendLayerShortName = (layer) => {
                 fileName += `${layer.options.shortName}_`;
             }
-            if (overlayLayer) {
-                appendLayerShortName(overlayLayer);
-            } else if (baseLayer) {
-                appendLayerShortName(baseLayer);
+            if (opaqueLayer) {
+                appendLayerShortName(opaqueLayer);
             }
             transparentOverlayLayers.forEach(appendLayerShortName);
 
