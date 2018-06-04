@@ -13,4 +13,5 @@
 .leaflet-coordinates-menu-fmt{
     color: #aaa;
     margin-left: 0.5em;
+    float: right;
 }
