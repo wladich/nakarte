@@ -5,7 +5,7 @@ import {saveNktk} from './nktk';
 function saveGpx(segments, name, points) {
     var gpx = [],
         x, y,
-        time = new Date(0).toISOString();
+        time = '1970-01-01T00:00:00.001Z';
 
     gpx.push('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>');
     gpx.push(
