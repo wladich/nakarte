@@ -194,8 +194,9 @@ function enableConfig(control, layers) {
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
-                        l.isOverlay ? this.addOverlay(l.layer, l.title) : this.addBaseLayer(l.layer, l.title);
-                        if (!l.isOverlay && this._map.hasLayer(l.layer)) {
+                        const { layer: { options: { isOverlay } } } = l
+                        isOverlay ? this.addOverlay(l.layer, l.title) : this.addBaseLayer(l.layer, l.title);
+                        if (!isOverlay && this._map.hasLayer(l.layer)) {
                               hasBaselayerOnMap = true;
                         }
                     }
@@ -203,7 +204,7 @@ function enableConfig(control, layers) {
                 // если нет активного базового слоя, включить первый, если он есть
                 if (!hasBaselayerOnMap) {
                     for (let layer of enabledLayers) {
-                        if (!layer.isOverlay) {
+                        if (!layer.layer.options.isOverlay) {
                             this._map.addLayer(layer.layer);
                             break;
                         }
@@ -395,6 +396,7 @@ ${buttonsHtml}`;
             createCustomLayer: function(fieldValues) {
                 const serialized = this.serializeCustomLayer(fieldValues);
                 const tileLayer = L.tileLayer(fieldValues.url, {
+                        isOverlay: fieldValues.isOverlay,
                         tms: fieldValues.tms,
                         maxNativeZoom: fieldValues.maxZoom,
                         scaleDependent: fieldValues.scaleDependent,
@@ -407,7 +409,6 @@ ${buttonsHtml}`;
 
                 const customLayer = {
                     title: fieldValues.name,
-                    isOverlay: fieldValues.isOverlay,
                     isDefault: false,
                     isCustom: true,
                     serialized: serialized,
@@ -464,7 +465,7 @@ ${buttonsHtml}`;
 
                 const newLayer = this.createCustomLayer(newFieldValues);
                 this._customLayers.splice(layerPos, 0, newLayer);
-                if (this._map.hasLayer(layer.layer) && (!layer.isOverlay || newLayer.isOverlay)) {
+                if (this._map.hasLayer(layer.layer) && (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);

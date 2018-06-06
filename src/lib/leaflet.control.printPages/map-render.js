@@ -217,7 +217,7 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
             layerPromises.push(tilePromise.tilePromise);
             let progressInc = (layer._printProgressWeight || 1) / count;
             tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc}, tileInfo));
+                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc, layer}, tileInfo));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
@@ -276,6 +276,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
     }
     progressRange *= pages.length;
     const pageImagesInfo = [];
+    const renderedLayers = new Set();
     for (let page of pages) {
         let destPixelSize = page.printSize.multiplyBy(resolution / 25.4).round();
         let pixelBounds = L.bounds(
@@ -301,6 +302,10 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
             progressCallback(tileInfo.progressInc, progressRange);
             composer.putTile(tileInfo);
+            const {image, draw, layer} = tileInfo;
+            if ((image || draw) && !layer._layerDummy) {
+                renderedLayers.add(layer);
+            }
         }
         const dataUrl = composer.getDataUrl();
         let data = dataUrl.substring(dataUrl.indexOf(',') + 1);
@@ -312,7 +317,7 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
             }
         );
     }
-    return pageImagesInfo;
+    return {images: pageImagesInfo, renderedLayers};
 }
 
 
