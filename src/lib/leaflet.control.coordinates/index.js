@@ -63,15 +63,16 @@ L.Control.Coordinates = L.Control.extend({
             this._link = link;
 
             barContainer.innerHTML = `
-                <div data-bind="with: formattedCoordinates()">
+                <div class="leaflet-coordinates-container" data-bind="with: formattedCoordinates()">
                     <span data-bind="html: lat"></span>
                     &nbsp;
                     <span data-bind="html: lng"></span>
                 </div>
+                <hr class="leaflet-coordinates-divider" />
                 <div data-bind="foreach: formats">
-                    <div>
+                    <div class="leaflet-coordinates-format">
                         <label>
-                            <input type="radio" data-bind="checked: $parent.formatCode, value: code" />
+                            <input type="radio" data-bind="checked: $parent.formatCode, value: code" class="leaflet-coordinates-format-radio"/>
                             <span data-bind="html: label"></span>
                         </label>
                     </div>
@@ -131,7 +132,7 @@ L.Control.Coordinates = L.Control.extend({
                     text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
                     callback: () => copyToClipboard(coordinates, e.originalEvent)
                 }, options);
-            }
+            };
 
             const header = createItem(this.format(), {
                 text: '<b>Copy coordinates to clipboard</b>',
