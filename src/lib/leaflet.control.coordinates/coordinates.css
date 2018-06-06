@@ -10,8 +10,28 @@
     cursor: crosshair;
 }
 
-.leaflet-coordinates-menu-fmt{
+.leaflet-coordinates-menu-fmt {
     color: #aaa;
     margin-left: 0.5em;
     float: right;
+}
+
+.leaflet-coordinates-container {
+    padding: 3px 5px;
+}
+
+.leaflet-coordinates-format {
+    padding: 2px 0;
+}
+
+.leaflet-coordinates-format-radio {
+    margin-top: -1px;
+    vertical-align: middle;
+}
+
+.leaflet-coordinates-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin-top: 0px;
+    margin-bottom: 6px;
 }
