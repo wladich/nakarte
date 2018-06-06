@@ -79,6 +79,8 @@ L.Control.Coordinates = L.Control.extend({
                 </div>
             `;
 
+            barContainer.title = "Right click on map to copy coordinates";
+
             this.loadStateFromStorage();
             ko.applyBindings(this, container);
             L.DomEvent.on(link, 'click', this.onClick, this);
