@@ -22,12 +22,10 @@ function parseLatLng(signedDegrees, isLat) {
         direction = (signedDegrees < 0) ? 'W' : 'E';
     }
 
-    const degreesPadding = isLat ? 2 : 3;
-
     return {
-        signedDegrees: pad(signedDegrees, degreesPadding, 5),
-        degrees:       pad(degrees, degreesPadding, 5),
-        intDegrees:    pad(intDegrees, degreesPadding),
+        signedDegrees: pad(signedDegrees, 0, 5),
+        degrees:       pad(degrees, 0, 5),
+        intDegrees:    pad(intDegrees, 0),
         minutes:       pad(minutes, 2, 3),
         intMinutes:    pad(intMinutes, 2),
         seconds:       pad(seconds, 2, 2),
