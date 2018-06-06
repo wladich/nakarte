@@ -29,7 +29,7 @@ function parseLatLng(signedDegrees, isLat) {
         degrees:       pad(degrees, degreesPadding, 5),
         intDegrees:    pad(intDegrees, degreesPadding),
         minutes:       pad(minutes, 2, 3),
-        intMinutes:    pad(minutes, 2),
+        intMinutes:    pad(intMinutes, 2),
         seconds:       pad(seconds, 2, 2),
         direction
     };
