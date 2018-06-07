@@ -189,7 +189,7 @@ const LocateControl = L.Control.extend({
         },
 
         _storePositionToLocalStorage: function(pos) {
-            const coords = {lat: pos.coords.latitude, lon: pos.coords.latitude};
+            const coords = {lat: pos.coords.latitude, lon: pos.coords.longitude};
             localStorage.setItem(LOCALSTORAGE_POSITION, JSON.stringify(coords));
         },
 
