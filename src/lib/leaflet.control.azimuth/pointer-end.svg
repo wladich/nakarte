@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+    <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="4" refY="4" orient="270" markerUnits="strokeWidth">
+            <path d="M0,0 L10,4 L0,8 z" fill="#3388ff"/>
+        </marker>
+    </defs>
     <g>
         <ellipse ry="15" rx="15" cy="20" cx="20" fill="#777" fill-opacity="0.5"/>
-        <line x1="20" y1="18" x2="25" y2="23" stroke="#3388ff" stroke-width="1.5"/>
-        <line x1="20" y1="18" x2="15" y2="23" stroke="#3388ff" stroke-width="1.5"/>
-        <line x1="20" y1="18" x2="20" y2="35" stroke="#3388ff" stroke-width="1"/>
+        <line x1="20" y1="20" x2="20" y2="35" stroke="#3388ff" stroke-width="1" marker-start="url(#arrow)"/>
     </g>
 </svg>
