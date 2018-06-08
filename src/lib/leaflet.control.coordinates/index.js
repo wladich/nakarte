@@ -46,6 +46,10 @@ L.Control.Coordinates = L.Control.extend({
                 return UNKNOWN_COORDINATES;
             }, this);
 
+            this.wrapperClass = ko.pureComputed(() => {
+                return this.format().wrapperClass;
+            }, this);
+
             this.formatCode.subscribe((_) => {
                 this.saveStateToStorage();
             }, this);
@@ -63,18 +67,19 @@ L.Control.Coordinates = L.Control.extend({
             this._link = link;
 
             barContainer.innerHTML = `
-                <div class="leaflet-coordinates-container" data-bind="with: formattedCoordinates()">
-                    <span data-bind="html: lat"></span>
-                    &nbsp;
-                    <span data-bind="html: lng"></span>
-                </div>
-                <hr class="leaflet-coordinates-divider" />
-                <div data-bind="foreach: formats">
-                    <div class="leaflet-coordinates-format">
-                        <label>
-                            <input type="radio" data-bind="checked: $parent.formatCode, value: code" class="leaflet-coordinates-format-radio"/>
-                            <span data-bind="html: label"></span>
-                        </label>
+                <div data-bind="css: wrapperClass">
+                    <div class="leaflet-coordinates-container" data-bind="with: formattedCoordinates()">
+                        <span class="leaflet-coordinates-latitude" data-bind="html: lat"></span>
+                        <span class="leaflet-coordinates-longitude" data-bind="html: lng"></span>
+                    </div>
+                    <hr class="leaflet-coordinates-divider" />
+                    <div data-bind="foreach: formats">
+                        <div>
+                            <label title="">
+                                <input type="radio" data-bind="checked: $parent.formatCode, value: code" class="leaflet-coordinates-format-radio"/>
+                                <span data-bind="html: label"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             `;
@@ -121,6 +126,7 @@ L.Control.Coordinates = L.Control.extend({
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
             this._isEnabled = !!enabled;
+            this.latlng(null);
         },
 
         onMapRightClick: function(e) {

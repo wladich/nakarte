@@ -16,12 +16,28 @@
     float: right;
 }
 
-.leaflet-coordinates-container {
-    padding: 3px 5px;
+.leaflet-coordinates-wrapper-signed-degrees {
+    min-width: 11em;
 }
 
-.leaflet-coordinates-format {
-    padding: 2px 0;
+.leaflet-coordinates-wrapper-degrees {
+    min-width: 14em;
+}
+
+.leaflet-coordinates-wrapper-degrees-and-minutes {
+    min-width: 14.5em;
+}
+
+.leaflet-coordinates-wrapper-degrees-and-minutes-and-seconds {
+    min-width: 16em;
+}
+
+.leaflet-coordinates-container {
+    padding: 0 5px;
+}
+
+.leaflet-coordinates-longitude {
+    float: right;
 }
 
 .leaflet-coordinates-format-radio {
@@ -33,5 +49,5 @@
     border: none;
     border-top: 1px solid #eee;
     margin-top: 0px;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
