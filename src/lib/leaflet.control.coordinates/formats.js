@@ -1,4 +1,4 @@
-function pad(value, size, precision = 0) {
+function formatNumber(value, size, precision = 0) {
     if (value < 0) {
       return value.toFixed(precision);
     }
@@ -8,35 +8,35 @@ function pad(value, size, precision = 0) {
     return value.toFixed(precision).padStart(size + precision, '0');
 }
 
-function parseLatLng(signedDegrees, isLat) {
-    const degrees    = Math.abs(signedDegrees);
+function coordinatePresentations(coordinate, isLat) {
+    const degrees    = Math.abs(coordinate);
     const intDegrees = Math.floor(degrees);
     const minutes    = (degrees - intDegrees) * 60;
     const intMinutes = Math.floor(minutes);
     const seconds    = (minutes - intMinutes) * 60;
 
-    let direction
+    let direction;
     if (isLat) {
-        direction = (signedDegrees < 0) ? 'S' : 'N';
+        direction = (coordinate < 0) ? 'S' : 'N';
     } else {
-        direction = (signedDegrees < 0) ? 'W' : 'E';
+        direction = (coordinate < 0) ? 'W' : 'E';
     }
 
     return {
-        signedDegrees: pad(signedDegrees, 0, 5),
-        degrees:       pad(degrees, 0, 5),
-        intDegrees:    pad(intDegrees, 0),
-        minutes:       pad(minutes, 2, 3),
-        intMinutes:    pad(intMinutes, 2),
-        seconds:       pad(seconds, 2, 2),
+        signedDegrees: formatNumber(coordinate, 0, 5),
+        degrees:       formatNumber(degrees, 0, 5),
+        intDegrees:    formatNumber(intDegrees, 0),
+        minutes:       formatNumber(minutes, 2, 3),
+        intMinutes:    formatNumber(intMinutes, 2),
+        seconds:       formatNumber(seconds, 2, 2),
         direction
     };
 }
 
-function transform(latlng, format) {
+function formatLatLng(latlng, format) {
     return {
-        lat: format(parseLatLng(latlng.lat, true)),
-        lng: format(parseLatLng(latlng.lng, false))
+        lat: format.formatter(coordinatePresentations(latlng.lat, true)),
+        lng: format.formatter(coordinatePresentations(latlng.lng, false))
     }
 }
 
@@ -44,47 +44,33 @@ const SIGNED_DEGREES = {
     code: 'd',
     label: '±ddd.ddddd',
     wrapperClass: 'leaflet-coordinates-wrapper-signed-degrees',
-    process: (latlng) => {
-        return transform(latlng, ({signedDegrees}) => signedDegrees);
-    }
+    formatter: ({signedDegrees}) => signedDegrees
 };
 
 const DEGREES = {
     code: 'D',
     label: 'ddd.ddddd°',
     wrapperClass: 'leaflet-coordinates-wrapper-degrees',
-    process: (latlng) => {
-        return transform(latlng, ({degrees, direction}) => {
-            return `${direction} ${degrees}°`;
-        });
-    }
+    formatter: ({degrees, direction}) => `${direction} ${degrees}°`
 };
 
 const DEGREES_AND_MINUTES = {
     code: 'DM',
     label: 'ddd°mm.mmm′',
     wrapperClass: 'leaflet-coordinates-wrapper-degrees-and-minutes',
-    process: (latlng) => {
-        return transform(latlng, ({intDegrees, minutes, direction}) => {
-            return `${direction} ${intDegrees}°${minutes}′`;
-        });
-    }
+    formatter: ({intDegrees, minutes, direction}) => `${direction} ${intDegrees}°${minutes}′`
 };
 
 const DEGREES_AND_MINUTES_AND_SECONDS = {
     code: 'DMS',
     label: 'ddd°mm′ss.s″',
     wrapperClass: 'leaflet-coordinates-wrapper-degrees-and-minutes-and-seconds',
-    process: (latlng) => {
-        return transform(latlng, ({intDegrees, intMinutes, seconds, direction}) => {
-            return `${direction} ${intDegrees}°${intMinutes}′${seconds}″`;
-        });
-    }
-};
+    formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`};
 
 export default {
     SIGNED_DEGREES,
     DEGREES,
     DEGREES_AND_MINUTES,
-    DEGREES_AND_MINUTES_AND_SECONDS
+    DEGREES_AND_MINUTES_AND_SECONDS,
+    formatLatLng
 }
