@@ -6,6 +6,7 @@
     bottom: 0;
     z-index: 2000;
     cursor: default;
+    border-top: 1px solid #ddd;
 }
 
 .elevation-profile-properties {
@@ -13,7 +14,7 @@
     height: 100%;
     float: left;
     width: 240px;
-    border-right: 1px solid #dddddd;
+    border-right: 1px solid #ddd;
 }
 
 .elevation-profile-properties table {
@@ -43,7 +44,7 @@
     position: relative;
     height: 100%;
     float: left;
-    width: 50px;
+    width: 35px;
 }
 
 .elevation-profile-drawingContainer {
@@ -52,6 +53,7 @@
     overflow-x: scroll;
     overflow-y: hidden;
     position: relative;
+    margin-right: 35px;
 }
 
 .elevation-profile-grid-label {
@@ -115,11 +117,7 @@
 }
 
 .elevation-profile-cursor-hidden {
-    visibility: hidden;
-}
-
-.elevation-profile-cursor-hidden-while-drag {
-    visibility: hidden;
+    display: none;
 }
 
 .elevation-profile-selection {
@@ -166,8 +164,7 @@
 
 .elevation-profile-close {
     position: absolute;
-    /*right: 0;*/
-    left: 244px;
+    right: 10px;
     width: 16px;
     height: 16px;
     background-image: url("close.png");

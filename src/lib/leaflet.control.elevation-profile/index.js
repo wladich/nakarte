@@ -246,7 +246,17 @@ const ElevationProfile = L.Class.extend({
                     self._addTo(map);
                 });
             this.values = null;
+        },
 
+        _onWindowResize: function() {
+            this._resizeGraph();
+        },
+
+        _resizeGraph: function() {
+            this.svgWidth = this.drawingContainer.clientWidth * this.horizZoom;
+            this.svg.setAttribute('width', this.svgWidth + 'px');
+            this.updateGraph();
+            this.updateGraphSelection();
         },
 
         _addTo: function(map) {
@@ -301,6 +311,7 @@ const ElevationProfile = L.Class.extend({
             this.svgDragEvents.on('drag', this.onSvgDrag, this);
             this.svgDragEvents.on('click', this.onSvgClick, this);
             L.DomEvent.on(svg, 'dblclick', this.onSvgDblClick, this);
+            L.DomEvent.on(window, 'resize', this._onWindowResize, this);
         },
 
         removeFrom: function(map) {
@@ -314,6 +325,7 @@ const ElevationProfile = L.Class.extend({
             map.removeLayer(this.polyline);
             map.removeLayer(this.trackMarker);
             map.removeLayer(this.polyLineSelection);
+            L.DomEvent.off(window, 'resize', this._onWindowResize, this);
             this._map = null;
             this.fire('remove');
             return this;
@@ -630,7 +642,7 @@ const ElevationProfile = L.Class.extend({
             this.graphCursor.style.left = x + 'px';
             this.graphCursorLabel.style.left = x + 'px';
             if (this.drawingContainer.getBoundingClientRect().left - this.drawingContainer.scrollLeft + x +
-                this.graphCursorLabel.offsetWidth >= this._container.getBoundingClientRect().right) {
+                this.graphCursorLabel.offsetWidth >= this.drawingContainer.getBoundingClientRect().right) {
                 L.DomUtil.addClass(this.graphCursorLabel, 'elevation-profile-cursor-label-left');
             } else {
                 L.DomUtil.removeClass(this.graphCursorLabel, 'elevation-profile-cursor-label-left');
@@ -659,8 +671,7 @@ const ElevationProfile = L.Class.extend({
             if (!this.values) {
                 return;
             }
-            var x = offestFromEvent(e).offsetX;
-            var ind = (x / (this.svgWidth - 1) * (this.values.length - 1));
+            var ind = this.xToIndex(offestFromEvent(e).offsetX);
             this.setCursorPosition(ind);
         },
 
