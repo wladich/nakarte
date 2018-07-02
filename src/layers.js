@@ -7,7 +7,6 @@ import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses';
 import 'lib/leaflet.layer.nordeskart';
-// import 'lib/leaflet.layer.tracks-collection';
 import 'lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
 import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
@@ -429,19 +428,6 @@ export default function getLayers() {
                         }
                     })
                 },
-                // {
-                //     title: 'Tracks',
-                //     order: 1150,
-                //     isOverlay: true,
-                //     isDefault: true,
-                //     layer: new L.TracksCollection({
-                //             tms: true,
-                //             maxNativeZoom: 12,
-                //             code: 'Tc',
-                //             print: false,
-                //         }
-                //     )
-                // },
             ]
         },
         {
