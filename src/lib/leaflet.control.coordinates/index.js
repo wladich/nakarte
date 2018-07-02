@@ -6,9 +6,9 @@ import Contextmenu from 'lib/contextmenu';
 import {makeButtonWithBar} from 'lib/leaflet.control.commons';
 import safeLocalStorage from 'lib/safe-localstorage';
 import 'lib/controls-styles/controls-styles.css';
-import FORMATS from './formats';
+import formats from './formats';
 
-const DEFAULT_FORMAT = FORMATS.DEGREES;
+const DEFAULT_FORMAT = formats.DEGREES;
 const UNKNOWN_COORDINATES = {
     lat: '-------',
     lng: '-------'
@@ -20,28 +20,32 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         formats: [
-            FORMATS.SIGNED_DEGREES,
-            FORMATS.DEGREES,
-            FORMATS.DEGREES_AND_MINUTES,
-            FORMATS.DEGREES_AND_MINUTES_AND_SECONDS
+            formats.SIGNED_DEGREES,
+            formats.DEGREES,
+            formats.DEGREES_AND_MINUTES,
+            formats.DEGREES_AND_MINUTES_AND_SECONDS
         ],
 
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
 
             this.latlng = ko.observable();
-            this.formatCode = ko.observable(DEFAULT_FORMAT.code);
-
-            this.format = ko.pureComputed(() => {
-                for (let format of this.formats) {
-                    if (format.code === this.formatCode()) return format;
+            this.format = ko.observable(DEFAULT_FORMAT);
+            this.formatCode = ko.pureComputed({
+                read: () => this.format().code,
+                write: (value) => {
+                    for (let format of this.formats) {
+                        if (value === format.code) {
+                            this.format(format);
+                            break
+                        }
+                    }
                 }
-                return DEFAULT_FORMAT;
-            }, this);
+            });
 
             this.formattedCoordinates = ko.pureComputed(() => {
                 if (this.latlng()) {
-                    return this.format().process(this.latlng().wrap());
+                    return formats.formatLatLng(this.latlng().wrap(), this.format());
                 }
                 return UNKNOWN_COORDINATES;
             }, this);
@@ -133,7 +137,7 @@ L.Control.Coordinates = L.Control.extend({
             L.DomEvent.stop(e);
 
             const createItem = (format, options = {}) => {
-                const {lat, lng} = format.process(e.latlng.wrap());
+                const {lat, lng} = formats.formatLatLng(e.latlng.wrap(), format);
                 const coordinates = `${lat} ${lng}`;
 
                 return Object.assign({
