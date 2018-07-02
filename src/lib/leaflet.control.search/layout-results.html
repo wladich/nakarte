@@ -1,8 +1,0 @@
-<!-- ko if: results().length -->
-<div class="search-results-list" data-bind="foreach: results">
-    <div class="result" data-bind="click: $root.onResultClick.bind($root), css: {highlighted: $root.highlightedResult() === $data}">
-        <p class="search-result-name" data-bind="text: name"></p>
-        <p class="search-result-address" data-bind="text: address"></p>
-    </div>
-</div>
-<!-- /ko -->
