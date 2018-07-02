@@ -11,7 +11,7 @@
 }
 
 .leaflet-coordinates-menu-fmt {
-    color: #aaa;
+    color: hsl(0, 0%, 66%);
     margin-left: 0.5em;
     float: right;
 }
@@ -47,7 +47,7 @@
 
 .leaflet-coordinates-divider {
     border: none;
-    border-top: 1px solid #eee;
+    border-top: 1px solid hsl(0, 0%, 92%);
     margin-top: 0px;
     margin-bottom: 3px;
 }
