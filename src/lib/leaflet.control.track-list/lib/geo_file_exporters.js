@@ -5,7 +5,7 @@ import {saveNktk} from './nktk';
 function saveGpx(segments, name, points) {
     var gpx = [],
         x, y,
-        time = '1970-01-01T00:00:01.000Z';
+        fakeTime = '1970-01-01T00:00:01.000Z';
 
     gpx.push('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>');
     gpx.push(
@@ -34,7 +34,7 @@ function saveGpx(segments, name, points) {
                             x = p.lng.toFixed(6);
                             y = p.lat.toFixed(6);
                             //time element is not necessary, added for compatibility to Garmin Connect only
-                            gpx.push('\t\t\t<trkpt lat="' + y + '" lon="' + x + '"><time>' + time + '</time></trkpt>');
+                            gpx.push('\t\t\t<trkpt lat="' + y + '" lon="' + x + '"><time>' + fakeTime + '</time></trkpt>');
                         }
                     );
                     gpx.push('\t\t</trkseg>');
