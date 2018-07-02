@@ -5,3 +5,4 @@ get_secrets.sh
 deploy_production.sh
 deploy_staging.sh
 secrets.js
+_trash
