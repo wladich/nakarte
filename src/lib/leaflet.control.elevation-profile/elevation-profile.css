@@ -53,8 +53,7 @@
     overflow-x: scroll;
     overflow-y: hidden;
     position: relative;
-    margin-right: 35px;
-}
+ }
 
 .elevation-profile-grid-label {
     font-family: Arial sans-serif;
@@ -117,7 +116,7 @@
 }
 
 .elevation-profile-cursor-hidden {
-    display: none;
+    visibility: hidden;
 }
 
 .elevation-profile-selection {
@@ -163,13 +162,11 @@
 }
 
 .elevation-profile-close {
-    position: absolute;
-    right: 10px;
+    float: right;
+    margin: 4px;
     width: 16px;
     height: 16px;
     background-image: url("close.png");
-    margin-left: 4px;
-    margin-top: 4px;
     cursor: pointer;
 }
 
