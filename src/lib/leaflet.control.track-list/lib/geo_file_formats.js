@@ -100,6 +100,7 @@ function parseGpx(txt, name, preferNameFromFile) {
                 error = 'CORRUPT';
                 continue;
             }
+            waypoint.tooltip = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('desc')[0]) || '');
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);
         }
