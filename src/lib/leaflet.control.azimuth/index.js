@@ -63,8 +63,8 @@ L.Control.Azimuth = L.Control.extend({
                 end: null
             };
             const iconSingle = L.icon({iconUrl: iconPointer, iconSize: [30, 30]});
-            const iconStart = L.icon({iconUrl: iconPointerStart, iconSize: [40, 40]});
-            const iconEnd = L.icon({iconUrl: iconPointerEnd, iconSize: [40, 40]});
+            const iconStart = L.icon({iconUrl: iconPointerStart, iconSize: [30, 30]});
+            const iconEnd = L.icon({iconUrl: iconPointerEnd, iconSize: [30, 45]});
             this.markers = {
                 single: L.marker([0, 0], {icon: iconSingle, draggable: true, which: 'start'})
                     .on('drag', this.onMarkerDrag, this)
