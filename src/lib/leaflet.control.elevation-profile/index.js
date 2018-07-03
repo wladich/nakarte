@@ -253,10 +253,13 @@ const ElevationProfile = L.Class.extend({
         },
 
         _resizeGraph: function() {
-            this.svgWidth = this.drawingContainer.clientWidth * this.horizZoom;
-            this.svg.setAttribute('width', this.svgWidth + 'px');
-            this.updateGraph();
-            this.updateGraphSelection();
+            const newSvgWidth = this.drawingContainer.clientWidth * this.horizZoom;
+            if (this.svgWidth < this.drawingContainer.clientWidth) {
+                this.svgWidth = newSvgWidth;
+                this.svg.setAttribute('width', this.svgWidth + 'px');
+                this.updateGraph();
+                this.updateGraphSelection();
+            }
         },
 
         _addTo: function(map) {
@@ -302,7 +305,11 @@ const ElevationProfile = L.Class.extend({
                 svgHeight = this.svgHeight = this.drawingContainer.clientHeight;
             var svg = this.svg = createSvg('svg', {width: svgWidth, height: svgHeight}, this.drawingContainer);
             L.DomEvent.on(svg, 'mousemove', this.onSvgMouseMove, this);
-            L.DomEvent.on(svg, 'mouseenter', this.onSvgEnter, this);
+            // We should handle mouseenter event, but due to a
+            // bug in Chrome (https://bugs.chromium.org/p/chromium/issues/detail?id=846738)
+            // this event is emitted while resizing window by dragging right window frame
+            // which causes cursor to appeat while resizing
+            L.DomEvent.on(svg, 'mousemove', this.onSvgEnter, this);
             L.DomEvent.on(svg, 'mouseleave', this.onSvgLeave, this);
             L.DomEvent.on(svg, 'mousewheel', this.onSvgMouseWheel, this);
             this.svgDragEvents = new DragEvents(this.svg, null, {dragButtons: [0, 2]});
