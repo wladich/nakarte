@@ -92,6 +92,7 @@ L.Control.Panoramas = L.Control.extend({
                 'leaflet-contol-panoramas', 'Show panoramas', 'icon-panoramas');
             this._container = container;
             L.DomEvent.on(link, 'click', this.onButtonClick, this);
+            L.DomEvent.on(document, 'keyup', this.onKeyUp, this);
             barContainer.innerHTML = `
                  <div class="panoramas-list" data-bind="foreach: providers">
                      <div>
@@ -108,10 +109,21 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         onButtonClick: function() {
+            this.switchControl();
+        },
+
+        switchControl: function() {
+
             if (this.controlEnabled) {
                 this.disableControl();
             } else {
                 this.enableControl();
+            }
+        },
+
+        onKeyUp: function(e) {
+            if (e.keyCode === 'P'.codePointAt(0) && e.altKey) {
+                this.switchControl();
             }
         },
 
