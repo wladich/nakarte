@@ -94,12 +94,7 @@ function parseGpx(txt, name, preferNameFromFile) {
                 error = 'CORRUPT';
                 continue;
             }
-            try {
-                waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]));
-            }  catch (e) {
-                error = 'CORRUPT';
-                continue;
-            }
+            waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]) || '');
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);
         }
