@@ -143,6 +143,7 @@ function parseGpx(txt, name, preferNameFromFile) {
 
 function parseOziRte(txt, name) {
     let error, segments = [];
+    txt = stripBom(txt);
     const lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Route File') !== 0) {
         return null;
@@ -181,6 +182,7 @@ function parseOziRte(txt, name) {
 function parseOziPlt(txt, name) {
     var error;
     var segments = [];
+    txt = stripBom(txt);
     var lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Track Point File') !== 0) {
         return null;
@@ -256,6 +258,7 @@ function parseOziWpt(txt, name) {
         lines, line,
         i,
         lat, lng, pointName, fields;
+    txt = stripBom(txt);
     lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Waypoint File') !== 0) {
         return null;
