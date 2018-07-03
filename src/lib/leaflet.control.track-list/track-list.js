@@ -912,6 +912,11 @@ L.Control.TrackList = L.Control.extend({
             marker.label = label;
         },
 
+        setMarkerTooltip: function(marker, desc) {
+            //property tooltip natively used by leaflet
+            marker.tooltip = desc;
+        },
+
         addPoint: function(track, srcPoint) {
             var marker = {
                 latlng: L.latLng([srcPoint.lat, srcPoint.lng]),
@@ -919,6 +924,7 @@ L.Control.TrackList = L.Control.extend({
             };
             this.setMarkerIcon(marker);
             this.setMarkerLabel(marker, srcPoint.name);
+            this.setMarkerTooltip(marker, srcPoint.tooltip);
             track.markers.push(marker);
             marker._parentTrack = track;
             return marker;
@@ -927,6 +933,7 @@ L.Control.TrackList = L.Control.extend({
         onMarkerClick: function(e) {
             new Contextmenu([
                     {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
+                    {text: 'Comment', callback: this.commentPoint.bind(this, e.marker)},
                     {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
                 ]
@@ -946,6 +953,15 @@ L.Control.TrackList = L.Control.extend({
             var newLabel = prompt('New point name', marker.label);
             if (newLabel !== null) {
                 this.setMarkerLabel(marker, newLabel);
+                this._markerLayer.updateMarker(marker);
+            }
+        },
+
+        commentPoint: function(marker) {
+            this.stopPlacingPoint();
+            var newDesc = prompt('New point description', marker.tooltip);
+            if (newDesc !== null) {
+                this.setMarkerTooltip(marker, newDesc);
                 this._markerLayer.updateMarker(marker);
             }
         },
