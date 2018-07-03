@@ -348,7 +348,15 @@ const ElevationProfile = L.Class.extend({
         },
 
         xToIndex: function(x) {
-            return x / (this.svgWidth - 1) * (this.values.length - 1);
+            var maxIdx = this.values.length - 1;
+
+            var idx = x / (this.svgWidth - 1) * maxIdx;
+
+            if (idx > maxIdx) {
+                idx = maxIdx;
+            }
+
+            return idx;
         },
 
         setTrackMarkerLabel: function(label) {
