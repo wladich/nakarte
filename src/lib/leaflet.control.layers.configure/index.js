@@ -121,7 +121,7 @@ function enableConfig(control, layers) {
             },
 
             showLayersSelectWindow: function() {
-                if (this._configWindowVisible) {
+                if (this._configWindowVisible || this._customLayerWindow) {
                     return;
                 }
                 [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.enabled));
@@ -242,7 +242,7 @@ function enableConfig(control, layers) {
             },
 
             showCustomLayerForm: function(buttons, fieldValues) {
-                if (this._customLayerWindow) {
+                if (this._customLayerWindow || this._configWindowVisible) {
                     return;
                 }
                 this._customLayerWindow =
