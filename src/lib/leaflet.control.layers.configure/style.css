@@ -165,3 +165,8 @@
     transition: background-color 7s ease-in;
     background-color: rgba(0, 0, 0, 0);
 }
+
+.custom-layers-window hr {
+    border: none;
+    border-top: 1px solid hsl(0, 0%, 85%);
+}
