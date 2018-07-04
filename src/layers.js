@@ -955,13 +955,15 @@ export default function getLayers() {
                 'Montenegro topo 250m'],
         },
         {
-            title: 'Mountains maps',
-            layers: ['Mountains by Aleksey Tsvetkov'],
+            title: 'Miscellaneous',
+            layers: [
+                'Mountains by Aleksey Tsvetkov',
+                'Bing imagery acquisition dates',
+                'geocaching.su']
         },
         {
-            title: 'Miscellaneous',
-            layers: ['Bing imagery acquisition dates',
-                'geocaching.su',
+            title: 'Routes and traces',
+            layers: [
                 'OpenStreetMap GPS traces',
                 'Strava heatmap (all)',
                 'Strava heatmap (run)',
