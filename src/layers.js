@@ -904,7 +904,37 @@ export default function getLayers() {
                             shortName: 'czech_geo'
                         }
                     )
-                }
+                },
+                {
+                    title: 'Waymarked Cycling Trails',
+                    isDefault: false,
+                    layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
+                        {
+                            code: 'Wc',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: false,
+                            scaleDependent: true,
+                            shortName: 'cycling_trails',
+                            isOverlayTransparent: true
+                        })
+                },
+                {
+                    title: 'Waymarked Hiking Trails',
+                    isDefault: false,
+                    layer: L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
+                        {
+                            code: 'Wh',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: false,
+                            scaleDependent: true,
+                            shortName: 'hiking_trails',
+                            isOverlayTransparent: true
+                        })
+                },
     ];
 
     const groupsDefs = [
@@ -964,6 +994,8 @@ export default function getLayers() {
         {
             title: 'Routes and traces',
             layers: [
+                'Waymarked Hiking Trails',
+                'Waymarked Cycling Trails',
                 'OpenStreetMap GPS traces',
                 'Strava heatmap (all)',
                 'Strava heatmap (run)',
@@ -1044,6 +1076,8 @@ export default function getLayers() {
         "O-sport",
 
         // line overlays
+        "Waymarked Hiking Trails",
+        "Waymarked Cycling Trails",
         "Norway summer trails",
         "Norway winter trails",
         "Bing imagery acquisition dates",
