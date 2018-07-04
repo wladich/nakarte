@@ -2,7 +2,7 @@ import secrets from './secrets';
 
 export default Object.assign({
     email: 'nakarte@nakarte.tk',
-    googleApiUrl: 'https://maps.googleapis.com/maps/api/js?v=3',
+    googleApiUrl: `https://maps.googleapis.com/maps/api/js?v=3&key=${secrets.google}`,
     westraDataBaseUrl: 'https://nakarte.tk/westraPasses/',
     CORSProxyUrl: 'https://proxy.nakarte.tk/',
     elevationsServer: 'https://elevation.nakarte.tk/',
