@@ -6,7 +6,7 @@ import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
 import safeLocalStorage from 'lib/safe-localstorage';
 
-function enableConfig(control, layers) {
+function enableConfig(control, {layers, customLayersOrder}) {
     const originalOnAdd = control.onAdd;
     const originalUnserializeState = control.unserializeState;
     const originalAddItem = control._addItem;
@@ -14,11 +14,6 @@ function enableConfig(control, layers) {
         return;
     }
     enableTopRow(control);
-
-    control.options = L.Util.extend({
-        customBaseLayersOrder: 999,
-        customOverlaysOrder: 10000
-    }, control.options);
 
     L.Util.extend(control, {
             _configEnabled: true,
@@ -179,7 +174,8 @@ function enableConfig(control, layers) {
                         tms: false,
                         maxZoom: 18,
                         isOverlay: false,
-                        scaleDependent: false
+                        scaleDependent: false,
+                        isTop: true
                     }
                 );
             },
@@ -263,6 +259,7 @@ function enableConfig(control, layers) {
                     scaleDependent: ko.observable(fieldValues.scaleDependent),
                     maxZoom: ko.observable(fieldValues.maxZoom),
                     isOverlay: ko.observable(fieldValues.isOverlay),
+                    isTop: ko.observable(fieldValues.isTop),
                     buttonClicked: function buttonClicked(callbackN) {
                         const fieldValues = {
                             name: dialogModel.name().trim(),
@@ -270,7 +267,8 @@ function enableConfig(control, layers) {
                             tms: dialogModel.tms(),
                             scaleDependent: dialogModel.scaleDependent(),
                             maxZoom: dialogModel.maxZoom(),
-                            isOverlay: dialogModel.isOverlay()
+                            isOverlay: dialogModel.isOverlay(),
+                            isTop: dialogModel.isTop()
                         };
                         console.log(fieldValues);
                         buttons[callbackN].callback(fieldValues);
@@ -283,6 +281,12 @@ function enableConfig(control, layers) {
 <label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: false">Base layer</label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: true">Overlay</label><br/>
+<hr/>
+<label><input type="radio" name="top-or-bottom"
+        data-bind="checked: isTop, checkedValue: true, enable: isOverlay">Place above other layers</label><br/>
+<label><input type="radio" name="top-or-bottom"
+        data-bind="checked: isTop, checkedValue: false, enable: isOverlay">Place below other layers</label><br/>
+<hr/>
 <label><input type="checkbox" data-bind="checked: scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
 <label><input type="checkbox" data-bind="checked: tms" />TMS rows order</label><br />
 
@@ -385,7 +389,8 @@ function enableConfig(control, layers) {
                         print: true,
                         jnx: true,
                         code: serialized,
-                        noCors: true
+                        noCors: true,
+                        isTop: fieldValues.isTop
                     }
                 );
 
@@ -395,7 +400,7 @@ function enableConfig(control, layers) {
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: fieldValues.isOverlay ? this.options.customOverlaysOrder : this.options.customBaseLayersOrder,
+                    order: (fieldValues.isTop ? customLayersOrder : -1),
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
@@ -476,6 +481,10 @@ function enableConfig(control, layers) {
                     if (fieldValues) {
                         if (!this.customLayerExists(fieldValues)) {
                             this._customLayers.push(this.createCustomLayer(fieldValues));
+                        }
+                        // upgrade
+                        if (fieldValues.isTop === undefined) {
+                            fieldValues.isTop = true;
                         }
                         return this.serializeCustomLayer(fieldValues);
                     }

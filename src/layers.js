@@ -1080,6 +1080,7 @@ export default function getLayers() {
         'O-sport',
 
         // line overlays
+        '#custom',
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
         'Norway summer trails',
@@ -1105,7 +1106,7 @@ export default function getLayers() {
     // assign order to layers
     const orderByTitle = {};
     for (let i=0; i < titlesByOrder.length; i++) {
-        const title = titlesByOrder[i];
+        let title = titlesByOrder[i];
         orderByTitle[title] = i + 1;
     }
 
@@ -1180,15 +1181,17 @@ export default function getLayers() {
     // check order definition
     let seenOverlay = false;
     for (let title of titlesByOrder) {
-        if (!titles.has(title)) {
-            throw new Error(`Unknown layer title in order list: ${title}`);
-        }
-        let isOverlay = layersByTitle[title];
-        if (isOverlay) {
-            seenOverlay = true;
-        } else {
-            if (seenOverlay) {
-                throw new Error(`Base layer after overlays: ${title}`);
+        if (title[0] !== '#') {
+            if (!titles.has(title)) {
+                throw new Error(`Unknown layer title in order list: ${title}`);
+            }
+            let isOverlay = layersByTitle[title];
+            if (isOverlay) {
+                seenOverlay = true;
+            } else {
+                if (seenOverlay) {
+                    throw new Error(`Base layer after overlays: ${title}`);
+                }
             }
         }
     }
@@ -1209,6 +1212,6 @@ export default function getLayers() {
         }
     }
 
-    return grouppedLayers;
+    return {layers: grouppedLayers, customLayersOrder: orderByTitle['#custom']};
 }
 
