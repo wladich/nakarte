@@ -89,7 +89,7 @@ L.Control.Panoramas = L.Control.extend({
         onAdd: function(map) {
             this._map = map;
             const {container, link, barContainer} = makeButtonWithBar(
-                'leaflet-contol-panoramas', 'Show panoramas', 'icon-panoramas');
+                'leaflet-contol-panoramas', 'Show panoramas (Alt-P)', 'icon-panoramas');
             this._container = container;
             L.DomEvent.on(link, 'click', this.onButtonClick, this);
             L.DomEvent.on(document, 'keyup', this.onKeyUp, this);
