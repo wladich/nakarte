@@ -13,9 +13,6 @@ import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
 
 export default function getLayers() {
     const layers = [
-        {
-            group: 'Default layers',
-            layers: [
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
@@ -403,11 +400,6 @@ export default function getLayers() {
                         }
                     })
                 },
-            ]
-        },
-        {
-            group: 'OpenStreetMap alternatives',
-            layers: [
                 {
                     title: 'OpenTopoMap',
                     isDefault: false,
@@ -453,11 +445,6 @@ export default function getLayers() {
                         }
                     )
                 },
-            ]
-        },
-        {
-            group: 'Topo maps',
-            layers: [
                 {
                     title: 'Eurasia 25km',
                     description: '1975-80',
@@ -544,12 +531,7 @@ export default function getLayers() {
                             shortName: 'montenegro_250'
                         }
                     )
-                }
-            ]
-        },
-        {
-            group: 'Mountains maps',
-            layers: [
+                },
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
                     description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
@@ -571,11 +553,7 @@ export default function getLayers() {
                             shortName: 'tsvetkov_mountains'
                         }
                     )
-                }]
-        },
-        {
-            group: 'Miscellaneous',
-            layers: [
+                },
                 {
                     title: 'Bing imagery acquisition dates',
                     isDefault: false,
@@ -744,12 +722,6 @@ export default function getLayers() {
                         }
                     )
                 },
-            ]
-        },
-
-        {
-            group: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
-            layers: [
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway UT map',
@@ -852,11 +824,7 @@ export default function getLayers() {
                             shortName: 'norway_roads'
                         }
                     )
-                }]
-        },
-        {
-            group: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
-            layers: [
+                },
                 {
                     title: 'Czech base',
                     isDefault: false,
@@ -936,9 +904,95 @@ export default function getLayers() {
                             shortName: 'czech_geo'
                         }
                     )
-                }]
-        }
+                }
     ];
+
+    const groupsDefs = [
+        {
+            title: 'Default layers',
+            layers: [
+                'OpenStreetMap',
+                'ESRI Sat',
+                'Yandex map',
+                'Yandex Satellite',
+                'Google',
+                'Google Satellite',
+                'Google Terrain',
+                'Bing Sat',
+                'marshruty.ru',
+                'Topomapper 1km',
+                'Topo 10km',
+                'GGC 2 km',
+                'ArbaletMO',
+                'Slazav mountains',
+                'GGC 1km',
+                'Topo 1km',
+                'GGC 500m',
+                'Topo 500m',
+                'GGC 250m',
+                'Slazav map',
+                'Races',
+                'O-sport',
+                'Soviet topo maps grid',
+                'Wikimapia',
+                'Mountain passes (Westra)'
+            ],
+        },
+        {
+            title: 'OpenStreetMap alternatives',
+            layers: [
+                'OpenTopoMap',
+                'OpenCycleMap',
+                'OSM Outdoors'],
+        },
+        {
+            title: 'Topo maps',
+            layers: [
+                'Eurasia 25km',
+                'Caucasus 1km',
+                'Caucasus 500m',
+                'Topo 250m',
+                'Montenegro topo 250m'],
+        },
+        {
+            title: 'Mountains maps',
+            layers: ['Mountains by Aleksey Tsvetkov'],
+        },
+        {
+            title: 'Miscellaneous',
+            layers: ['Bing imagery acquisition dates',
+                'geocaching.su',
+                'OpenStreetMap GPS traces',
+                'Strava heatmap (all)',
+                'Strava heatmap (run)',
+                'Strava heatmap (ride)',
+                'Strava heatmap (winter)',
+                'Strava heatmap lowres (all)',
+                'Strava heatmap lowres (run)',
+                'Strava heatmap lowres (ride)',
+                'Strava heatmap lowres (winter)'],
+
+        },
+        {
+            title: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
+            layers: ['Norway UT map',
+                'Norway paper map',
+                'Norway map',
+                'Norway summer trails',
+                'Norway winter trails',
+                'Norway roads'],
+
+        },
+        {
+            title: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
+            layers: ['Czech base',
+                'Czech tourist',
+                'Czech summer',
+                'Czech winter',
+                'Czech geographical'],
+
+        }];
+
 
     const titlesByOrder = [
         // common base layers
@@ -1008,69 +1062,113 @@ export default function getLayers() {
         "geocaching.su",
     ];
 
+    // assign order to layers
     const orderByTitle = {};
     for (let i=0; i < titlesByOrder.length; i++) {
         const title = titlesByOrder[i];
         orderByTitle[title] = i + 1;
     }
 
-    for (let group of layers) {
-        for (let layer of group.layers) {
-            const title = layer.title;
-            layer.order = orderByTitle[title];
-            if (!layer.order) {
-                throw new Error(`Layer title not found in titlesByOrder list: ${title}`)
-            }
+    for (let layer of layers) {
+        const title = layer.title;
+        layer.order = orderByTitle[title];
+        if (!layer.order) {
+            throw new Error(`Layer title not found in titlesByOrder list: ${title}`)
         }
     }
+
+    // divide layers by groups
+    const grouppedLayers = [];
+    const layersByTitle = {};
+    for (let layer of layers) {
+        layersByTitle[layer.title] = layer;
+    }
+    for (let groupDef of groupsDefs) {
+        let group = {group: groupDef.title, layers: []};
+        grouppedLayers.push(group);
+        for (let title of groupDef.layers) {
+            let layer = layersByTitle[title];
+            if (!layer) {
+                throw new Error(`Unknown layer in groups definitions: ${title}`)
+            }
+            group.layers.push(layer);
+        }
+    }
+
     // TODO: move it to tests
     const codes = new Set();
     const titles = new Set();
     const shortNames = new Set();
-    for (let group of layers) {
-        for (let layer of group.layers) {
-            const {title, layer: {options}} = layer;
-            if (!options) {
-                throw new Error(`Layer without options: ${layer.title}`);
-            }
-            if (titles.has(title)) {
-                throw new Error(`Duplicate layer title "${title}"`);
-            }
-            titles.add(title);
-            const {
-                code,
-                shortName,
-                print,
-                isOverlay,
-                isOverlayTransparent
-            } = options;
-            if (!code) {
-                throw new Error('Layer without code: ' + layer.title);
-            }
-            if (codes.has(code)) {
-                throw new Error(`Duplicate layer code "${code}"`);
-            }
-            codes.add(code);
+    for (let layer of layers) {
+        const {title, layer: {options}} = layer;
+        if (!options) {
+            throw new Error(`Layer without options: ${layer.title}`);
+        }
+        if (titles.has(title)) {
+            throw new Error(`Duplicate layer title "${title}"`);
+        }
+        titles.add(title);
+        const {
+            code,
+            shortName,
+            print,
+            isOverlay,
+            isOverlayTransparent
+        } = options;
+        if (!code) {
+            throw new Error('Layer without code: ' + layer.title);
+        }
+        if (codes.has(code)) {
+            throw new Error(`Duplicate layer code "${code}"`);
+        }
+        codes.add(code);
 
-            if (print) {
-                if (isOverlay && (isOverlayTransparent === undefined)) {
-                    throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
-                }
-                if (!shortName) {
-                    throw new Error('Layer without shortName: ' + layer.title);
-                }
-                if (shortNames.has(shortName)) {
-                    throw new Error(`Duplicate layer shortName "${shortName}"`);
-                }
-                shortNames.add(shortName);
+        if (print) {
+            if (isOverlay && (isOverlayTransparent === undefined)) {
+                throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
             }
+            if (!shortName) {
+                throw new Error('Layer without shortName: ' + layer.title);
+            }
+            if (shortNames.has(shortName)) {
+                throw new Error(`Duplicate layer shortName: "${shortName}"`);
+            }
+            shortNames.add(shortName);
         }
     }
+
+    // check order definition
+    let seenOverlay = false;
     for (let title of titlesByOrder) {
         if (!titles.has(title)) {
             throw new Error(`Unknown layer title in order list: ${title}`);
         }
+        let isOverlay = layersByTitle[title];
+        if (isOverlay) {
+            seenOverlay = true;
+        } else {
+            if (seenOverlay) {
+                throw new Error(`Base layer after overlays: ${title}`);
+            }
+        }
     }
-    return layers;
+    // check groups definitions
+    const seenLayerTitles = new Set();
+    for (let group of groupsDefs) {
+        for (let title of group.layers) {
+            if (seenLayerTitles.has(title)) {
+                throw new Error(`Duplicate layer in groups definition: ${title}`)
+            }
+            seenLayerTitles.add(title);
+        }
+    }
+    // unknown layers in groupsDefs already checked, check only that all layers assigned to groups
+    for (let title of titles) {
+        if (!seenLayerTitles.has(title)) {
+            throw new Error(`Layer not assigned to any group: ${title}`);
+        }
+    }
+
+    return grouppedLayers;
 }
 
