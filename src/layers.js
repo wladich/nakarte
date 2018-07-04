@@ -907,6 +907,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Waymarked Cycling Trails',
+                    description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
                         {
@@ -922,6 +923,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Waymarked Hiking Trails',
+                    description: '<a href="https://hiking.waymarkedtrails.org/">https://hiking.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
                         {
