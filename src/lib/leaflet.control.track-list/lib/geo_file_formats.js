@@ -212,7 +212,7 @@ function parseOziPlt(txt, name) {
         current_segment.push({lat: lat, lng: lon});
         total_points_num += 1;
     }
-    if (isNaN(expected_points_num) || expected_points_num !== total_points_num) {
+    if (isNaN(expected_points_num) || (expected_points_num !== 0 && expected_points_num !== total_points_num)) {
         error = 'CORRUPT';
     }
     return [{name: name, tracks: segments, error: error}];
