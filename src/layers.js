@@ -905,6 +905,21 @@ export default function getLayers() {
                         }
                     )
                 },
+		        {
+		            title: 'Finland Topo',
+		            isDefault: false,
+		            layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
+		                {
+		                    code: 'Fmk',
+		                    isOverlay: false,
+		                    tms: false,
+		                    print: true,
+		                    jnx: true,
+		                    scaleDependent: true,
+		                    shortName: 'finland_topo'
+		                }
+		            )
+		        },
                 {
                     title: 'Waymarked Cycling Trails',
                     description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
@@ -1029,6 +1044,11 @@ export default function getLayers() {
                 'Czech winter',
                 'Czech geographical'],
 
+        },
+        {
+            title: 'Finland',
+            layers: [
+                'Finland Topo'],
         }];
 
 
@@ -1055,6 +1075,7 @@ export default function getLayers() {
         'Czech winter',
         'Czech geographical',
         'Norway UT map',
+        'Finland Topo',
 
         // map overlays
         '#custom-bottom',
