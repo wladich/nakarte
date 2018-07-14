@@ -283,9 +283,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: true">Overlay</label><br/>
 <hr/>
 <label><input type="radio" name="top-or-bottom"
-        data-bind="checked: isTop, checkedValue: true, enable: isOverlay">Place above other layers</label><br/>
-<label><input type="radio" name="top-or-bottom"
         data-bind="checked: isTop, checkedValue: false, enable: isOverlay">Place below other layers</label><br/>
+<label><input type="radio" name="top-or-bottom"
+        data-bind="checked: isTop, checkedValue: true, enable: isOverlay">Place above other layers</label><br/>
 <hr/>
 <label><input type="checkbox" data-bind="checked: scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
 <label><input type="checkbox" data-bind="checked: tms" />TMS rows order</label><br />
