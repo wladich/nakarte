@@ -479,12 +479,12 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
 
                     if (fieldValues) {
-                        if (!this.customLayerExists(fieldValues)) {
-                            this._customLayers.push(this.createCustomLayer(fieldValues));
-                        }
                         // upgrade
                         if (fieldValues.isTop === undefined) {
                             fieldValues.isTop = true;
+                        }
+                        if (!this.customLayerExists(fieldValues)) {
+                            this._customLayers.push(this.createCustomLayer(fieldValues));
                         }
                         return this.serializeCustomLayer(fieldValues);
                     }
