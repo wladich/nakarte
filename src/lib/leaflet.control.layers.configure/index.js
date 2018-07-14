@@ -400,7 +400,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: (fieldValues.isTop ? customLayersOrder : -1),
+                    order: (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
