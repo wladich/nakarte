@@ -51,11 +51,16 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         })
                     }
                 }
-                // restore custom layers
-                Object.keys(storedLayersEnabled).forEach(code => this.loadCustomLayerFromString(code));
+                // restore custom layers;
+                // custom layers can be upgraded in loadCustomLayerFromString and their code will change
+                const storedLayersEnabled2 = {};
+                for (let [code, isEnabled] of Object.entries(storedLayersEnabled)) {
+                    let newCode = this.loadCustomLayerFromString(code) || code;
+                    storedLayersEnabled2[newCode] = isEnabled;
+                }
 
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
-                    let enabled = storedLayersEnabled[layer.layer.options.code];
+                    let enabled = storedLayersEnabled2[layer.layer.options.code];
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
                     if (typeof enabled === 'undefined') {
