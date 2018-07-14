@@ -1057,6 +1057,7 @@ export default function getLayers() {
         'Norway UT map',
 
         // map overlays
+        '#custom-bottom',
         'Norway roads',
         'Eurasia 25km',
         'Topo 10km',
@@ -1078,9 +1079,9 @@ export default function getLayers() {
         'Slazav map',
         'Races',
         'O-sport',
+        '#custom-top',
 
         // line overlays
-        '#custom',
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
         'Norway summer trails',
@@ -1212,6 +1213,12 @@ export default function getLayers() {
         }
     }
 
-    return {layers: grouppedLayers, customLayersOrder: orderByTitle['#custom']};
+    return {
+        layers: grouppedLayers,
+        customLayersOrder: {
+            top: orderByTitle['#custom-top'],
+            bottom: orderByTitle['#custom-bottom'],
+
+        }};
 }
 
