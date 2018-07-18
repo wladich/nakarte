@@ -348,6 +348,12 @@ const ElevationProfile = L.Class.extend({
         },
 
         xToIndex: function(x) {
+            if (x < 0) {
+                x = 0;
+            }
+            if (x > this.svgWidth - 1) {
+                x = this.svgWidth - 1;
+            }
             return x / (this.svgWidth - 1) * (this.values.length - 1);
         },
 
