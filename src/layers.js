@@ -1046,11 +1046,6 @@ export default function getLayers() {
                 'Czech winter',
                 'Czech geographical'],
 
-        },
-        {
-            title: 'Finland',
-            layers: [
-                'Finland Topo'],
         }];
 
 
