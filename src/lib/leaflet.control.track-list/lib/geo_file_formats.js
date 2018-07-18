@@ -87,7 +87,9 @@ function parseGpx(txt, name, preferNameFromFile) {
         var waypoints = [];
         for (var i = 0; i < waypoint_elements.length; i++) {
             var waypoint_element = waypoint_elements[i];
-            var waypoint = {};
+            var waypoint = {
+                name: ''
+            };
             waypoint.lat = parseFloat(waypoint_element.getAttribute('lat'));
             waypoint.lng = parseFloat(waypoint_element.getAttribute('lon'));
             if (isNaN(waypoint.lat) || isNaN(waypoint.lng)) {
@@ -96,9 +98,8 @@ function parseGpx(txt, name, preferNameFromFile) {
             }
             try {
                 waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]));
-            }  catch (e) {
-                error = 'CORRUPT';
-                continue;
+            } catch (e) {
+                //do nothing
             }
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);
@@ -124,7 +125,11 @@ function parseGpx(txt, name, preferNameFromFile) {
         for (let trk of [...dom.getElementsByTagName('trk')]) {
             let trkName = trk.getElementsByTagName('name')[0];
             if (trkName) {
-                trkName = utf8_decode(xmlGetNodeText(trkName));
+                try {
+                    trkName = utf8_decode(xmlGetNodeText(trkName));
+                } catch (e) {
+                    //do nothing
+                }
                 if (trkName.length) {
                     name = trkName;
                     break;
