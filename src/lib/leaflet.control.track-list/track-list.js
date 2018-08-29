@@ -851,6 +851,14 @@ L.Control.TrackList = L.Control.extend({
             trackSegment._parentTrack.feature.removeLayer(trackSegment);
         },
 
+        isDuplicateTrack: function(geodata) {
+            var trackAsString = this.trackToString(this.convertGeodataToTrack(geodata));
+            var isDuplicate = this.tracks().some(function(track) {
+                return this.trackToString(track) === trackAsString;
+            }.bind(this));
+            return isDuplicate;
+        },
+
         newTrackFromSegment: function(trackSegment) {
             var srcNodes = trackSegment.getLatLngs(),
                 newNodes = [],
@@ -861,7 +869,7 @@ L.Control.TrackList = L.Control.extend({
             this.addTrack({name: "New track", tracks: [newNodes]});
         },
 
-        addTrack: function(geodata) {
+        convertGeodataToTrack: function(geodata) {
             var color;
             color = geodata.color;
             if (!(color >= 0 && color < this.colors.length)) {
@@ -880,9 +888,12 @@ L.Control.TrackList = L.Control.extend({
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
+            return track;
+        },
 
+        addTrack: function(geodata) {
+            var track = this.convertGeodataToTrack(geodata);
             this.tracks.push(track);
-
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
