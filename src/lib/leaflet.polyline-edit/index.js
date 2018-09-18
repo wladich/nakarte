@@ -65,7 +65,7 @@ L.Polyline.EditMixin = {
     onNodeMarkerMovedChangeNode: function(e) {
         var marker = e.target,
             latlng = marker.getLatLng(),
-        //nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+            //nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
             node = marker._lineNode;
         node.lat = latlng.lat;
         node.lng = latlng.lng;
@@ -141,7 +141,6 @@ L.Polyline.EditMixin = {
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = false;
         this.fire('drawend');
-
     },
 
     onKeyPress: function(e) {
@@ -210,7 +209,6 @@ L.Polyline.EditMixin = {
         marker._lineNode = node;
         node._nodeMarker = marker;
         marker.addTo(this._map);
-
     },
 
     onNodeMarkerClickStartStopDrawing: function(e) {
@@ -286,6 +284,7 @@ L.Polyline.EditMixin = {
         if (!isAddingRight) {
             this.makeSegmentOverlay(index);
         }
+        this.updateMarkersCorners();
     },
 
     removeNode: function(index) {
@@ -310,6 +309,7 @@ L.Polyline.EditMixin = {
                 this.makeSegmentOverlay(index - 1);
             }
         }
+        this.updateMarkersCorners();
     },
 
     replaceNode: function(index, latlng) {
@@ -335,6 +335,7 @@ L.Polyline.EditMixin = {
             delete prevNode._segmentOverlay;
             this.makeSegmentOverlay(index - 1);
         }
+        this.updateMarkersCorners();
     },
 
     setupMarkers: function() {
@@ -354,7 +355,30 @@ L.Polyline.EditMixin = {
                 this.makeSegmentOverlay(i);
             }
         }
+        this.updateMarkersCorners();
+    },
 
+    updateMarkersCorners: function () {
+        var getClassName = function (postfix) {
+            return 'leaflet-marker-' + postfix;
+        };
+
+        var latlngs = this.getLatLngs().filter(function (latlng) {
+            return latlng._nodeMarker;
+        });
+
+        latlngs.forEach(function(node, i) {
+            var markerIconElement = node._nodeMarker._icon;
+
+            L.DomUtil.removeClass(markerIconElement, getClassName('start'));
+            L.DomUtil.removeClass(markerIconElement, getClassName('end'));
+
+            if (i === 0) {
+                L.DomUtil.addClass(markerIconElement, getClassName('start'));
+            } else if (i === latlngs.length - 1) {
+                L.DomUtil.addClass(markerIconElement, getClassName('end'));
+            }
+        }.bind(this));
     },
 
     spliceLatLngs: function(...args) {

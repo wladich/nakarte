@@ -31,3 +31,13 @@
 .leaflet-line-drawing .leaflet-editable-line {
     pointer-events: none !important;
 }
+
+.leaflet-marker-start {
+    background: green;
+    z-index: 2147483647 !important;
+}
+
+.leaflet-marker-end {
+    background: red;
+    z-index: 2147483647 !important;
+}
