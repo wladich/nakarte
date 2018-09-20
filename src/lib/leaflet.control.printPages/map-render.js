@@ -104,6 +104,7 @@ class PageComposer {
         this.currentCanvas = null;
         this.currentZoom = null;
         this.targetCanvas = this.createCanvas(destSize);
+        this.validateCanvas();
     }
 
     createCanvas(size) {
@@ -111,6 +112,15 @@ class PageComposer {
         canvas.width = size.x;
         canvas.height = size.y;
         return canvas;
+    }
+
+    validateCanvas() {
+        const dataUrl = this.targetCanvas.toDataURL('image/jpeg', 0);
+        if ('data:,' === dataUrl) {
+            if (this.targetCanvas.height && this.targetCanvas.width) {
+                throw new Error('Invalid canvas size (too large)');
+            }
+        }
     }
 
     putTile(tileInfo) {
