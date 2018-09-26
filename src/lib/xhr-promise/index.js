@@ -13,7 +13,8 @@ class XMLHttpRequestPromiseError extends Error {
         super();
         this.xhr = xhr;
         this.name = 'XMLHttpRequestPromiseError';
-
+        this.status = xhr.status;
+        this.url = xhr.responseURL;
         this.message = xhr.status === 0 ? 'network error' : `server response is ${xhr.status}`;
     }
 }
