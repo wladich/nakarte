@@ -411,7 +411,7 @@ export default function getLayers() {
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            noCors: false,
+                            noCors: true,
                             shortName: 'opentopo'
                         }
                     )
