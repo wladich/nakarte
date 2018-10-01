@@ -1,5 +1,5 @@
 import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
-import RawDeflate from 'vendored/github.com/dankogai/js-deflate/rawinflate';
+import Pako from 'pako';
 import stripBom from 'lib/stripBom';
 
 import {decode as utf8_decode} from 'utf8';
@@ -430,7 +430,7 @@ function parseKmz(txt, name) {
             if (entry.compressionMethod === 0) {
                 uncompressed = entry.data;
             } else if (entry.compressionMethod === 8) {
-                uncompressed = RawDeflate.inflate(entry.data);
+                uncompressed = Pako.inflateRaw(entry.data, {to: 'string'});
             } else {
                 return null;
             }
@@ -502,7 +502,7 @@ function parseZip(txt, name) {
         if (entry.compressionMethod === 0) {
             uncompressed = entry.data;
         } else if (entry.compressionMethod === 8) {
-            uncompressed = RawDeflate.inflate(entry.data);
+            uncompressed = Pako.inflateRaw(entry.data, {to: 'string'});
         } else {
             return null;
         }
