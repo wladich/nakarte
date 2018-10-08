@@ -59,19 +59,21 @@ L.Control.JNX = L.Control.extend({
             let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
 
             const items = [{text: layerName, header: true}];
-            for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
-                let tilesCount = this.estimateTilesCount(zoom);
-                let fileSizeMb = tilesCount * 0.02;
-                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
-                let resolutionString = metersPerPixel.toFixed(2);
-                let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
-                let item = {
-                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
-                    callback: () => this.makeJnx(layer, layerName, zoom),
-                    disabled: this.makingJnx()
-                };
-                items.push(item);
-                metersPerPixel *= 2;
+            for (let outputType of ["jnx", "rmaps"]) {
+	            for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
+	                let tilesCount = this.estimateTilesCount(zoom);
+	                let fileSizeMb = tilesCount * 0.02;
+	                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
+	                let resolutionString = metersPerPixel.toFixed(2);
+	                let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
+	                let item = {
+	                    text: `<span class="${itemClass}">${outputType} Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
+	                    callback: () => this.makeJnx(layer, layerName, zoom, outputType),
+	                    disabled: this.makingJnx()
+	                };
+	                items.push(item);
+	                metersPerPixel *= 2;
+	            }
             }
             return items;
         },
@@ -81,15 +83,15 @@ L.Control.JNX = L.Control.extend({
             this.downloadProgressRange(maxValue);
         },
 
-        makeJnx: function(layer, layerName, zoom) {
+        makeJnx: function(layer, layerName, zoom, outputType) {
             logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
             this.makingJnx(true);
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
-            const fileName = `nakarte.tk_${sanitizedLayerName}_z${zoom}.jnx`;
-            makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
+            const fileName = outputType == 'rmaps' ? `nakarte.tk_${sanitizedLayerName}_z${zoom}.sqlitedb` : `nakarte.tk_${sanitizedLayerName}_z${zoom}.jnx`;
+            makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this), outputType)
                 .then((fileData) => saveAs(fileData, fileName, true))
                 .catch((e) => {
                         logging.captureException(e);
@@ -154,4 +156,3 @@ L.Control.JNX = L.Control.extend({
         },
     }
 );
-

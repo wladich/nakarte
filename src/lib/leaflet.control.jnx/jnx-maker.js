@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import {JnxWriter} from './jnx-encoder';
+import {RmapsWriter} from './rmaps-encoder';
 import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
 import {XHRQueue} from 'lib/xhr-promise';
 import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
@@ -56,10 +57,10 @@ function ensureImageJpg(image) {
     }
 }
 
-async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
+async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress, outputType) {
     const jnxProductId = L.stamp(srcLayer);
     const jnxZOrder = Math.min(jnxProductId, 100);
-    const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder);
+    const writer = outputType == 'rmaps' ? new RmapsWriter(layerName, jnxProductId, jnxZOrder) : new JnxWriter(layerName, jnxProductId, jnxZOrder);
     const xhrQueue = new XHRQueue();
     let doStop = false;
     let error;
