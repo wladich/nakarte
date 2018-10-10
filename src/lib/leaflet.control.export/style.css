@@ -1,9 +1,9 @@
-.leaflet-control-jnx .ko-progress{
+.leaflet-control-export .ko-progress{
     width: 200px;
     background-color: white;
 }
 
-.leaflet-control-jnx .button {
+.leaflet-control-export .button {
     display: inline-block;
     background-color: white;
     height: 26px;
@@ -17,7 +17,7 @@
     color: #333;
 }
 
-.leaflet-control-jnx .button:hover {
+.leaflet-control-export .button:hover {
     background-color: #f4f4f4;
 }
 
@@ -53,6 +53,6 @@
     cursor: e-resize !important;
 }
 
-.jnx-menu-warning {
+.export-menu-warning {
     color: red;
 }

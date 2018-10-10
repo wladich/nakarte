@@ -22,13 +22,13 @@ function getFormatNameFromLocalStorage() {
     return localStorage.getItem(ATTR_EXPORT_FORMAT);
 }
 
-L.Control.JNX = L.Control.extend({
+L.Control.export = L.Control.extend({
         includes: L.Mixin.Events,
 
         initialize: function(layersControl, options) {
             L.Control.prototype.initialize.call(this, options);
             this._layersControl = layersControl;
-            this.makingJnx = ko.observable(false);
+            this.exportInProgress = ko.observable(false);
             this.downloadProgressRange = ko.observable(1);
             this.downloadProgressDone = ko.observable(0);
             this.contextMenu = new Contextmenu(() => this.makeMenuItems());
@@ -38,7 +38,7 @@ L.Control.JNX = L.Control.extend({
             let selectedLayer = {};
             for (let layerRec of this._layersControl._layers) {
                 let layer = layerRec.layer;
-                if (this._map.hasLayer(layer) && layer.options && layer.options.jnx) {
+                if (this._map.hasLayer(layer) && layer.options && layer.options.export) {
                     selectedLayer = {
                         layer,
                         layerName: layerRec.name
@@ -93,13 +93,13 @@ L.Control.JNX = L.Control.extend({
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
                 let tilesCount = this.estimateTilesCount(zoom);
                 let fileSizeMb = tilesCount * 0.02;
-                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
+                let itemClass = tilesCount > 50000 ? 'export-menu-warning' : '';
                 let resolutionString = metersPerPixel.toFixed(2);
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
                 let item = {
                     text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
                     callback: () => this.startExport(format, layer, layerName, zoom),
-                    disabled: this.makingJnx()
+                    disabled: this.exportInProgress()
                 };
                 items.push(item);
                 metersPerPixel *= 2;
@@ -113,8 +113,8 @@ L.Control.JNX = L.Control.extend({
         },
 
         startExport: function(format, layer, layerName, zoom) {
-            logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
-            this.makingJnx(true);
+            logging.captureBreadcrumbWithUrl({message: 'start export'});
+            this.exportInProgress(true);
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
@@ -124,24 +124,24 @@ L.Control.JNX = L.Control.extend({
                 .then((fileData) => saveAs(fileData, fileName, true))
                 .catch((e) => {
                         logging.captureException(e);
-                        notify(`Failed to create JNX: ${e.message}`);
+                        notify(`Export failed: ${e.message}`);
                     }
                 )
-                .then(() => this.makingJnx(false));
+                .then(() => this.exportInProgress(false));
         },
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-jnx');
+            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-export');
             container.innerHTML = `
-                <a class="button" data-bind="visible: !makingJnx(), click: onButtonClicked"
+                <a class="button" data-bind="visible: !exportInProgress(), click: onButtonClicked"
                  title="Export tiles for GPS receivers">Export</a>
                 <div data-bind="
                     component:{
                         name: 'progress-indicator',
                         params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
                     },
-                    visible: makingJnx()"></div>`;
+                    visible: exportInProgress()"></div>`;
             ko.applyBindings(this, container);
             this._stopContainerEvents();
             return container;
