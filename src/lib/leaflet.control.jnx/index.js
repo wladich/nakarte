@@ -4,10 +4,23 @@ import './style.css';
 import 'lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import Contextmenu from 'lib/contextmenu';
-import {makeJnxFromLayer, minZoom} from './jnx-maker';
+import {exportFromLayer, minZoom} from './export-maker';
+import {formats} from './export-formats';
+import localStorage from 'lib/safe-localstorage';
+
 import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
+
+const ATTR_EXPORT_FORMAT = "exportFormat";
+
+function saveFormatNameToLocalStorage(formatName) {
+    localStorage.setItem(ATTR_EXPORT_FORMAT, formatName);
+}
+
+function getFormatNameFromLocalStorage() {
+    return localStorage.getItem(ATTR_EXPORT_FORMAT);
+}
 
 L.Control.JNX = L.Control.extend({
         includes: L.Mixin.Events,
@@ -21,7 +34,7 @@ L.Control.JNX = L.Control.extend({
             this.contextMenu = new Contextmenu(() => this.makeMenuItems());
         },
 
-        getLayerForJnx: function() {
+        getExportLayer: function() {
             let selectedLayer = {};
             for (let layerRec of this._layersControl._layers) {
                 let layer = layerRec.layer;
@@ -47,7 +60,7 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeMenuItems: function() {
-            const {layer, layerName} = this.getLayerForJnx();
+            const {layer, layerName} = this.getExportLayer();
             if (!layer) {
                 return [{text: 'No supported layer'}];
             }
@@ -57,23 +70,39 @@ L.Control.JNX = L.Control.extend({
             const equatorLength = 40075016;
             const lat = this._selector.getBounds().getCenter().lat;
             let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
-
-            const items = [{text: layerName, header: true}];
-            for (let outputType of ["jnx", "rmaps"]) {
-	            for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
-	                let tilesCount = this.estimateTilesCount(zoom);
-	                let fileSizeMb = tilesCount * 0.02;
-	                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
-	                let resolutionString = metersPerPixel.toFixed(2);
-	                let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
-	                let item = {
-	                    text: `<span class="${itemClass}">${outputType} Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
-	                    callback: () => this.makeJnx(layer, layerName, zoom, outputType),
-	                    disabled: this.makingJnx()
-	                };
-	                items.push(item);
-	                metersPerPixel *= 2;
-	            }
+            let format;
+            function changeFormat(formatName) {
+                format = formats[0];
+                for(const f of formats) {
+                    if(f.name == formatName) {
+                        format = f;
+                        break;
+                    }
+                }
+                saveFormatNameToLocalStorage(format.name);
+            }
+            const items = [
+                {text: "Output format", header: true},
+                {
+                    selectmenu: true,
+                    values: formats.map(function(x) {return {value: x.name, label: `${x.name} (${x.hint})`}}),
+                    callback: changeFormat, defaultValue: getFormatNameFromLocalStorage()
+                },
+                {text: layerName, header: true}
+            ];
+            for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
+                let tilesCount = this.estimateTilesCount(zoom);
+                let fileSizeMb = tilesCount * 0.02;
+                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
+                let resolutionString = metersPerPixel.toFixed(2);
+                let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
+                let item = {
+                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
+                    callback: () => this.startExport(format, layer, layerName, zoom),
+                    disabled: this.makingJnx()
+                };
+                items.push(item);
+                metersPerPixel *= 2;
             }
             return items;
         },
@@ -83,15 +112,15 @@ L.Control.JNX = L.Control.extend({
             this.downloadProgressRange(maxValue);
         },
 
-        makeJnx: function(layer, layerName, zoom, outputType) {
+        startExport: function(format, layer, layerName, zoom) {
             logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
             this.makingJnx(true);
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
-            const fileName = outputType == 'rmaps' ? `nakarte.tk_${sanitizedLayerName}_z${zoom}.sqlitedb` : `nakarte.tk_${sanitizedLayerName}_z${zoom}.jnx`;
-            makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this), outputType)
+            const fileName = `nakarte.tk_${sanitizedLayerName}_z${zoom}.${format.extension}`;
+            exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => saveAs(fileData, fileName, true))
                 .catch((e) => {
                         logging.captureException(e);
@@ -106,7 +135,7 @@ L.Control.JNX = L.Control.extend({
             const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-jnx');
             container.innerHTML = `
                 <a class="button" data-bind="visible: !makingJnx(), click: onButtonClicked"
-                 title="Make JNX for Garmin receivers">JNX</a>
+                 title="Export tiles for GPS receivers">Export</a>
                 <div data-bind="
                     component:{
                         name: 'progress-indicator',

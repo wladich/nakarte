@@ -25,7 +25,20 @@
     cursor: default;
 }
 
-.contextmenu .item:hover {
+.contextmenu .item.action {
+    cursor: pointer;
+}
+
+.contextmenu .item.selectmenu {
+    line-height: normal;
+    height: auto;
+}
+
+.contextmenu .item.selectmenu select {
+    width: 100%;
+}
+
+.contextmenu .item.action:hover {
     background-color: hsl(0, 0%, 95%);
 }
 

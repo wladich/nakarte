@@ -107,6 +107,8 @@ class Contextmenu {
             }
             if (itemOptions === '-' || itemOptions.separator) {
                 yield this.createSeparator(itemOptions);
+            } if(itemOptions.selectmenu) {
+                yield this.createSelectmenu(itemOptions);
             } else {
                 yield this.createItem(itemOptions);
             }
@@ -122,13 +124,14 @@ class Contextmenu {
         if (itemOptions.header) {
             className += ' header';
         }
-        el.className = className;
         el.innerHTML = itemOptions.text;
 
         const callback = itemOptions.callback;
         if (callback && !itemOptions.disabled) {
+            className += ' action';
             el.addEventListener('click', this.onItemClick.bind(this, callback));
         }
+        el.className = className;
         return el;
     }
 
@@ -145,6 +148,38 @@ class Contextmenu {
         if (itemOptions.text) {
             el.innerHTML = `<span>${itemOptions.text}</span>`;
         }
+        return el;
+    }
+
+    createSelectmenu(itemOptions) {
+        let defaultValue = itemOptions.defaultValue;
+        if (typeof defaultValue === "function") {
+            defaultValue = defaultValue();
+        }
+        const el = document.createElement('div');
+        el.className = 'selectmenu item';
+        const selectEl = document.createElement('select');
+        el.appendChild(selectEl);
+        let selectedIndex = 0;
+        for(let [index, value] of itemOptions.values.entries()) {
+            let option = document.createElement('option');
+            let label = value;
+            if(typeof value == "object") {
+                label = value.label;
+                value = value.value;
+            }
+            option.value = value;
+            option.innerHTML = label;
+            if(value == itemOptions.defaultValue) {
+                selectedIndex = index;
+            }
+            selectEl.appendChild(option);
+        }
+        selectEl.options.selectedIndex = selectedIndex;
+        itemOptions.callback(selectEl.value);
+        selectEl.addEventListener('change', function() {
+            itemOptions.callback(this.value);
+        });
         return el;
     }
 

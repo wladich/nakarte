@@ -30,7 +30,7 @@ const JnxWriter = L.Class.extend({
             this.tiles[level].push({data: tileData, extents: extents});
         },
 
-        getJnx: function() {
+        getAsBlob: function() {
             const  HEADER_SIZE = 52,
                 LEVEL_INFO_SIZE = 17,
                 TILE_INFO_SIZE = 28;

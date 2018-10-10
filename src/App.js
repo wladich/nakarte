@@ -102,16 +102,16 @@ function setUp() {
 
     /////////// controls bottom-left corner
 
+    new L.Control.JNX(layersControl, {position: 'bottomleft'})
+        .addTo(map)
+        .enableHashState('j');
+
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
         .enableHashState('p');
     if (!printControl.hasPages()) {
         printControl.setMinimized();
     }
-
-    new L.Control.JNX(layersControl, {position: 'bottomleft'})
-        .addTo(map)
-        .enableHashState('j');
 
     /////////// controls bottom-right corner
 

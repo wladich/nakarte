@@ -7,9 +7,9 @@ function rmapsTileInfo(latLngBounds, zoom) { // https://stackoverflow.com/a/2305
     }
     var lat = (latLngBounds._southWest.lat + latLngBounds._northEast.lat) / 2
     var lon = (latLngBounds._southWest.lng + latLngBounds._northEast.lng) / 2
-    var xtile = parseInt(Math.floor( (lon + 180) / 360 * (1<<zoom) ));
-    var ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(toRad(lat)) + 1 / Math.cos(toRad(lat))) / Math.PI) / 2 * (1<<zoom) ));
-    return {z: (17-zoom), x: xtile, y: ytile};
+    var xtile = parseInt(Math.floor( (lon + 180) / 360 * (1<<zoom) ), 10);
+    var ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(toRad(lat)) + 1 / Math.cos(toRad(lat))) / Math.PI) / 2 * (1<<zoom) ), 10);
+    return {z: (17 - zoom), x: xtile, y: ytile};
 }
 
 const RmapsWriter = L.Class.extend({
@@ -24,7 +24,7 @@ const RmapsWriter = L.Class.extend({
             this.db.prepare("insert into tiles (x,y,z,s,image) VALUES (?,?,?,?,?)").run([tileInfo.x, tileInfo.y, tileInfo.z, 0, new Uint8Array(tileData)]);
         },
 
-        getJnx: function() {
+        getAsBlob: function() {
             this.db.run("INSERT INTO info (maxzoom, minzoom) SELECT max(z), min(z) from tiles");
             let blob = new Blob([this.db.export()]);
             this.db.close();
