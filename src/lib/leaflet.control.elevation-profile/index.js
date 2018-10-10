@@ -227,6 +227,7 @@ const ElevationProfile = L.Class.extend({
             L.setOptions(this, options);
             this.path = latlngs;
             var samples = this.samples = pathRegularSamples(this.path, this.options.samplingInterval);
+            samples = samples.map(latlng => latlng.wrap());
             if (!samples.length) {
                 notify('Track is empty');
                 return;
