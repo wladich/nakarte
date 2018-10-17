@@ -599,7 +599,8 @@ L.Control.TrackList = L.Control.extend({
 
         movePoint: function(e) {
             const marker = this._movingMarker;
-            this._markerLayer.setMarkerPosition(marker, e.latlng);
+            const newLatLng = e.latlng.wrap();
+            this._markerLayer.setMarkerPosition(marker, newLatLng);
             this.stopPlacingPoint();
         },
 
@@ -613,7 +614,8 @@ L.Control.TrackList = L.Control.extend({
             while (name.length < 3) {
                 name = '0' + name;
             }
-            const marker = this.addPoint(parentTrack, {name: name, lat: e.latlng.lat, lng: e.latlng.lng});
+            const newLatLng = e.latlng.wrap();
+            const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
             // we need to show prompt after marker is dispalyed;
             // grid layer is updated in setTimout(..., 0)after adding marker
