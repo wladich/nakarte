@@ -337,7 +337,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         findMarkerFromMouseEvent: function(e) {
             const
-                p = this._map.project(e.latlng),
+                p = this._map.project(e.latlng.wrap()),
                 region = this._regions.search({minX: p.x, minY: p.y, maxX: p.x, maxY: p.y})[0];
             let marker;
             if (region) {
