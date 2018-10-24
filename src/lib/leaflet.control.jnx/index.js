@@ -88,7 +88,7 @@ L.Control.JNX = L.Control.extend({
 
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
-            const fileName = `nakarte.tk_${sanitizedLayerName}_z${zoom}.jnx`;
+            const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.jnx`;
             makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => saveAs(fileData, fileName, true))
                 .catch((e) => {
