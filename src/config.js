@@ -6,7 +6,7 @@ export default Object.assign({
     westraDataBaseUrl: 'https://nakarte.me/westraPasses/',
     CORSProxyUrl: 'https://proxy.nakarte.me/',
     elevationsServer: 'https://elevation.nakarte.me/',
-    newsUrl: 'https://about.nakarte.me',
+    newsUrl: 'https://nakarte-me.blogspot.com',
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su.json',
     tracksStorageServer: 'https://tracks.nakarte.me',
