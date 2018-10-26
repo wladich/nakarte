@@ -92,7 +92,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'eslint',
         include: paths.appSrc,
-        exclude: /augustl\/js-unzip|augustl\/js-inflate/,
+        exclude: /augustl\/js-unzip/,
       }
     ],
     loaders: [
@@ -100,7 +100,6 @@ module.exports = {
         test: /\.js$/,
         include: [
             paths.appSrc + '/vendored/github.com/augustl/js-unzip',
-            paths.appSrc + '/vendored/github.com/augustl/js-inflate'
         ],
         loader: 'legacy'
       },
@@ -108,7 +107,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
-        exclude: /augustl\/js-unzip|augustl\/js-inflate/,
+        exclude: /augustl\/js-unzip/,
         loader: 'babel',
         query: {
 
