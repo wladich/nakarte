@@ -20,20 +20,30 @@ L.Control.JNX.include({
         },
 
         unserializeState: function(values) {
+
             function validateFloat(value, min, max) {
                 value = parseFloat(value);
-                if (isNaN(value) || value < min || value > max) {
+                if (isNaN(value)) {
                     throw new Error('INVALID VALUE');
                 }
                 return value;
             }
 
+            function validateFloatRange(value, min, max) {
+                value = validateFloat(value);
+                if (value < min || value > max) {
+                    throw new Error('INVALID VALUE');
+                }
+                return value;
+
+            }
+
             if (values && values.length === 4) {
                 try {
-                    var south = validateFloat(values[0], -86, 86),
-                        west = validateFloat(values[1], -180, 180),
-                        north = validateFloat(values[2], -86, 86),
-                        east = validateFloat(values[3], -180, 180);
+                    var south = validateFloatRange(values[0], -86, 86),
+                        west = validateFloat(values[1]),
+                        north = validateFloatRange(values[2], -86, 86),
+                        east = validateFloat(values[3]);
                 } catch (e) {
                     if (e.message === 'INVALID VALUE') {
                         return false;
