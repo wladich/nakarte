@@ -1,4 +1,4 @@
-Source code of site http://nakarte.me (former http://nakarte.me)
+Source code of site http://nakarte.me (former http://nakarte.tk)
 
 Install locally for development
 
