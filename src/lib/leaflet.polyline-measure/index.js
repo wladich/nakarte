@@ -32,7 +32,8 @@ L.MeasuredLine = L.Polyline.extend({
             this._ticks = {};
             this.updateTicks();
             this._map.on('zoomend', this.updateTicks, this);
-            this._map.on('dragend', this.updateTicks, this);
+            // markers are created only for visible part of map, need to update when it changes
+            this._map.on('moveend', this.updateTicks, this);
             this.on('nodeschanged', this.updateTicksLater, this);
         },
 
@@ -42,7 +43,7 @@ L.MeasuredLine = L.Polyline.extend({
 
         onRemove: function(map) {
             this._map.off('zoomend', this.updateTicks, this);
-            this._map.off('dragend', this.updateTicks, this);
+            this._map.off('moveend', this.updateTicks, this);
             this.off('nodeschanged', this.updateTicks, this);
             this._clearTicks();
             L.Polyline.prototype.onRemove.call(this, map);
@@ -84,10 +85,24 @@ L.MeasuredLine = L.Polyline.extend({
             var steps = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000];
             var ticks = [];
 
+            const self = this;
             function addTick(position, segment, distanceValue) {
-                if (bounds && (!bounds.contains(position))) {
-                    return;
+                if (bounds) {
+                    // create markers only in visible part of map
+                    const normalizedBounds = self._map.wrapLatLngBounds(bounds);
+                    const normalizedPosition = position.wrap();
+                    // account for worldCopyJump
+                    const positionMinus360 = L.latLng(normalizedPosition.lat, normalizedPosition.lng - 360);
+                    const positionPlus360 = L.latLng(normalizedPosition.lat, normalizedPosition.lng + 360);
+                    if (
+                        !normalizedBounds.contains(normalizedPosition) &&
+                        !normalizedBounds.contains(positionMinus360) &&
+                        !normalizedBounds.contains(positionPlus360)
+                    ) {
+                        return;
+                    }
                 }
+
                 var sinCos = sinCosFromLatLonSegment(segment),
                     sin = sinCos[0], cos = sinCos[1],
                     transformMatrix;
