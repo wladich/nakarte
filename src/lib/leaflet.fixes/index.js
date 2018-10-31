@@ -9,6 +9,7 @@ function fixAll() {
     fixVectorWorldJump();
     fixMarkerWorldJump();
     fixViewResetOnWorldJump();
+    fixMarkerDragWorldJump();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -159,5 +160,42 @@ function fixViewResetOnWorldJump() {
     });
 }
 
+function wrapLongitudeToTarget(latLng, targetLatLng) {
+    const targetLng = targetLatLng.lng;
+    const lng = latLng.lng;
+    let newLng;
+    if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
+        newLng = lng + 360;
+    } else if (Math.abs(lng - 360 - targetLng) < Math.abs(lng - targetLng)) {
+        newLng = lng - 360;
+    } else {
+        return latLng;
+    }
+    return L.latLng(latLng.lat, newLng);
+}
 
-export {fixAll}
+function fixMarkerDragWorldJump() {
+    L.Handler.MarkerDrag.prototype._onDrag = function(e) {
+        var marker = this._marker,
+            shadow = marker._shadow,
+            iconPos = L.DomUtil.getPosition(marker._icon),
+            latlng = marker._map.layerPointToLatLng(iconPos);
+        // update shadow position
+        if (shadow) {
+            L.DomUtil.setPosition(shadow, iconPos);
+        }
+
+        latlng = wrapLongitudeToTarget(latlng, marker._latlng);
+        marker._latlng = latlng;
+        e.latlng = latlng;
+        e.oldLatLng = this._oldLatLng;
+
+        // @event drag: Event
+        // Fired repeatedly while the user drags the marker.
+        marker
+            .fire('move', e)
+            .fire('drag', e);
+    }
+}
+
+export {fixAll, wrapLongitudeToTarget}
