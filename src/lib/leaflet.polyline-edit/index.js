@@ -197,11 +197,10 @@ L.Polyline.EditMixin = {
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
             marker = L.marker(node.clone(), {
-                    icon: L.divIcon(
-                        {className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}
-                    ),
+                    icon: L.divIcon({className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}),
                     draggable: true,
-                    zIndexOffset: this._nodeMarkersZOffset
+                    zIndexOffset: this._nodeMarkersZOffset,
+                    projectedShift: () => this.shiftProjectedFitMapView()
                 }
             );
         marker
@@ -248,7 +247,11 @@ L.Polyline.EditMixin = {
         if (!p2) {
             return;
         }
-        const segmentOverlay = L.polyline([p1, p2], {weight: 10, opacity: 0.0});
+        const segmentOverlay = L.polyline([p1, p2], {
+            weight: 10,
+            opacity: 0.0,
+            projectedShift: () => this.shiftProjectedFitMapView()
+        });
         segmentOverlay.on('mousedown', this.onSegmentMouseDownAddNode, this);
         segmentOverlay.on('contextmenu', function(e) {
                 this.stopDrawingLine();

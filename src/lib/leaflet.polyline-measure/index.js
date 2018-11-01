@@ -70,7 +70,12 @@ L.MeasuredLine = L.Polyline.extend({
                             className: 'measure-tick-icon'
                         }
                     );
-                marker = L.marker(tick.position, {icon: icon, interactive: false, keyboard: false});
+                marker = L.marker(tick.position, {
+                    icon: icon,
+                    interactive: false,
+                    keyboard: false,
+                    projectedShift: () => this.shiftProjectedFitMapView(),
+                });
                 marker.addTo(this._map);
             }
             this._ticks[tick.distanceValue.toString()] = marker;

@@ -65,20 +65,32 @@ L.Control.Azimuth = L.Control.extend({
             const iconSingle = L.icon({iconUrl: iconPointer, iconSize: [30, 30]});
             const iconStart = L.icon({iconUrl: iconPointerStart, iconSize: [30, 30]});
             const iconEnd = L.icon({iconUrl: iconPointerEnd, iconSize: [30, 45]});
+            this.azimuthLine = L.polyline([], {interactive: false, weight: 1.5});
             this.markers = {
                 single: L.marker([0, 0], {icon: iconSingle, draggable: true, which: 'start'})
                     .on('drag', this.onMarkerDrag, this)
                     .on('click', L.DomEvent.stopPropagation),
-                start: L.marker([0, 0], {icon: iconStart, draggable: true, which: 'start', rotationOrigin: 'center center'})
+                start: L.marker([0, 0], {
+                    icon: iconStart,
+                    draggable: true,
+                    which: 'start',
+                    rotationOrigin: 'center center',
+                    projectedShift: () => this.azimuthLine.shiftProjectedFitMapView()
+                })
                     .on('drag', this.onMarkerDrag, this)
                     .on('click', L.DomEvent.stopPropagation)
                     .on('dragend', this.onMarkerDragEnd, this),
-                end: L.marker([0, 0], {icon: iconEnd, draggable: true, which: 'end', rotationOrigin: 'center center'})
+                end: L.marker([0, 0], {
+                    icon: iconEnd,
+                    draggable: true,
+                    which: 'end',
+                    rotationOrigin: 'center center',
+                    projectedShift: () => this.azimuthLine.shiftProjectedFitMapView()
+                })
                     .on('drag', this.onMarkerDrag, this)
                     .on('click', L.DomEvent.stopPropagation)
                     .on('dragend', this.onMarkerDragEnd, this)
             };
-            this.azimuthLine = L.polyline([], {interactive: false, weight: 1.5});
         },
 
         onAdd: function(map) {
