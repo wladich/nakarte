@@ -436,7 +436,7 @@ L.Control.PrintPages = L.Control.extend({
                 state.push(this.marginTop().toString());
                 state.push(this.marginBottom().toString());
                 for (let page of pages) {
-                    let latLng = page.getLatLng();
+                    let latLng = page.getLatLng().wrap();
                     state.push(latLng.lat.toFixed(5));
                     state.push(latLng.lng.toFixed(5));
                     state.push(page._rotated ? '1' : '0');
@@ -444,7 +444,7 @@ L.Control.PrintPages = L.Control.extend({
                 let flags =
                     (this.magneticMeridiansOn() ? 1 : 0) |
                     (this.gridOn() ? 2 : 0);
-                state.push(flags);
+                state.push(flags.toString());
 
             }
             return state;
