@@ -1,11 +1,13 @@
 import L from 'leaflet';
 import './style.css';
+import {fixVectorMarkerWorldJump} from './fixWorldCopyJump';
 
 function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
     fixMapKeypressEvent();
     fixVectorDrawWhileAnimation();
+    fixVectorMarkerWorldJump()
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -77,5 +79,6 @@ function fixVectorDrawWhileAnimation() {
     L.Renderer.prototype.getEvents = getEvents;
     L.Renderer.__animationFixed = true;
 }
+
 
 export {fixAll}

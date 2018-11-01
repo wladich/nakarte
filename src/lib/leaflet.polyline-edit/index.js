@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import './edit_line.css';
+import {wrapLongitudeToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 L.Polyline.EditMixinOptions = {
     className: 'leaflet-editable-line'
@@ -85,8 +86,16 @@ L.Polyline.EditMixin = {
 
     onMapClick: function(e) {
         if (this._drawingDirection) {
-            var newNodeIndex = this._drawingDirection === -1 ? 1 : this.getLatLngs().length - 1;
-            this.addNode(newNodeIndex, e.latlng);
+            let newNodeIndex,
+                refNodeIndex;
+            if (this._drawingDirection === -1) {
+                newNodeIndex = 1;
+                refNodeIndex = 0;
+            } else {
+                newNodeIndex = this._latlngs.length - 1;
+                refNodeIndex = this._latlngs.length - 1;
+            }
+            this.addNode(newNodeIndex, wrapLongitudeToTarget(e.latlng, this._latlngs[refNodeIndex]));
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit(true);
@@ -177,18 +186,21 @@ L.Polyline.EditMixin = {
 
     onMouseMoveFollowEndNode: function(e) {
         var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
-        this.spliceLatLngs(nodeIndex, 1, e.latlng);
+        let latlng = e.latlng;
+        if (this._latlngs.length > 0) {
+            latlng = wrapLongitudeToTarget(latlng, this._latlngs[nodeIndex]);
+        }
+        this.spliceLatLngs(nodeIndex, 1, latlng);
         this.fire('nodeschanged');
     },
 
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
             marker = L.marker(node.clone(), {
-                    icon: L.divIcon(
-                        {className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}
-                    ),
+                    icon: L.divIcon({className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}),
                     draggable: true,
-                    zIndexOffset: this._nodeMarkersZOffset
+                    zIndexOffset: this._nodeMarkersZOffset,
+                    projectedShift: () => this.shiftProjectedFitMapView()
                 }
             );
         marker
@@ -235,7 +247,11 @@ L.Polyline.EditMixin = {
         if (!p2) {
             return;
         }
-        const segmentOverlay = L.polyline([p1, p2], {weight: 10, opacity: 0.0});
+        const segmentOverlay = L.polyline([p1, p2], {
+            weight: 10,
+            opacity: 0.0,
+            projectedShift: () => this.shiftProjectedFitMapView()
+        });
         segmentOverlay.on('mousedown', this.onSegmentMouseDownAddNode, this);
         segmentOverlay.on('contextmenu', function(e) {
                 this.stopDrawingLine();
@@ -259,7 +275,8 @@ L.Polyline.EditMixin = {
         var segmentOverlay = e.target,
             latlngs = this.getLatLngs(),
             nodeIndex = latlngs.indexOf(segmentOverlay._lineNode) + 1;
-        this.addNode(nodeIndex, e.latlng);
+        const midPoint = L.latLngBounds(latlngs[nodeIndex], latlngs[nodeIndex - 1]).getCenter();
+        this.addNode(nodeIndex, wrapLongitudeToTarget(e.latlng, midPoint));
         if (L.Draggable._dragging) {
             L.Draggable._dragging.finishDrag()
         }
