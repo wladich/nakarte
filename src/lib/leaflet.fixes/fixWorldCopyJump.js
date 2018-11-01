@@ -15,16 +15,10 @@ function wrapLongitudeToTarget(latLng, targetLatLng) {
 }
 
 function fixVectorMarkerWorldJump() {
-    // Shift line points longitude by +360 or -360, to minimize distance between line center and map view center
-    // Longitude is changed only for display, longitude of pints is not changed
-    // Breaks dipslay of lines spanning more then one world copy
-    L.Polyline.prototype._projectLatlngs = function(latlngs, result, projectedBounds) {
-        var flat = latlngs[0] instanceof L.LatLng,
-            len = latlngs.length,
-            i, ring;
+    L.Polyline.prototype.shiftProjectedFitMapView = function() {
         const polylineBounds = this.getBounds();
-        let shift = 0;
-        if (polylineBounds.isValid()) {
+        let shift = null;
+        if (this._map && polylineBounds.isValid()) {
             const worldWidth = this._map.getPixelWorldBounds().getSize().x;
             const polylineCenter = polylineBounds.getCenter();
             const mapCenter = this._map.getCenter();
@@ -33,7 +27,27 @@ function fixVectorMarkerWorldJump() {
                 shift = worldWidth
             } else if (polylineCenter.lng > mapCenter.lng + 180) {
                 shift = -worldWidth;
+            } else {
+                shift = 0;
             }
+        }
+        return shift;
+    };
+
+
+    // Shift line points longitude by +360 or -360, to minimize distance between line center and map view center
+    // Longitude is changed only for display, longitude of pints is not changed
+    // Breaks dipslay of lines spanning more then one world copy
+    L.Polyline.prototype._projectLatlngs = function(latlngs, result, projectedBounds) {
+        var flat = latlngs[0] instanceof L.LatLng,
+            len = latlngs.length,
+            i, ring;
+        let shift = null;
+        if (this.options.projectedShift) {
+            shift = this.options.projectedShift();
+        }
+        if (shift === null)  {
+            shift = this.shiftProjectedFitMapView();
         }
 
         if (flat) {
@@ -57,14 +71,23 @@ function fixVectorMarkerWorldJump() {
     // Breaks display of markers with huge longitudes like 750 (can be displayed only at zoom levels 0 or 1)
     L.Marker.prototype.update = function() {
         if (this._icon) {
-            const mapCenter = this._map.getCenter();
-            const worldWidth = this._map.getPixelWorldBounds().getSize().x;
             var pos = this._map.latLngToLayerPoint(this._latlng).round();
-            if (this._latlng.lng < mapCenter.lng - 180) {
-                pos.x += worldWidth
-            } else if (this._latlng.lng > mapCenter.lng + 180) {
-                pos.x -= worldWidth;
+            let shift = null;
+            if (this.options.projectedShift) {
+                shift = this.options.projectedShift();
             }
+            if (shift === null) {
+                const mapCenter = this._map.getCenter();
+                const worldWidth = this._map.getPixelWorldBounds().getSize().x;
+                if (this._latlng.lng < mapCenter.lng - 180) {
+                    shift = worldWidth;
+                } else if (this._latlng.lng > mapCenter.lng + 180) {
+                    shift = -worldWidth;
+                } else {
+                    shift = 0;
+                }
+            }
+            pos.x += shift;
             this._setPos(pos);
         }
 
