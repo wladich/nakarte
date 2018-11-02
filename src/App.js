@@ -58,9 +58,14 @@ function setUp() {
         }
     ).addTo(map);
 
-    new L.Control.Scale({imperial: false, position: 'topleft'}).addTo(map);
 
     new ZoomDisplay().addTo(map);
+
+    new L.Control.Scale({
+        imperial: false,
+        position: 'topleft',
+        stackHorizontally: true
+    }).addTo(map);
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
