@@ -6,7 +6,7 @@ import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
 import safeLocalStorage from 'lib/safe-localstorage';
 
-function enableConfig(control, layers) {
+function enableConfig(control, {layers, customLayersOrder}) {
     const originalOnAdd = control.onAdd;
     const originalUnserializeState = control.unserializeState;
     const originalAddItem = control._addItem;
@@ -14,11 +14,6 @@ function enableConfig(control, layers) {
         return;
     }
     enableTopRow(control);
-
-    control.options = L.Util.extend({
-        customBaseLayersOrder: 999,
-        customOverlaysOrder: 10000
-    }, control.options);
 
     L.Util.extend(control, {
             _configEnabled: true,
@@ -56,11 +51,16 @@ function enableConfig(control, layers) {
                         })
                     }
                 }
-                // restore custom layers
-                Object.keys(storedLayersEnabled).forEach(code => this.loadCustomLayerFromString(code));
+                // restore custom layers;
+                // custom layers can be upgraded in loadCustomLayerFromString and their code will change
+                const storedLayersEnabled2 = {};
+                for (let [code, isEnabled] of Object.entries(storedLayersEnabled)) {
+                    let newCode = this.loadCustomLayerFromString(code) || code;
+                    storedLayersEnabled2[newCode] = isEnabled;
+                }
 
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
-                    let enabled = storedLayersEnabled[layer.layer.options.code];
+                    let enabled = storedLayersEnabled2[layer.layer.options.code];
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
                     if (typeof enabled === 'undefined') {
@@ -121,7 +121,7 @@ function enableConfig(control, layers) {
             },
 
             showLayersSelectWindow: function() {
-                if (this._configWindowVisible) {
+                if (this._configWindowVisible || this._customLayerWindow) {
                     return;
                 }
                 [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.enabled));
@@ -179,7 +179,8 @@ function enableConfig(control, layers) {
                         tms: false,
                         maxZoom: 18,
                         isOverlay: false,
-                        scaleDependent: false
+                        scaleDependent: false,
+                        isTop: true
                     }
                 );
             },
@@ -242,7 +243,7 @@ function enableConfig(control, layers) {
             },
 
             showCustomLayerForm: function(buttons, fieldValues) {
-                if (this._customLayerWindow) {
+                if (this._customLayerWindow || this._configWindowVisible) {
                     return;
                 }
                 this._customLayerWindow =
@@ -254,64 +255,55 @@ function enableConfig(control, layers) {
 
                 let customLayerWindow = L.DomUtil.create('div', 'custom-layers-window', this._customLayerWindow);
                 let form = L.DomUtil.create('form', '', customLayerWindow);
-
-                let buttonsHtml = '';
-                for (let [i, button] of buttons.entries()) {
-                    buttonsHtml += `<a class="button" name="btn-${i}">${button.caption}</a>`;
-                }
                 L.DomEvent.on(form, 'submit', L.DomEvent.preventDefault);
-                form.innerHTML = `
+
+                const dialogModel = {
+                    name: ko.observable(fieldValues.name),
+                    url: ko.observable(fieldValues.url),
+                    tms: ko.observable(fieldValues.tms),
+                    scaleDependent: ko.observable(fieldValues.scaleDependent),
+                    maxZoom: ko.observable(fieldValues.maxZoom),
+                    isOverlay: ko.observable(fieldValues.isOverlay),
+                    isTop: ko.observable(fieldValues.isTop),
+                    buttonClicked: function buttonClicked(callbackN) {
+                        const fieldValues = {
+                            name: dialogModel.name().trim(),
+                            url: dialogModel.url().trim(),
+                            tms: dialogModel.tms(),
+                            scaleDependent: dialogModel.scaleDependent(),
+                            maxZoom: dialogModel.maxZoom(),
+                            isOverlay: dialogModel.isOverlay(),
+                            isTop: dialogModel.isTop()
+                        };
+                        console.log(fieldValues);
+                        buttons[callbackN].callback(fieldValues);
+                    }
+                };
+
+                const formHtml = [`
 <p><a href="http://leafletjs.com/reference-1.0.2.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
-<label>Layer name<br/>
-<input name="name"/></label><br/>
-<label>Tile url template<br/>
-<textarea name="url" style="width: 100%"></textarea></label><br/>
-<label><input type="radio" name="overlay" value="no">Base layer</label><br/>
-<label><input type="radio" name="overlay" value="yes">Overlay</label><br/>
-<label><input type="checkbox" name="scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
-<label><input type="checkbox" name="tms" />TMS rows order</label><br />
+<label>Layer name<br/><input data-bind="value: name"/></label><br/>
+<label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
+<label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: false">Base layer</label><br/>
+<label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: true">Overlay</label><br/>
+<hr/>
+<label><input type="radio" name="top-or-bottom"
+        data-bind="checked: isTop, checkedValue: false, enable: isOverlay">Place below other layers</label><br/>
+<label><input type="radio" name="top-or-bottom"
+        data-bind="checked: isTop, checkedValue: true, enable: isOverlay">Place above other layers</label><br/>
+<hr/>
+<label><input type="checkbox" data-bind="checked: scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
+<label><input type="checkbox" data-bind="checked: tms" />TMS rows order</label><br />
 
 <label>Max zoom<br>
-<select name="maxZoom">
-<option value="9">9</option>
-<option value="10">10</option>
-<option value="11">11</option>
-<option value="12">12</option>
-<option value="13">13</option>
-<option value="14">14</option>
-<option value="15">15</option>
-<option value="16">16</option>
-<option value="17">17</option>
-<option value="18" selected>18</option>
-</select></label>
-<br />
-${buttonsHtml}`;
-
-                form.name.value = fieldValues.name;
-                form.url.value = fieldValues.url;
-                form.tms.checked = fieldValues.tms;
-                form.scaleDependent.checked = fieldValues.scaleDependent;
-                form.maxZoom.value = fieldValues.maxZoom;
-                form.overlay[fieldValues.isOverlay ? 1 : 0].checked = true;
-
-                function buttonClicked(callback) {
-                    var fieldValues = {
-                        name: form.name.value.trim(),
-                        url: form.url.value.trim(),
-                        tms: form.tms.checked,
-                        scaleDependent: form.scaleDependent.checked,
-                        maxZoom: form.maxZoom.value,
-                        isOverlay: form.querySelector('input[name="overlay"]:checked').value === 'yes'
-                    };
-                    callback(fieldValues);
-                }
-
+<select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label>
+<br />`];
                 for (let [i, button] of buttons.entries()) {
-
-                    let buttonEl = form.querySelector(`[name="btn-${i}"]`);
-                    L.DomEvent.on(buttonEl, 'click', buttonClicked.bind(this, button.callback));
+                    formHtml.push(`<a class="button" data-bind="click: buttonClicked.bind(null, ${i})">${button.caption}</a>`);
                 }
 
+                form.innerHTML = formHtml.join('');
+                ko.applyBindings(dialogModel, form);
             },
 
             _addItem: function(obj) {
@@ -392,7 +384,6 @@ ${buttonsHtml}`;
                 this.updateEnabledLayers();
             },
 
-
             createCustomLayer: function(fieldValues) {
                 const serialized = this.serializeCustomLayer(fieldValues);
                 const tileLayer = L.tileLayer(fieldValues.url, {
@@ -403,7 +394,8 @@ ${buttonsHtml}`;
                         print: true,
                         jnx: true,
                         code: serialized,
-                        noCors: true
+                        noCors: true,
+                        isTop: fieldValues.isTop
                     }
                 );
 
@@ -413,7 +405,7 @@ ${buttonsHtml}`;
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: fieldValues.isOverlay ? this.options.customOverlaysOrder : this.options.customBaseLayersOrder,
+                    order: (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
@@ -492,6 +484,10 @@ ${buttonsHtml}`;
                     }
 
                     if (fieldValues) {
+                        // upgrade
+                        if (fieldValues.isTop === undefined) {
+                            fieldValues.isTop = true;
+                        }
                         if (!this.customLayerExists(fieldValues)) {
                             this._customLayers.push(this.createCustomLayer(fieldValues));
                         }

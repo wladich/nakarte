@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import logging from 'lib/logging';
 import {notify} from 'lib/notifications';
 
 const StravaHeatmap = L.TileLayer.extend({

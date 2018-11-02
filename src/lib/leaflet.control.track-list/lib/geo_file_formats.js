@@ -95,12 +95,14 @@ function parseGpx(txt, name, preferNameFromFile) {
                 error = 'CORRUPT';
                 continue;
             }
+            let wptName = xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]) || '';
             try {
-                waypoint.name = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]));
+                wptName = utf8_decode((wptName));
             }  catch (e) {
                 error = 'CORRUPT';
-                continue;
+                wptName = '__invalid point name__';
             }
+            waypoint.name = wptName;
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);
         }
@@ -125,7 +127,11 @@ function parseGpx(txt, name, preferNameFromFile) {
         for (let trk of [...dom.getElementsByTagName('trk')]) {
             let trkName = trk.getElementsByTagName('name')[0];
             if (trkName) {
-                trkName = utf8_decode(xmlGetNodeText(trkName));
+                try {
+                    trkName = utf8_decode(xmlGetNodeText(trkName));
+                } catch (e) {
+                    error = 'CORRUPT';
+                }
                 if (trkName.length) {
                     name = trkName;
                     break;
@@ -144,6 +150,7 @@ function parseGpx(txt, name, preferNameFromFile) {
 
 function parseOziRte(txt, name) {
     let error, segments = [];
+    txt = stripBom(txt);
     const lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Route File') !== 0) {
         return null;
@@ -182,6 +189,7 @@ function parseOziRte(txt, name) {
 function parseOziPlt(txt, name) {
     var error;
     var segments = [];
+    txt = stripBom(txt);
     var lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Track Point File') !== 0) {
         return null;
@@ -211,7 +219,7 @@ function parseOziPlt(txt, name) {
         current_segment.push({lat: lat, lng: lon});
         total_points_num += 1;
     }
-    if (isNaN(expected_points_num) || expected_points_num !== total_points_num) {
+    if (isNaN(expected_points_num) || (expected_points_num !== 0 && expected_points_num !== total_points_num)) {
         error = 'CORRUPT';
     }
     return [{name: name, tracks: segments, error: error}];
@@ -257,6 +265,7 @@ function parseOziWpt(txt, name) {
         lines, line,
         i,
         lat, lng, pointName, fields;
+    txt = stripBom(txt);
     lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Waypoint File') !== 0) {
         return null;

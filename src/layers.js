@@ -13,13 +13,9 @@ import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
 
 export default function getLayers() {
     const layers = [
-        {
-            group: 'Default layers',
-            layers: [
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
-                    order: 100,
                     isDefault: true,
                     layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {
@@ -34,7 +30,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'ESRI Sat',
-                    order: 200,
                     isDefault: true,
                     layer: L.tileLayer(
                         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -51,7 +46,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Yandex map',
-                    order: 300,
                     isDefault: true,
                     layer: new L.Layer.Yandex('map',
                         {
@@ -66,7 +60,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Yandex Satellite',
-                    order: 400,
                     isDefault: true,
                     layer: new L.Layer.Yandex('sat',
                         {
@@ -81,7 +74,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google',
-                    order: 500,
                     isDefault: true,
                     layer: new L.Layer.Google('ROADMAP',
                         {
@@ -96,7 +88,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google Satellite',
-                    order: 600,
                     isDefault: true,
                     layer: new L.Layer.Google('SATELLITE',
                         {
@@ -111,7 +102,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google Terrain',
-                    order: 650,
                     isDefault: true,
                     layer: new L.Layer.Google('TERRAIN',
                         {
@@ -126,7 +116,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Bing Sat',
-                    order: 700,
                     isDefault: true,
                     layer: new BingLayer(config.bingKey,
                         {
@@ -142,7 +131,6 @@ export default function getLayers() {
 
                 {
                     title: 'marshruty.ru',
-                    order: 800,
                     isDefault: true,
                     layer: L.tileLayer('https://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
                         {
@@ -159,7 +147,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topomapper 1km',
-                    order: 900,
                     isDefault: true,
                     layer: L.tileLayer(
                         'http://144.76.234.108/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
@@ -178,9 +165,8 @@ export default function getLayers() {
 
                 {
                     title: 'Topo 10km',
-                    order: 10100,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo001m/{z}/{x}/{y}",
                         {
                             code: 'D',
                             isOverlay: true,
@@ -196,9 +182,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 2 km',
-                    order: 10200,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
                         {
                             code: 'N',
                             isOverlay: true,
@@ -214,9 +199,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'ArbaletMO',
-                    order: 10300,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
                         {
                             code: 'A',
                             isOverlay: true,
@@ -232,9 +216,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav mountains',
-                    order: 10400,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/map_hr/{z}/{x}/{y}",
                         {
                             code: 'Q',
                             isOverlay: true,
@@ -250,9 +233,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 1km',
-                    order: 10500,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
                         {
                             code: 'J',
                             isOverlay: true,
@@ -268,9 +250,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 1km',
-                    order: 10600,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo1000/{z}/{x}/{y}",
                         {
                             code: 'C',
                             isOverlay: true,
@@ -286,9 +267,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 500m',
-                    order: 10700,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc500/{z}/{x}/{y}",
                         {
                             code: 'F',
                             isOverlay: true,
@@ -304,9 +284,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 500m',
-                    order: 10800,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo500/{z}/{x}/{y}",
                         {
                             code: 'B',
                             isOverlay: true,
@@ -322,9 +301,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'GGC 250m',
-                    order: 10900,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc250/{z}/{x}/{y}",
                         {
                             code: 'K',
                             isOverlay: true,
@@ -340,9 +318,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Slazav map',
-                    order: 11000,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/map_podm/{z}/{x}/{y}",
                         {
                             code: 'Z',
                             isOverlay: true,
@@ -358,9 +335,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Races',
-                    order: 11050,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/adraces/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/adraces/{z}/{x}/{y}",
                         {
                             code: 'U',
                             isOverlay: true,
@@ -376,9 +352,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'O-sport',
-                    order: 11100,
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/osport/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/osport/{z}/{x}/{y}",
                         {
                             code: 'R',
                             isOverlay: true,
@@ -394,7 +369,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Soviet topo maps grid',
-                    order: 11200,
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({
                         code: 'Ng',
@@ -403,7 +377,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Wikimapia',
-                    order: 11300,
                     isDefault: true,
                     layer: new L.Wikimapia({
                         code: 'W',
@@ -412,7 +385,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Mountain passes (Westra)',
-                    order: 11400,
                     isDefault: true,
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
                         code: 'Wp',
@@ -428,14 +400,8 @@ export default function getLayers() {
                         }
                     })
                 },
-            ]
-        },
-        {
-            group: 'OpenStreetMap alternatives',
-            layers: [
                 {
                     title: 'OpenTopoMap',
-                    order: 110,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
                         {
@@ -453,7 +419,6 @@ export default function getLayers() {
                 {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
-                    order: 120,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
@@ -468,7 +433,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'OSM Outdoors',
-                    order: 130,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
@@ -481,17 +445,11 @@ export default function getLayers() {
                         }
                     )
                 },
-            ]
-        },
-        {
-            group: 'Topo maps',
-            layers: [
                 {
                     title: 'Eurasia 25km',
                     description: '1975-80',
-                    order: 10090,
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
                         {
                             code: 'E25m',
                             isOverlay: true,
@@ -507,9 +465,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 1km',
-                    order: 10610,
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
                         {
                             code: 'NT1',
                             isOverlay: true,
@@ -525,9 +482,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Caucasus 500m',
-                    order: 10810,
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
                         {
                             code: 'NT5',
                             isOverlay: true,
@@ -543,9 +499,8 @@ export default function getLayers() {
                 },
                 {
                     title: 'Topo 250m',
-                    order: 10950,
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo250/{z}/{x}/{y}",
                         {
                             code: 'T25',
                             isOverlay: true,
@@ -562,9 +517,8 @@ export default function getLayers() {
                 {
                     title: 'Montenegro topo 250m',
                     description: '1970-72',
-                    order: 10960,
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
                         {
                             code: 'MN25',
                             isOverlay: true,
@@ -577,16 +531,10 @@ export default function getLayers() {
                             shortName: 'montenegro_250'
                         }
                     )
-                }
-            ]
-        },
-        {
-            group: 'Mountains maps',
-            layers: [
+                },
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
                     description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
-                    order: 10390,
                     isDefault: false,
                     layer: L.tileLayer("http://map.g-utka.ru/{z}/{x}/{y}.png",
                         // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
@@ -605,14 +553,9 @@ export default function getLayers() {
                             shortName: 'tsvetkov_mountains'
                         }
                     )
-                }]
-        },
-        {
-            group: 'Miscellaneous',
-            layers: [
+                },
                 {
                     title: 'Bing imagery acquisition dates',
-                    order: 11110,
                     isDefault: false,
                     layer: new BingDates({
                         code: 'Bd',
@@ -626,7 +569,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'geocaching.su',
-                    order: 11500,
                     isDefault: false,
                     layer: new GeocachingSu(config.geocachingSuUrl, {
                         code: 'Gc',
@@ -639,7 +581,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'OpenStreetMap GPS traces',
-                    order: 11120,
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
                         {
@@ -655,7 +596,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (all)',
-                    order: 11130,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -672,7 +612,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (run)',
-                    order: 11131,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -689,7 +628,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (ride)',
-                    order: 11132,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -706,7 +644,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap (winter)',
-                    order: 11133,
                     isDefault: false,
                     layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -723,7 +660,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (all)',
-                    order: 11134,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -740,7 +676,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (run)',
-                    order: 11135,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -757,7 +692,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (ride)',
-                    order: 11136,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -774,7 +708,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Strava heatmap lowres (winter)',
-                    order: 11137,
                     isDefault: false,
                     layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
                         {
@@ -789,16 +722,9 @@ export default function getLayers() {
                         }
                     )
                 },
-            ]
-        },
-
-        {
-            group: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
-            layers: [
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway UT map',
-                    order: 5000,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
                         {
@@ -816,7 +742,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway paper map',
-                    order: 10310,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
                         {
@@ -834,7 +759,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway map',
-                    order: 10320,
                     isDefault: false,
                     layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=topo4&zoom={z}&x={x}&y={y}&gkt={baatToken}',
                         {
@@ -851,7 +775,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway summer trails',
-                    order: 20000,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
                         {
@@ -869,7 +792,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Norway winter trails',
-                    order: 20010,
                     isDefault: false,
                     layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
                         {
@@ -889,7 +811,6 @@ export default function getLayers() {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
                     description: '<a href="https://kart.finn.no/">https://kart.finn.no/</a>',
-                    order: 5030,
                     isDefault: false,
                     layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {
@@ -903,14 +824,9 @@ export default function getLayers() {
                             shortName: 'norway_roads'
                         }
                     )
-                }]
-        },
-        {
-            group: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
-            layers: [
+                },
                 {
                     title: 'Czech base',
-                    order: 5040,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
                         {
@@ -927,7 +843,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech tourist',
-                    order: 5050,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
                         {
@@ -944,7 +859,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech summer',
-                    order: 5060,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
                         {
@@ -961,7 +875,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech winter',
-                    order: 5070,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
                         {
@@ -978,7 +891,6 @@ export default function getLayers() {
                 },
                 {
                     title: 'Czech geographical',
-                    order: 5080,
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
                         {
@@ -992,56 +904,339 @@ export default function getLayers() {
                             shortName: 'czech_geo'
                         }
                     )
-                }]
-        }
+                },
+		        {
+		            title: 'Finland Topo',
+                    description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
+		            isDefault: false,
+		            layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
+		                {
+		                    code: 'Fmk',
+		                    isOverlay: false,
+		                    tms: false,
+		                    print: true,
+		                    jnx: true,
+		                    scaleDependent: true,
+		                    shortName: 'finland_topo'
+		                }
+		            )
+		        },
+                {
+                    title: 'Waymarked Cycling Trails',
+                    description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
+                    isDefault: false,
+                    layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
+                        {
+                            code: 'Wc',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: false,
+                            scaleDependent: true,
+                            shortName: 'cycling_trails',
+                            isOverlayTransparent: true
+                        })
+                },
+                {
+                    title: 'Waymarked Hiking Trails',
+                    description: '<a href="https://hiking.waymarkedtrails.org/">https://hiking.waymarkedtrails.org</a>',
+                    isDefault: false,
+                    layer: L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
+                        {
+                            code: 'Wh',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: false,
+                            scaleDependent: true,
+                            shortName: 'hiking_trails',
+                            isOverlayTransparent: true
+                        })
+                },
     ];
-    // TODO: move it to tests
-    const codes = {};
-    const orders = {};
-    const shortNames = new Set();
-    for (let group of layers) {
-        for (let layer of group.layers) {
-            const { layer: { options } } = layer
-            if (!options) {
-                throw new Error('Layer without options: ' + layer.title);
-            }
-            const {
-                code,
-                shortName,
-                print,
-                isOverlay,
-                isOverlayTransparent
-            } = options
-            if (!code) {
-                throw new Error('Layer without code: ' + layer.title);
-            }
-            if (code in codes) {
-                throw new Error(`Duplicate layer code "${code}"`);
-            }
-            codes[code] = 1;
-            let order = layer.order;
-            if (!order) {
-                throw new Error('Layer without order: ' + layer.title);
-            }
-            if (order in orders) {
-                throw new Error(`Duplicate layer order "${order}"`);
-            }
-            orders[order] = 1;
 
-            if (print) {
-                if (isOverlay && (isOverlayTransparent === undefined)) {
-                    throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
+    const groupsDefs = [
+        {
+            title: 'Default layers',
+            layers: [
+                'OpenStreetMap',
+                'ESRI Sat',
+                'Yandex map',
+                'Yandex Satellite',
+                'Google',
+                'Google Satellite',
+                'Google Terrain',
+                'Bing Sat',
+                'marshruty.ru',
+                'Topomapper 1km',
+                'Topo 10km',
+                'GGC 2 km',
+                'ArbaletMO',
+                'Slazav mountains',
+                'GGC 1km',
+                'Topo 1km',
+                'GGC 500m',
+                'Topo 500m',
+                'GGC 250m',
+                'Slazav map',
+                'Races',
+                'O-sport',
+                'Soviet topo maps grid',
+                'Wikimapia',
+                'Mountain passes (Westra)'
+            ],
+        },
+        {
+            title: 'OpenStreetMap alternatives',
+            layers: [
+                'OpenTopoMap',
+                'OpenCycleMap',
+                'OSM Outdoors'],
+        },
+        {
+            title: 'Topo maps',
+            layers: [
+                'Eurasia 25km',
+                'Caucasus 1km',
+                'Caucasus 500m',
+                'Topo 250m',
+                'Montenegro topo 250m',
+                'Finland Topo'],
+        },
+        {
+            title: 'Miscellaneous',
+            layers: [
+                'Mountains by Aleksey Tsvetkov',
+                'Bing imagery acquisition dates',
+                'geocaching.su']
+        },
+        {
+            title: 'Routes and traces',
+            layers: [
+                'Waymarked Hiking Trails',
+                'Waymarked Cycling Trails',
+                'OpenStreetMap GPS traces',
+                'Strava heatmap (all)',
+                'Strava heatmap (run)',
+                'Strava heatmap (ride)',
+                'Strava heatmap (winter)',
+                'Strava heatmap lowres (all)',
+                'Strava heatmap lowres (run)',
+                'Strava heatmap lowres (ride)',
+                'Strava heatmap lowres (winter)'],
+
+        },
+        {
+            title: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
+            layers: [
+                'Norway UT map',
+                'Norway paper map',
+                'Norway map',
+                'Norway summer trails',
+                'Norway winter trails',
+                'Norway roads'],
+
+        },
+        {
+            title: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
+            layers: [
+                'Czech base',
+                'Czech tourist',
+                'Czech summer',
+                'Czech winter',
+                'Czech geographical'],
+
+        }];
+
+
+    const titlesByOrder = [
+        // common base layers
+        'OpenStreetMap',
+        'OpenTopoMap',
+        'OpenCycleMap',
+        'OSM Outdoors',
+        'ESRI Sat',
+        'Yandex map',
+        'Yandex Satellite',
+        'Google',
+        'Google Satellite',
+        'Google Terrain',
+        'Bing Sat',
+        'marshruty.ru',
+        'Topomapper 1km',
+
+        // local base layers
+        'Czech base',
+        'Czech tourist',
+        'Czech summer',
+        'Czech winter',
+        'Czech geographical',
+        'Norway UT map',
+        'Finland Topo',
+
+        // map overlays
+        '#custom-bottom',
+        'Norway roads',
+        'Eurasia 25km',
+        'Topo 10km',
+        'GGC 2 km',
+        'ArbaletMO',
+        'Norway paper map',
+        'Norway map',
+        'Mountains by Aleksey Tsvetkov',
+        'Slazav mountains',
+        'GGC 1km',
+        'Topo 1km',
+        'Caucasus 1km',
+        'GGC 500m',
+        'Topo 500m',
+        'Caucasus 500m',
+        'GGC 250m',
+        'Topo 250m',
+        'Montenegro topo 250m',
+        'Slazav map',
+        'Races',
+        'O-sport',
+        '#custom-top',
+
+        // line overlays
+        'Waymarked Hiking Trails',
+        'Waymarked Cycling Trails',
+        'Norway summer trails',
+        'Norway winter trails',
+        'Bing imagery acquisition dates',
+        'OpenStreetMap GPS traces',
+        'Strava heatmap (all)',
+        'Strava heatmap (run)',
+        'Strava heatmap (ride)',
+        'Strava heatmap (winter)',
+        'Strava heatmap lowres (all)',
+        'Strava heatmap lowres (run)',
+        'Strava heatmap lowres (ride)',
+        'Strava heatmap lowres (winter)',
+        'Soviet topo maps grid',
+        'Wikimapia',
+
+        // point overlays
+        'Mountain passes (Westra)',
+        'geocaching.su',
+    ];
+
+    // assign order to layers
+    const orderByTitle = {};
+    for (let i=0; i < titlesByOrder.length; i++) {
+        let title = titlesByOrder[i];
+        orderByTitle[title] = i + 1;
+    }
+
+    for (let layer of layers) {
+        const title = layer.title;
+        layer.order = orderByTitle[title];
+        if (!layer.order) {
+            throw new Error(`Layer title not found in titlesByOrder list: ${title}`)
+        }
+    }
+
+    // divide layers by groups
+    const grouppedLayers = [];
+    const layersByTitle = {};
+    for (let layer of layers) {
+        layersByTitle[layer.title] = layer;
+    }
+    for (let groupDef of groupsDefs) {
+        let group = {group: groupDef.title, layers: []};
+        grouppedLayers.push(group);
+        for (let title of groupDef.layers) {
+            let layer = layersByTitle[title];
+            if (!layer) {
+                throw new Error(`Unknown layer in groups definitions: ${title}`)
+            }
+            group.layers.push(layer);
+        }
+    }
+
+    // TODO: move it to tests
+    const codes = new Set();
+    const titles = new Set();
+    const shortNames = new Set();
+    for (let layer of layers) {
+        const {title, layer: {options}} = layer;
+        if (!options) {
+            throw new Error(`Layer without options: ${layer.title}`);
+        }
+        if (titles.has(title)) {
+            throw new Error(`Duplicate layer title "${title}"`);
+        }
+        titles.add(title);
+        const {
+            code,
+            shortName,
+            print,
+            isOverlay,
+            isOverlayTransparent
+        } = options;
+        if (!code) {
+            throw new Error('Layer without code: ' + layer.title);
+        }
+        if (codes.has(code)) {
+            throw new Error(`Duplicate layer code "${code}"`);
+        }
+        codes.add(code);
+
+        if (print) {
+            if (isOverlay && (isOverlayTransparent === undefined)) {
+                throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
+            }
+            if (!shortName) {
+                throw new Error('Layer without shortName: ' + layer.title);
+            }
+            if (shortNames.has(shortName)) {
+                throw new Error(`Duplicate layer shortName: "${shortName}"`);
+            }
+            shortNames.add(shortName);
+        }
+    }
+
+    // check order definition
+    let seenOverlay = false;
+    for (let title of titlesByOrder) {
+        if (title[0] !== '#') {
+            if (!titles.has(title)) {
+                throw new Error(`Unknown layer title in order list: ${title}`);
+            }
+            let isOverlay = layersByTitle[title];
+            if (isOverlay) {
+                seenOverlay = true;
+            } else {
+                if (seenOverlay) {
+                    throw new Error(`Base layer after overlays: ${title}`);
                 }
-                if (!shortName) {
-                    throw new Error('Layer without shortName: ' + layer.title);
-                }
-                if (shortNames.has(shortName)) {
-                    throw new Error(`Duplicate layer shortName "${shortName}"`);
-                }
-                shortNames.add(shortName);
             }
         }
     }
-    return layers;
+    // check groups definitions
+    const seenLayerTitles = new Set();
+    for (let group of groupsDefs) {
+        for (let title of group.layers) {
+            if (seenLayerTitles.has(title)) {
+                throw new Error(`Duplicate layer in groups definition: ${title}`)
+            }
+            seenLayerTitles.add(title);
+        }
+    }
+    // unknown layers in groupsDefs already checked, check only that all layers assigned to groups
+    for (let title of titles) {
+        if (!seenLayerTitles.has(title)) {
+            throw new Error(`Layer not assigned to any group: ${title}`);
+        }
+    }
+
+    return {
+        layers: grouppedLayers,
+        customLayersOrder: {
+            top: orderByTitle['#custom-top'],
+            bottom: orderByTitle['#custom-bottom'],
+
+        }};
 }
 

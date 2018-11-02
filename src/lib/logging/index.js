@@ -35,7 +35,7 @@ function logEvent(eventName, extra) {
     }
     const s = JSON.stringify(data);
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://nakarte.tk/event');
+    xhr.open('POST', 'https://nakarte.me/event');
     xhr.send(s);
 }
 
