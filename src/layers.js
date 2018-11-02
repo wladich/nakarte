@@ -922,6 +922,25 @@ export default function getLayers() {
 		            )
 		        },
                 {
+                    title: 'France Topo 250m',
+                    isDefault: false,
+                    layer: L.tileLayer("https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+                        {
+                            minZoom: 6,
+                            maxNativeZoom: 16,
+                            bounds: [[41.29019, -4.94385], [51.23441, 9.82178]],
+                            code: 'Ft',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: false,
+                            shortName: 'france_topo_25k'
+                        }
+                    )
+                },
+                {
                     title: 'Waymarked Cycling Trails',
                     description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
@@ -1001,7 +1020,9 @@ export default function getLayers() {
                 'Caucasus 500m',
                 'Topo 250m',
                 'Montenegro topo 250m',
-                'Finland Topo'],
+                'Finland Topo',
+                'France Topo 250m',
+            ],
         },
         {
             title: 'Miscellaneous',
@@ -1046,7 +1067,8 @@ export default function getLayers() {
                 'Czech winter',
                 'Czech geographical'],
 
-        }];
+        },
+    ];
 
 
     const titlesByOrder = [
@@ -1094,6 +1116,7 @@ export default function getLayers() {
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
+        'France Topo 250m',
         'Slazav map',
         'Races',
         'O-sport',
