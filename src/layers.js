@@ -128,7 +128,6 @@ export default function getLayers() {
                         }
                     )
                 },
-
                 {
                     title: 'marshruty.ru',
                     isDefault: true,
@@ -941,6 +940,25 @@ export default function getLayers() {
                     )
                 },
                 {
+                    title: 'Great Britain Topo',
+                    isDefault: false,
+                    layer: new BingLayer(config.bingKey,
+                        {
+                            type: 'OrdnanceSurvey',
+                            minZoom: 12,
+                            maxNativeZoom: 16,
+                            bounds: [[49.85171,-7.74708], [60.86949,1.80382]],
+                            code: 'Gbt',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            scaleDependent: false,
+                            print: true,
+                            jnx: true,
+                            shortName: 'england_topo'
+                        }
+                    )
+                },
+                {
                     title: 'Waymarked Cycling Trails',
                     description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
@@ -1022,6 +1040,7 @@ export default function getLayers() {
                 'Montenegro topo 250m',
                 'Finland Topo',
                 'France Topo 250m',
+                'Great Britain Topo',
             ],
         },
         {
@@ -1110,6 +1129,7 @@ export default function getLayers() {
         'GGC 1km',
         'Topo 1km',
         'Caucasus 1km',
+        'Great Britain Topo',
         'GGC 500m',
         'Topo 500m',
         'Caucasus 500m',
