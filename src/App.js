@@ -28,6 +28,7 @@ import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
 import {LocateControl} from 'lib/leaflet.control.locate';
 import {notify} from 'lib/notifications';
+import ZoomDisplay from 'lib/leaflet.control.zoom-display';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -59,7 +60,7 @@ function setUp() {
 
     new L.Control.Scale({imperial: false, position: 'topleft'}).addTo(map);
 
-    L.control.zoom().addTo(map);
+    new ZoomDisplay().addTo(map);
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 

@@ -1,0 +1,15 @@
+.leaflet-control-zoom-display {
+    background-color: #fff;
+    width: 26px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 12px;
+    line-height: 12px;
+    font-weight: bold;
+}
+
+.leaflet-touch .leaflet-control-zoom-display {
+    width: 30px;
+}
