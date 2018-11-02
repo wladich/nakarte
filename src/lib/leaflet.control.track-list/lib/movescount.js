@@ -92,4 +92,21 @@ function movescountParser(name, responses) {
     return trackParser[matchTypedUrl.type](data);
 }
 
-export {isMovescountUrl, movescountXhrOptions, movescountParser}
+function movescountErrorHandler(errorHandler) {
+    return function (e) {
+        // movescount returns status 403 when profile or route is private
+        if (e.status && e.status === 403) {
+            let url = errorHandler(e)[0].name;
+
+            let matchTypedUrl = typedUrls.filter(function (typedUrl) {
+                return typedUrl.re.test(url);
+            })[0];
+
+            return [{error: 'Movescount user disabled viewing this ' + matchTypedUrl.type}];
+        } else {
+            return errorHandler(e);
+        }
+    };
+}
+
+export {isMovescountUrl, movescountXhrOptions, movescountParser, movescountErrorHandler}

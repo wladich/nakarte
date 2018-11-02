@@ -8,7 +8,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
 import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
-import {isMovescountUrl, movescountXhrOptions, movescountParser} from './movescount';
+import {isMovescountUrl, movescountXhrOptions, movescountParser, movescountErrorHandler} from './movescount';
 import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser} from './nktk';
 
 
@@ -610,14 +610,14 @@ function loadFromUrl(url) {
     }
     let urlToRequest = simpleTrackFetchOptions;
     let parser = simpleTrackParser;
-
-
+    let errorHandler = (e) => [{name: url, error: 'NETWORK', status: e.status}];
     if (isGpsiesUrl(url)) {
         urlToRequest = gpsiesXhrOptions;
         parser = gpsiesParser;
     } else if (isMovescountUrl(url)) {
         urlToRequest = movescountXhrOptions;
         parser = movescountParser;
+        errorHandler = movescountErrorHandler(errorHandler);
     } else if (isEndomondoUrl(url)) {
         urlToRequest = endomonXhrOptions;
         parser = endomondoParser;
@@ -647,7 +647,7 @@ function loadFromUrl(url) {
                     .pop();
                 return parser(name, responses);
             },
-            () => [{name: url, error: 'NETWORK'}]
+            errorHandler
         );
 }
 
