@@ -108,6 +108,7 @@ var Nomenclature = {
         var min_lat = Math.max(bounds.getSouth(), -84);
         var max_lat = Math.min(bounds.getNorth(), 84);
         var min_row = Math.floor(min_lat / row_height);
+        const maxCols = 360 / column_width;
         for (var row = min_row; row * row_height < max_lat; row++) {
             var row_south = row * row_height;
             var row_north = row_south + row_height;
@@ -119,15 +120,17 @@ var Nomenclature = {
             } else {
                 joined_quads = 1;
             }
-            var min_lon = Math.max(bounds.getWest(), -180);
-            var max_lon = Math.min(bounds.getEast(), 180);
+            var min_lon = bounds.getWest();
+            var max_lon = bounds.getEast();
             var min_column = Math.floor((min_lon + 180) / column_width / joined_quads) * joined_quads -
                 Math.round(180 / column_width);
             for (var column = min_column; column * column_width < max_lon; column += joined_quads) {
                 var column_west = column * column_width;
                 var column_east = column_west + column_width * joined_quads;
                 var quad_bounds = L.latLngBounds([[row_south, column_west], [row_north, column_east]]);
-                var names = name_factory(column, row, joined_quads);
+                // shift column to positive numbers, calc modulo, shift back
+                const wrappedColumn = ((column  + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
+                var names = name_factory(wrappedColumn, row, joined_quads);
                 quads.push({'names': names, 'bounds': quad_bounds});
             }
         }
