@@ -22,6 +22,7 @@ L.Polyline.EditMixin = {
             this._storedStyle = {weight: this.options.weight, opacity: this.options.opacity};
             this.setStyle({weight: 1.5, opacity: 1});
             L.DomUtil.addClass(this._map._container, 'leaflet-line-editing');
+            this.fire('editstart', {target: this});
         }
     },
 

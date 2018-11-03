@@ -92,7 +92,7 @@ L.Control.TrackList = L.Control.extend({
                 </div>
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
+                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}, css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -692,6 +692,10 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
             polyline.on('mousemove', this.onMouseMoveOnSegmentUpdateLineJoinCursor, this);
+            polyline.on('mouseover', () => this.onTrackMouseEnter(track));
+            polyline.on('mouseout', () => this.onTrackMouseLeave(track));
+            polyline.on('editstart', () => this.onTrackEditStart(track));
+            polyline.on('editend', () => this.onTrackEditEnd(track));
 
             //polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             //polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -793,6 +797,22 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.stopPropagation(e);
         },
 
+        onTrackMouseEnter: function(track) {
+            track.hover(true);
+        },
+
+        onTrackMouseLeave: function(track) {
+            track.hover(false);
+        },
+
+        onTrackEditStart: function(track) {
+            track.isEdited(true);
+        },
+
+        onTrackEditEnd: function(track) {
+            track.isEdited(false);
+        },
+
         onEscPressedStopLineJoinSelection: function(e) {
             if ('input' === e.target.tagName.toLowerCase()) {
                 return;
@@ -878,7 +898,9 @@ L.Control.TrackList = L.Control.extend({
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
                 _pointAutoInc: 0,
-                markers: []
+                markers: [],
+                hover: ko.observable(false),
+                isEdited: ko.observable(false)
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
