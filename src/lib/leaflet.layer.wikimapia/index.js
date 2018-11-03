@@ -155,7 +155,7 @@ L.Wikimapia = L.GridLayer.extend({
             if (!tileData) {
                 return null;
             }
-            return this.getPlaceAtLatlng(e.latlng, tileData.places);
+            return this.getPlaceAtLatlng(e.latlng.wrap(), tileData.places);
         },
 
         onMouseMove: function(e) {
