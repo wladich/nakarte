@@ -262,10 +262,11 @@
     margin-top: 2px;
 }
 
-.leaflet-control-tracklist .hover td {
+.leaflet-control-tracklist .hover,
+.leaflet-control-tracklist tr:hover {
     background-color: rgb(93%, 93%, 93%);
 }
 
-.leaflet-control-tracklist .edit td {
-    background-color: rgb(217, 232, 255);
+.leaflet-control-tracklist .edit {
+    background-color: rgb(217, 232, 255) !important;
 }
