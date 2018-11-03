@@ -92,7 +92,12 @@ L.Control.TrackList = L.Control.extend({
                 </div>
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}, css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
+                    <tr data-bind="event: {
+                                       contextmenu: $parent.showTrackMenu.bind($parent),
+                                       mouseenter: $parent.highLightTrack.bind($parent, track),
+                                       mouseleave: $parent.highLightTrack.bind($parent, null)
+                                   },
+                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -908,6 +913,7 @@ L.Control.TrackList = L.Control.extend({
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
+            track.feature.bindTooltip(() => track.name(), {sticky: true});
 
             //this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
@@ -917,6 +923,27 @@ L.Control.TrackList = L.Control.extend({
             return track;
         },
 
+        highLightTrack: function(track) {
+            if (this._trackHighlight) {
+                this._trackHighlight.removeFrom(this._map);
+                this._trackHighlight = null;
+            }
+            if (track) {
+                const trackHighlight = L.featureGroup([]);
+
+                track.feature.eachLayer((line) => {
+                    L.polyline(line.getLatLngs()).addTo(trackHighlight);
+                });
+
+                trackHighlight.setStyle({
+                    color: 'yellow',
+                    weight: '15',
+                    opacity: 0.5
+                });
+                trackHighlight.addTo(this._map).bringToBack();
+                this._trackHighlight = trackHighlight;
+            }
+        },
 
         setMarkerIcon: function(marker) {
             var symbol = 'marker',
