@@ -97,11 +97,9 @@
     height: 4px;
     vertical-align: middle;
     cursor: pointer;
-    margin-left: 2px;
-    border-top-width: 6px;
-    border-bottom-width: 6px;
-    border-color: white;
-    border-style: solid;
+    margin-left: 4px;
+    margin-right: 2px;
+    margin-bottom: 2px;
 }
 
 .leaflet-control-tracklist .track-name-wrapper {
@@ -258,4 +256,16 @@
 
 .join-line-selecting {
     cursor: default;
+}
+
+.tracks-rows-wrapper {
+    margin-top: 2px;
+}
+
+.leaflet-control-tracklist .hover td {
+    background-color: rgb(93%, 93%, 93%);
+}
+
+.leaflet-control-tracklist .edit td {
+    background-color: rgb(217, 232, 255);
 }
