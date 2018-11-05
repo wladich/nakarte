@@ -130,6 +130,8 @@ L.Control.TrackList = L.Control.extend({
                 printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
+            this._markerLayer.on('markerenter', this.onMarkerEnter, this);
+            this._markerLayer.on('markerleave', this.onMarkerLeave, this);
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
@@ -980,6 +982,14 @@ L.Control.TrackList = L.Control.extend({
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
                 ]
             ).show(e);
+        },
+
+        onMarkerEnter: function(e) {
+            e.marker._parentTrack.hover(true);
+        },
+
+        onMarkerLeave: function(e) {
+            e.marker._parentTrack.hover(false);
         },
 
         removePoint: function(marker) {
