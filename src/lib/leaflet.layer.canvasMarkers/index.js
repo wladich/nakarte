@@ -391,8 +391,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         onMouseOut: function() {
             if (this._hoverMarker) {
+                const marker = this._hoverMarker;
                 this._hoverMarker = null;
-                this.fire('markerleave', {marker: this._hoverMarker});
+                this.fire('markerleave', {marker});
             }
         },
 
