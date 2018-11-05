@@ -916,7 +916,7 @@ L.Control.TrackList = L.Control.extend({
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
             if (!L.Browser.touch) {
-                track.feature.bindTooltip(() => track.name(), {sticky: true});
+                track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
             }
 
             //this.onTrackColorChanged(track);
