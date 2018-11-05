@@ -6,6 +6,7 @@ function fixAll() {
     fixTouchDetection();
     fixMapKeypressEvent();
     fixVectorDrawWhileAnimation();
+    addTooltipDelay();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -76,6 +77,24 @@ function fixVectorDrawWhileAnimation() {
 
     L.Renderer.prototype.getEvents = getEvents;
     L.Renderer.__animationFixed = true;
+}
+
+function addTooltipDelay() {
+    const origOpenTooltip = L.Layer.prototype._openTooltip;
+    L.Layer.prototype._openTooltip = function(e) {
+        if (this._tooltip.options.delay) {
+            const self = this;
+            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(self, e), this._tooltip.options.delay);
+        } else {
+            origOpenTooltip.call(this, e);
+        }
+    };
+
+    const origCloseTooltip = L.Layer.prototype.closeTooltip;
+    L.Layer.prototype.closeTooltip = function() {
+        clearInterval(this._pendingTooltip);
+        origCloseTooltip.call(this);
+    }
 }
 
 export {fixAll}
