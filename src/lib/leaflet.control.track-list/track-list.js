@@ -917,7 +917,9 @@ L.Control.TrackList = L.Control.extend({
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
-            track.feature.bindTooltip(() => track.name(), {sticky: true});
+            if (!L.Browser.touch) {
+                track.feature.bindTooltip(() => track.name(), {sticky: true});
+            }
 
             //this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
@@ -927,7 +929,10 @@ L.Control.TrackList = L.Control.extend({
             return track;
         },
 
-        highLightTrack: function(track) {
+        highLightTrack: function(track, e) {
+            if (L.Browser.touch) {
+                return;
+            }
             if (this._trackHighlight) {
                 this._trackHighlight.removeFrom(this._map);
                 this._trackHighlight = null;
