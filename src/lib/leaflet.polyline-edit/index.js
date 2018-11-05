@@ -60,6 +60,7 @@ L.Polyline.EditMixin = {
         var marker = e.target,
             nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         this.replaceNode(nodeIndex, marker.getLatLng());
+        this._setupEndMarkers();
     },
 
     onNodeMarkerMovedChangeNode: function(e) {
@@ -80,6 +81,7 @@ L.Polyline.EditMixin = {
         var marker = e.target,
             nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         this.removeNode(nodeIndex);
+        this._setupEndMarkers();
         this.fire('nodeschanged');
     },
 
@@ -116,7 +118,7 @@ L.Polyline.EditMixin = {
         }
         this.stopDrawingLine();
         this._drawingDirection = direction;
-
+        this._setupEndMarkers();
         if (e) {
             var newNodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length;
             this.spliceLatLngs(newNodeIndex, 0, e.latlng);
@@ -140,6 +142,7 @@ L.Polyline.EditMixin = {
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = false;
+        this._setupEndMarkers();
         this.fire('drawend');
 
     },
@@ -337,6 +340,17 @@ L.Polyline.EditMixin = {
         }
     },
 
+    _setupEndMarkers: function() {
+        const nodesCount = this._latlngs.length;
+        if (nodesCount == 0) {
+            return;
+        }
+        const startIcon = this._latlngs[0]._nodeMarker._icon;
+        L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](startIcon, 'line-editor-node-marker-start');
+        const endIcon = this._latlngs[nodesCount - 1]._nodeMarker._icon;
+        L.DomUtil[this._drawingDirection !== 1 ? 'addClass' : 'removeClass'](endIcon, 'line-editor-node-marker-end');
+    },
+
     setupMarkers: function() {
         this.removeMarkers();
         var latlngs = this.getLatLngs(),
@@ -354,7 +368,7 @@ L.Polyline.EditMixin = {
                 this.makeSegmentOverlay(i);
             }
         }
-
+        this._setupEndMarkers();
     },
 
     spliceLatLngs: function(...args) {
