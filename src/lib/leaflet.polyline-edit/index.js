@@ -224,10 +224,10 @@ L.Polyline.EditMixin = {
         if ((this._drawingDirection === -1 && nodeIndex === 1) ||
             ((this._drawingDirection === 1 && nodeIndex === latlngs_n - 2))) {
             this.stopDrawingLine();
-        } else if (nodeIndex === 0) {
-            this.startDrawingLine(-1, e);
         } else if (nodeIndex === this.getLatLngs().length - 1) {
             this.startDrawingLine(1, e);
+        } else if (nodeIndex === 0) {
+            this.startDrawingLine(-1, e);
         }
     },
 
