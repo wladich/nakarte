@@ -118,10 +118,10 @@ L.Polyline.EditMixin = {
         }
         this.stopDrawingLine();
         this._drawingDirection = direction;
-        this._setupEndMarkers();
         if (e) {
             var newNodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length;
             this.spliceLatLngs(newNodeIndex, 0, e.latlng);
+            this._setupEndMarkers();
             this.fire('nodeschanged');
         }
 
@@ -289,6 +289,9 @@ L.Polyline.EditMixin = {
         if (!isAddingRight) {
             this.makeSegmentOverlay(index);
         }
+        if (nodes.length < 3) {
+            this._setupEndMarkers();
+        }
     },
 
     removeNode: function(index) {
@@ -342,13 +345,23 @@ L.Polyline.EditMixin = {
 
     _setupEndMarkers: function() {
         const nodesCount = this._latlngs.length;
-        if (nodesCount == 0) {
+        if (nodesCount === 0) {
             return;
         }
-        const startIcon = this._latlngs[0]._nodeMarker._icon;
+        const startIndex = this._drawingDirection === -1 ? 1 : 0;
+        const endIndex = this._drawingDirection === 1 ? nodesCount - 2 : nodesCount - 1;
+        const startIcon = this._latlngs[startIndex]._nodeMarker._icon;
         L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](startIcon, 'line-editor-node-marker-start');
-        const endIcon = this._latlngs[nodesCount - 1]._nodeMarker._icon;
-        L.DomUtil[this._drawingDirection !== 1 ? 'addClass' : 'removeClass'](endIcon, 'line-editor-node-marker-end');
+        if (endIndex >= 0) {
+            const endIcon = this._latlngs[endIndex]._nodeMarker._icon;
+            let func;
+            if (this._drawingDirection !== 1 && endIndex > 0) {
+                func = L.DomUtil.addClass;
+            } else {
+                func = L.DomUtil.removeClass;
+            }
+            func(endIcon, 'line-editor-node-marker-end');
+        }
     },
 
     setupMarkers: function() {
