@@ -4,12 +4,12 @@ const typedUrls = [
     {
         type: 'route',
         url: 'http://www.movescount.com/Move/Route/{id}',
-        re: /^https?:\/\/www.movescount.com\/map\?route=(\d+)/
+        re: /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?map\?route=(\d+)/
     },
     {
         type: 'move',
         url: 'http://www.movescount.com/Move/Track2/{id}',
-        re: /^https?:\/\/www.movescount.com\/moves\/move(\d+)/
+        re: /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?moves\/move(\d+)/
     }
 ];
 
@@ -72,7 +72,7 @@ function movescountXhrOptions(url) {
 
     let match = matchTypedUrl.re.exec(url);
 
-    trackId = match[1];
+    trackId = match[2];
 
     return [{
         url: urlViaCorsProxy(matchTypedUrl.url.replace('{id}', trackId)),
