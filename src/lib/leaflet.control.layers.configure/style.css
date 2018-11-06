@@ -104,7 +104,7 @@
 .custom-layers-window {
     position: relative;
     left: -50%;
-    width: 290px;
+    min-width: 290px;
     /*margin-left: -150px;*/
     margin-top: 15px;
     background-color: white;
@@ -164,4 +164,9 @@
 .leaflet-layers-configure-just-added-2 {
     transition: background-color 7s ease-in;
     background-color: rgba(0, 0, 0, 0);
+}
+
+.custom-layers-window hr {
+    border: none;
+    border-top: 1px solid hsl(0, 0%, 85%);
 }
