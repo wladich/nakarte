@@ -96,7 +96,7 @@ function parseGpx(txt, name, preferNameFromFile) {
             }
             let wptName = xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]) || '';
             try {
-                wptName = utf8_decode((wptName));
+                wptName = utf8_decode(wptName);
             }  catch (e) {
                 error = 'CORRUPT';
                 wptName = '__invalid point name__';
