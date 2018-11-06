@@ -92,7 +92,12 @@ L.Control.TrackList = L.Control.extend({
                 </div>
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
+                    <tr data-bind="event: {
+                                       contextmenu: $parent.showTrackMenu.bind($parent),
+                                       mouseenter: $parent.highLightTrack.bind($parent, track),
+                                       mouseleave: $parent.highLightTrack.bind($parent, null)
+                                   },
+                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -125,6 +130,8 @@ L.Control.TrackList = L.Control.extend({
                 printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
+            this._markerLayer.on('markerenter', this.onMarkerEnter, this);
+            this._markerLayer.on('markerleave', this.onMarkerLeave, this);
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
@@ -692,6 +699,10 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
             polyline.on('mousemove', this.onMouseMoveOnSegmentUpdateLineJoinCursor, this);
+            polyline.on('mouseover', () => this.onTrackMouseEnter(track));
+            polyline.on('mouseout', () => this.onTrackMouseLeave(track));
+            polyline.on('editstart', () => this.onTrackEditStart(track));
+            polyline.on('editend', () => this.onTrackEditEnd(track));
 
             //polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             //polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -793,6 +804,22 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.stopPropagation(e);
         },
 
+        onTrackMouseEnter: function(track) {
+            track.hover(true);
+        },
+
+        onTrackMouseLeave: function(track) {
+            track.hover(false);
+        },
+
+        onTrackEditStart: function(track) {
+            track.isEdited(true);
+        },
+
+        onTrackEditEnd: function(track) {
+            track.isEdited(false);
+        },
+
         onEscPressedStopLineJoinSelection: function(e) {
             if ('input' === e.target.tagName.toLowerCase()) {
                 return;
@@ -878,7 +905,9 @@ L.Control.TrackList = L.Control.extend({
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
                 _pointAutoInc: 0,
-                markers: []
+                markers: [],
+                hover: ko.observable(false),
+                isEdited: ko.observable(false)
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
@@ -888,6 +917,9 @@ L.Control.TrackList = L.Control.extend({
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
+            if (!L.Browser.touch) {
+                track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
+            }
 
             //this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
@@ -897,6 +929,30 @@ L.Control.TrackList = L.Control.extend({
             return track;
         },
 
+        highLightTrack: function(track, e) {
+            if (L.Browser.touch) {
+                return;
+            }
+            if (this._trackHighlight) {
+                this._trackHighlight.removeFrom(this._map);
+                this._trackHighlight = null;
+            }
+            if (track) {
+                const trackHighlight = L.featureGroup([]);
+
+                track.feature.eachLayer((line) => {
+                    L.polyline(line.getLatLngs()).addTo(trackHighlight);
+                });
+
+                trackHighlight.setStyle({
+                    color: 'yellow',
+                    weight: '15',
+                    opacity: 0.5
+                });
+                trackHighlight.addTo(this._map).bringToBack();
+                this._trackHighlight = trackHighlight;
+            }
+        },
 
         setMarkerIcon: function(marker) {
             var symbol = 'marker',
@@ -933,6 +989,14 @@ L.Control.TrackList = L.Control.extend({
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
                 ]
             ).show(e);
+        },
+
+        onMarkerEnter: function(e) {
+            e.marker._parentTrack.hover(true);
+        },
+
+        onMarkerLeave: function(e) {
+            e.marker._parentTrack.hover(false);
         },
 
         removePoint: function(marker) {

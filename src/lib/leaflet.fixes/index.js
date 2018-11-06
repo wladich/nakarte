@@ -7,8 +7,9 @@ function fixAll() {
     fixTouchDetection();
     fixMapKeypressEvent();
     fixVectorDrawWhileAnimation();
-    fixVectorMarkerWorldJump()
+    fixVectorMarkerWorldJump();
     allowControlHorizontalStacking();
+    addTooltipDelay();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -84,12 +85,29 @@ function fixVectorDrawWhileAnimation() {
 function allowControlHorizontalStacking() {
     const original_addTo = L.Control.prototype.addTo;
     L.Control.prototype.addTo = function(map) {
-        console.log('!!!!!!!!!!');
         const result = original_addTo.call(this, map);
         if (this.options.stackHorizontally) {
             L.DomUtil.addClass(this._container, 'leaflet-control-horizontal-stack');
         }
         return result;
+    }
+}
+
+function addTooltipDelay() {
+    const origOpenTooltip = L.Layer.prototype._openTooltip;
+    L.Layer.prototype._openTooltip = function(e) {
+        if (this._tooltip.options.delay) {
+            const self = this;
+            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(self, e), this._tooltip.options.delay);
+        } else {
+            origOpenTooltip.call(this, e);
+        }
+    };
+
+    const origCloseTooltip = L.Layer.prototype.closeTooltip;
+    L.Layer.prototype.closeTooltip = function() {
+        clearInterval(this._pendingTooltip);
+        origCloseTooltip.call(this);
     }
 }
 
