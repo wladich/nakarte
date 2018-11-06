@@ -8,6 +8,7 @@ function fixAll() {
     fixMapKeypressEvent();
     fixVectorDrawWhileAnimation();
     fixVectorMarkerWorldJump()
+    allowControlHorizontalStacking();
 }
 
 // https://github.com/Leaflet/Leaflet/issues/3575
@@ -80,5 +81,16 @@ function fixVectorDrawWhileAnimation() {
     L.Renderer.__animationFixed = true;
 }
 
+function allowControlHorizontalStacking() {
+    const original_addTo = L.Control.prototype.addTo;
+    L.Control.prototype.addTo = function(map) {
+        console.log('!!!!!!!!!!');
+        const result = original_addTo.call(this, map);
+        if (this.options.stackHorizontally) {
+            L.DomUtil.addClass(this._container, 'leaflet-control-horizontal-stack');
+        }
+        return result;
+    }
+}
 
 export {fixAll}
