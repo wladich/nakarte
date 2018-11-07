@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './edit_line.css';
-import {wrapLongitudeToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 L.Polyline.EditMixinOptions = {
     className: 'leaflet-editable-line'
@@ -98,7 +98,7 @@ L.Polyline.EditMixin = {
                 newNodeIndex = this._latlngs.length - 1;
                 refNodeIndex = this._latlngs.length - 1;
             }
-            this.addNode(newNodeIndex, wrapLongitudeToTarget(e.latlng, this._latlngs[refNodeIndex]));
+            this.addNode(newNodeIndex, wrapLatLngToTarget(e.latlng, this._latlngs[refNodeIndex]));
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit(true);
@@ -192,7 +192,7 @@ L.Polyline.EditMixin = {
         var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
         let latlng = e.latlng;
         if (this._latlngs.length > 0) {
-            latlng = wrapLongitudeToTarget(latlng, this._latlngs[nodeIndex]);
+            latlng = wrapLatLngToTarget(latlng, this._latlngs[nodeIndex]);
         }
         this.spliceLatLngs(nodeIndex, 1, latlng);
         this.fire('nodeschanged');
@@ -280,7 +280,7 @@ L.Polyline.EditMixin = {
             latlngs = this.getLatLngs(),
             nodeIndex = latlngs.indexOf(segmentOverlay._lineNode) + 1;
         const midPoint = L.latLngBounds(latlngs[nodeIndex], latlngs[nodeIndex - 1]).getCenter();
-        this.addNode(nodeIndex, wrapLongitudeToTarget(e.latlng, midPoint));
+        this.addNode(nodeIndex, wrapLatLngToTarget(e.latlng, midPoint));
         if (L.Draggable._dragging) {
             L.Draggable._dragging.finishDrag()
         }
