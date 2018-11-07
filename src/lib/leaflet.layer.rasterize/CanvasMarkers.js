@@ -20,7 +20,7 @@ L.Layer.CanvasMarkers.include({
         },
 
         cloneForPrint: function(options) {
-            options = L.Util.extend({}, this.options);
+            options = L.Util.extend({}, this.options, {noWrap: true});
             if (options.printIconsOpacity !== undefined) {
                 options.iconsOpacity = options.printIconsOpacity;
             }
