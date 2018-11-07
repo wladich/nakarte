@@ -378,7 +378,7 @@ L.Control.TrackList = L.Control.extend({
                     }
                 );
                 if (bounds.isValid()) {
-                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getBounds());
+                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
                     if (L.Browser.mobile) {
                         this.map.fitBounds(bounds);
                     } else {

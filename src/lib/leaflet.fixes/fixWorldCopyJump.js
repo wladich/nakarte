@@ -1,6 +1,14 @@
 import L from 'leaflet';
 
 function shiftLongitudeToTarget(lng, targetLng) {
+    if (targetLng instanceof L.LatLngBounds) {
+        if (!targetLng.isValid()) {
+            return 0;
+        }
+        targetLng = targetLng.getCenter().lng;
+    } else if (targetLng instanceof L.LatLng) {
+        targetLng = targetLng.lng;
+    }
     let shift = 0;
     if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
         shift = 360;
@@ -10,16 +18,13 @@ function shiftLongitudeToTarget(lng, targetLng) {
     return shift;
 }
 
-function wrapLatLngToTarget(latLng, targetLatLng) {
-    const shift = shiftLongitudeToTarget(latLng.lng, targetLatLng.lng);
+function wrapLatLngToTarget(latLng, targetLng) {
+    const shift = shiftLongitudeToTarget(latLng.lng, targetLng);
     return L.latLng(latLng.lat, latLng.lng + shift);
 }
 
-function wrapLatLngBoundsToTarget(latLngBounds, targetLatLngBounds) {
-    if (!targetLatLngBounds.isValid()) {
-        return latLngBounds;
-    }
-    const shift = shiftLongitudeToTarget(latLngBounds.getCenter().lng, targetLatLngBounds.getCenter().lng);
+function wrapLatLngBoundsToTarget(latLngBounds, targetLng) {
+    const shift = shiftLongitudeToTarget(latLngBounds.getCenter().lng, targetLng);
     const p1 = latLngBounds.getSouthEast();
     const p2 = latLngBounds.getNorthWest();
     return L.latLngBounds([[p1.lat, p1.lng + shift], [p2.lat, p2.lng + shift]]);
