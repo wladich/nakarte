@@ -23,6 +23,7 @@ import {notify} from 'lib/notifications';
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
 import md5 from './lib/md5';
+import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -365,17 +366,19 @@ L.Control.TrackList = L.Control.extend({
             var points = this.getTrackPoints(track);
             if (lines.length || points.length) {
                 var bounds = L.latLngBounds([]);
-                lines.forEach(function(l) {
+                lines.forEach((l) => {
                         if (l.getLatLngs().length > 1) {
-                            bounds.extend(l.getBounds());
+                            bounds.extend(wrapLatLngBoundsToTarget(l.getBounds(), bounds));
                         }
                     }
                 );
-                points.forEach(function(p) {
-                        bounds.extend([p.latlng.lat, p.latlng.lng]);
+                const boundsCenter = bounds.getCenter();
+                points.forEach((p) => {
+                        bounds.extend(wrapLatLngToTarget(p.latlng, boundsCenter));
                     }
                 );
                 if (bounds.isValid()) {
+                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
                     if (L.Browser.mobile) {
                         this.map.fitBounds(bounds);
                     } else {

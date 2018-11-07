@@ -1,17 +1,33 @@
 import L from 'leaflet';
 
-function wrapLongitudeToTarget(latLng, targetLatLng) {
-    const targetLng = targetLatLng.lng;
-    const lng = latLng.lng;
-    let newLng;
-    if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
-        newLng = lng + 360;
-    } else if (Math.abs(lng - 360 - targetLng) < Math.abs(lng - targetLng)) {
-        newLng = lng - 360;
-    } else {
-        return latLng;
+function shiftLongitudeToTarget(lng, targetLng) {
+    if (targetLng instanceof L.LatLngBounds) {
+        if (!targetLng.isValid()) {
+            return 0;
+        }
+        targetLng = targetLng.getCenter().lng;
+    } else if (targetLng instanceof L.LatLng) {
+        targetLng = targetLng.lng;
     }
-    return L.latLng(latLng.lat, newLng);
+    let shift = 0;
+    if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
+        shift = 360;
+    } else if (Math.abs(lng - 360 - targetLng) < Math.abs(lng - targetLng)) {
+        shift= - 360;
+    }
+    return shift;
+}
+
+function wrapLatLngToTarget(latLng, targetLng) {
+    const shift = shiftLongitudeToTarget(latLng.lng, targetLng);
+    return L.latLng(latLng.lat, latLng.lng + shift);
+}
+
+function wrapLatLngBoundsToTarget(latLngBounds, targetLng) {
+    const shift = shiftLongitudeToTarget(latLngBounds.getCenter().lng, targetLng);
+    const p1 = latLngBounds.getSouthEast();
+    const p2 = latLngBounds.getNorthWest();
+    return L.latLngBounds([[p1.lat, p1.lng + shift], [p2.lat, p2.lng + shift]]);
 }
 
 function fixVectorMarkerWorldJump() {
@@ -122,7 +138,7 @@ function fixVectorMarkerWorldJump() {
             L.DomUtil.setPosition(shadow, iconPos);
         }
 
-        latlng = wrapLongitudeToTarget(latlng, marker._latlng);
+        latlng = wrapLatLngToTarget(latlng, marker._latlng);
         marker._latlng = latlng;
         e.latlng = latlng;
         e.oldLatLng = this._oldLatLng;
@@ -135,4 +151,4 @@ function fixVectorMarkerWorldJump() {
     }
 }
 
-export {wrapLongitudeToTarget, fixVectorMarkerWorldJump}
+export {wrapLatLngToTarget, fixVectorMarkerWorldJump, wrapLatLngBoundsToTarget}
