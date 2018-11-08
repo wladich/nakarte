@@ -372,9 +372,8 @@ L.Control.TrackList = L.Control.extend({
                         }
                     }
                 );
-                const boundsCenter = bounds.getCenter();
                 points.forEach((p) => {
-                        bounds.extend(wrapLatLngToTarget(p.latlng, boundsCenter));
+                        bounds.extend(wrapLatLngToTarget(p.latlng, bounds));
                     }
                 );
                 if (bounds.isValid()) {
