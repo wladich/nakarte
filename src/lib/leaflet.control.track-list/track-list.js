@@ -205,6 +205,7 @@ L.Control.TrackList = L.Control.extend({
                     this.url('');
                 }
             }
+            this.stopPlacingPoint();
             var track = this.addTrack({name: name}),
                 line = this.addTrackSegment(track);
             this.startEditTrackSegement(track, line);
@@ -322,8 +323,10 @@ L.Control.TrackList = L.Control.extend({
                 this.map.addLayer(track.feature);
                 this._markerLayer.addMarkers(track.markers);
             } else {
+                if (this.trackAddingPoint() === track) {
+                    this.stopPlacingPoint();
+                }
                 this.map.removeLayer(track.feature);
-                this.stopPlacingPoint();
                 this._markerLayer.removeMarkers(track.markers);
             }
         },
@@ -1021,7 +1024,6 @@ L.Control.TrackList = L.Control.extend({
         removeTrack: function(track) {
             track.visible(false);
             this.tracks.remove(track);
-            this.stopPlacingPoint();
         },
 
         deleteAllTracks: function() {
