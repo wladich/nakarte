@@ -409,6 +409,15 @@ L.Polyline.EditMixin = {
         return res;
         // this._latlngs.splice(...args);
         // this.redraw();
+    },
+
+    getFixedLatLngs: function() {
+        const start = this._drawingDirection === -1 ? 1 : 0;
+        let end = this._latlngs.length;
+        if (this._drawingDirection === 1) {
+            end -= 1;
+        }
+        return this._latlngs.slice(start, end);
     }
 
 };

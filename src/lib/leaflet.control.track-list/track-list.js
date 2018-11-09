@@ -95,8 +95,8 @@ L.Control.TrackList = L.Control.extend({
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
                     <tr data-bind="event: {
                                        contextmenu: $parent.showTrackMenu.bind($parent),
-                                       mouseenter: $parent.highLightTrack.bind($parent, track),
-                                       mouseleave: $parent.highLightTrack.bind($parent, null)
+                                       mouseenter: $parent.onTrackRowMouseEnter.bind($parent, track),
+                                       mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
                                    },
                                    css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
@@ -329,6 +329,8 @@ L.Control.TrackList = L.Control.extend({
                 this.map.removeLayer(track.feature);
                 this._markerLayer.removeMarkers(track.markers);
             }
+            this.updateTrackHighlight();
+
         },
 
         onTrackLengthChanged: function(track) {
@@ -825,6 +827,18 @@ L.Control.TrackList = L.Control.extend({
             track.isEdited(false);
         },
 
+        onTrackRowMouseEnter: function(track) {
+            this._highlightedTrack = track;
+            this.updateTrackHighlight();
+        },
+
+        onTrackRowMouseLeave: function(track) {
+            if (this._highlightedTrack === track){
+                this._highlightedTrack = null;
+                this.updateTrackHighlight();
+            }
+        },
+
         onEscPressedStopLineJoinSelection: function(e) {
             if ('input' === e.target.tagName.toLowerCase()) {
                 return;
@@ -934,7 +948,7 @@ L.Control.TrackList = L.Control.extend({
             return track;
         },
 
-        highLightTrack: function(track, e) {
+        updateTrackHighlight: function() {
             if (L.Browser.touch) {
                 return;
             }
@@ -942,11 +956,12 @@ L.Control.TrackList = L.Control.extend({
                 this._trackHighlight.removeFrom(this._map);
                 this._trackHighlight = null;
             }
-            if (track) {
+            if (this._highlightedTrack && this._highlightedTrack.visible()) {
                 const trackHighlight = L.featureGroup([]);
 
-                track.feature.eachLayer((line) => {
-                    L.polyline(line.getLatLngs()).addTo(trackHighlight);
+                this._highlightedTrack.feature.eachLayer((line) => {
+                    let latlngs = line.getFixedLatLngs();
+                    L.polyline(latlngs).addTo(trackHighlight);
                 });
 
                 trackHighlight.setStyle({
