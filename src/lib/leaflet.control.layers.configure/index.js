@@ -275,7 +275,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                             isOverlay: dialogModel.isOverlay(),
                             isTop: dialogModel.isTop()
                         };
-                        console.log(fieldValues);
                         buttons[callbackN].callback(fieldValues);
                     }
                 };
