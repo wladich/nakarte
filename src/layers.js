@@ -419,7 +419,7 @@ export default function getLayers() {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://proxy.nakarte.me/https/{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
                             code: 'Ocm',
                             isOverlay: false,
@@ -433,7 +433,7 @@ export default function getLayers() {
                 {
                     title: 'OSM Outdoors',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://proxy.nakarte.me/https/{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
                         {
                             code: 'Oso',
                             isOverlay: false,
