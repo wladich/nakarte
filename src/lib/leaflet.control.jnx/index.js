@@ -49,7 +49,7 @@ L.Control.JNX = L.Control.extend({
         makeMenuItems: function() {
             const {layer, layerName} = this.getLayerForJnx();
             if (!layer) {
-                return [{text: 'No supported layer'}];
+                return [{text: 'No supported layers'}];
             }
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
             const minLevel = Math.max(0, maxLevel - 6);
