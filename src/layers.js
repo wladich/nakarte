@@ -424,7 +424,7 @@ export default function getLayers() {
                             code: 'Ocm',
                             isOverlay: false,
                             scaleDependent: true,
-                            print: true,
+                            print: false,
                             jnx: true,
                             shortName: 'opencyclemap'
                         }
@@ -438,7 +438,7 @@ export default function getLayers() {
                             code: 'Oso',
                             isOverlay: false,
                             scaleDependent: true,
-                            print: true,
+                            print: false,
                             jnx: true,
                             shortName: 'osm_outdoors'
                         }
@@ -1164,6 +1164,11 @@ export default function getLayers() {
         'Mountain passes (Westra)',
         'geocaching.su',
     ];
+
+    // set metadata
+    for (let layer of layers) {
+        layer.layer.meta = {title: layer.title}
+    }
 
     // assign order to layers
     const orderByTitle = {};
