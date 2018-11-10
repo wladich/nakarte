@@ -425,7 +425,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: false,
-                            jnx: true,
+                            jnx: false,
                             shortName: 'opencyclemap'
                         }
                     )
@@ -439,7 +439,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: false,
-                            jnx: true,
+                            jnx: false,
                             shortName: 'osm_outdoors'
                         }
                     )
