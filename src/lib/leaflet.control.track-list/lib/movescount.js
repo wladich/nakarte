@@ -1,6 +1,7 @@
 import urlViaCorsProxy from 'lib/CORSProxy';
+import {decode as utf8_decode} from 'utf8';
 
-const urlType = {
+const urlTypes = {
     route: {
         type: 'route',
         url: 'http://www.movescount.com/Move/Route/{id}',
@@ -15,26 +16,28 @@ const urlType = {
 
 function getTrackParser(type) {
     const parsers = {
-        route(data, type, name) {
+        route(data, type, id, name) {
             const track = data.points.latitudes.map((lat, i) => ({
                 lat: data.points.latitudes[i],
                 lng: data.points.longitudes[i]
             }));
 
+            name = name || data.routeName;
+
             return [{
-                name: `${data.routeName} ${getTrackBaseName(type, name)}`,
+                name: getTrackName(type, name, id),
                 tracks: [track]
             }];
         },
 
-        move(data, type, name) {
+        move(data, type, id, name) {
             const track = data.TrackPoints.map(trackPoint => ({
                 lat: trackPoint.Latitude,
                 lng: trackPoint.Longitude
             }));
 
             return [{
-                name: getTrackBaseName(type, name),
+                name: getTrackName(type, name, id),
                 tracks: [track]
             }];
         }
@@ -43,24 +46,24 @@ function getTrackParser(type) {
     return parsers[type];
 }
 
-function getMovescountUrlType(url, name) {
-    let urlType = Object.values(urlType).filter(urlType => {
-        if (name === undefined) {
+function getMovescountUrlType(url, id) {
+    let urlType = Object.values(urlTypes).filter(urlType => {
+        if (id === undefined) {
             return urlType.re.test(url);
         } else {
-            return url === urlViaCorsProxy(urlType.url.replace('{id}', name));
+            return url === urlViaCorsProxy(urlType.url.replace('{id}', id));
         }
     })[0];
 
     return urlType && urlType.type;
 }
 
-function getTrackBaseName(type, name) {
-    return type + name;
+function getTrackName(type, name, id) {
+    return `${name} (${type}${id})`;
 }
 
 function isMovescountUrl(url) {
-    return Object.values(urlType).some(urlType => {
+    return Object.values(urlTypes).some(urlType => {
         return urlType.re.test(url);
     });
 }
@@ -68,27 +71,41 @@ function isMovescountUrl(url) {
 function movescountXhrOptions(url) {
     let type = getMovescountUrlType(url);
 
-    let urlType = urlType[type];
+    let urlType = urlTypes[type];
 
     let match = urlType.re.exec(url);
 
-    let name = match[2];
+    let id = match[2];
 
-    return [{
-        url: urlViaCorsProxy(urlType.url.replace('{id}', name)),
+    const options = [{
+        url: urlViaCorsProxy(urlType.url.replace('{id}', id)),
         options: {
             responseType: 'binarystring',
-            isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
+            isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
         },
     }];
+
+    if (type === 'move') {
+        options.push({
+            url: urlViaCorsProxy(url),
+            options: {
+                responseType: 'binarystring',
+                isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
+            },
+        });
+    }
+
+    return options;
 }
 
-function movescountParser(name, responses) {
+function movescountParser(id, responses) {
     let data;
+
+    let name;
 
     let response = responses[0];
 
-    let type = getMovescountUrlType(response.responseURL, name);
+    let type = getMovescountUrlType(response.responseURL, id);
 
     if (response.status === 403) {
         return [{error: `Movescount user disabled viewing this ${type}`}];
@@ -96,13 +113,34 @@ function movescountParser(name, responses) {
         try {
             data = JSON.parse(response.responseBinaryText)
         } catch (e) {
-            return [{name, error: 'UNSUPPORTED'}];
+            return [{name: id, error: 'UNSUPPORTED'}];
+        }
+    }
+
+    if (responses[1]) {
+        let s = responses[1].responseBinaryText;
+        s = utf8_decode(s);
+
+        let m = s.match(/<title>([^<]+)<\/title>/);
+
+        if (m) {
+            name = unescapeHtml(m[1]);
         }
     }
 
     let parseTrack = getTrackParser(type);
 
-    return parseTrack(data, type, name);
+    return parseTrack(data, type, id, name);
+
+    function unescapeHtml(html) {
+        const element = document.createElement('div');
+
+        return html.replace(/&[0-9a-z#]+;/gi, s => {
+            element.innerHTML = s;
+
+            return element.innerText;
+        });
+    }
 }
 
 export {isMovescountUrl, movescountXhrOptions, movescountParser}
