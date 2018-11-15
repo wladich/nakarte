@@ -81,7 +81,7 @@ class XMLHttpRequestPromise {
                 xhr.responseJSON = xhr.response;
             }
             if (this._isResponseSuccess(xhr)) {
-                //console.log('success', this.url);
+                // console.log('success', this.url);
                 this._resolve(xhr);
             } else {
                 if (this.triesLeft > 0 && this._responseNeedsRetry(xhr)) {
