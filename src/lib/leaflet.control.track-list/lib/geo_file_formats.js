@@ -610,14 +610,13 @@ function loadFromUrl(url) {
     }
     let urlToRequest = simpleTrackFetchOptions;
     let parser = simpleTrackParser;
-    let errorHandler = (e) => [{name: url, error: 'NETWORK', status: e.status}];
+    let errorHandler = (e) => [{name: url, error: 'NETWORK'}];
     if (isGpsiesUrl(url)) {
         urlToRequest = gpsiesXhrOptions;
         parser = gpsiesParser;
     } else if (isMovescountUrl(url)) {
         urlToRequest = movescountXhrOptions;
         parser = movescountParser;
-        errorHandler = movescountErrorHandler(errorHandler);
     } else if (isEndomondoUrl(url)) {
         urlToRequest = endomonXhrOptions;
         parser = endomondoParser;

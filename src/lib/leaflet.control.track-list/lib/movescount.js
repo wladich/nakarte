@@ -1,112 +1,108 @@
 import urlViaCorsProxy from 'lib/CORSProxy';
 
-const typedUrls = [
-    {
+const urlType = {
+    route: {
         type: 'route',
         url: 'http://www.movescount.com/Move/Route/{id}',
-        re: /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?map\?route=(\d+)/
+        re: /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?map\/?.*[?&]route=(\d+)/
     },
-    {
+    move: {
         type: 'move',
         url: 'http://www.movescount.com/Move/Track2/{id}',
         re: /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?moves\/move(\d+)/
     }
-];
-
-let matchTypedUrl, trackId;
-
-const trackParser = {
-    route: function (data) {
-        const track = [];
-
-        data.points.latitudes.forEach(function (lat, i) {
-            track.push({
-                lat: data.points.latitudes[i],
-                lng: data.points.longitudes[i]
-            })
-        });
-
-        const trackName = getTrackBaseName() + ' ('+ data.routeName + ')';
-
-        const geodata = {
-            name: trackName,
-            tracks: [track]
-        };
-
-        return [geodata];
-    },
-
-    move: function (data) {
-        const track = [];
-
-        data.TrackPoints.forEach(function (trackPoint) {
-            track.push({
-                lat: trackPoint.Latitude,
-                lng: trackPoint.Longitude
-            })
-        });
-
-        const geodata = {
-            name: getTrackBaseName(),
-            tracks: [track]
-        };
-
-        return [geodata];
-    }
 };
 
-function getTrackBaseName() {
-    return matchTypedUrl.type + trackId;
+function getTrackParser(type) {
+    const parsers = {
+        route(data, type, name) {
+            const track = data.points.latitudes.map((lat, i) => ({
+                lat: data.points.latitudes[i],
+                lng: data.points.longitudes[i]
+            }));
+
+            return [{
+                name: `${data.routeName} ${getTrackBaseName(type, name)}`,
+                tracks: [track]
+            }];
+        },
+
+        move(data, type, name) {
+            const track = data.TrackPoints.map(trackPoint => ({
+                lat: trackPoint.Latitude,
+                lng: trackPoint.Longitude
+            }));
+
+            return [{
+                name: getTrackBaseName(type, name),
+                tracks: [track]
+            }];
+        }
+    };
+
+    return parsers[type];
+}
+
+function getMovescountUrlType(url, name) {
+    let urlType = Object.values(urlType).filter(urlType => {
+        if (name === undefined) {
+            return urlType.re.test(url);
+        } else {
+            return url === urlViaCorsProxy(urlType.url.replace('{id}', name));
+        }
+    })[0];
+
+    return urlType && urlType.type;
+}
+
+function getTrackBaseName(type, name) {
+    return type + name;
 }
 
 function isMovescountUrl(url) {
-    return typedUrls.some(function (typedUrl) {
-        return typedUrl.re.test(url);
+    return Object.values(urlType).some(urlType => {
+        return urlType.re.test(url);
     });
 }
 
 function movescountXhrOptions(url) {
-    matchTypedUrl = typedUrls.filter(function (typedUrl) {
-        return typedUrl.re.test(url);
-    })[0];
+    let type = getMovescountUrlType(url);
 
-    let match = matchTypedUrl.re.exec(url);
+    let urlType = urlType[type];
 
-    trackId = match[2];
+    let match = urlType.re.exec(url);
+
+    let name = match[2];
 
     return [{
-        url: urlViaCorsProxy(matchTypedUrl.url.replace('{id}', trackId)),
-        options: {responseType: 'binarystring'}
+        url: urlViaCorsProxy(urlType.url.replace('{id}', name)),
+        options: {
+            responseType: 'binarystring',
+            isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
+        },
     }];
 }
 
 function movescountParser(name, responses) {
     let data;
 
-    try {
-        data = JSON.parse(responses[0].responseBinaryText)
-    } catch (e) {
-        return [{name: name, error: 'UNSUPPORTED'}];
+    let response = responses[0];
+
+    let type = getMovescountUrlType(response.responseURL, name);
+
+    if (response.status === 403) {
+        return [{error: `Movescount user disabled viewing this ${type}`}];
+    } else {
+        try {
+            data = JSON.parse(response.responseBinaryText)
+        } catch (e) {
+            return [{name, error: 'UNSUPPORTED'}];
+        }
     }
 
-    return trackParser[matchTypedUrl.type](data);
+    let parseTrack = getTrackParser(type);
+
+    return parseTrack(data, type, name);
 }
 
-function movescountErrorHandler(errorHandler) {
-    return function (e) {
-        // movescount returns status 403 when profile or route is private
-        if (e.status && e.status === 403) {
-            let url = errorHandler(e)[0].name;
-
-            let matchTypedUrl = typedUrls.filter(function (typedUrl) {
-                return typedUrl.re.test(url);
-            })[0];
-
-            return [{error: 'Movescount user disabled viewing this ' + matchTypedUrl.type}];
-        } else {
-            return errorHandler(e);
-        }
-    };
-}
-
-export {isMovescountUrl, movescountXhrOptions, movescountParser, movescountErrorHandler}
+export {isMovescountUrl, movescountXhrOptions, movescountParser}
