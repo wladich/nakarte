@@ -8,7 +8,7 @@ import urlViaCorsProxy from 'lib/CORSProxy';
 import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
 import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
-import {isMovescountUrl, movescountXhrOptions, movescountParser, movescountErrorHandler} from './movescount';
+import {isMovescountUrl, movescountXhrOptions, movescountParser} from './movescount';
 import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser} from './nktk';
 
 
