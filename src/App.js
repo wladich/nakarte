@@ -164,7 +164,10 @@ function setUp() {
     //////////// save state at unload
 
     L.DomEvent.on(window, 'beforeunload', () => {
-        logging.logEvent('saveTracksToStorage begin', {localStorageKeys: Object.keys(safeLocalStorage)});
+        logging.logEvent('saveTracksToStorage begin', {
+            localStorageKeys: Object.keys(safeLocalStorage),
+            trackNames: trackNames(),
+        });
         const t = Date.now();
         let localStorageKeys;
         try {
