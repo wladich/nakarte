@@ -63,7 +63,7 @@ function setUp() {
     new L.Control.Caption(`
         <a href="https://nakarte-me.blogspot.com/p/blog-page.html">Documentation</a> |
         <a href="${config.newsUrl}">News</a> |
-        <a href="mailto:${config.email}">nakarte@nakarte.me</a> `, {
+        <a href="mailto:${config.email}" target="_self">nakarte@nakarte.me</a> `, {
             position: 'topleft'
         }
     ).addTo(map);
