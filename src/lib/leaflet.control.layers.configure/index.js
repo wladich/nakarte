@@ -265,6 +265,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     maxZoom: ko.observable(fieldValues.maxZoom),
                     isOverlay: ko.observable(fieldValues.isOverlay),
                     isTop: ko.observable(fieldValues.isTop),
+                    buttons: buttons,
                     buttonClicked: function buttonClicked(callbackN) {
                         const fieldValues = {
                             name: dialogModel.name().trim(),
@@ -279,7 +280,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                 };
 
-                const formHtml = [`
+                const formHtml = `
 <p><a href="http://leafletjs.com/reference-1.0.2.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
 <label>Layer name<br/><input data-bind="value: name"/></label><br/>
 <label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
@@ -296,12 +297,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
 <label>Max zoom<br>
 <select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label>
-<br />`];
-                for (let [i, button] of buttons.entries()) {
-                    formHtml.push(`<a class="button" data-bind="click: buttonClicked.bind(null, ${i})">${button.caption}</a>`);
-                }
-
-                form.innerHTML = formHtml.join('');
+<div data-bind="foreach: buttons">
+    <a class="button" data-bind="click: $root.buttonClicked.bind(null, $index()), text: caption"></a>
+</div>`;
+                form.innerHTML = formHtml;
                 ko.applyBindings(dialogModel, form);
             },
 
