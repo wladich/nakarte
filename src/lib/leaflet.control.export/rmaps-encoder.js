@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import SQL from 'vendored/github.com/kripken/sql.js';
+import getSqlite3 from 'vendored/github.com/kripken/sql.js';
 
 function rmapsTileInfo(latLngBounds, zoom) { // https://stackoverflow.com/a/23058284
     function toRad(x) {
@@ -14,6 +14,10 @@ function rmapsTileInfo(latLngBounds, zoom) { // https://stackoverflow.com/a/2305
 
 const RmapsWriter = L.Class.extend({
         initialize: function(productName, productId, zOrder) {
+        },
+
+        asyncInit: async function() {
+            const SQL = await getSqlite3();
             this.db = new SQL.Database();
             this.db.run("CREATE TABLE tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s))")
             this.db.run("CREATE TABLE info (maxzoom Int, minzoom Int)")

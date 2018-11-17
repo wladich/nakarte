@@ -17,6 +17,8 @@ const JnxWriter = L.Class.extend({
             this.zOrder = zOrder;
         },
 
+        asyncInit: async function() {},
+
         addTile: function(tileData, level, latLngBounds) {
             this.tiles[level] = this.tiles[level] || [];
             tileData = new Blob([tileData]).slice(2);

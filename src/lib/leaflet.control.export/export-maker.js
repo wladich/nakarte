@@ -59,6 +59,7 @@ async function exportFromLayer(format, srcLayer, layerName, maxZoomLevel, latLng
     const productId = L.stamp(srcLayer);
     const zOrder = Math.min(productId, 100);
     const writer = new format.encoder(layerName, productId, zOrder);
+    await writer.asyncInit();
     const xhrQueue = new XHRQueue();
     let doStop = false;
     let error;
