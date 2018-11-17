@@ -107,7 +107,7 @@ class Contextmenu {
             }
             if (itemOptions === '-' || itemOptions.separator) {
                 yield this.createSeparator(itemOptions);
-            } if(itemOptions.selectmenu) {
+            } else if(itemOptions.selectmenu) {
                 yield this.createSelectmenu(itemOptions);
             } else {
                 yield this.createItem(itemOptions);
