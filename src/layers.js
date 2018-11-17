@@ -128,7 +128,6 @@ export default function getLayers() {
                         }
                     )
                 },
-
                 {
                     title: 'marshruty.ru',
                     isDefault: true,
@@ -166,7 +165,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 10km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo001m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo001m/{z}/{x}/{y}",
                         {
                             code: 'D',
                             isOverlay: true,
@@ -183,7 +182,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 2 km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc2000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
                         {
                             code: 'N',
                             isOverlay: true,
@@ -200,7 +199,7 @@ export default function getLayers() {
                 {
                     title: 'ArbaletMO',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ArbaletMO/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
                         {
                             code: 'A',
                             isOverlay: true,
@@ -217,7 +216,7 @@ export default function getLayers() {
                 {
                     title: 'Slazav mountains',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/map_hr/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/map_hr/{z}/{x}/{y}",
                         {
                             code: 'Q',
                             isOverlay: true,
@@ -234,7 +233,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
                         {
                             code: 'J',
                             isOverlay: true,
@@ -251,7 +250,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo1000/{z}/{x}/{y}",
                         {
                             code: 'C',
                             isOverlay: true,
@@ -268,7 +267,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc500/{z}/{x}/{y}",
                         {
                             code: 'F',
                             isOverlay: true,
@@ -285,7 +284,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo500/{z}/{x}/{y}",
                         {
                             code: 'B',
                             isOverlay: true,
@@ -302,7 +301,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 250m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/ggc250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/ggc250/{z}/{x}/{y}",
                         {
                             code: 'K',
                             isOverlay: true,
@@ -319,7 +318,7 @@ export default function getLayers() {
                 {
                     title: 'Slazav map',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/map_podm/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/map_podm/{z}/{x}/{y}",
                         {
                             code: 'Z',
                             isOverlay: true,
@@ -336,7 +335,7 @@ export default function getLayers() {
                 {
                     title: 'Races',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/adraces/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/adraces/{z}/{x}/{y}",
                         {
                             code: 'U',
                             isOverlay: true,
@@ -353,7 +352,7 @@ export default function getLayers() {
                 {
                     title: 'O-sport',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/osport/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/osport/{z}/{x}/{y}",
                         {
                             code: 'R',
                             isOverlay: true,
@@ -420,28 +419,28 @@ export default function getLayers() {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
                         {
                             code: 'Ocm',
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             export: true,
-                            shortName: 'opencyclemap'
+                            shortName: 'opencyclemap',
                         }
                     )
                 },
                 {
                     title: 'OSM Outdoors',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
                         {
                             code: 'Oso',
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             export: true,
-                            shortName: 'osm_outdoors'
+                            shortName: 'osm_outdoors',
                         }
                     )
                 },
@@ -449,7 +448,7 @@ export default function getLayers() {
                     title: 'Eurasia 25km',
                     description: '1975-80',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/eurasia25km/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
                         {
                             code: 'E25m',
                             isOverlay: true,
@@ -466,7 +465,7 @@ export default function getLayers() {
                 {
                     title: 'Caucasus 1km',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/new_gsh_100k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
                         {
                             code: 'NT1',
                             isOverlay: true,
@@ -483,7 +482,7 @@ export default function getLayers() {
                 {
                     title: 'Caucasus 500m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/new_gsh_050k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
                         {
                             code: 'NT5',
                             isOverlay: true,
@@ -500,7 +499,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 250m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/topo250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/topo250/{z}/{x}/{y}",
                         {
                             code: 'T25',
                             isOverlay: true,
@@ -518,7 +517,7 @@ export default function getLayers() {
                     title: 'Montenegro topo 250m',
                     description: '1970-72',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.tk/montenegro250m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
                         {
                             code: 'MN25',
                             isOverlay: true,
@@ -922,6 +921,44 @@ export default function getLayers() {
 		            )
 		        },
                 {
+                    title: 'France Topo 250m',
+                    isDefault: false,
+                    layer: L.tileLayer("https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+                        {
+                            minZoom: 6,
+                            maxNativeZoom: 16,
+                            bounds: [[41.29019, -4.94385], [51.23441, 9.82178]],
+                            code: 'Ft',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            tms: false,
+                            print: true,
+                            export: true,
+                            scaleDependent: false,
+                            shortName: 'france_topo_25k'
+                        }
+                    )
+                },
+                {
+                    title: 'Great Britain Topo',
+                    isDefault: false,
+                    layer: new BingLayer(config.bingKey,
+                        {
+                            type: 'OrdnanceSurvey',
+                            minZoom: 12,
+                            maxNativeZoom: 16,
+                            bounds: [[49.85171,-7.74708], [60.86949,1.80382]],
+                            code: 'Gbt',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            scaleDependent: false,
+                            print: true,
+                            export: true,
+                            shortName: 'england_topo'
+                        }
+                    )
+                },
+                {
                     title: 'Waymarked Cycling Trails',
                     description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
@@ -1001,7 +1038,10 @@ export default function getLayers() {
                 'Caucasus 500m',
                 'Topo 250m',
                 'Montenegro topo 250m',
-                'Finland Topo'],
+                'Finland Topo',
+                'France Topo 250m',
+                'Great Britain Topo',
+            ],
         },
         {
             title: 'Miscellaneous',
@@ -1046,7 +1086,8 @@ export default function getLayers() {
                 'Czech winter',
                 'Czech geographical'],
 
-        }];
+        },
+    ];
 
 
     const titlesByOrder = [
@@ -1088,12 +1129,14 @@ export default function getLayers() {
         'GGC 1km',
         'Topo 1km',
         'Caucasus 1km',
+        'Great Britain Topo',
         'GGC 500m',
         'Topo 500m',
         'Caucasus 500m',
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
+        'France Topo 250m',
         'Slazav map',
         'Races',
         'O-sport',
@@ -1121,6 +1164,11 @@ export default function getLayers() {
         'Mountain passes (Westra)',
         'geocaching.su',
     ];
+
+    // set metadata
+    for (let layer of layers) {
+        layer.layer.meta = {title: layer.title}
+    }
 
     // assign order to layers
     const orderByTitle = {};

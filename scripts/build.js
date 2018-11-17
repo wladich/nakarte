@@ -2,7 +2,7 @@
 process.env.NODE_ENV = 'production';
 
 var execSync = require('child_process').execSync;
-var verCmd = "echo `date +%Y-%m-%d_%H:%M:%S`-`git rev-parse --abbrev-ref HEAD`-`git rev-parse --short HEAD``git diff-index --quiet HEAD -- || echo '-dirty'`";
+var verCmd = "echo -n `date +%Y-%m-%d_%H:%M:%S`-`git rev-parse --abbrev-ref HEAD`-`git rev-parse --short HEAD``git diff-index --quiet HEAD -- || echo '-dirty'`";
 var version = execSync(verCmd).toString();
 console.log('Version:', version);
 process.env.RELEASE_VER = version;

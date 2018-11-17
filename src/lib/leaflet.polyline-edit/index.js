@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import './edit_line.css';
+import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 L.Polyline.EditMixinOptions = {
     className: 'leaflet-editable-line'
@@ -21,6 +22,7 @@ L.Polyline.EditMixin = {
             this._storedStyle = {weight: this.options.weight, opacity: this.options.opacity};
             this.setStyle({weight: 1.5, opacity: 1});
             L.DomUtil.addClass(this._map._container, 'leaflet-line-editing');
+            this.fire('editstart', {target: this});
         }
     },
 
@@ -60,6 +62,7 @@ L.Polyline.EditMixin = {
         var marker = e.target,
             nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         this.replaceNode(nodeIndex, marker.getLatLng());
+        this._setupEndMarkers();
     },
 
     onNodeMarkerMovedChangeNode: function(e) {
@@ -80,13 +83,22 @@ L.Polyline.EditMixin = {
         var marker = e.target,
             nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         this.removeNode(nodeIndex);
+        this._setupEndMarkers();
         this.fire('nodeschanged');
     },
 
     onMapClick: function(e) {
         if (this._drawingDirection) {
-            var newNodeIndex = this._drawingDirection === -1 ? 1 : this.getLatLngs().length - 1;
-            this.addNode(newNodeIndex, e.latlng);
+            let newNodeIndex,
+                refNodeIndex;
+            if (this._drawingDirection === -1) {
+                newNodeIndex = 1;
+                refNodeIndex = 0;
+            } else {
+                newNodeIndex = this._latlngs.length - 1;
+                refNodeIndex = this._latlngs.length - 1;
+            }
+            this.addNode(newNodeIndex, wrapLatLngToTarget(e.latlng, this._latlngs[refNodeIndex]));
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit(true);
@@ -116,10 +128,10 @@ L.Polyline.EditMixin = {
         }
         this.stopDrawingLine();
         this._drawingDirection = direction;
-
         if (e) {
             var newNodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length;
             this.spliceLatLngs(newNodeIndex, 0, e.latlng);
+            this._setupEndMarkers();
             this.fire('nodeschanged');
         }
 
@@ -140,6 +152,7 @@ L.Polyline.EditMixin = {
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = false;
+        this._setupEndMarkers();
         this.fire('drawend');
 
     },
@@ -177,18 +190,21 @@ L.Polyline.EditMixin = {
 
     onMouseMoveFollowEndNode: function(e) {
         var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
-        this.spliceLatLngs(nodeIndex, 1, e.latlng);
+        let latlng = e.latlng;
+        if (this._latlngs.length > 0) {
+            latlng = wrapLatLngToTarget(latlng, this._latlngs[nodeIndex]);
+        }
+        this.spliceLatLngs(nodeIndex, 1, latlng);
         this.fire('nodeschanged');
     },
 
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
             marker = L.marker(node.clone(), {
-                    icon: L.divIcon(
-                        {className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}
-                    ),
+                    icon: L.divIcon({className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}),
                     draggable: true,
-                    zIndexOffset: this._nodeMarkersZOffset
+                    zIndexOffset: this._nodeMarkersZOffset,
+                    projectedShift: () => this.shiftProjectedFitMapView()
                 }
             );
         marker
@@ -221,10 +237,10 @@ L.Polyline.EditMixin = {
         if ((this._drawingDirection === -1 && nodeIndex === 1) ||
             ((this._drawingDirection === 1 && nodeIndex === latlngs_n - 2))) {
             this.stopDrawingLine();
-        } else if (nodeIndex === 0) {
-            this.startDrawingLine(-1, e);
         } else if (nodeIndex === this.getLatLngs().length - 1) {
             this.startDrawingLine(1, e);
+        } else if (nodeIndex === 0) {
+            this.startDrawingLine(-1, e);
         }
     },
 
@@ -235,7 +251,11 @@ L.Polyline.EditMixin = {
         if (!p2) {
             return;
         }
-        const segmentOverlay = L.polyline([p1, p2], {weight: 10, opacity: 0.0});
+        const segmentOverlay = L.polyline([p1, p2], {
+            weight: 10,
+            opacity: 0.0,
+            projectedShift: () => this.shiftProjectedFitMapView()
+        });
         segmentOverlay.on('mousedown', this.onSegmentMouseDownAddNode, this);
         segmentOverlay.on('contextmenu', function(e) {
                 this.stopDrawingLine();
@@ -259,7 +279,8 @@ L.Polyline.EditMixin = {
         var segmentOverlay = e.target,
             latlngs = this.getLatLngs(),
             nodeIndex = latlngs.indexOf(segmentOverlay._lineNode) + 1;
-        this.addNode(nodeIndex, e.latlng);
+        const midPoint = L.latLngBounds(latlngs[nodeIndex], latlngs[nodeIndex - 1]).getCenter();
+        this.addNode(nodeIndex, wrapLatLngToTarget(e.latlng, midPoint));
         if (L.Draggable._dragging) {
             L.Draggable._dragging.finishDrag()
         }
@@ -285,6 +306,9 @@ L.Polyline.EditMixin = {
         }
         if (!isAddingRight) {
             this.makeSegmentOverlay(index);
+        }
+        if (nodes.length < 3) {
+            this._setupEndMarkers();
         }
     },
 
@@ -337,6 +361,27 @@ L.Polyline.EditMixin = {
         }
     },
 
+    _setupEndMarkers: function() {
+        const nodesCount = this._latlngs.length;
+        if (nodesCount === 0) {
+            return;
+        }
+        const startIndex = this._drawingDirection === -1 ? 1 : 0;
+        const endIndex = this._drawingDirection === 1 ? nodesCount - 2 : nodesCount - 1;
+        const startIcon = this._latlngs[startIndex]._nodeMarker._icon;
+        L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](startIcon, 'line-editor-node-marker-start');
+        if (endIndex >= 0) {
+            const endIcon = this._latlngs[endIndex]._nodeMarker._icon;
+            let func;
+            if (this._drawingDirection !== 1 && endIndex > 0) {
+                func = L.DomUtil.addClass;
+            } else {
+                func = L.DomUtil.removeClass;
+            }
+            func(endIcon, 'line-editor-node-marker-end');
+        }
+    },
+
     setupMarkers: function() {
         this.removeMarkers();
         var latlngs = this.getLatLngs(),
@@ -354,7 +399,7 @@ L.Polyline.EditMixin = {
                 this.makeSegmentOverlay(i);
             }
         }
-
+        this._setupEndMarkers();
     },
 
     spliceLatLngs: function(...args) {
@@ -364,6 +409,15 @@ L.Polyline.EditMixin = {
         return res;
         // this._latlngs.splice(...args);
         // this.redraw();
+    },
+
+    getFixedLatLngs: function() {
+        const start = this._drawingDirection === -1 ? 1 : 0;
+        let end = this._latlngs.length;
+        if (this._drawingDirection === 1) {
+            end -= 1;
+        }
+        return this._latlngs.slice(start, end);
     }
 
 };

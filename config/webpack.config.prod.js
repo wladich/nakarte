@@ -104,7 +104,6 @@ module.exports = {
         test: /\.js$/,
         include: [
           paths.appSrc + '/vendored/github.com/augustl/js-unzip',
-          paths.appSrc + '/vendored/github.com/dankogai/js-deflate'
         ],
         loader: 'legacy'
       },

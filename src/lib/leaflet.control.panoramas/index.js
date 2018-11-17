@@ -373,7 +373,6 @@ L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
     return L.Util.extend({}, L.Mixin.HashState, {
         unserializeState: function(oldState) {
             if (oldState) {
-                console.log('Upgrading');
                 const upgradedState = ['_g'];
                 if (oldState.length) {
                     upgradedState.push('g', ...oldState);

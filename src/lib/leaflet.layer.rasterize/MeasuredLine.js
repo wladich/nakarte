@@ -11,19 +11,46 @@ L.Polyline.include({
             return new L.Polyline(latlngs, options);
         },
 
-        _makelatLngToCanvasPixelTransformer: function(printOptions) {
+        _makelatLngToCanvasPixelTransformer: function(printOptions, shift) {
             const projectedBounds = printOptions.pixelBounds;
             const scale = projectedBounds.getSize().unscaleBy(printOptions.destPixelSize);
             const origin = projectedBounds.min;
             return function(latlng) {
-                return L.CRS.EPSG3857.latLngToPoint(latlng, printOptions.zoom).subtract(origin).unscaleBy(scale);
+                return L.CRS.EPSG3857.latLngToPoint(latlng, printOptions.zoom)
+                    .subtract(origin)
+                    .add(L.point([shift, 0]))
+                    .unscaleBy(scale);
             }
         },
 
+        _shift: function(targetBounds, zoom) {
+            const polylineBounds = this.getBounds();
+            let shift = 0;
+            const worldWidth = L.CRS.EPSG3857.getProjectedBounds(zoom).getSize().x;
+            if (polylineBounds.isValid()) {
+                const polylineCenter = polylineBounds.getCenter();
+                const targetCenter = targetBounds.getCenter();
+
+                if (polylineCenter.lng < targetCenter.lng - 180) {
+                    shift = 1
+                } else if (polylineCenter.lng > targetCenter.lng + 180) {
+                    shift = -1;
+                } else {
+                    shift = 0;
+                }
+            }
+            return {lng: shift * 360, projected: worldWidth * shift};
+        },
 
         _drawRaster: function(canvas, printOptions) {
             const latlngs = this.getLatLngs();
-            if (!latlngs.length || !this.getBounds().intersects(printOptions.latLngBounds)) {
+            const shift = this._shift(printOptions.latLngBounds, printOptions.zoom);
+            const lineBounds = this.getBounds();
+            const shiftedLineBounds = L.latLngBounds([
+                [lineBounds.getNorth(), lineBounds.getWest() + shift.lng],
+                [lineBounds.getSouth(), lineBounds.getEast() + shift.lng]
+            ]);
+            if (!latlngs.length || !shiftedLineBounds.intersects(printOptions.latLngBounds)) {
                 return;
             }
 
@@ -31,7 +58,7 @@ L.Polyline.include({
             ctx.lineWidth = this.printWidthMm / 25.4 * printOptions.resolution;
             ctx.lineJoin = 'round';
             ctx.strokeStyle = this.options.color;
-            const transform = this._makelatLngToCanvasPixelTransformer(printOptions);
+            const transform = this._makelatLngToCanvasPixelTransformer(printOptions, shift.projected);
             let point;
             ctx.beginPath();
 
@@ -85,7 +112,8 @@ L.MeasuredLine.include({
             const ctx = canvas.getContext('2d');
             const ticks = this.getTicksPositions(minTicksIntervalMeters);
             const ticksPixelSize = this.tickFontSizeMm / 25.4 * printOptions.resolution;
-            const transform = this._makelatLngToCanvasPixelTransformer(printOptions);
+            const shift = this._shift(printOptions.latLngBounds, printOptions.zoom);
+            const transform = this._makelatLngToCanvasPixelTransformer(printOptions, shift.projected);
             ctx.font = `bold ${ticksPixelSize}px verdana`;
             ctx.fillStyle = this.options.color;
             for (let tick of ticks) {

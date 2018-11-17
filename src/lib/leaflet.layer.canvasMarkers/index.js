@@ -2,6 +2,7 @@ import L from 'leaflet';
 import './canvasMarkers.css';
 import rbush from 'rbush';
 import loadImage from 'image-promise';
+import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 /*
  Marker definition:
@@ -189,23 +190,34 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 markerJobs = {};
 
             // used only to preload icons
-            const pointsForMarkers = this.rtree.search({
-                    minX: iconsBounds.getWest(),
+            const pointsForMarkers = [];
+            for (let shift of [-360, 0, 360]) {
+                pointsForMarkers.push(...this.rtree.search({
+                    minX: iconsBounds.getWest() + shift,
                     minY: iconsBounds.getSouth(),
-                    maxX: iconsBounds.getEast(),
+                    maxX: iconsBounds.getEast() + shift,
                     maxY: iconsBounds.getNorth()
-                }
-            );
+                }));
+            }
 
             // used to place labels
-            const pointsForLabels = this.rtree.search({
-                    minX: labelsBounds.getWest(), minY: labelsBounds.getSouth(),
-                    maxX: labelsBounds.getEast(), maxY: labelsBounds.getNorth()
-                }
-            );
+            const pointsForLabels = [];
+            for (let shift of [-360, 0, 360]) {
+                pointsForLabels.push(...this.rtree.search({
+                    minX: labelsBounds.getWest() + shift,
+                    minY: labelsBounds.getSouth(),
+                    maxX: labelsBounds.getEast() + shift,
+                    maxY: labelsBounds.getNorth()
+                }));
+            }
+            const tileMidLongitude = this._map.unproject([(tileE + tileW) / 2, tileN], zoom);
 
             for (let marker of pointsForMarkers) {
-                const p = this._map.project(marker.latlng, zoom);
+                let latlng = marker.latlng;
+                if (this.options.noWrap) {
+                    latlng = wrapLatLngToTarget(latlng, tileMidLongitude);
+                }
+                const p = this._map.project(latlng, zoom);
                 let icon = marker.icon;
                 if (typeof icon === 'function') {
                     icon = icon(marker);
@@ -337,7 +349,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         findMarkerFromMouseEvent: function(e) {
             const
-                p = this._map.project(e.latlng),
+                p = this._map.project(e.latlng.wrap()),
                 region = this._regions.search({minX: p.x, minY: p.y, maxX: p.x, maxY: p.y})[0];
             let marker;
             if (region) {
@@ -391,8 +403,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         onMouseOut: function() {
             if (this._hoverMarker) {
+                const marker = this._hoverMarker;
                 this._hoverMarker = null;
-                this.fire('markerleave', {marker: this._hoverMarker});
+                this.fire('markerleave', {marker});
             }
         },
 

@@ -28,6 +28,9 @@ import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
 import {LocateControl} from 'lib/leaflet.control.locate';
 import {notify} from 'lib/notifications';
+import ZoomDisplay from 'lib/leaflet.control.zoom-display';
+import logging from 'lib/logging';
+import safeLocalStorage from 'lib/safe-localstorage';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -36,6 +39,11 @@ const locationErrorMessage = {
 };
 
 function setUp() {
+    const startInfo = {
+        href: window.location.href,
+        localStorageKeys: Object.keys(safeLocalStorage),
+        mobile: L.Browser.mobile,
+    };
     fixAll();
 
     const map = L.map('map', {
@@ -52,14 +60,22 @@ function setUp() {
 
     /////////// controls top-left corner
 
-    new L.Control.Caption(`<a href="https://about.nakarte.tk/p/blog-page.html">Documentation</a> | <a href="${config.newsUrl}">News</a> | <a href="mailto:${config.email}">nakarte@nakarte.tk</a>`, {
+    new L.Control.Caption(`
+        <a href="https://nakarte-me.blogspot.com/p/blog-page.html">Documentation</a> |
+        <a href="${config.newsUrl}">News</a> |
+        <a href="mailto:${config.email}" target="_self">nakarte@nakarte.me</a> `, {
             position: 'topleft'
         }
     ).addTo(map);
 
-    new L.Control.Scale({imperial: false, position: 'topleft'}).addTo(map);
 
-    L.control.zoom().addTo(map);
+    new ZoomDisplay().addTo(map);
+
+    new L.Control.Scale({
+        imperial: false,
+        position: 'topleft',
+        stackHorizontally: true
+    }).addTo(map);
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
@@ -115,12 +131,18 @@ function setUp() {
 
     /////////// controls bottom-right corner
 
+    function trackNames() {
+        return tracklist.tracks().map((track) => track.name());
+    }
     tracklist.addTo(map);
     if (!hashState.getState('nktk') && !hashState.getState('nktl')) {
         tracklist.loadTracksFromStorage();
     }
+    startInfo.tracksAfterLoadFromStorage = trackNames();
     bindHashStateReadOnly('nktk', tracklist.loadNktkFromHash.bind(tracklist));
+    startInfo.tracksAfterLoadFromNktk = trackNames();
     bindHashStateReadOnly('nktl', tracklist.loadNktlFromHash.bind(tracklist));
+    startInfo.tracksAfterLoadFromNktl = trackNames();
 
 
     ////////// adaptive layout
@@ -140,7 +162,25 @@ function setUp() {
 
     //////////// save state at unload
 
-    L.DomEvent.on(window, 'beforeunload', () => tracklist.saveTracksToStorage());
+    L.DomEvent.on(window, 'beforeunload', () => {
+        logging.logEvent('saveTracksToStorage begin', {
+            localStorageKeys: Object.keys(safeLocalStorage),
+            trackNames: trackNames(),
+        });
+        const t = Date.now();
+        let localStorageKeys;
+        try {
+            tracklist.saveTracksToStorage();
+            localStorageKeys = Object.keys(safeLocalStorage);
+        } catch (e) {
+            logging.logEvent('saveTracksToStorage failed', {error: e});
+            return;
+        }
+        logging.logEvent('saveTracksToStorage done', {
+            time: Date.now() - t,
+            localStorageKeys
+        });
+    });
 
     ////////// track list and azimuth measure interaction
 
@@ -150,6 +190,7 @@ function setUp() {
         tracklist.stopEditLine();
     });
     azimuthControl.on('elevation-shown', () => tracklist.hideElevationProfile());
+    logging.logEvent('start', startInfo);
 }
 
 export default {setUp};

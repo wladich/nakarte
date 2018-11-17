@@ -23,6 +23,7 @@ import {notify} from 'lib/notifications';
 import {fetch} from 'lib/xhr-promise';
 import config from 'config';
 import md5 from './lib/md5';
+import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -92,7 +93,12 @@ L.Control.TrackList = L.Control.extend({
                 </div>
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {contextmenu: $parent.showTrackMenu.bind($parent)}">
+                    <tr data-bind="event: {
+                                       contextmenu: $parent.showTrackMenu.bind($parent),
+                                       mouseenter: $parent.onTrackRowMouseEnter.bind($parent, track),
+                                       mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
+                                   },
+                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -125,6 +131,8 @@ L.Control.TrackList = L.Control.extend({
                 printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
+            this._markerLayer.on('markerenter', this.onMarkerEnter, this);
+            this._markerLayer.on('markerleave', this.onMarkerLeave, this);
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
@@ -197,6 +205,7 @@ L.Control.TrackList = L.Control.extend({
                     this.url('');
                 }
             }
+            this.stopPlacingPoint();
             var track = this.addTrack({name: name}),
                 line = this.addTrackSegment(track);
             this.startEditTrackSegement(track, line);
@@ -314,10 +323,14 @@ L.Control.TrackList = L.Control.extend({
                 this.map.addLayer(track.feature);
                 this._markerLayer.addMarkers(track.markers);
             } else {
+                if (this.trackAddingPoint() === track) {
+                    this.stopPlacingPoint();
+                }
                 this.map.removeLayer(track.feature);
-                this.stopPlacingPoint();
                 this._markerLayer.removeMarkers(track.markers);
             }
+            this.updateTrackHighlight();
+
         },
 
         onTrackLengthChanged: function(track) {
@@ -358,17 +371,18 @@ L.Control.TrackList = L.Control.extend({
             var points = this.getTrackPoints(track);
             if (lines.length || points.length) {
                 var bounds = L.latLngBounds([]);
-                lines.forEach(function(l) {
+                lines.forEach((l) => {
                         if (l.getLatLngs().length > 1) {
-                            bounds.extend(l.getBounds());
+                            bounds.extend(wrapLatLngBoundsToTarget(l.getBounds(), bounds));
                         }
                     }
                 );
-                points.forEach(function(p) {
-                        bounds.extend([p.latlng.lat, p.latlng.lng]);
+                points.forEach((p) => {
+                        bounds.extend(wrapLatLngToTarget(p.latlng, bounds));
                     }
                 );
                 if (bounds.isValid()) {
+                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
                     if (L.Browser.mobile) {
                         this.map.fitBounds(bounds);
                     } else {
@@ -599,7 +613,8 @@ L.Control.TrackList = L.Control.extend({
 
         movePoint: function(e) {
             const marker = this._movingMarker;
-            this._markerLayer.setMarkerPosition(marker, e.latlng);
+            const newLatLng = e.latlng.wrap();
+            this._markerLayer.setMarkerPosition(marker, newLatLng);
             this.stopPlacingPoint();
         },
 
@@ -613,7 +628,8 @@ L.Control.TrackList = L.Control.extend({
             while (name.length < 3) {
                 name = '0' + name;
             }
-            const marker = this.addPoint(parentTrack, {name: name, lat: e.latlng.lat, lng: e.latlng.lng});
+            const newLatLng = e.latlng.wrap();
+            const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
             // we need to show prompt after marker is dispalyed;
             // grid layer is updated in setTimout(..., 0)after adding marker
@@ -690,6 +706,10 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
             polyline.on('mousemove', this.onMouseMoveOnSegmentUpdateLineJoinCursor, this);
+            polyline.on('mouseover', () => this.onTrackMouseEnter(track));
+            polyline.on('mouseout', () => this.onTrackMouseLeave(track));
+            polyline.on('editstart', () => this.onTrackEditStart(track));
+            polyline.on('editend', () => this.onTrackEditEnd(track));
 
             //polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             //polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -791,6 +811,34 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.stopPropagation(e);
         },
 
+        onTrackMouseEnter: function(track) {
+            track.hover(true);
+        },
+
+        onTrackMouseLeave: function(track) {
+            track.hover(false);
+        },
+
+        onTrackEditStart: function(track) {
+            track.isEdited(true);
+        },
+
+        onTrackEditEnd: function(track) {
+            track.isEdited(false);
+        },
+
+        onTrackRowMouseEnter: function(track) {
+            this._highlightedTrack = track;
+            this.updateTrackHighlight();
+        },
+
+        onTrackRowMouseLeave: function(track) {
+            if (this._highlightedTrack === track){
+                this._highlightedTrack = null;
+                this.updateTrackHighlight();
+            }
+        },
+
         onEscPressedStopLineJoinSelection: function(e) {
             if ('input' === e.target.tagName.toLowerCase()) {
                 return;
@@ -876,7 +924,9 @@ L.Control.TrackList = L.Control.extend({
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
                 _pointAutoInc: 0,
-                markers: []
+                markers: [],
+                hover: ko.observable(false),
+                isEdited: ko.observable(false)
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
@@ -886,6 +936,9 @@ L.Control.TrackList = L.Control.extend({
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
+            if (!L.Browser.touch) {
+                track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
+            }
 
             //this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
@@ -895,6 +948,31 @@ L.Control.TrackList = L.Control.extend({
             return track;
         },
 
+        updateTrackHighlight: function() {
+            if (L.Browser.touch) {
+                return;
+            }
+            if (this._trackHighlight) {
+                this._trackHighlight.removeFrom(this._map);
+                this._trackHighlight = null;
+            }
+            if (this._highlightedTrack && this._highlightedTrack.visible()) {
+                const trackHighlight = L.featureGroup([]);
+
+                this._highlightedTrack.feature.eachLayer((line) => {
+                    let latlngs = line.getFixedLatLngs();
+                    L.polyline(latlngs).addTo(trackHighlight);
+                });
+
+                trackHighlight.setStyle({
+                    color: 'yellow',
+                    weight: '15',
+                    opacity: 0.5
+                });
+                trackHighlight.addTo(this._map).bringToBack();
+                this._trackHighlight = trackHighlight;
+            }
+        },
 
         setMarkerIcon: function(marker) {
             var symbol = 'marker',
@@ -933,6 +1011,14 @@ L.Control.TrackList = L.Control.extend({
             ).show(e);
         },
 
+        onMarkerEnter: function(e) {
+            e.marker._parentTrack.hover(true);
+        },
+
+        onMarkerLeave: function(e) {
+            e.marker._parentTrack.hover(false);
+        },
+
         removePoint: function(marker) {
             this.stopPlacingPoint();
             this._markerLayer.removeMarker(marker);
@@ -953,7 +1039,6 @@ L.Control.TrackList = L.Control.extend({
         removeTrack: function(track) {
             track.visible(false);
             this.tracks.remove(track);
-            this.stopPlacingPoint();
         },
 
         deleteAllTracks: function() {

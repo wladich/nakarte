@@ -1,5 +1,5 @@
 import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
-import RawDeflate from 'vendored/github.com/dankogai/js-deflate/rawinflate';
+import tynyInflate from 'tiny-inflate';
 import stripBom from 'lib/stripBom';
 
 import {decode as utf8_decode} from 'utf8';
@@ -9,7 +9,7 @@ import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
 import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
 import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser} from './nktk';
-
+import {stringToArrayBuffer, arrayBufferToString} from 'lib/binary-strings';
 
 function xmlGetNodeText(node) {
     if (node) {
@@ -22,6 +22,15 @@ function xmlGetNodeText(node) {
     }
 }
 
+
+function inflate(compressed, originalSize) {
+    if (originalSize === 0) {
+        return '';
+    }
+    const out = new Uint8Array(originalSize);
+    tynyInflate(new Uint8Array(stringToArrayBuffer(compressed)), out);
+    return arrayBufferToString(out);
+}
 
 function parseGpx(txt, name, preferNameFromFile) {
     var error;
@@ -430,7 +439,7 @@ function parseKmz(txt, name) {
             if (entry.compressionMethod === 0) {
                 uncompressed = entry.data;
             } else if (entry.compressionMethod === 8) {
-                uncompressed = RawDeflate.inflate(entry.data);
+                uncompressed = inflate(entry.data, entry.uncompressedSize);
             } else {
                 return null;
             }
@@ -502,7 +511,7 @@ function parseZip(txt, name) {
         if (entry.compressionMethod === 0) {
             uncompressed = entry.data;
         } else if (entry.compressionMethod === 8) {
-            uncompressed = RawDeflate.inflate(entry.data);
+            uncompressed = inflate(entry.data, entry.uncompressedSize);
         } else {
             return null;
         }

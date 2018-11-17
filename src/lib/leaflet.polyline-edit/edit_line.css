@@ -31,3 +31,13 @@
 .leaflet-line-drawing .leaflet-editable-line {
     pointer-events: none !important;
 }
+
+.line-editor-node-marker-start {
+    background-color: rgb(20%, 75%, 20%);
+    z-index: 1000000 !important;
+}
+
+.line-editor-node-marker-end {
+    background-color: rgb(90%, 20%, 20%);
+    z-index: 1000000 !important;
+}

@@ -1,3 +1,7 @@
 .alertify {
     z-index: 100000 !important;
 }
+
+.alertify .alert>*, .alertify .dialog>* {
+    overflow-wrap: break-word;
+}

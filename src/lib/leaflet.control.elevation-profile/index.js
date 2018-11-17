@@ -227,6 +227,7 @@ const ElevationProfile = L.Class.extend({
             L.setOptions(this, options);
             this.path = latlngs;
             var samples = this.samples = pathRegularSamples(this.path, this.options.samplingInterval);
+            samples = samples.map(latlng => latlng.wrap());
             if (!samples.length) {
                 notify('Track is empty');
                 return;
@@ -397,7 +398,7 @@ const ElevationProfile = L.Class.extend({
             if (e.dragButton === 0) {
                 this.cursorShow();
                 this.updateGraphSelection(e);
-                var stats = this.calcProfileStats(this.values.slice(this.selStartInd, this.selEndInd + 1), true);
+                var stats = this.calcProfileStats(this.values.slice(this.selStartInd, this.selEndInd + 1));
                 this.updatePropsDisplay(stats);
                 L.DomUtil.addClass(this.propsContainer, 'elevation-profile-properties-selected');
             }
@@ -490,27 +491,62 @@ const ElevationProfile = L.Class.extend({
             if (!this._map) {
                 return;
             }
-            this.propsContainer.innerHTML = '';
-            var ascentAngleStr = isNaN(stats.angleAvgAscent) ? '-' : L.Util.template('{avg} / {max}&deg;',
-                {avg: stats.angleAvgAscent, max: stats.angleMaxAscent}
-            );
-            var descentAngleStr = isNaN(stats.angleAvgDescent) ? '-' : L.Util.template('{avg} / {max}&deg;',
-                {avg: stats.angleAvgDescent, max: stats.angleMaxDescent}
-            );
+            let d;
+            if (stats.noData) {
+                d = {
+                    maxElev: '-',
+                    minElev: '-',
+                    startElev: '-',
+                    endElev: '-',
+                    change: '-',
+                    ascentAngleStr: '-',
+                    descentAngleStr: '-',
+                    ascent: '-',
+                    descent: '-',
+                    startApprox: '',
+                    endApprox: '',
+                    approx: '',
+                    incomplete: 'No elevation data',
+                }
+            } else {
+                d = {
+                    maxElev: Math.round(stats.max),
+                    minElev: Math.round(stats.min),
+                    startElev: Math.round(stats.start),
+                    endElev: Math.round(stats.end),
+                    change: Math.round(stats.finalAscent),
+                    ascentAngleStr: isNaN(stats.angleAvgAscent) ? '-' : L.Util.template('{avg} / {max}&deg;',
+                            {avg: stats.angleAvgAscent, max: stats.angleMaxAscent}
+                        ),
+                    descentAngleStr: isNaN(stats.angleAvgDescent) ? '-' : L.Util.template('{avg} / {max}&deg;',
+                            {avg: stats.angleAvgDescent, max: stats.angleMaxDescent}
+                        ),
+                    ascent: Math.round(stats.ascent),
+                    descent: Math.round(stats.descent),
+                    dist: (stats.distance / 1000).toFixed(1),
+                    startApprox: stats.dataLostAtStart > 0.02 ? '~ ' : '',
+                    endApprox: stats.dataLostAtEnd > 0.02 ? '~ ' : '',
+                    approx: stats.dataLost > 0.02 ? '~ ' : '',
+                    incomplete: stats.dataLost > 0.02 ? 'Some elevation data missing' : '',
+                };
+            }
+            d.dist = (stats.distance / 1000).toFixed(1);
 
-            this.propsContainer.innerHTML =
-                '<table>' +
-                '<tr><td>Max elevation:</td><td>' + Math.round(stats.max) + '</td></tr>' +
-                '<tr><td>Min elevation:</td><td>' + Math.round(stats.min) + '</td></tr>' +
-                '<tr class="start-group"><td>Start elevation:</td><td>' + Math.round(stats.start) + '</td></tr>' +
-                '<tr><td>Finish elevation:</td><td>' + Math.round(stats.end) + '</td></tr>' +
-                '<tr><td>Start to finish elevation change:</td><td>' + Math.round(stats.finalAscent) + '</td></tr>' +
-                '<tr class="start-group"><td>Avg / Max ascent inclination:</td><td>' + ascentAngleStr + '</td></tr>' +
-                '<tr><td>Avg / Max descent inclination:</td><td>' + descentAngleStr + '</td></tr>' +
-                '<tr class="start-group"><td>Total ascent:</td><td>' + Math.round(stats.ascent) + '</td></tr>' +
-                '<tr><td>Total descent:</td><td>' + Math.round(stats.descent) + '</td></tr>' +
-                '<tr class="start-group"><td>Distance:</td><td>' + (stats.distance / 1000).toFixed(1) + ' km</td></tr>' +
-                '</table>'
+            this.propsContainer.innerHTML = `
+                <table>
+                <tr><td>Max elevation:</td><td>${d.maxElev}</td></tr>
+                <tr><td>Min elevation:</td><td>${d.minElev}</td></tr>
+                <tr class="start-group"><td>Start elevation:</td><td>${d.startApprox}${d.startElev}</td></tr>
+                <tr><td>Finish elevation:</td><td>${d.endApprox}${d.endElev}</td></tr>
+                <tr><td>Start to finish elevation change:</td><td>${d.startApprox || d.endApprox}${d.change}</td></tr>
+                <tr class="start-group"><td>Avg / Max ascent inclination:</td><td>${d.ascentAngleStr}</td></tr>
+                <tr><td>Avg / Max descent inclination:</td><td>${d.descentAngleStr}</td></tr>
+                <tr class="start-group"><td>Total ascent:</td><td>${d.approx}${d.ascent}</td></tr>
+                <tr><td>Total descent:</td><td>${d.approx}${d.descent}</td></tr>
+                <tr class="start-group"><td>Distance:</td><td>${d.dist} km</td></tr>
+                <tr><td colspan="2" style="text-align: center">${d.incomplete}</td></tr>
+                </table>
+                `
         },
 
         calcGridValues: function(minValue, maxValue) {
@@ -559,6 +595,9 @@ const ElevationProfile = L.Class.extend({
                 maxErrorInd = null;
                 for (i = scanStart + 1; i < scanEnd; i++) {
                     linearValue += linearDelta;
+                    if (filtered[i] === null) {
+                        continue
+                    }
                     error = Math.abs(filtered[i] - linearValue);
                     if (error === null || error > maxError) {
                         maxError = error;
@@ -577,50 +616,96 @@ const ElevationProfile = L.Class.extend({
             return filtered;
         },
 
-        calcProfileStats: function(values, partial) {
-            var stats = {},
-                gradient, i;
-            stats.min = Math.min.apply(null, values);
-            stats.max = Math.max.apply(null, values);
-            stats.finalAscent = values[values.length - 1] - values[0];
-            var ascents = [],
-                descents = [];
-            for (i = 1; i < values.length; i++) {
-                gradient = (values[i] - values[i - 1]);
-                if (gradient > 0) {
-                    ascents.push(gradient);
-                } else if (gradient < 0) {
-                    descents.push(-gradient);
+        calcProfileStats: function(values) {
+            const stats = {
+                distance: (values.length - 1) * this.options.samplingInterval
+            };
+            const notNullValues = values.filter((value) => value !== null);
+            if (notNullValues.length === 0) {
+                stats.noData = true;
+                return stats;
+            }
+            stats.min = Math.min(...notNullValues);
+            stats.max = Math.max(...notNullValues);
+            let firstNotNullIndex = true,
+                lastNotNullIndex = true,
+                firstNotNullValue,
+                lastNotNullValue;
+            for (let i = 0; i < values.length; i++) {
+                let value = values[i];
+                if (value !== null) {
+                    firstNotNullValue = value;
+                    firstNotNullIndex = i;
+                    break;
                 }
+            }
+            for (let i = values.length - 1; i >= 0; i--) {
+                let value = values[i];
+                if (value !== null) {
+                    lastNotNullValue = value;
+                    lastNotNullIndex = i;
+                    break;
+                }
+            }
+            stats.finalAscent = lastNotNullValue - firstNotNullValue;
+
+            const ascents = [],
+                descents = [];
+            let prevNotNullValue = values[firstNotNullIndex],
+                prevNotNullIndex=firstNotNullIndex;
+            for (let i = firstNotNullIndex + 1; i <= lastNotNullIndex; i++) {
+                let value = values[i];
+                if (value === null) {
+                    continue
+                }
+                let length = i - prevNotNullIndex;
+                let gradient = (value - prevNotNullValue) / length;
+                if (gradient > 0) {
+                    for (let j = 0; j < length; j++) {
+                        ascents.push(gradient);
+                    }
+                } else if (gradient < 0) {
+                    for (let j = 0; j < length; j++) {
+                        descents.push(-gradient);
+                    }
+                }
+                prevNotNullIndex = i;
+                prevNotNullValue = value;
             }
             function sum(a, b) {
                 return a + b;
             }
+            if (ascents.length !== 0) {
+                stats.gradientAvgAscent = ascents.reduce(sum, 0) / ascents.length / this.options.samplingInterval;
+                stats.gradientMinAscent = Math.min(...ascents) / this.options.samplingInterval;
+                stats.gradientMaxAscent = Math.max(...ascents) / this.options.samplingInterval;
+                stats.angleAvgAscent = gradientToAngle(stats.gradientAvgAscent);
+                stats.angleMinAscent = gradientToAngle(stats.gradientMinAscent);
+                stats.angleMaxAscent = gradientToAngle(stats.gradientMaxAscent);
 
-            stats.gradientAvgAscent = ascents.reduce(sum, 0) / ascents.length / this.options.samplingInterval;
-            stats.gradientMinAscent = Math.min.apply(null, ascents) / this.options.samplingInterval;
-            stats.gradientMaxAscent = Math.max.apply(null, ascents) / this.options.samplingInterval;
-            stats.gradientAvgDescent = descents.reduce(sum, 0) / descents.length / this.options.samplingInterval;
-            stats.gradientMinDescent = Math.min.apply(null, descents) / this.options.samplingInterval;
-            stats.gradientMaxDescent = Math.max.apply(null, descents) / this.options.samplingInterval;
+            }
+            if (descents.length !== 0) {
+                stats.gradientAvgDescent = descents.reduce(sum, 0) / descents.length / this.options.samplingInterval;
+                stats.gradientMinDescent = Math.min(...descents) / this.options.samplingInterval;
+                stats.gradientMaxDescent = Math.max(...descents) / this.options.samplingInterval;
+                stats.angleAvgDescent = gradientToAngle(stats.gradientAvgDescent);
+                stats.angleMinDescent = gradientToAngle(stats.gradientMinDescent);
+                stats.angleMaxDescent = gradientToAngle(stats.gradientMaxDescent);
+            }
 
-            stats.angleAvgAscent = gradientToAngle(stats.gradientAvgAscent);
-            stats.angleMinAscent = gradientToAngle(stats.gradientMinAscent);
-            stats.angleMaxAscent = gradientToAngle(stats.gradientMaxAscent);
-            stats.angleAvgDescent = gradientToAngle(stats.gradientAvgDescent);
-            stats.angleMinDescent = gradientToAngle(stats.gradientMinDescent);
-            stats.angleMaxDescent = gradientToAngle(stats.gradientMaxDescent);
-
-            stats.start = values[0];
-            stats.end = values[values.length - 1];
+            stats.start = firstNotNullValue;
+            stats.end = lastNotNullValue;
             stats.distance = (values.length - 1) * this.options.samplingInterval;
+            stats.dataLostAtStart = firstNotNullIndex / values.length;
+            stats.dataLostAtEnd = 1 - lastNotNullIndex / (values.length - 1);
+            stats.dataLost = 1 - notNullValues.length / values.length;
 
-            var filterTolerance = 5;
-            var filtered = this.filterElevations(values, filterTolerance);
-            var ascent = 0,
+            const filterTolerance = 5;
+            const filtered = this.filterElevations(values.slice(firstNotNullIndex, lastNotNullIndex), filterTolerance);
+            let ascent = 0,
                 descent = 0,
                 delta;
-            for (i = 1; i < filtered.length; i++) {
+            for (let i = 1; i < filtered.length; i++) {
                 delta = filtered[i] - filtered[i - 1];
                 if (delta < 0) {
                     descent += -delta;
@@ -639,18 +724,33 @@ const ElevationProfile = L.Class.extend({
             if (!this._map || !this.values) {
                 return;
             }
-            var distance = this.options.samplingInterval * ind;
-            distance = (distance / 1000).toFixed(2);
-            var gradient = (this.values[Math.ceil(ind)] - this.values[Math.floor(ind)]) / this.options.samplingInterval;
-            var angle = Math.round(Math.atan(gradient) * 180 / Math.PI);
-            gradient = Math.round(gradient * 100);
+            const samplingInterval = this.options.samplingInterval;
+            const distanceKm = samplingInterval * ind / 1000;
+            const distanceStr = `${distanceKm.toFixed(2)} km`;
+            const sample1 = this.values[Math.ceil(ind)];
+            const sample2 = this.values[Math.floor(ind)];
+            let angleStr;
+            if (sample1 !== null && sample2 !== null) {
+                const gradient = (sample2 - sample1) / samplingInterval;
+                angleStr = `${Math.round(Math.atan(gradient) * 180 / Math.PI)}&deg`;
+            } else {
+                angleStr = '-';
+            }
 
-            var x = Math.round(ind / (this.values.length - 1) * (this.svgWidth - 1));
-            var indInt = Math.round(ind);
-            var elevation = this.values[indInt];
-            this.graphCursorLabel.innerHTML = L.Util.template('{ele} m<br>{dist} km<br>{angle}&deg;',
-                {ele: Math.round(elevation), dist: distance, grad: gradient, angle: angle}
-            );
+            const x = Math.round(ind / (this.values.length - 1) * (this.svgWidth - 1));
+            const indInt = Math.round(ind);
+            let elevation = this.values[indInt];
+            if (elevation === null) {
+                elevation = sample1;
+            }
+            if (elevation === null) {
+                elevation = sample2;
+            }
+            const elevationStr = (elevation === null) ? '-' : `${elevation} m`;
+
+            const cursorLabel = `${elevationStr}<br>${distanceStr}<br>${angleStr}`;
+
+            this.graphCursorLabel.innerHTML = cursorLabel;
 
             this.graphCursor.style.left = x + 'px';
             this.graphCursorLabel.style.left = x + 'px';
@@ -661,23 +761,20 @@ const ElevationProfile = L.Class.extend({
                 L.DomUtil.removeClass(this.graphCursorLabel, 'elevation-profile-cursor-label-left');
             }
 
-            var markerPos;
+            let markerPos;
             if (ind <= 0) {
                 markerPos = this.samples[0];
             } else if (ind >= this.samples.length - 1) {
                 markerPos = this.samples[this.samples.length - 1];
             } else {
-                var p1 = this.samples[Math.floor(ind)],
+                const p1 = this.samples[Math.floor(ind)],
                     p2 = this.samples[Math.ceil(ind)],
                     indFrac = ind - Math.floor(ind);
                 markerPos = [p1.lat + (p2.lat - p1.lat) * indFrac, p1.lng + (p2.lng - p1.lng) * indFrac];
             }
             this.trackMarker.setLatLng(markerPos);
-            var label = L.Util.template('{ele} m<br>{dist} km<br>{angle}&deg;',
-                {ele: Math.round(elevation), dist: distance, grad: gradient, angle: angle}
-            );
 
-            this.setTrackMarkerLabel(label);
+            this.setTrackMarkerLabel(cursorLabel);
         },
 
         onSvgMouseMove: function(e) {

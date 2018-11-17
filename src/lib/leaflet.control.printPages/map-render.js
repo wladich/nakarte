@@ -50,6 +50,10 @@ function getLayersForPrint(map, xhrQueue) {
     map.eachLayer((layer) => {
             if (layer.options.print) {
                 layers.push(layer);
+            } else {
+                if (layer.meta && layer.options.isOverlay === false) {
+                    throw new Error(`Print disabled for layer ${layer.meta.title}`);
+                }
             }
         }
     );

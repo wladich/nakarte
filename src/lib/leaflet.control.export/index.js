@@ -62,7 +62,7 @@ L.Control.export = L.Control.extend({
         makeMenuItems: function() {
             const {layer, layerName} = this.getExportLayer();
             if (!layer) {
-                return [{text: 'No supported layer'}];
+                return [{text: 'No supported layers'}];
             }
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
             const minLevel = Math.max(0, maxLevel - 6);
@@ -119,7 +119,7 @@ L.Control.export = L.Control.extend({
 
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
-            const fileName = `nakarte.tk_${sanitizedLayerName}_z${zoom}.${format.extension}`;
+            const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.${format.extension}`;
             exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => saveAs(fileData, fileName, true))
                 .catch((e) => {
