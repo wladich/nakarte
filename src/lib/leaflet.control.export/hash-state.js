@@ -4,7 +4,7 @@ import 'lib/leaflet.hashState/leaflet.hashState';
 
 L.Control.export.include(L.Mixin.HashState);
 L.Control.export.include({
-        stateChangeEvents: ['selectionchange'],
+        stateChangeEvents: ['selectionchange', 'exportformatchange'],
 
         serializeState: function() {
             let state;
@@ -14,7 +14,8 @@ L.Control.export.include({
                     bounds.getSouth().toFixed(5),
                     bounds.getWest().toFixed(5),
                     bounds.getNorth().toFixed(5),
-                    bounds.getEast().toFixed(5)];
+                    bounds.getEast().toFixed(5),
+                    this.getExportFormatName()];
             }
             return state;
         },
@@ -38,7 +39,7 @@ L.Control.export.include({
 
             }
 
-            if (values && values.length === 4) {
+            if (values && ( values.length === 4 || values.length === 5 ) ) { // format is optional
                 try {
                     var south = validateFloatRange(values[0], -86, 86),
                         west = validateFloat(values[1]),
@@ -49,6 +50,9 @@ L.Control.export.include({
                         return false;
                     }
                     throw e;
+                }
+                if ( values[4] ) {
+                    this.setExportFormatByName(values[4]);
                 }
                 this.removeSelector();
                 this.addSelector([[south, west], [north, east]]);

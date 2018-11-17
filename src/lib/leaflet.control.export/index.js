@@ -34,6 +34,27 @@ L.Control.export = L.Control.extend({
             this.contextMenu = new Contextmenu(() => this.makeMenuItems());
         },
 
+    getExportFormat: function() {
+        if (this.exportFormat === undefined) {
+            let fromStorage = getFormatNameFromLocalStorage();
+            this.exportFormat = formats.find( (f) => (f.name == fromStorage) ) || formats[0];
+        }
+        return this.exportFormat;
+    },
+
+    getExportFormatName: function() {
+        return this.getExportFormat().name;
+    },
+
+    setExportFormatByName: function(formatName) {
+        this.exportFormat = formats.find( (f) => (f.name == formatName ) );
+            if ( this.exportFormat === undefined ) {
+                this.exportFormat = this.getExportFormat();
+                this.fire('exportformatchange');
+            }
+            saveFormatNameToLocalStorage(this.getExportFormatName());
+        },
+
         getExportLayer: function() {
             let selectedLayer = {};
             for (let layerRec of this._layersControl._layers) {
@@ -71,22 +92,17 @@ L.Control.export = L.Control.extend({
             const lat = this._selector.getBounds().getCenter().lat;
             let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
             let format;
-            function changeFormat(formatName) {
-                format = formats[0];
-                for(const f of formats) {
-                    if(f.name == formatName) {
-                        format = f;
-                        break;
-                    }
-                }
-                saveFormatNameToLocalStorage(format.name);
+            let changeFormat = (formatName) => {
+                this.setExportFormatByName(formatName);
+                this.fire('exportformatchange');
             }
             const items = [
                 {text: "Output format", header: true},
                 {
                     selectmenu: true,
                     values: formats.map(function(x) {return {value: x.name, label: `${x.name} (${x.hint})`}}),
-                    callback: changeFormat, defaultValue: getFormatNameFromLocalStorage()
+                    callback: changeFormat, 
+                    defaultValue: this.getExportFormatName()
                 },
                 {text: layerName, header: true}
             ];
