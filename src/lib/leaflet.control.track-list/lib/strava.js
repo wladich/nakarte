@@ -7,13 +7,13 @@ function isStravaUrl(url) {
     return re.test(url);
 }
 
-function stravaXhrOptions(url) {
+function stravaRequestOptions(url) {
     const m = re.exec(url);
     if (!m) {
         throw new Error('Invalid strava url');
     }
     const trackId = m[1];
-    return [
+    const requestOptions = [
         {
             url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}?hl=en-GB`),
             options: {responseType: 'binarystring'}
@@ -22,6 +22,9 @@ function stravaXhrOptions(url) {
             url: urlViaCorsProxy(`https://www.strava.com/stream/${trackId}?streams%5B%5D=latlng`),
             options: {responseType: 'binarystring'}
         }];
+    return {
+        requestOptions,
+    }
 }
 
 
@@ -63,4 +66,4 @@ function stravaParser(name, responses) {
 }
 
 
-export {isStravaUrl, stravaXhrOptions, stravaParser}
+export {isStravaUrl, stravaRequestOptions, stravaParser}

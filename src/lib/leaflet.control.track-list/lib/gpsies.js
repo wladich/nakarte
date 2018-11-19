@@ -11,14 +11,14 @@ function isGpsiesUrl(url) {
     return re.test(url);
 }
 
-function gpsiesXhrOptions(url) {
+function gpsiesRequestOptions(url) {
     const m = re.exec(url);
     if (!m) {
         throw new Error('Invalid gpsies url');
     }
     const trackId = m[1];
     const newUrl = urlViaCorsProxy('https://www.gpsies.com/download.do');
-    return [{
+    const requestOptions =  [{
         url: newUrl,
         options: {
             method: 'POST',
@@ -35,6 +35,7 @@ function gpsiesXhrOptions(url) {
             responseType: 'binarystring'
         }
     }];
+    return {requestOptions};
 }
 
 
@@ -45,4 +46,4 @@ function gpsiesParser(name, responses) {
     return parseGpx(responses[0].responseBinaryText, name, true);
 }
 
-export {gpsiesXhrOptions, isGpsiesUrl, gpsiesParser}
+export {gpsiesRequestOptions, isGpsiesUrl, gpsiesParser}

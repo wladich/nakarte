@@ -370,13 +370,17 @@ function isNakarteLinkUrl(url) {
 }
 
 
-function nakarteLinkXhrOptions(url) {
+function nakarteLinkRequestOptions(url) {
     const m = nakarteLinkRe.exec(url);
     if (!m) {
         throw new Error('Invalid nakarteLink url');
     }
     const trackId = m[1];
-    return [{url: (`${config.tracksStorageServer}/track/${trackId}`), options: {responseType: 'binarystring'}}]
+    const requestOptions = [{
+        url: (`${config.tracksStorageServer}/track/${trackId}`),
+        options: {responseType: 'binarystring'}}
+        ];
+    return {requestOptions}
 }
 
 function nakarteLinkParser(_, responses) {
@@ -386,4 +390,5 @@ function nakarteLinkParser(_, responses) {
     return parseNktkSequence(responses[0].responseBinaryText);
 }
 
-export {saveNktk, parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser, parseNktkSequence};
+export {saveNktk, parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkRequestOptions,
+    nakarteLinkParser, parseNktkSequence};

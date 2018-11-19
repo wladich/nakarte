@@ -9,7 +9,7 @@ function isEndomondoUrl(url) {
     return regexps[0].test(url) || regexps[1].test(url);
 }
 
-function endomonXhrOptions(url) {
+function endomondoRequestOptions(url) {
     let m = regexps[0].exec(url);
     let userId, trackId;
     if (m) {
@@ -21,10 +21,11 @@ function endomonXhrOptions(url) {
         }
         [trackId, userId] = [m[1], m[2]];
     }
-    return [{
+    const requestOptions = [{
         url: urlViaCorsProxy(`https://www.endomondo.com/rest/v1/users/${userId}/workouts/${trackId}`),
         options: {responseType: 'binarystring'}
     }];
+    return {requestOptions};
 }
 
 function endomondoParser(name, responses) {
@@ -62,4 +63,4 @@ function endomondoParser(name, responses) {
 }
 
 
-export {isEndomondoUrl, endomonXhrOptions, endomondoParser}
+export {isEndomondoUrl, endomondoRequestOptions, endomondoParser}

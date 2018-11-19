@@ -5,10 +5,10 @@ import stripBom from 'lib/stripBom';
 import {decode as utf8_decode} from 'utf8';
 import {fetch} from 'lib/xhr-promise';
 import urlViaCorsProxy from 'lib/CORSProxy';
-import {isGpsiesUrl, gpsiesXhrOptions, gpsiesParser} from './gpsies';
-import {isStravaUrl, stravaXhrOptions, stravaParser} from './strava';
-import {isEndomondoUrl, endomonXhrOptions, endomondoParser} from './endomondo';
-import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkXhrOptions, nakarteLinkParser} from './nktk';
+import {isGpsiesUrl, gpsiesRequestOptions, gpsiesParser} from './gpsies';
+import {isStravaUrl, stravaRequestOptions, stravaParser} from './strava';
+import {isEndomondoUrl, endomondoRequestOptions, endomondoParser} from './endomondo';
+import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkRequestOptions, nakarteLinkParser} from './nktk';
 import {stringToArrayBuffer, arrayBufferToString} from 'lib/binary-strings';
 
 function xmlGetNodeText(node) {
@@ -610,50 +610,50 @@ function simpleTrackParser(name, responses) {
 }
 
 
-function loadFromUrl(url) {
+async function loadFromUrl(url) {
     let geodata;
     geodata = parseGeoFile('', url);
     if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
         return Promise.resolve(geodata);
     }
-    let urlToRequest = simpleTrackFetchOptions;
+    let requestOptionsGetter = simpleTrackFetchOptions;
     let parser = simpleTrackParser;
 
 
     if (isGpsiesUrl(url)) {
-        urlToRequest = gpsiesXhrOptions;
+        requestOptionsGetter = gpsiesRequestOptions;
         parser = gpsiesParser;
     } else if (isEndomondoUrl(url)) {
-        urlToRequest = endomonXhrOptions;
+        requestOptionsGetter = endomondoRequestOptions;
         parser = endomondoParser;
     } else if (isStravaUrl(url)) {
-        urlToRequest = stravaXhrOptions;
+        requestOptionsGetter = stravaRequestOptions;
         parser = stravaParser;
     } else if (isNakarteLinkUrl(url)) {
-        urlToRequest = nakarteLinkXhrOptions;
+        requestOptionsGetter = nakarteLinkRequestOptions;
         parser = nakarteLinkParser;
     }
 
-    const requests = urlToRequest(url);
-    return Promise.all(requests.map((request) => fetch(request.url, request.options)))
-        .then(
-            (responses) => {
-                let responseURL = responses[0].responseURL;
-                try {
-                    responseURL = decodeURIComponent(responseURL);
-                } catch (e) {
-                }
-
-                let name = responseURL
-                    .split('#')[0]
-                    .split('?')[0]
-                    .replace(/\/*$/, '')
-                    .split('/')
-                    .pop();
-                return parser(name, responses);
-            },
-            () => [{name: url, error: 'NETWORK'}]
-        );
+    const {requestOptions, extra} = requestOptionsGetter(url);
+    let responses;
+    try {
+        const requests = requestOptions.map((it) => fetch(it.url, it.options));
+        responses = await Promise.all(requests);
+    } catch (e) {
+        return [{name: url, error: 'NETWORK'}];
+    }
+    let responseURL = responses[0].responseURL;
+    try {
+        responseURL = decodeURIComponent(responseURL);
+    } catch (e) {
+    }
+    let name = responseURL
+        .split('#')[0]
+        .split('?')[0]
+        .replace(/\/*$/, '')
+        .split('/')
+        .pop();
+    return parser(name, responses, extra);
 }
 
 
