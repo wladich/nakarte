@@ -362,7 +362,7 @@ function parseNakarteUrl(s) {
 }
 
 
-const nakarteLinkRe = /#.*nktl=([A-Z-a-z0-9_-]+)/;
+const nakarteLinkRe = /#.*nktl=([A-Za-z0-9_-]+)/;
 
 
 function isNakarteLinkUrl(url) {
