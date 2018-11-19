@@ -24,11 +24,12 @@ function stravaRequestOptions(url) {
         }];
     return {
         requestOptions,
+        extra: {trackId}
     }
 }
 
 
-function stravaParser(name, responses) {
+function stravaParser(name, responses, extra) {
     if (responses.length !== 2) {
         throw new Error(`Invalid responses array length ${responses.length}`);
     }
@@ -44,13 +45,24 @@ function stravaParser(name, responses) {
         return [{name: name, error: 'UNSUPPORTED'}];
     }
 
-    let s = responses[0].responseBinaryText;
-    s = utf8_decode(s);
-    let m = s.match(/<meta [^>]*twitter:description[^>]*>/);
-    if (m) {
-        m = m[0].match(/content='([^']+)'/);
-        name = m[1];
-    }
+    name = `Strava ${extra.trackId}`;
+    try {
+        const dom = (new DOMParser()).parseFromString(responses[0].responseBinaryText, "text/html");
+        let title = dom.querySelector('meta[property=og\\:title]').content;
+        title = utf8_decode(title);
+        // name and description
+        const m = title.match(/^(.+) - ([^-]+)/);
+        if (m) {
+            // reverse name and description
+            name =  `${m[2]} ${m[1]}`;
+            title = dom.querySelector('title').text;
+            let date = title.match(/ (on \d{1,2} \w+ \d{4}) /)[1];
+            if (date) {
+                name += ' ' + date;
+            }
+        }
+
+    } catch (e) {}
 
     const geodata = {
         name: name || 'Strava',
