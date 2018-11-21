@@ -6,6 +6,7 @@ import {decode as utf8_decode} from 'utf8';
 import {fetch} from 'lib/xhr-promise';
 import urlViaCorsProxy from 'lib/CORSProxy';
 import {isGpsiesUrl, gpsiesRequestOptions, gpsiesParser} from './gpsies';
+import {isGpslibUrl, gpslibRequestOptions, gpslibParser} from './gpslib';
 import {isStravaUrl, stravaRequestOptions, stravaParser} from './strava';
 import {isEndomondoUrl, endomondoRequestOptions, endomondoParser} from './endomondo';
 import {parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkRequestOptions, nakarteLinkParser} from './nktk';
@@ -623,6 +624,9 @@ async function loadFromUrl(url) {
     if (isGpsiesUrl(url)) {
         requestOptionsGetter = gpsiesRequestOptions;
         parser = gpsiesParser;
+    } else if (isGpslibUrl(url)) {
+        requestOptionsGetter = gpslibRequestOptions;
+        parser = gpslibParser;
     } else if (isEndomondoUrl(url)) {
         requestOptionsGetter = endomondoRequestOptions;
         parser = endomondoParser;
