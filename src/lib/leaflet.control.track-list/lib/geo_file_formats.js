@@ -594,11 +594,12 @@ function parseTrackUrl(s) {
 }
 
 
-function simpleTrackFetchOptions(url) {
-    return [{
+function simpleRequestOptions(url) {
+    const requestOptions = [{
         url: urlViaCorsProxy(url),
         options: {responseType: 'binarystring'}
     }];
+    return {requestOptions};
 }
 
 
@@ -616,7 +617,7 @@ async function loadFromUrl(url) {
     if (geodata.length === 0 || geodata.length > 1 || geodata[0].error !== 'UNSUPPORTED') {
         return Promise.resolve(geodata);
     }
-    let requestOptionsGetter = simpleTrackFetchOptions;
+    let requestOptionsGetter = simpleRequestOptions;
     let parser = simpleTrackParser;
 
 
