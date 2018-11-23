@@ -390,5 +390,13 @@ function nakarteLinkParser(_, responses) {
     return parseNktkSequence(responses[0].responseBinaryText);
 }
 
+function parseTrackUrl(s) {
+    var i = s.indexOf('track://');
+    if (i === -1) {
+        return null;
+    }
+    return parseTrackUrlData(s.substring(i + 8));
+}
+
 export {saveNktk, parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkRequestOptions,
-    nakarteLinkParser, parseNktkSequence};
+    nakarteLinkParser, parseNktkSequence, parseTrackUrl};
