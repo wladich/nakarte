@@ -1,6 +1,6 @@
 import './track-list'
 import L from 'leaflet';
-import {parseGeoFile} from './lib/geo_file_formats';
+import parseGeoFile from './lib/parseGeoFile';
 import safeLocalStorage from 'lib/safe-localstorage';
 import logging from 'lib/logging';
 

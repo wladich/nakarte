@@ -1,0 +1,28 @@
+import urlViaCorsProxy from 'lib/CORSProxy';
+import BaseService from './baseService';
+import parseGpx from  '../parsers/gpx';
+
+class Gpslib extends BaseService {
+    urlRe = /^https?:\/\/(?:.+\.)?gpslib\.[^.]+\/tracks\/info\/(\d+)/;
+
+    isOurUrl() {
+        return this.urlRe.test(this.origUrl);
+    }
+
+    requestOptions() {
+        const m = this.urlRe.exec(this.origUrl);
+        const trackId = m[1];
+        return [{
+            url: urlViaCorsProxy(`https://www.gpslib.ru/tracks/download/${trackId}.gpx`),
+            options: {responseType: 'binarystring'}
+        }]
+    }
+
+    parseResponse(responses) {
+        const response = responses[0];
+        return parseGpx(response.responseBinaryText, this.nameFromUrl(response.responseURL), true);
+    }
+}
+
+
+export default Gpslib;

@@ -1,14 +1,3 @@
-function xmlGetNodeText(node) {
-    if (node) {
-        return Array.prototype.slice.call(node.childNodes)
-            .map(function(node) {
-                    return node.nodeValue;
-                }
-            )
-            .join('');
-    }
-}
-
 function decode866(s) {
     var c, i, s2 = [];
     for (i = 0; i < s.length; i++) {
@@ -43,5 +32,5 @@ function decodeCP1251(s) {
     return s2.join('');
 }
 
-export {xmlGetNodeText, decode866, decodeCP1251};
+export {decode866, decodeCP1251};
 

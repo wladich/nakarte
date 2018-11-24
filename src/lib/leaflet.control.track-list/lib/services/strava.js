@@ -1,0 +1,73 @@
+import BaseService from './baseService';
+import urlViaCorsProxy from 'lib/CORSProxy';
+import {decode as utf8_decode} from 'utf8';
+
+class Strava extends BaseService {
+    urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/;
+
+    isOurUrl() {
+        return this.urlRe.test(this.origUrl);
+    }
+
+    requestOptions() {
+        const m = this.urlRe.exec(this.origUrl);
+        const trackId = this.trackId = m[1];
+        return [
+            {
+                url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}?hl=en-GB`),
+                options: {responseType: 'binarystring'}
+            },
+            {
+                url: urlViaCorsProxy(`https://www.strava.com/stream/${trackId}?streams%5B%5D=latlng`),
+                options: {responseType: 'binarystring'}
+            }];
+    }
+
+    parseResponse(responses) {
+        let data;
+        const pageResponse = responses[0];
+        const trackResponse = responses[1];
+        try {
+            data = JSON.parse(trackResponse.responseBinaryText);
+        } catch (e) {
+            return [{name: name, error: 'UNSUPPORTED'}];
+        }
+        if (!data.latlng) {
+            return [{name: name, error: 'UNSUPPORTED'}];
+        }
+
+        const tracks = [data.latlng.map((p) => ({lat: p[0],lng: p[1]}))];
+
+        let name = `Strava ${this.trackId}`;
+        try {
+            let name2;
+            const dom = (new DOMParser()).parseFromString(responses[0].responseBinaryText, "text/html");
+            let title = dom.querySelector('meta[property=og\\:title]').content;
+            title = utf8_decode(title);
+            // name and description
+            const m = title.match(/^(.+) - ([^-]+)/);
+            if (m) {
+                // reverse name and description
+                name2 =  `${m[2]} ${m[1]}`;
+                title = dom.querySelector('title').text;
+                let date = title.match(/ (on \d{1,2} \w+ \d{4}) /)[1];
+                if (date) {
+                    name2 += ' ' + date;
+                }
+            }
+            name = name2;
+        } catch (e) {}
+
+
+        return [{
+            name: name,
+            tracks
+        }];
+    }
+}
+
+
+
+
+
+export default Strava;

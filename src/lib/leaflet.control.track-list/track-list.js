@@ -4,8 +4,8 @@ import Contextmenu from 'lib/contextmenu';
 import 'lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from 'lib/file-read';
-import {parseGeoFile, loadFromUrl} from './lib/geo_file_formats';
-
+import parseGeoFile from './lib/parseGeoFile';
+import loadFromUrl from './lib/loadFromUrl';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
 import {saveAs} from 'vendored/github.com/eligrey/FileSaver';

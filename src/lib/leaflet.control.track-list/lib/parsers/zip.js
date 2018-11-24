@@ -1,7 +1,7 @@
 import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
 import jsInflate from './jsInflate';
-import {decode866} from './utils';
-import {parseGeoFile} from './geo_file_formats';
+import {decode866} from './codePages';
+import parseGeoFile from '../parseGeoFile';
 
 function parseZip(txt, name) {
     try {

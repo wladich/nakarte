@@ -1,4 +1,4 @@
-import {decodeCP1251} from './utils';
+import {decodeCP1251} from './codePages';
 import stripBom from 'lib/stripBom';
 
 function parseOziRte(txt, name) {

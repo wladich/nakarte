@@ -1,35 +1,45 @@
-function parseYandexRulerString(s) {
-    var last_lat = 0;
-    var last_lng = 0;
-    var error;
-    var points = [];
-    s = s.replace(/%2C/ig, ',');
-    var points_str = s.split('~');
-    for (var i = 0; i < points_str.length; i++) {
-        var point = points_str[i].split(',');
-        var lng = parseFloat(point[0]);
-        var lat = parseFloat(point[1]);
-        if (isNaN(lat) || isNaN(lng)) {
-            error = 'CORRUPT';
-            break;
+import BaseService from './baseService';
+
+class YandexRuler extends BaseService {
+    urlRe =  /yandex\..+[?&]rl=([^&]+)/;
+
+    isOurUrl() {
+        return this.urlRe.test(this.origUrl);
+    }
+
+    requestOptions() {
+        return [];
+    }
+
+    parseResponse() {
+        let last_lat = 0;
+        let last_lng = 0;
+        let error;
+        const points = [];
+        let s = this.urlRe.exec(this.origUrl)[1];
+        s = s.replace(/%2C/ig, ',');
+        const points_str = s.split('~');
+        for (let i = 0; i < points_str.length; i++) {
+            let point = points_str[i].split(',');
+            let lng = parseFloat(point[0]);
+            let lat = parseFloat(point[1]);
+            if (isNaN(lat) || isNaN(lng)) {
+                error = 'CORRUPT';
+                break;
+            }
+            last_lng += lng;
+            last_lat += lat;
+            points.push({lat: last_lat, lng: last_lng});
         }
-        last_lng += lng;
-        last_lat += lat;
-        points.push({lat: last_lat, lng: last_lng});
+        return [{
+            error: error,
+            tracks: [points],
+            name: 'Yandex ruler'
+        }];
     }
-    return {error: error, points: points};
 }
 
 
-function parseYandexRulerUrl(s) {
-    var re = /yandex\..+[?&]rl=([^&]+)/;
-    var m = re.exec(s);
-    if (!m) {
-        return null;
-    }
-    var res = parseYandexRulerString(m[1]);
-    return [{name: 'Yandex ruler', error: res.error, tracks: [res.points]}];
-}
 
 // function parseYandexMap(txt) {
 //     var start_tag = '<script id="vpage" type="application/json">';
@@ -89,4 +99,4 @@ function parseYandexRulerUrl(s) {
 // }
 
 
-export {parseYandexRulerUrl}
+export {YandexRuler};

@@ -1,5 +1,5 @@
 import {decode as utf8_decode} from 'utf8';
-import {xmlGetNodeText} from './utils';
+import {xmlGetNodeText} from './xmlUtils';
 import stripBom from 'lib/stripBom';
 
 function parseGpx(txt, name, preferNameFromFile) {
