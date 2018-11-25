@@ -40,7 +40,7 @@ class Endomondo extends BaseService {
         try {
             data = JSON.parse(response.responseBinaryText)
         } catch (e) {
-            return [{name: name, error: 'UNSUPPORTED'}];
+            return [{name: 'Endomondo activity', error: 'UNSUPPORTED'}];
         }
         if (!data.points || !data.points.points) {
             return [{error: 'Endomondo user disabled viewing this workout track'}];
@@ -63,7 +63,6 @@ class Endomondo extends BaseService {
         const date = data.local_start_time.split('T')[0];
         const dist = `${data.distance.toFixed(1)} km`;
         let trackName = `${date}, ${dist}${author}: ${data.title}`;
-        console.log(data, track);
         return [{
             name: trackName,
             tracks: [track]
