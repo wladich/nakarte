@@ -25,23 +25,21 @@ class Strava extends BaseService {
 
     parseResponse(responses) {
         let data;
-        const pageResponse = responses[0];
-        const trackResponse = responses[1];
+        const [pageResponse, trackResponse] = responses;
+        let name = `Strava ${this.trackId}`;
         try {
             data = JSON.parse(trackResponse.responseBinaryText);
         } catch (e) {
-            return [{name: name, error: 'UNSUPPORTED'}];
+            return [{name, error: 'UNSUPPORTED'}];
         }
         if (!data.latlng) {
-            return [{name: name, error: 'UNSUPPORTED'}];
+            return [{name, error: 'UNSUPPORTED'}];
         }
-
         const tracks = [data.latlng.map((p) => ({lat: p[0],lng: p[1]}))];
 
-        let name = `Strava ${this.trackId}`;
         try {
             let name2;
-            const dom = (new DOMParser()).parseFromString(responses[0].responseBinaryText, "text/html");
+            const dom = (new DOMParser()).parseFromString(pageResponse.responseBinaryText, "text/html");
             let title = dom.querySelector('meta[property=og\\:title]').content;
             title = utf8_decode(title);
             // name and description
@@ -60,7 +58,7 @@ class Strava extends BaseService {
 
 
         return [{
-            name: name,
+            name,
             tracks
         }];
     }
