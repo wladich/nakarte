@@ -323,4 +323,17 @@ function parseNktkSequence(s) {
     return geodataArray;
 }
 
-export {saveNktk, parseNktkSequence, parseTrackUrlData};
+function parseNktkParam(s) {
+    let i = s.indexOf('#');
+    if (i === -1) {
+        return null;
+    }
+    i = s.indexOf('nktk=', i + 1);
+    if (i === -1) {
+        return null;
+    }
+    s = s.substring(i + 5);
+    return parseNktkSequence(s)
+}
+
+export {saveNktk, parseNktkParam, parseTrackUrlData, parseNktkSequence};

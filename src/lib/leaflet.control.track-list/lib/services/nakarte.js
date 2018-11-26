@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import {parseNktkSequence, parseTrackUrlData} from '../parsers/nktk';
+import {parseNktkParam, parseNktkSequence, parseTrackUrlData} from '../parsers/nktk';
 import config from 'config';
 
 class NakarteTrack extends BaseService {
@@ -19,22 +19,12 @@ class NakarteTrack extends BaseService {
 
 class NakarteNktk extends BaseService {
     constructor(url) {
-        super(url);
-        this._data = null;
-        let i = url.indexOf('#');
-        if (i === -1) {
-            return;
-        }
-        i = url.indexOf('nktk=', i + 1);
-        if (i === -1) {
-            return;
-        }
-        this._data = url.substring(i + 5);
-
+        super(null);
+        this._geoData = parseNktkParam(url);
     }
 
     isOurUrl() {
-        return !!this._data;
+        return !!this._geoData;
     }
 
     requestOptions() {
@@ -42,7 +32,7 @@ class NakarteNktk extends BaseService {
     }
 
     parseResponse() {
-        return parseNktkSequence(this._data);
+        return this._geoData;
     }
 
 }
