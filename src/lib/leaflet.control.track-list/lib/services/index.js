@@ -5,6 +5,7 @@ import Gpslib from './gpslib';
 import Strava from './strava';
 import {YandexRuler} from './yandex';
 import {NakarteTrack, NakarteNktk, NakarteNktl} from './nakarte';
+import {MovescountMove, MovescountRoute} from './movescount';
 
 export default [
     YandexRuler,
@@ -15,5 +16,7 @@ export default [
     Gpsies,
     Gpslib,
     Strava,
+    MovescountMove,
+    MovescountRoute,
     SimpleService
 ]
