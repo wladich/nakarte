@@ -59,10 +59,15 @@ class Endomondo extends BaseService {
             return [{error: 'Endomondo user disabled viewing this workout track'}];
         }
 
-        const author = data.author && data.author.name ? ` ${data.author.name}` : '';
         const date = data.local_start_time.split('T')[0];
         const dist = `${data.distance.toFixed(1)} km`;
-        let trackName = `${date}, ${dist}${author}: ${data.title}`;
+        let trackName = `${date}, ${dist}`;
+        if (data.author && data.author.name) {
+            trackName += ` ${data.author.name}`;
+        }
+        if (data.title) {
+            trackName += `: ${data.title}`;
+        }
         return [{
             name: trackName,
             tracks: [track]
