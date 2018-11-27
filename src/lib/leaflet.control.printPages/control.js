@@ -5,7 +5,7 @@ import 'lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
 import Contextmenu from 'lib/contextmenu';
-import {renderPages} from './map-render'
+import {renderPages, isValidCanvasSize} from './map-render'
 import formHtml from './form.html';
 import {notify} from 'lib/notifications';
 import {makePdf} from './pdf';
@@ -168,11 +168,21 @@ L.Control.PrintPages = L.Control.extend({
             this.updateFormZooms();
         },
 
+        getPagePixelSize: function (page) {
+            return page.getPrintSize().multiplyBy(this.resolution() / 25.4).round();
+        },
+
         onSavePdfClicked: function() {
             if (!this.pages.length) {
                 notify('Add some pages to print');
                 return;
             }
+
+            if (!isValidCanvasSize(this.getPagePixelSize(this.pages[0]))) {
+                notify('To generate a file you need to reduce the print size or page resolution.');
+                return;
+            }
+
             this.savePdf();
         },
 
