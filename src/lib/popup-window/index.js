@@ -1,3 +1,5 @@
+import alertify from 'alertify.js';
+
 function openPopupWindow(url, width, uniqName = null) {
     var left, top, height,
         screenLeft = screen.availLeft || 0,
@@ -19,8 +21,14 @@ function openPopupWindow(url, width, uniqName = null) {
     height = window.innerHeight;
     var features = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
     features += ',resizable,scrollbars';
-    window.open(url, uniqName, features)
-        .focus();
+    var newWindow = window.open(url, uniqName, features);
+    if (!newWindow || newWindow.closed) {
+        alertify.alert('Pop-up blocked by browser.\n\n' +
+            'If you want to use the full functionality of this site, ' +
+            'turn off blocking pop-up in the browser settings for this site.');
+    } else {
+        newWindow.focus();
+    }
 }
 
 export {openPopupWindow};
