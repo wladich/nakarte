@@ -5,3 +5,7 @@
 .alertify .alert>*, .alertify .dialog>* {
     overflow-wrap: break-word;
 }
+
+.alertify .alert .msg, .alertify .dialog .msg {
+    white-space: pre-line;
+}
