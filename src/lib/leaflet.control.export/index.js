@@ -91,7 +91,6 @@ L.Control.export = L.Control.extend({
             const equatorLength = 40075016;
             const lat = this._selector.getBounds().getCenter().lat;
             let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
-            let format;
             let changeFormat = (formatName) => {
                 this.setExportFormatByName(formatName);
                 this.fire('exportformatchange');
@@ -114,7 +113,7 @@ L.Control.export = L.Control.extend({
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
                 let item = {
                     text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
-                    callback: () => this.startExport(format, layer, layerName, zoom),
+                    callback: () => this.startExport(this.getExportFormat(), layer, layerName, zoom),
                     disabled: this.exportInProgress()
                 };
                 items.push(item);
