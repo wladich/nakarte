@@ -71,7 +71,8 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint">
-                        gpx kml Ozi zip YandexMaps GPSies GPSLib OSM Strava endomondo
+                        gpx kml Ozi zip YandexMaps GPSies Strava
+                        <span class="formats-hint-more" title="GPSLib Endomondo Movescount OSM">&hellip;</span>
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
