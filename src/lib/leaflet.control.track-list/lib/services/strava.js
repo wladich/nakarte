@@ -15,17 +15,26 @@ class Strava extends BaseService {
         return [
             {
                 url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}?hl=en-GB`),
-                options: {responseType: 'binarystring'}
+                options: {
+                    responseType: 'binarystring',
+                    isResponseSuccess: (xhr) => (xhr.status === 200 || xhr.status === 404)
+                }
             },
             {
                 url: urlViaCorsProxy(`https://www.strava.com/stream/${trackId}?streams%5B%5D=latlng`),
-                options: {responseType: 'binarystring'}
+                options: {
+                    responseType: 'binarystring',
+                    isResponseSuccess: (xhr) => (xhr.status === 200 || xhr.status === 401)
+                }
             }];
     }
 
     parseResponse(responses) {
         let data;
         const [pageResponse, trackResponse] = responses;
+        if (trackResponse.status === 401) {
+            return [{error: 'Strava user disabled viewing this track (track is private)'}];
+        }
         let name = `Strava ${this.trackId}`;
         try {
             data = JSON.parse(trackResponse.responseBinaryText);
