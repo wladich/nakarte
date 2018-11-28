@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import {loadFromUrl} from './lib/geo_file_formats';
+import loadFromUrl from './lib/loadFromUrl';
 import logging from 'lib/logging';
-import {parseNktkSequence} from './lib/nktk';
+import {parseNktkSequence} from './lib/parsers/nktk';
 
 
 L.Control.TrackList.include({

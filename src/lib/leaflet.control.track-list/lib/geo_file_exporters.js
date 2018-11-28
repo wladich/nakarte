@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import utf8 from 'utf8';
 import escapeHtml from 'escape-html';
-import {saveNktk} from './nktk';
+import {saveNktk} from './parsers/nktk';
 
 function getSegmentLatForLng(latLng1, latLng2, lng) {
     const deltaLat = latLng2.lat - latLng1.lat;

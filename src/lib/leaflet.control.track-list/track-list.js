@@ -4,8 +4,8 @@ import Contextmenu from 'lib/contextmenu';
 import 'lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from 'lib/file-read';
-import {parseGeoFile, loadFromUrl} from './lib/geo_file_formats';
-
+import parseGeoFile from './lib/parseGeoFile';
+import loadFromUrl from './lib/loadFromUrl';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
 import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
@@ -71,7 +71,8 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint">
-                        gpx kml Ozi zip YandexMaps GPSies Strava endomondo
+                        gpx kml Ozi zip YandexMaps GPSies Strava
+                        <span class="formats-hint-more" title="GPSLib Endomondo Movescount OSM">&hellip;</span>
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
