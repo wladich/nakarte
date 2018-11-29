@@ -272,11 +272,10 @@
 }
 
 .leaflet-control-tracklist .formats-hint-more {
-    background-color: hsl(100, 0%, 88%);
+    background-color: hsl(100, 0%, 92%);
     padding: 2px 6px;
     display: inline-block;
     line-height: 10px;
     border-radius: 5px;
-    margin-left: 4px;
     color: hsl(100, 0%, 40%);
 }
