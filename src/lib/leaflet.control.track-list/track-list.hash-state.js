@@ -26,6 +26,10 @@ L.Control.TrackList.include({
             const href = window.location.href;
             loadFromUrl(url).then(
                 (geodata) => {
+                    var isDuplicate = this.isDuplicateTrack(geodata[0]);
+                    if (isDuplicate) {
+                        return;
+                    }
                     const notEmpty = this.addTracksFromGeodataArray(geodata, {href});
                     if (notEmpty) {
                         this.setExpanded();
