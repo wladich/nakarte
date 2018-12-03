@@ -105,7 +105,7 @@ function parseGpx(txt, name, preferNameFromFile) {
             }
             let wptName = xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]) || '';
             try {
-                wptName = utf8_decode((wptName));
+                wptName = utf8_decode(wptName);
             }  catch (e) {
                 error = 'CORRUPT';
                 wptName = '__invalid point name__';
@@ -135,11 +135,7 @@ function parseGpx(txt, name, preferNameFromFile) {
         for (let trk of [...dom.getElementsByTagName('trk')]) {
             let trkName = trk.getElementsByTagName('name')[0];
             if (trkName) {
-                try {
-                    trkName = utf8_decode(xmlGetNodeText(trkName));
-                } catch (e) {
-                    error = 'CORRUPT';
-                }
+                trkName = utf8_decode(xmlGetNodeText(trkName));
                 if (trkName.length) {
                     name = trkName;
                     break;
