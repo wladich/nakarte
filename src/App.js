@@ -135,14 +135,25 @@ function setUp() {
         return tracklist.tracks().map((track) => track.name());
     }
     tracklist.addTo(map);
-    if (!hashState.getState('nktk') && !hashState.getState('nktl')) {
+    const tracksHashParams = tracklist.hashParams();
+
+    let hasTrackParamsInHash = false;
+    for (let param of tracksHashParams) {
+        if (hashState.hasKey(param)) {
+            hasTrackParamsInHash = true;
+            break;
+        }
+    }
+    if (!hasTrackParamsInHash) {
         tracklist.loadTracksFromStorage();
     }
     startInfo.tracksAfterLoadFromStorage = trackNames();
-    bindHashStateReadOnly('nktk', tracklist.loadNktkFromHash.bind(tracklist));
-    startInfo.tracksAfterLoadFromNktk = trackNames();
-    bindHashStateReadOnly('nktl', tracklist.loadNktlFromHash.bind(tracklist));
-    startInfo.tracksAfterLoadFromNktl = trackNames();
+
+    for (let param of tracksHashParams ) {
+        bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
+    }
+    startInfo.tracksAfterLoadFromHash = trackNames();
+
     if (!validPositionInHash) {
         tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
     }

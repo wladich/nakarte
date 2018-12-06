@@ -311,29 +311,12 @@ function parseNktkFragment(s) {
 }
 
 function parseNktkSequence(s) {
-    if (typeof s === "string") {
-        s = s.split('/');
-    }
-    var geodataArray = [];
-    for (let i = 0; i < s.length; i++) {
-        if (s[i]) {
-            geodataArray.push.apply(geodataArray, parseNktkFragment(s[i]));
-        }
-    }
-    return geodataArray;
+    return s.split('/')
+        .map(parseNktkFragment)
+        .reduce((acc, cur) => {
+            acc.push(...cur);
+            return acc;
+        });
 }
 
-function parseNktkParam(s) {
-    let i = s.indexOf('#');
-    if (i === -1) {
-        return null;
-    }
-    i = s.indexOf('nktk=', i + 1);
-    if (i === -1) {
-        return null;
-    }
-    s = s.substring(i + 5);
-    return parseNktkSequence(s)
-}
-
-export {saveNktk, parseNktkParam, parseTrackUrlData, parseNktkSequence};
+export {saveNktk, parseTrackUrlData, parseNktkSequence, parseNktkFragment};

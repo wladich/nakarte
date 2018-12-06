@@ -5,14 +5,13 @@ import Gpslib from './gpslib';
 import Osm from './osm';
 import Strava from './strava';
 import {YandexRuler} from './yandex';
-import {NakarteTrack, NakarteNktk, NakarteNktl} from './nakarte';
+import {NakarteTrack, NakarteUrl} from './nakarte';
 import {MovescountMove, MovescountRoute} from './movescount';
 
 export default [
     YandexRuler,
     NakarteTrack,
-    NakarteNktk,
-    NakarteNktl,
+    NakarteUrl,
     Endomondo,
     Gpsies,
     Gpslib,

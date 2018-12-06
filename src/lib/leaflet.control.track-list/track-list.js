@@ -25,6 +25,9 @@ import config from 'config';
 import md5 from './lib/md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
+const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
+
+
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
 
@@ -43,7 +46,7 @@ L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
         includes: L.Mixin.Events,
 
-        colors: ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'],
+        colors: TRACKLIST_TRACK_COLORS,
 
 
         initialize: function() {
@@ -1181,3 +1184,5 @@ L.Control.TrackList = L.Control.extend({
         }
     }
 );
+
+export {TRACKLIST_TRACK_COLORS};
