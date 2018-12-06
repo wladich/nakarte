@@ -29,5 +29,5 @@
 
 9. Изменения по ревью можно как делать новыми коммитами, так и добавлять в первый и пушить с форсом.
 
-10. Перед мержем все коммиты необходимо склеить (кроме случая слабо связанных изменений) и отребейзить на master:
-https://blog.carbonfive.com/2017/08/28/always-squash-and-rebase-your-git-commits/
+10. Перед мержем все коммиты необходимо склеить (кроме случая слабо связанных изменений) и отребейзить на master.
+Коротко и по-русски: https://htmlacademy.ru/blog/27-how-to-squash-commits-and-why-it-is-needed, подробно: https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#_changing_multiple
