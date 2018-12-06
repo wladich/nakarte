@@ -102,9 +102,9 @@ function setUp() {
     const defaultLocation = L.latLng(55.75185, 37.61856);
     const defaultZoom = 10;
 
-    let {lat, lng, zoom, valid} = map.validateState(hashState.getState('m'));
+    let {lat, lng, zoom, valid: validPositionInHash} = map.validateState(hashState.getState('m'));
     locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
-        valid ? L.latLng(lat, lng) : null, valid ? zoom : null);
+        validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
     map.enableHashState('m');
     /////////// controls top-right corner
 
@@ -143,6 +143,9 @@ function setUp() {
     startInfo.tracksAfterLoadFromNktk = trackNames();
     bindHashStateReadOnly('nktl', tracklist.loadNktlFromHash.bind(tracklist));
     startInfo.tracksAfterLoadFromNktl = trackNames();
+    if (!validPositionInHash) {
+        tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
+    }
 
 
     ////////// adaptive layout

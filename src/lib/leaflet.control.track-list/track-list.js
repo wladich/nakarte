@@ -50,7 +50,7 @@ L.Control.TrackList = L.Control.extend({
             L.Control.prototype.initialize.call(this);
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
-            this.readingFiles = ko.observable(false);
+            this.readingFiles = ko.observable(0);
             this.readProgressRange = ko.observable();
             this.readProgressDone = ko.observable();
             this._lastTrackColor = 0;
@@ -215,9 +215,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         loadFilesFromFilesObject: function(files) {
-            this.readProgressDone(undefined);
-            this.readProgressRange(1);
-            this.readingFiles(true);
+            this.readingFiles(this.readingFiles() + 1);
 
             readFiles(files).then(function(fileDataArray) {
                 const geodataArray = [];
@@ -230,7 +228,7 @@ L.Control.TrackList = L.Control.extend({
                             content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
                         });
                 }
-                this.readingFiles(false);
+                this.readingFiles(this.readingFiles() - 1);
 
                 this.addTracksFromGeodataArray(geodataArray, debugFileData);
             }.bind(this));
@@ -247,17 +245,28 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            this.readingFiles(true);
-            this.readProgressDone(undefined);
-            this.readProgressRange(1);
+            this.readingFiles(this.readingFiles() + 1);
 
             logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
             loadFromUrl(url)
                 .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
-                    this.readingFiles(false)
+                    this.readingFiles(this.readingFiles() - 1);
                 });
             this.url('');
+        },
+
+        whenLoadDone: function(cb) {
+            if (this.readingFiles() === 0) {
+                cb();
+                return;
+            }
+            const subscription = this.readingFiles.subscribe((value) =>{
+                if (value === 0) {
+                    subscription.dispose();
+                    cb();
+                }
+            });
         },
 
         addTracksFromGeodataArray: function(geodata_array, debugData) {
@@ -368,10 +377,33 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setViewToTrack: function(track) {
-            var lines = this.getTrackPolylines(track);
-            var points = this.getTrackPoints(track);
+            this.setViewToBounds(this.getTrackBounds(track));
+        },
+
+        setViewToAllTracks: function(immediate) {
+            const bounds = L.latLngBounds([]);
+            for (let track of this.tracks()) {
+                bounds.extend(this.getTrackBounds(track));
+            }
+            this.setViewToBounds(bounds, immediate);
+        },
+
+        setViewToBounds: function(bounds, immediate) {
+            if (bounds && bounds.isValid()) {
+                bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
+                if (L.Browser.mobile || immediate) {
+                    this.map.fitBounds(bounds, {maxZoom: 16});
+                } else {
+                    this.map.flyToBounds(bounds, {maxZoom: 16});
+                }
+            }
+        },
+
+        getTrackBounds: function(track) {
+            const lines = this.getTrackPolylines(track);
+            const points = this.getTrackPoints(track);
+            const bounds = L.latLngBounds([]);
             if (lines.length || points.length) {
-                var bounds = L.latLngBounds([]);
                 lines.forEach((l) => {
                         if (l.getLatLngs().length > 1) {
                             bounds.extend(wrapLatLngBoundsToTarget(l.getBounds(), bounds));
@@ -382,16 +414,8 @@ L.Control.TrackList = L.Control.extend({
                         bounds.extend(wrapLatLngToTarget(p.latlng, bounds));
                     }
                 );
-                if (bounds.isValid()) {
-                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
-                    if (L.Browser.mobile) {
-                        this.map.fitBounds(bounds);
-                    } else {
-                        this.map.flyToBounds(bounds);
-                    }
-                }
-
             }
+            return bounds;
         },
 
         attachColorSelector: function(track) {
