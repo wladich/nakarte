@@ -42,12 +42,10 @@ function parseTrack(rawTrack) {
 
 }
 
-async function loadTracksFromJson(values) {
+async function loadTracksFromJson(value) {
     const errCorrupt = [{name: 'Track in url', error: 'CORRUPT'}];
-    if (values.length < 1) {
-        return errCorrupt;
-    }
-    const jsonString = urlSafeBase64.decode(values[0]);
+
+    const jsonString = urlSafeBase64.decode(value);
     let data;
     try {
         data = JSON.parse(jsonString)
@@ -60,7 +58,7 @@ async function loadTracksFromJson(values) {
     const geoDataArray = [];
 
     for (let el of data) {
-        // Each track should contain either url or at least ono of tracks and points
+        // Each track should contain either url or at least one of tracks and points
         if (!el.u && !(el.p || el.t)) {
             return errCorrupt;
         }

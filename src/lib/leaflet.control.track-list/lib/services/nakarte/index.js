@@ -70,7 +70,7 @@ class NakarteUrlLoader {
     }
 
     async loadFromJSON(values) {
-        return loadTracksFromJson(values);
+        return flattenArray(await Promise.all(values.map(loadTracksFromJson)));
     }
 
     async loadFromUrlencodedUrls(values) {
