@@ -60,10 +60,7 @@ function setUp() {
 
     /////////// controls top-left corner
 
-    new L.Control.Caption(`
-        <a href="https://nakarte-me.blogspot.com/p/blog-page.html">Documentation</a> |
-        <a href="${config.newsUrl}">News</a> |
-        <a href="mailto:${config.email}" target="_self">nakarte@nakarte.me</a> `, {
+    new L.Control.Caption(config.caption, {
             position: 'topleft'
         }
     ).addTo(map);
