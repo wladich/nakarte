@@ -270,3 +270,12 @@
 .leaflet-control-tracklist .edit {
     background-color: rgb(217, 232, 255) !important;
 }
+
+.leaflet-control-tracklist .formats-hint-more {
+    background-color: hsl(100, 0%, 92%);
+    padding: 2px 6px;
+    display: inline-block;
+    line-height: 10px;
+    border-radius: 5px;
+    color: hsl(100, 0%, 40%);
+}

@@ -2,33 +2,9 @@ import Pbf from 'pbf';
 import {TrackView} from './nktk_pb';
 import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
 import utf8 from 'utf8';
-import config from 'config';
+import urlSafeBase64 from './urlSafeBase64';
 
 const arcUnit = ((1 << 24) - 1) / 360;
-
-function encodeUrlSafeBase64(s) {
-    return (btoa(s)
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_')
-            // .replace(/=+$/, '')
-    );
-}
-
-function decodeUrlSafeBase64(s) {
-    var decoded;
-    s = s
-        .replace(/[\n\r \t]/g, '')
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
-    try {
-        decoded = atob(s);
-    } catch (e) {
-    }
-    if (decoded && decoded.length) {
-        return decoded;
-    }
-    return null;
-}
 
 function PackedStreamReader(s) {
     this._string = s;
@@ -165,11 +141,11 @@ function saveNktk(segments, name, color, measureTicksShown, waypoints, trackHidd
     const versionStr = String.fromCharCode(4 + 64);
     TrackView.write(trackView, pbf);
     const s = versionStr + arrayBufferToString(pbf.finish());
-    return encodeUrlSafeBase64(s);
+    return urlSafeBase64.encode(s);
 }
 
 function parseTrackUrlData(s) {
-    s = decodeUrlSafeBase64(s);
+    s = urlSafeBase64.decode(s);
     if (!s) {
         return [{name: 'Text encoded track', error: ['CORRUPT']}];
     }
@@ -319,7 +295,7 @@ function parseNktkProtobuf(s) {
 }
 
 function parseNktkFragment(s) {
-    s = decodeUrlSafeBase64(s);
+    s = urlSafeBase64.decode(s);
     if (!s) {
         return [{name: 'Text encoded track', error: ['CORRUPT']}];
     }
@@ -335,60 +311,12 @@ function parseNktkFragment(s) {
 }
 
 function parseNktkSequence(s) {
-    if (typeof s === "string") {
-        s = s.split('/');
-    }
-    var geodataArray = [];
-    for (let i = 0; i < s.length; i++) {
-        if (s[i]) {
-            geodataArray.push.apply(geodataArray, parseNktkFragment(s[i]));
-        }
-    }
-    return geodataArray;
+    return s.split('/')
+        .map(parseNktkFragment)
+        .reduce((acc, cur) => {
+            acc.push(...cur);
+            return acc;
+        });
 }
 
-
-function parseNakarteUrl(s) {
-    let i = s.indexOf('#');
-    if (i === -1) {
-        return null;
-    }
-    i = s.indexOf('nktk=', i + 1);
-    if (i === -1) {
-        return null;
-    }
-    s = s.substring(i + 5);
-    return parseNktkSequence(s)
-}
-
-
-const nakarteLinkRe = /#.*nktl=([A-Za-z0-9_-]+)/;
-
-
-function isNakarteLinkUrl(url) {
-    return nakarteLinkRe.test(url);
-}
-
-
-function nakarteLinkRequestOptions(url) {
-    const m = nakarteLinkRe.exec(url);
-    if (!m) {
-        throw new Error('Invalid nakarteLink url');
-    }
-    const trackId = m[1];
-    const requestOptions = [{
-        url: (`${config.tracksStorageServer}/track/${trackId}`),
-        options: {responseType: 'binarystring'}}
-        ];
-    return {requestOptions}
-}
-
-function nakarteLinkParser(_, responses) {
-    if (responses.length !== 1) {
-        throw new Error(`Invalid responses array length ${responses.length}`);
-    }
-    return parseNktkSequence(responses[0].responseBinaryText);
-}
-
-export {saveNktk, parseTrackUrlData, parseNakarteUrl, isNakarteLinkUrl, nakarteLinkRequestOptions,
-    nakarteLinkParser, parseNktkSequence};
+export {saveNktk, parseTrackUrlData, parseNktkSequence, parseNktkFragment};
