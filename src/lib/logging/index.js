@@ -1,6 +1,10 @@
 import Raven from 'raven-js';
 
-const sessionId = Math.random().toString(36).substring(2);
+function randId() {
+    return Math.random().toString(36).substring(2, 13);
+}
+
+const sessionId = randId();
 
 function captureException(e, options) {
     console.log('captureException', e, options);
@@ -34,7 +38,11 @@ function logEvent(eventName, extra) {
     const url = 'https://nakarte.me/event';
 
     const data = {event: eventName.toString()};
-    data.data = Object.assign({}, extra, {beacon: true, session: sessionId});
+    data.data = Object.assign({}, extra, {
+        beacon: true,
+        session: sessionId,
+        address: window.location.toString()
+    });
     let s = JSON.stringify(data);
     try {
         navigator.sendBeacon(url, s);
@@ -50,4 +58,4 @@ function logEvent(eventName, extra) {
 
 
 export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb,
-    captureMessageWithUrl, logEvent}
+    captureMessageWithUrl, logEvent, randId}
