@@ -468,7 +468,9 @@ L.Control.TrackList = L.Control.extend({
             const segments = this.getTrackPolylines(track).map((line) => {
                 return line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
             });
-            this.addTrack({name: track.name(), tracks: segments});
+            const points = this.getTrackPoints(track)
+                .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label}));
+            this.addTrack({name: track.name(), tracks: segments, points});
         },
 
         reverseTrackSegment: function(trackSegment) {
