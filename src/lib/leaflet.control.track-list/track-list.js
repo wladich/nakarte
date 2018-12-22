@@ -465,17 +465,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         duplicateTrack: function(track) {
-            var segments = [], segment,
-                line,
-                lines = this.getTrackPolylines(track);
-            for (var i = 0; i < lines.length; i++) {
-                segment = [];
-                line = lines[i].getLatLngs();
-                for (var j = 0; j < line.length; j++) {
-                    segment.push([line[j].lat, line[j].lng]);
-                }
-                segments.push(segment);
-            }
+            const segments = this.getTrackPolylines(track).map((line) => {
+                return line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
+            });
             this.addTrack({name: track.name(), tracks: segments});
         },
 
