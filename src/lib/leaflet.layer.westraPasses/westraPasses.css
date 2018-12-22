@@ -88,12 +88,14 @@
 
 }
 
-.westra-region-polygon {
-    stroke-width: 2;
-    opacity: 0.5;
-    fill-opacity: 0.7;
+.westra-coverage-polygon {
+    stroke-width: 10;
+    stroke-opacity: 1;
+    fill-opacity: 1;
     stroke: #c55;
-    fill: #c55
+    fill: #c55;
+    opacity: 0.6;
+
 }
 
 .pass-details {
