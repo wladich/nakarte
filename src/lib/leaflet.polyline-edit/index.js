@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import './edit_line.css';
 import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import {confirm, notify} from 'lib/notifications';
 
 L.Polyline.EditMixinOptions = {
     className: 'leaflet-editable-line'
@@ -8,6 +9,44 @@ L.Polyline.EditMixinOptions = {
 
 L.Polyline.EditMixin = {
     _nodeMarkersZOffset: 10000,
+
+    removePoints: function (points) {
+        points.forEach(point => {
+            const marker = point._nodeMarker;
+            const nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+
+            this.removeNode(nodeIndex);
+        }, this);
+
+        this._setupEndMarkers();
+    },
+
+    onAreaSelected: function (e) {
+        const selectedPoints = this.getLatLngs().filter(point => e.bounds.contains(point));
+        const selectedPointsLength = selectedPoints.length;
+
+        if (!selectedPointsLength) {
+            notify('No points selected');
+
+            return;
+        }
+
+        const message = `Remove ${selectedPointsLength} points?`;
+        const accept = () => this.removePoints(selectedPoints);
+        const decline = () => {};
+
+        confirm(message, accept, decline);
+    },
+
+    enableAreaSelected: function () {
+        this._map.on('areaselected', this.onAreaSelected, this);
+        this._map.selectArea.enable();
+    },
+
+    disabledAreaSelected: function () {
+        this._map.off('areaselected', this.onAreaSelected, this);
+        this._map.selectArea.disable();
+    },
 
     startEdit: function() {
         if (this._map && !this._editing) {
@@ -23,6 +62,7 @@ L.Polyline.EditMixin = {
             this.setStyle({weight: 1.5, opacity: 1});
             L.DomUtil.addClass(this._map._container, 'leaflet-line-editing');
             this.fire('editstart', {target: this});
+            this.enableAreaSelected();
         }
     },
 
@@ -39,6 +79,7 @@ L.Polyline.EditMixin = {
             this.setStyle(this._storedStyle);
             L.DomUtil.removeClass(this._map._container, 'leaflet-line-editing');
             this.fire('editend', {target: this, userCancelled});
+            this.disabledAreaSelected();
         }
     },
 

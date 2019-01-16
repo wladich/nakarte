@@ -31,6 +31,7 @@ import {notify} from 'lib/notifications';
 import ZoomDisplay from 'lib/leaflet.control.zoom-display';
 import logging from 'lib/logging';
 import safeLocalStorage from 'lib/safe-localstorage';
+import 'lib/leaflet.map.selectArea';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
