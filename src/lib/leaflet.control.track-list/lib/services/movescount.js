@@ -1,9 +1,8 @@
 import BaseService from './baseService';
 import urlViaCorsProxy from 'lib/CORSProxy';
+import utf8 from 'utf8';
 
 class MovescountBase extends BaseService {
-    // urlRe = null;
-
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
     }
@@ -32,20 +31,31 @@ class MovescountRoute extends MovescountBase {
         let data;
         let name = `Movescount route ${this.trackId}`;
         try {
-            data = JSON.parse(response.responseBinaryText)
+            data = JSON.parse(utf8.decode(response.responseBinaryText));
         } catch (e) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        const track = data.points.latitudes.map((lat, i) => ({
-                lat,
+
+        let points = [];
+        let track = [];
+
+        for (let i = 0; i < data.points.latitudes.length; i++) {
+            const latlng = {
+                lat: data.points.latitudes[i],
                 lng: data.points.longitudes[i]
-            })
-        );
+            };
+            track.push(latlng);
+            const point = data.points.data[i];
+            if (point) {
+                points.push({ ...latlng, name: point.name });
+            }
+        }
 
         name = data.routeName ? data.routeName : name;
 
         return [{
             name,
+            points,
             tracks: [track]
         }];
     }
@@ -83,7 +93,7 @@ class MovescountMove extends MovescountBase {
         let data;
         let name = `Movescount move ${this.trackId}`;
         try {
-            data = JSON.parse(trackResponse.responseBinaryText)
+            data = JSON.parse(utf8.decode(trackResponse.responseBinaryText));
         } catch (e) {
             return [{name, error: 'UNSUPPORTED'}];
         }
