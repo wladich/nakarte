@@ -9,6 +9,7 @@ import 'lib/leaflet.layer.westraPasses';
 import 'lib/leaflet.layer.nordeskart';
 import 'lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
+import {OSMPasses} from 'lib/leaflet.layer.osmpasses';
 import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
 
 export default function getLayers() {
@@ -578,6 +579,18 @@ export default function getLayers() {
                     })
                 },
                 {
+                    title: 'OSM passes',
+                    isDefault: false,
+                    layer: new OSMPasses(config.overpassTurboUrl, {
+                        code: 'OP',
+                        isOverlay: true,
+                        isOverlayTransparent: true,
+                        print: true,
+                        jnx: false,
+                        shortName: 'osmpasses'
+                    })
+                },
+                {
                     title: 'OpenStreetMap GPS traces',
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
@@ -1047,7 +1060,9 @@ export default function getLayers() {
             layers: [
                 'Mountains by Aleksey Tsvetkov',
                 'Bing imagery acquisition dates',
-                'geocaching.su']
+                'geocaching.su',
+                'OSM passes',
+            ]
         },
         {
             title: 'Routes and traces',
@@ -1162,6 +1177,7 @@ export default function getLayers() {
         // point overlays
         'Mountain passes (Westra)',
         'geocaching.su',
+        'OSM passes',
     ];
 
     // set metadata
