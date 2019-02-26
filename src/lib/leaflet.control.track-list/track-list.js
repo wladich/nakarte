@@ -647,16 +647,18 @@ L.Control.TrackList = L.Control.extend({
             this.stopPlacingPoint();
         },
 
+        getNewPointName: function () {
+            const maxNumber = Math.max.apply(Math,
+                this._markerLayer.getMarkers().map((marker) => parseInt(marker.label, 10) || 0)) | 0;
+            return String(maxNumber + 1).padStart(3, '0');
+        },
+
         createNewPoint: function(e) {
             if (!this.isPlacingPoint) {
                 return;
             }
             const parentTrack = this.trackAddingPoint();
-            parentTrack._pointAutoInc += 1;
-            let name = parentTrack._pointAutoInc.toString();
-            while (name.length < 3) {
-                name = '0' + name;
-            }
+            const name = this.getNewPointName();
             const newLatLng = e.latlng.wrap();
             const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
@@ -952,7 +954,6 @@ L.Control.TrackList = L.Control.extend({
                 length: ko.observable('empty'),
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
-                _pointAutoInc: 0,
                 markers: [],
                 hover: ko.observable(false),
                 isEdited: ko.observable(false)
@@ -1011,11 +1012,6 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerLabel: function(marker, label) {
-            if (label.match(/^\d{3,}/)) {
-                var n = parseInt(label, 10);
-                marker._parentTrack._pointAutoInc =
-                    Math.max(n, marker._parentTrack._pointAutoInc | 0);
-            }
             marker.label = label;
         },
 
