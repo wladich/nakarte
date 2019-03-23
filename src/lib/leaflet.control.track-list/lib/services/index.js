@@ -1,5 +1,6 @@
 import SimpleService from './simpleService'
 import Endomondo from './endomondo';
+import Etomesto from './etomesto';
 import Gpsies from './gpsies';
 import Gpslib from './gpslib';
 import Osm from './osm';
@@ -14,6 +15,7 @@ export default [
     NakarteTrack,
     NakarteUrl,
     Endomondo,
+    Etomesto,
     Gpsies,
     Gpslib,
     Osm,
