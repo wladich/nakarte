@@ -71,7 +71,7 @@ async function loadTracksFromJson(value) {
             }
         } else {
             geodata = {};
-            geodata.name = el.name || 'Track';
+            geodata.name = el.n || 'Track';
             if (el.t) {
                 const res = parseTrack(el.t);
                 if (!res.valid) {
