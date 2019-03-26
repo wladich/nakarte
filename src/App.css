@@ -16,3 +16,15 @@
 *:focus {
   outline: 0;
 }
+
+#street-view div[aria-label='Street View'] {
+  filter: invert(1) !important;
+}
+
+#street-view .panorama-container > div:nth-child(2) {
+  z-index: -1 !important;
+}
+
+#street-view .panorama-container > div > div > div > div:nth-child(1) {
+  font-size: 0 !important;
+}
