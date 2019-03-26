@@ -42,7 +42,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                             }
                         }
                     );
-                    notify('Failed to get Westra passes data');
+                    notify('Failed to get geocaching data');
                 }
             );
     },
