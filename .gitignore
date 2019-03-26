@@ -1,8 +1,6 @@
 node_modules
 build
 .idea
-get_secrets.sh
-deploy_production.sh
-deploy_staging.sh
+deploy
 secrets.js
 _trash
