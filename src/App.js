@@ -60,10 +60,7 @@ function setUp() {
 
     /////////// controls top-left corner
 
-    new L.Control.Caption(`
-        <a href="https://nakarte-me.blogspot.com/p/blog-page.html">Documentation</a> |
-        <a href="${config.newsUrl}">News</a> |
-        <a href="mailto:${config.email}" target="_self">nakarte@nakarte.me</a> `, {
+    new L.Control.Caption(config.caption, {
             position: 'topleft'
         }
     ).addTo(map);
@@ -102,9 +99,9 @@ function setUp() {
     const defaultLocation = L.latLng(55.75185, 37.61856);
     const defaultZoom = 10;
 
-    let {lat, lng, zoom, valid} = map.validateState(hashState.getState('m'));
+    let {lat, lng, zoom, valid: validPositionInHash} = map.validateState(hashState.getState('m'));
     locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
-        valid ? L.latLng(lat, lng) : null, valid ? zoom : null);
+        validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
     map.enableHashState('m');
     /////////// controls top-right corner
 
@@ -135,14 +132,28 @@ function setUp() {
         return tracklist.tracks().map((track) => track.name());
     }
     tracklist.addTo(map);
-    if (!hashState.getState('nktk') && !hashState.getState('nktl')) {
+    const tracksHashParams = tracklist.hashParams();
+
+    let hasTrackParamsInHash = false;
+    for (let param of tracksHashParams) {
+        if (hashState.hasKey(param)) {
+            hasTrackParamsInHash = true;
+            break;
+        }
+    }
+    if (!hasTrackParamsInHash) {
         tracklist.loadTracksFromStorage();
     }
     startInfo.tracksAfterLoadFromStorage = trackNames();
-    bindHashStateReadOnly('nktk', tracklist.loadNktkFromHash.bind(tracklist));
-    startInfo.tracksAfterLoadFromNktk = trackNames();
-    bindHashStateReadOnly('nktl', tracklist.loadNktlFromHash.bind(tracklist));
-    startInfo.tracksAfterLoadFromNktl = trackNames();
+
+    for (let param of tracksHashParams ) {
+        bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
+    }
+    startInfo.tracksAfterLoadFromHash = trackNames();
+
+    if (!validPositionInHash) {
+        tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
+    }
 
 
     ////////// adaptive layout

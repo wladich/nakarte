@@ -177,7 +177,12 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                         <td>${comments}</td>
                     </tr>`
             }
-
+            let reports;
+            if (properties.reports_total) {
+                reports = `<br>Отчетов: ${properties.reports_total}, с фото: ${properties.reports_photo || 0}, с описанием: ${properties.reports_tech || 0}`;
+            } else {
+                reports = '<br>Отчетов нет'
+            }
             let description = `
                 <table class="pass-details">
                     <tr>
@@ -217,7 +222,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     </tr>
                     <tr>
                         <td>На сайте Вестры</td>
-                        <td><a id="westra-pass-link" href="${url}">${url}</a></td></tr>
+                        <td><a id="westra-pass-link" href="${url}">${url}</a>${reports}</td></tr>
                     <tr>
                         <td>Добавил</td>
                         <td>${properties.author || "неизвестно"}</td>

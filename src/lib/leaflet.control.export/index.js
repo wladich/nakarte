@@ -135,10 +135,16 @@ L.Control.export = L.Control.extend({
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
             const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.${format.extension}`;
+            const eventId = logging.randId();
+            logging.logEvent('export start', {eventId, layerName, zoom, bounds});
             exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
-                .then((fileData) => saveAs(fileData, fileName, true))
+                .then((fileData) => {
+                    saveAs(fileData, fileName, true);
+                    logging.logEvent('export end', {eventId, success: true});
+                })
                 .catch((e) => {
                         logging.captureException(e);
+                        logging.logEvent('jnx end', {eventId, success: false, error: e.stack});
                         notify(`Export failed: ${e.message}`);
                     }
                 )
@@ -200,3 +206,4 @@ L.Control.export = L.Control.extend({
         },
     }
 );
+

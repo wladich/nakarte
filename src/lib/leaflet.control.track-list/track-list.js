@@ -4,8 +4,8 @@ import Contextmenu from 'lib/contextmenu';
 import 'lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from 'lib/file-read';
-import {parseGeoFile, loadFromUrl} from './lib/geo_file_formats';
-
+import parseGeoFile from './lib/parseGeoFile';
+import loadFromUrl from './lib/loadFromUrl';
 import geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from 'lib/clipboardCopy';
 import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
@@ -25,6 +25,9 @@ import config from 'config';
 import md5 from './lib/md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
 
+const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
+
+
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
 
@@ -43,14 +46,14 @@ L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
         includes: L.Mixin.Events,
 
-        colors: ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'],
+        colors: TRACKLIST_TRACK_COLORS,
 
 
         initialize: function() {
             L.Control.prototype.initialize.call(this);
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
-            this.readingFiles = ko.observable(false);
+            this.readingFiles = ko.observable(0);
             this.readProgressRange = ko.observable();
             this.readProgressDone = ko.observable();
             this._lastTrackColor = 0;
@@ -70,8 +73,10 @@ L.Control.TrackList = L.Control.extend({
                  title="Load, edit and save tracks"></div>
                 <div class="leaflet-control-content">
                 <div class="header">
-                    <div class="hint">
-                        gpx kml Ozi zip YandexMaps GPSies Strava endomondo
+                    <div class="hint"
+                     title="gpx kml Ozi zip YandexMaps GPSies Strava GPSLib Endomondo Movescount OSM">
+                        gpx kml Ozi zip YandexMaps GPSies Strava
+                        <span class="formats-hint-more">&hellip;</span>
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
@@ -214,9 +219,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         loadFilesFromFilesObject: function(files) {
-            this.readProgressDone(undefined);
-            this.readProgressRange(1);
-            this.readingFiles(true);
+            this.readingFiles(this.readingFiles() + 1);
 
             readFiles(files).then(function(fileDataArray) {
                 const geodataArray = [];
@@ -229,7 +232,7 @@ L.Control.TrackList = L.Control.extend({
                             content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
                         });
                 }
-                this.readingFiles(false);
+                this.readingFiles(this.readingFiles() - 1);
 
                 this.addTracksFromGeodataArray(geodataArray, debugFileData);
             }.bind(this));
@@ -246,17 +249,28 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            this.readingFiles(true);
-            this.readProgressDone(undefined);
-            this.readProgressRange(1);
+            this.readingFiles(this.readingFiles() + 1);
 
             logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
             loadFromUrl(url)
                 .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
-                    this.readingFiles(false)
+                    this.readingFiles(this.readingFiles() - 1);
                 });
             this.url('');
+        },
+
+        whenLoadDone: function(cb) {
+            if (this.readingFiles() === 0) {
+                cb();
+                return;
+            }
+            const subscription = this.readingFiles.subscribe((value) =>{
+                if (value === 0) {
+                    subscription.dispose();
+                    cb();
+                }
+            });
         },
 
         addTracksFromGeodataArray: function(geodata_array, debugData) {
@@ -367,10 +381,33 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setViewToTrack: function(track) {
-            var lines = this.getTrackPolylines(track);
-            var points = this.getTrackPoints(track);
+            this.setViewToBounds(this.getTrackBounds(track));
+        },
+
+        setViewToAllTracks: function(immediate) {
+            const bounds = L.latLngBounds([]);
+            for (let track of this.tracks()) {
+                bounds.extend(this.getTrackBounds(track));
+            }
+            this.setViewToBounds(bounds, immediate);
+        },
+
+        setViewToBounds: function(bounds, immediate) {
+            if (bounds && bounds.isValid()) {
+                bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
+                if (L.Browser.mobile || immediate) {
+                    this.map.fitBounds(bounds, {maxZoom: 16});
+                } else {
+                    this.map.flyToBounds(bounds, {maxZoom: 16});
+                }
+            }
+        },
+
+        getTrackBounds: function(track) {
+            const lines = this.getTrackPolylines(track);
+            const points = this.getTrackPoints(track);
+            const bounds = L.latLngBounds([]);
             if (lines.length || points.length) {
-                var bounds = L.latLngBounds([]);
                 lines.forEach((l) => {
                         if (l.getLatLngs().length > 1) {
                             bounds.extend(wrapLatLngBoundsToTarget(l.getBounds(), bounds));
@@ -381,16 +418,8 @@ L.Control.TrackList = L.Control.extend({
                         bounds.extend(wrapLatLngToTarget(p.latlng, bounds));
                     }
                 );
-                if (bounds.isValid()) {
-                    bounds = wrapLatLngBoundsToTarget(bounds, this.map.getCenter());
-                    if (L.Browser.mobile) {
-                        this.map.fitBounds(bounds);
-                    } else {
-                        this.map.flyToBounds(bounds);
-                    }
-                }
-
             }
+            return bounds;
         },
 
         attachColorSelector: function(track) {
@@ -436,18 +465,12 @@ L.Control.TrackList = L.Control.extend({
         },
 
         duplicateTrack: function(track) {
-            var segments = [], segment,
-                line,
-                lines = this.getTrackPolylines(track);
-            for (var i = 0; i < lines.length; i++) {
-                segment = [];
-                line = lines[i].getLatLngs();
-                for (var j = 0; j < line.length; j++) {
-                    segment.push([line[j].lat, line[j].lng]);
-                }
-                segments.push(segment);
-            }
-            this.addTrack({name: track.name(), tracks: segments});
+            const segments = this.getTrackPolylines(track).map((line) => {
+                return line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
+            });
+            const points = this.getTrackPoints(track)
+                .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label}));
+            this.addTrack({name: track.name(), tracks: segments, points});
         },
 
         reverseTrackSegment: function(trackSegment) {
@@ -1156,3 +1179,5 @@ L.Control.TrackList = L.Control.extend({
         }
     }
 );
+
+export {TRACKLIST_TRACK_COLORS};

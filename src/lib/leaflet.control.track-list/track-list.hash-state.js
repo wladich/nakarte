@@ -1,38 +1,24 @@
 import L from 'leaflet';
-import {loadFromUrl} from './lib/geo_file_formats';
-import logging from 'lib/logging';
-import {parseNktkSequence} from './lib/nktk';
+import {NakarteUrlLoader} from './lib/services/nakarte'
 
 
 L.Control.TrackList.include({
-        loadNktkFromHash: function(values) {
-            if (!values || !(values.length)) {
+        hashParams: function() {
+            return new NakarteUrlLoader().paramNames();
+        },
+
+        loadTrackFromParam: async function(paramName, values) {
+            if (!values || !values.length) {
                 return false;
             }
-            logging.captureBreadcrumb({message: 'load nktk from hashState'});
-            const geodata = parseNktkSequence(values);
-            const notEmpty = this.addTracksFromGeodataArray(geodata, {href: window.location.href});
+            this.readingFiles(this.readingFiles() + 1);
+            const geodata = await new NakarteUrlLoader().geoData(paramName, values);
+            const notEmpty = this.addTracksFromGeodataArray(geodata, {paramName, values});
+            this.readingFiles(this.readingFiles() - 1);
             if (notEmpty) {
                 this.setExpanded();
             }
         },
-
-        loadNktlFromHash: function(values) {
-            if (!values || !(values.length)) {
-                return false;
-            }
-            logging.captureBreadcrumb({message: 'load nktl from hashState'});
-            const url = `#nktl=${values[0]}`;
-            const href = window.location.href;
-            loadFromUrl(url).then(
-                (geodata) => {
-                    const notEmpty = this.addTracksFromGeodataArray(geodata, {href});
-                    if (notEmpty) {
-                        this.setExpanded();
-                    }
-                }
-            );
-        }
     }
 );
 
