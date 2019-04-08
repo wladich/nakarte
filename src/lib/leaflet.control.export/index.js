@@ -134,7 +134,7 @@ L.Control.export = L.Control.extend({
 
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
-            const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.${format.extension}`;
+            const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.${format.fileExtension}`;
             const eventId = logging.randId();
             logging.logEvent('export start', {eventId, layerName, zoom, bounds});
             exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
@@ -144,7 +144,7 @@ L.Control.export = L.Control.extend({
                 })
                 .catch((e) => {
                         logging.captureException(e);
-                        logging.logEvent('jnx end', {eventId, success: false, error: e.stack});
+                        logging.logEvent('export end', {eventId, success: false, error: e.stack});
                         notify(`Export failed: ${e.message}`);
                     }
                 )

@@ -1,10 +1,10 @@
 import {JnxWriter} from './jnx-encoder';
 import {RmapsWriter} from './rmaps-encoder';
 
-const formats = []
+const formats = [];
 
-function addFormat(encoder, name, hint, extension) {
-    formats.push({encoder: encoder, name: name, hint: hint, extension: extension});
+function addFormat(encoder, name, hint, fileExtension) {
+    formats.push({encoder: encoder, name: name, hint: hint, fileExtension: fileExtension});
 }
 
 addFormat(JnxWriter, "JNX", "Garmin", "jnx");
