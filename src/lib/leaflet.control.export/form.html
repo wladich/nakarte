@@ -1,0 +1,43 @@
+<a class="button" title="Export tiles for GPS receivers"
+     data-bind="click: setExpanded">JNX+
+</a>
+
+<div class="leaflet-control-content">
+    <table class="layout">
+        <tbody>
+        <tr>
+            <td>
+                Format:
+            </td>
+            <td>
+                <select style="width: 100%;" data-bind="options: formatNames,
+                            value: formatName">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <b data-bind="text: exportLayer().layerName"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                Zoom level: <br>
+                <div data-bind="foreach: items" class="items">
+                    <div><a style="cursor: pointer;"><span data-bind="html: $data.label, click: function() {$root.clickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></span></a></div>
+                </div>
+            </td>
+        </tr>
+        <tr><td colspan="2">
+            <div class="download-button-row">
+                <div class="button-minimize" data-bind="click: setMinimized"></div>
+                <div data-bind="component:{
+                        name: 'progress-indicator',
+                        params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
+                    },
+                    visible: exportInProgress()"></div>
+            </div>
+        </td></tr>
+        </tbody>
+    </table>
+</div>

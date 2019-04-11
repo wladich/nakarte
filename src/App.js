@@ -22,7 +22,7 @@ import enableLayersConfig from 'lib/leaflet.control.layers.configure';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
 import 'lib/leaflet.control.layers.events';
-import 'lib/leaflet.control.export';
+import 'lib/leaflet.control.export/control';
 import 'lib/leaflet.control.export/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
@@ -115,16 +115,16 @@ function setUp() {
 
     /////////// controls bottom-left corner
 
-    new L.Control.export(layersControl, {position: 'bottomleft'})
-        .addTo(map)
-        .enableHashState('j');
-
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
         .enableHashState('p');
     if (!printControl.hasPages()) {
         printControl.setMinimized();
     }
+
+    new L.Control.export(layersControl, {position: 'bottomleft'})
+        .addTo(map)
+        .enableHashState('j');
 
     /////////// controls bottom-right corner
 

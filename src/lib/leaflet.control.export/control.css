@@ -1,0 +1,98 @@
+.leaflet-control-export table {
+    border-collapse: collapse;
+    min-width: 150px;
+
+}
+
+.leaflet-control-export tr,
+.leaflet-control-export td,
+.leaflet-control-export tbody {
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-control-export td {
+    border-top: 1px solid #eee;
+    padding-top: 1.5mm;
+    padding-bottom: 1mm;
+}
+
+.leaflet-control-export tr:first-child td {
+    border: 0;
+}
+
+.leaflet-control-export td:nth-child(2) {
+    padding-left: 2mm;
+}
+
+.leaflet-control-export .margins td {
+    padding: 0;
+    border: 0;
+}
+
+.leaflet-control-export .settings-summary {
+    display: inline-block;
+    margin-left: 3mm;
+}
+
+.leaflet-control-export tr:last-child td {
+    text-align: center;
+}
+
+.preset-values {
+    margin-bottom: 1.5mm;
+}
+
+.preset-values a {
+    color: #999;
+    border-bottom: 1px dotted #999;
+    cursor: pointer;
+    margin-right: 2.5mm;
+}
+
+.preset-values a:last-child {
+    margin-right: 0;
+}
+
+.leaflet-control-export .label {
+    vertical-align: bottom;
+}
+
+.leaflet-control-export .label-high {
+    vertical-align: middle;
+}
+
+.preset-values .selected {
+    /*background-color: #ddd;*/
+    border-bottom: 1px solid #333;
+    color: #333;
+}
+
+.leaflet-control-export > a.button {
+    border: 0;
+    margin: 0;
+    display: none;
+}
+
+.leaflet-control-export.minimized > a.button {
+    display: inline-block;
+}
+
+.leaflet-control-export .button-minimize {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.leaflet-control-export .download-button-row {
+    height: 30px;
+    position: relative;
+}
+
+.leaflet-control-export .items a:hover {
+    text-decoration: underline;
+}
+
+.leaflet-control-export .download-button-row .ko-progress {
+    float: right;
+}
