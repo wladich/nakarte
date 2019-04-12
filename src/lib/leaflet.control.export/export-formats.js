@@ -14,17 +14,17 @@ function createBaseExportOption(params) {
     return params;
 }
 
-function addFormat(encoder, name, hint, fileExtension, exportOptionFactory) {
-    formats.push({encoder, name, hint, fileExtension, exportOptionFactory});
+function addFormat(encoder, name, nameWithHint, fileExtension, exportOptionFactory) {
+    formats.push({encoder, name, nameWithHint, fileExtension, exportOptionFactory});
 }
 
-addFormat(JnxWriter, "JNX", "Garmin", "jnx", function(params) {
+addFormat(JnxWriter, "JNX", "JNX", "jnx", function(params) {
     const option = createBaseExportOption(params);
-    option.itemClass = option.tilesCount > 50000 ? 'export-menu-warning' : '';
+    option.itemClass = option.tilesCount > 50000 ? 'warning' : '';
     option.tooltip = option.tilesCount > 50000 ? '> 50000 tiles' : '';
     return option;
 });
 
-addFormat(RmapsWriter, "RMaps", "OsmAnd", "sqlitedb", createBaseExportOption);
+addFormat(RmapsWriter, "RMaps", "RMaps (OsmAnd)", "sqlitedb", createBaseExportOption);
 
 export {formats};

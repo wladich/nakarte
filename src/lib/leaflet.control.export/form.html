@@ -6,29 +6,25 @@
     <table class="layout">
         <tbody>
         <tr>
-            <td>
-                Format:
-            </td>
-            <td>
-                <select style="width: 100%;" data-bind="options: formatNames,
-                            value: formatName">
-                </select>
-            </td>
-        </tr>
-        <tr>
             <td colspan="2">
                 <b data-bind="text: exportLayer().layerName"></b>
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                Zoom level: <br>
-                <div data-bind="foreach: items" class="items">
-                    <div><a style="cursor: pointer;"><span data-bind="html: $data.label, click: function() {$root.clickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></span></a></div>
+                <div data-bind="foreach: formats">
+                    <label><input type="radio" name="formatName" data-bind="checked: $root.formatName, checkedValue: name"><span data-bind="text: nameWithHint"></span></label>
                 </div>
             </td>
         </tr>
-        <tr><td colspan="2">
+        <tr>
+            <td colspan="2">
+                <div data-bind="foreach: items" class="items">
+                    <div data-bind="html: $data.label, click: function() {$root.clickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></div>
+                </div>
+            </td>
+        </tr>
+        <tr class="border-top"><td colspan="2">
             <div class="download-button-row">
                 <div class="button-minimize" data-bind="click: setMinimized"></div>
                 <div data-bind="component:{

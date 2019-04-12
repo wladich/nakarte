@@ -59,7 +59,7 @@ L.Control.export = L.Control.extend({
         });
 
 
-        this.formatNames = formats.map(f => f.name);
+        this.formats = formats;
         this.formatName = ko.observable(this.getExportFormat().name);
         this.formatName.subscribe(() => {
             this.setExportFormatByName(this.formatName());
