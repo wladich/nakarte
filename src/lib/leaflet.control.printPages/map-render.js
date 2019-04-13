@@ -101,20 +101,27 @@ function blendMultiplyCanvas(src, dest) {
     dest.getContext('2d').putImageData(d_image_data, 0, 0);
 }
 
+function createCanvas(size) {
+    const canvas = L.DomUtil.create('canvas');
+    canvas.width = size.x;
+    canvas.height = size.y;
+    return canvas;
+}
+
+function isValidCanvasSize(size) {
+    const canvas = createCanvas(size);
+    const isEncodedNotEmpty = 'data:,' !== canvas.toDataURL('image/jpeg', 0);
+    const hasZeroDimension = canvas.height === 0 || canvas.width === 0;
+    return isEncodedNotEmpty || hasZeroDimension;
+}
+
 class PageComposer {
     constructor(destSize, pixelBoundsAtZoom24) {
         this.destSize = destSize;
         this.projectedBounds = pixelBoundsAtZoom24;
         this.currentCanvas = null;
         this.currentZoom = null;
-        this.targetCanvas = this.createCanvas(destSize);
-    }
-
-    createCanvas(size) {
-        const canvas = L.DomUtil.create('canvas');
-        canvas.width = size.x;
-        canvas.height = size.y;
-        return canvas;
+        this.targetCanvas = createCanvas(destSize);
     }
 
     putTile(tileInfo) {
@@ -151,7 +158,7 @@ class PageComposer {
                 bottomRight = this.projectedBounds.max.divideBy(q).round();
             size = bottomRight.subtract(topLeft);
         }
-        this.currentCanvas = this.createCanvas(size);
+        this.currentCanvas = createCanvas(size);
         this.currentZoom = zoom;
     }
 
@@ -325,4 +332,4 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
 }
 
 
-export {renderPages};
+export {renderPages, isValidCanvasSize};
