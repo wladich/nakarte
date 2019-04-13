@@ -122,13 +122,14 @@ class Contextmenu {
         if (itemOptions.header) {
             className += ' header';
         }
-        el.className = className;
         el.innerHTML = itemOptions.text;
 
         const callback = itemOptions.callback;
         if (callback && !itemOptions.disabled) {
+            className += ' action';
             el.addEventListener('click', this.onItemClick.bind(this, callback));
         }
+        el.className = className;
         return el;
     }
 
