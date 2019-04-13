@@ -1,5 +1,5 @@
 <a class="button" title="Export tiles for GPS receivers"
-     data-bind="click: setExpanded">JNX+
+     data-bind="click: setExpanded">JNX / RMaps
 </a>
 
 <div class="leaflet-control-content">
@@ -12,15 +12,15 @@
         </tr>
         <tr>
             <td colspan="2">
-                <div data-bind="foreach: formats">
+                <div data-bind="foreach: _formats">
                     <label><input type="radio" name="formatName" data-bind="checked: $root.formatName, checkedValue: name"><span data-bind="text: nameWithHint"></span></label>
                 </div>
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                <div data-bind="foreach: items" class="items">
-                    <div data-bind="html: $data.label, click: function() {$root.clickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></div>
+                <div data-bind="foreach: exportOptions, css: {disabled: exportInProgress()}" class="export-options">
+                    <div data-bind="html: $data.label, click: function() {$root.exportOptionClickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></div>
                 </div>
             </td>
         </tr>

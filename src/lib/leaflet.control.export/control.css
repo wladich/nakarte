@@ -1,9 +1,57 @@
+/* */
+
 .leaflet-control-export table {
     border-collapse: collapse;
     min-width: 300px;
-
 }
 
+.leaflet-control-export > a.button {
+    border: 0;
+    margin: 0;
+    display: none;
+}
+
+.leaflet-control-export.minimized > a.button {
+    display: block;
+}
+
+.leaflet-control-export .download-button-row {
+    height: 30px;
+    position: relative;
+}
+
+.leaflet-control-export .download-button-row .ko-progress {
+    margin: 0 auto;
+}
+
+.leaflet-control-export .button {
+    display: inline-block;
+    background-color: white;
+    height: 26px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 6px;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+.leaflet-control-export .button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-export .ko-progress{
+    width: 200px;
+    background-color: white;
+}
+
+.leaflet-control-export tr.border-top td {
+    border-top: 1px solid #eee;
+}
+
+/* Styles from leaflet.control.printPages */
 .leaflet-control-export tr,
 .leaflet-control-export td,
 .leaflet-control-export tbody {
@@ -14,10 +62,6 @@
 .leaflet-control-export td {
     padding-top: 1.5mm;
     padding-bottom: 1mm;
-}
-
-.leaflet-control-export tr.border-top td {
-    border-top: 1px solid #eee;
 }
 
 .leaflet-control-export tr:first-child td {
@@ -37,42 +81,14 @@
     text-align: center;
 }
 
-
-.leaflet-control-export .label {
-    vertical-align: bottom;
-}
-
-.leaflet-control-export .label-high {
-    vertical-align: middle;
-}
-
-.leaflet-control-export > a.button {
-    border: 0;
-    margin: 0;
-    display: none;
-}
-
-.leaflet-control-export.minimized > a.button {
-    display: inline-block;
-}
-
 .leaflet-control-export .button-minimize {
     position: absolute;
     left: 0;
     bottom: 0;
 }
 
-.leaflet-control-export .download-button-row {
-    height: 30px;
-    position: relative;
-}
-
-
-.leaflet-control-export .download-button-row .ko-progress {
-    margin: 0 auto;
-}
-
-.leaflet-control-export .items > div {
+/* styles from ContextMenu */
+.leaflet-control-export .export-options > div {
     display: block;
     color: hsl(0, 0%, 15%);
     font-size: 12px;
@@ -86,10 +102,16 @@
     overflow: hidden;
 }
 
-.leaflet-control-export .items > div.warning {
+.leaflet-control-export .export-options > div.warning {
     color: red;
 }
 
-.leaflet-control-export .items > div:hover {
+.leaflet-control-export .export-options > div:hover {
     background-color: hsl(0, 0%, 95%);
+}
+
+.leaflet-control-export .export-options.disabled > div {
+    color: hsl(0, 0%, 40%) !important;
+    background: white !important;
+    cursor: default !important;
 }

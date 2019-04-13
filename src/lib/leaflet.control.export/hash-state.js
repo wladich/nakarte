@@ -15,7 +15,7 @@ L.Control.export.include({
                     bounds.getWest().toFixed(5),
                     bounds.getNorth().toFixed(5),
                     bounds.getEast().toFixed(5),
-                    this.getExportFormatName()];
+                    this.getExportFormat().name];
             }
             return state;
         },

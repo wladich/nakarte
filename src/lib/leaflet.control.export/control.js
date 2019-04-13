@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import ko from 'vendored/knockout';
-import './style.css';
 import './control.css';
+import './selector.css';
 import 'lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import {exportFromLayer, minZoom} from './export-maker';
@@ -46,6 +46,7 @@ L.Control.export = L.Control.extend({
     initialize: function(layersControl, options) {
         L.Control.prototype.initialize.call(this, options);
         this._layersControl = layersControl;
+        this._formats = formats;
         this.exportInProgress = ko.observable(false);
         this.downloadProgressRange = ko.observable(1);
         this.downloadProgressDone = ko.observable(0);
@@ -59,14 +60,13 @@ L.Control.export = L.Control.extend({
         });
 
 
-        this.formats = formats;
         this.formatName = ko.observable(this.getExportFormat().name);
         this.formatName.subscribe(() => {
             this.setExportFormatByName(this.formatName());
             this.fire('exportformatchange');
         });
 
-        this.items = ko.computed(() => {
+        this.exportOptions = ko.computed(() => {
             this.formatName();
             return this.getExportOptions();
         });
@@ -82,7 +82,7 @@ L.Control.export = L.Control.extend({
         container.innerHTML = formHtml;
         this._stopContainerEvents();
 
-        map.on("layeradd", () => {this.exportLayer.recalculate()}); // todo: multiple events on `soviet topo maps grid`.
+        map.on("layeradd", () => {this.exportLayer.recalculate()}); // multiple events on `soviet topo maps grid`.
         map.on("layerremove", () => {this.exportLayer.recalculate()});
         this.exportLayer.recalculate();
 
@@ -92,8 +92,7 @@ L.Control.export = L.Control.extend({
 
     setExpanded: function() {
         L.DomUtil.removeClass(this._container, 'minimized');
-        this.removeSelector(); // fixme
-        this.onButtonClicked();
+        this.showSelector();
     },
 
     setMinimized: function() {
@@ -109,10 +108,6 @@ L.Control.export = L.Control.extend({
         return this.exportFormat;
     },
 
-    getExportFormatName: function() {
-        return this.getExportFormat().name;
-    },
-
     setExportFormatByName: function(formatName) {
         this.exportFormat = formats.find( (f) => (f.name === formatName ) );
         if ( this.exportFormat === undefined ) {
@@ -120,7 +115,7 @@ L.Control.export = L.Control.extend({
             this.fire('exportformatchange');
         }
         this.formatName(this.exportFormat.name);
-        saveFormatNameToLocalStorage(this.getExportFormatName());
+        saveFormatNameToLocalStorage(this.getExportFormat().name);
     },
 
     getExportLayer: function() {
@@ -180,8 +175,10 @@ L.Control.export = L.Control.extend({
         this.downloadProgressRange(maxValue);
     },
 
-    clickHandler: function(option) {
-        this.startExport(option.format, option.layer, option.layerName, option.zoom);
+    exportOptionClickHandler: function(option) {
+        if (! this.exportInProgress()) {
+            this.startExport(option.format, option.layer, option.layerName, option.zoom);
+        }
     },
 
     startExport: function(format, layer, layerName, zoom) {
@@ -226,16 +223,12 @@ L.Control.export = L.Control.extend({
         this.fire('selectionchange');
     },
 
-
-    onButtonClicked: function() {
+    showSelector: function() {
         if (this._selector) {
-            if (this._selector.getBounds().intersects(this._map.getBounds().pad(-0.05))) {
-                this.removeSelector();
-            } else {
+            if (! this._selector.getBounds().intersects(this._map.getBounds().pad(-0.05))) {
                 this.removeSelector();
                 this.addSelector();
             }
-
         } else {
             this.addSelector();
         }
