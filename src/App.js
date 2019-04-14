@@ -122,7 +122,7 @@ function setUp() {
         printControl.setMinimized();
     }
 
-    new L.Control.JNX(layersControl, {position: 'bottomleft'})
+    new L.Control.export(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
 
