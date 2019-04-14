@@ -17,6 +17,8 @@ const JnxWriter = L.Class.extend({
             this.zOrder = zOrder;
         },
 
+        asyncInit: async function() {},
+
         addTile: function(tileData, level, latLngBounds) {
             this.tiles[level] = this.tiles[level] || [];
             tileData = new Blob([tileData]).slice(2);
@@ -30,7 +32,7 @@ const JnxWriter = L.Class.extend({
             this.tiles[level].push({data: tileData, extents: extents});
         },
 
-        getJnx: function() {
+        getAsBlob: function() {
             const  HEADER_SIZE = 52,
                 LEVEL_INFO_SIZE = 17,
                 TILE_INFO_SIZE = 28;
