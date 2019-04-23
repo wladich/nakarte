@@ -11,5 +11,6 @@ export default Object.assign({
     elevationsServer: 'https://elevation.nakarte.me/',
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',
+    overpassTurboUrl: 'https://overpass.kumi.systems/api/interpreter',
     tracksStorageServer: 'https://tracks.nakarte.me',
 }, secrets);
