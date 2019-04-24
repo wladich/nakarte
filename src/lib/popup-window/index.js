@@ -1,3 +1,5 @@
+import logging from 'lib/logging';
+
 function openPopupWindow(url, width, uniqName = null) {
     var left, top, height,
         screenLeft = screen.availLeft || 0,
@@ -19,8 +21,20 @@ function openPopupWindow(url, width, uniqName = null) {
     height = window.innerHeight;
     var features = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
     features += ',resizable,scrollbars';
-    window.open(url, uniqName, features)
-        .focus();
+    const eventId = logging.randId();
+    url = `http://nakarte.me/r/?url=${encodeURIComponent(url)}&event=${eventId}`;
+    let error;
+    let isClosed;
+    let win;
+    try {
+        win = window.open(url, uniqName, features);
+    } catch (e) {
+        error = e;
+    }
+    if (win) {
+        isClosed = win.closed;
+    }
+    logging.logEvent('openPopupWindow', {win: !!win, error, isClosed, eventId});
 }
 
 export {openPopupWindow};

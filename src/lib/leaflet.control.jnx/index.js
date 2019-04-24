@@ -89,10 +89,16 @@ L.Control.JNX = L.Control.extend({
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
             const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.jnx`;
+            const eventId = logging.randId();
+            logging.logEvent('jnx start', {eventId, layerName, zoom, bounds});
             makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
-                .then((fileData) => saveAs(fileData, fileName, true))
+                .then((fileData) => {
+                    saveAs(fileData, fileName, true);
+                    logging.logEvent('jnx end', {eventId, success: true});
+                })
                 .catch((e) => {
                         logging.captureException(e);
+                        logging.logEvent('jnx end', {eventId, success: false, error: e.stack});
                         notify(`Failed to create JNX: ${e.message}`);
                     }
                 )

@@ -1,6 +1,6 @@
 import './track-list'
 import L from 'leaflet';
-import {parseGeoFile} from './lib/geo_file_formats';
+import {parseNktkSequence} from './lib/parsers/nktk';
 import safeLocalStorage from 'lib/safe-localstorage';
 import logging from 'lib/logging';
 
@@ -80,7 +80,8 @@ L.Control.TrackList.include({
                 safeLocalStorage.removeItem(key);
                 if (s) {
                     logging.captureBreadcrumb({message: 'load track from localStorage'});
-                    geodata = parseGeoFile('', s);
+                    s = s.slice(6); // remove "#nktk=" prefix
+                    geodata = parseNktkSequence(s);
                     this.addTracksFromGeodataArray(geodata, {localStorage: {key, value: s}});
                 }
             }

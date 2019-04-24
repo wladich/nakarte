@@ -219,6 +219,8 @@ L.Control.PrintPages = L.Control.extend({
             const scale = this.scale();
             const width = this.pageWidth();
             const height = this.pageHeight();
+            const eventId = logging.randId();
+            logging.logEvent('print pdf start', {eventId});
             renderPages({
                     map: this._map,
                     pages,
@@ -238,10 +240,12 @@ L.Control.PrintPages = L.Control.extend({
                             extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
+                        logging.logEvent('print pdf end', {eventId, success: true});
                     }
                 }
             ).catch((e) => {
                     logging.captureException(e);
+                    logging.logEvent('print pdf end', {eventId, success: false, error: e.stack});
                     notify(`Failed to create PDF: ${e.message}`);
                 }
             ).then(() => this.makingPdf(false));
@@ -268,6 +272,8 @@ L.Control.PrintPages = L.Control.extend({
             const scale = this.scale();
             const width = this.pageWidth();
             const height = this.pageHeight();
+            const eventId = logging.randId();
+            logging.logEvent('print jpg start', {eventId});
             renderPages({
                     map: this._map,
                     pages,
@@ -287,9 +293,11 @@ L.Control.PrintPages = L.Control.extend({
                         extension: 'jpg'
                     });
                     savePageJpg(images[0], fileName);
+                    logging.logEvent('print jpg end', {eventId, success: true});
                 })
                 .catch((e) => {
                         logging.captureException(e);
+                        logging.logEvent('print jpg end', {eventId, success: false, error: e.stack});
                         notify(`Failed to create JPEG from page: ${e.message}`);
                     }
                 ).then(() => this.makingPdf(false));

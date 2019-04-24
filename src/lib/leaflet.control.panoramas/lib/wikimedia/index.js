@@ -96,7 +96,7 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     const clusterSize = 10;
     const urlTemplate = 'https://commons.wikimedia.org/w/api.php?' +
                         'origin=*&format=json&action=query&generator=geosearch&' +
-                        'ggsprimary=all&ggsnamespace=6&ggslimit=10&iilimit=1&' +
+                        'ggsprimary=all&ggsnamespace=6&ggslimit=10&iilimit=1&coprimary=all&' +
                         'ggsradius={radius}&ggscoord={lat}|{lng}&' +
                         'iiurlwidth=134&' +
                         'prop=imageinfo|coordinates&' +

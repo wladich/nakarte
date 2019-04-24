@@ -419,28 +419,28 @@ export default function getLayers() {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://proxy.nakarte.me/https/{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
                         {
                             code: 'Ocm',
                             isOverlay: false,
                             scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            shortName: 'opencyclemap'
+                            print: true,
+                            jnx: true,
+                            shortName: 'opencyclemap',
                         }
                     )
                 },
                 {
                     title: 'OSM Outdoors',
                     isDefault: false,
-                    layer: L.tileLayer('https://proxy.nakarte.me/https/{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=' + config.thunderforestKey,
+                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
                         {
                             code: 'Oso',
                             isOverlay: false,
                             scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            shortName: 'osm_outdoors'
+                            print: true,
+                            jnx: true,
+                            shortName: 'osm_outdoors',
                         }
                     )
                 },
@@ -542,8 +542,7 @@ export default function getLayers() {
                             isOverlay: true,
                             isOverlayTransparent: false,
                             tms: false,
-                            minZoom: 7,
-                            minNativeZoom: 7,
+                            minZoom: 2,
                             maxNativeZoom: 15,
                             print: true,
                             jnx: true,

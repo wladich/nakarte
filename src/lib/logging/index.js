@@ -1,5 +1,11 @@
 import Raven from 'raven-js';
 
+function randId() {
+    return Math.random().toString(36).substring(2, 13);
+}
+
+const sessionId = randId();
+
 function captureException(e, options) {
     console.log('captureException', e, options);
     Raven.captureException(e, options)
@@ -29,15 +35,27 @@ function captureBreadcrumbWithUrl(crumb) {
 }
 
 function logEvent(eventName, extra) {
+    const url = 'https://nakarte.me/event';
+
     const data = {event: eventName.toString()};
-    if (extra) {
-        data['data'] = extra;
+    data.data = Object.assign({}, extra, {
+        beacon: true,
+        session: sessionId,
+        address: window.location.toString()
+    });
+    let s = JSON.stringify(data);
+    try {
+        navigator.sendBeacon(url, s);
+    } catch (e) {
+        data.data.beacon = false;
+        s = JSON.stringify(data);
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://nakarte.me/event');
+        xhr.send(s);
     }
-    const s = JSON.stringify(data);
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://nakarte.me/event');
-    xhr.send(s);
 }
 
+
+
 export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb,
-    captureMessageWithUrl, logEvent}
+    captureMessageWithUrl, logEvent, randId}

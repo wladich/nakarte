@@ -42,7 +42,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                             }
                         }
                     );
-                    notify('Failed to get Westra passes data');
+                    notify('Failed to get geocaching data');
                 }
             );
     },
@@ -63,12 +63,12 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
             return zoom >= 10 ? marker._label : null;
         };
 
-        const markers = data.map(([label, url, lat, lng]) => {
+        const markers = data.map(([label, cacheId, lat, lng]) => {
             return {
                 latlng: {lat, lng},
                 _label: label,
                 label: getLabel,
-                icon, url
+                icon, cacheId
             }
         });
         this.addMarkers(markers);
@@ -77,7 +77,8 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
     },
 
     openCachePage: function(e) {
-        openPopupWindow(e.marker.url, 900, 'geocaching_su');
+        const url = `https://geocaching.su/?pn=101&cid=${e.marker.cacheId}`
+        openPopupWindow(url, 900, 'geocaching_su');
     }
 });
 

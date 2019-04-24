@@ -9,6 +9,30 @@ function arrayItemsEqual(l1, l2) {
     return true;
 }
 
+
+function parseHashParams(s) {
+    const args = {},
+        i = s.indexOf('#');
+    if (i >= 0) {
+        s = s.substr(i + 1).trim();
+        let m, key, value;
+        for (let pair of s.split('&')) {
+            m = /^([^=]+?)(?:=(.*))?$/.exec(pair);
+            if (m) {
+                [, key, value] = m;
+                if (value) {
+                    value = value.split('/');
+                    value = value.map(decodeURIComponent);
+                } else {
+                    value = [];
+                }
+                args[key] = value;
+            }
+        }
+    }
+    return args;
+}
+
 const hashState = {
     _listeners: [],
     _state: {},
@@ -45,28 +69,8 @@ const hashState = {
         return this._state[key];
     },
 
-    _parseHash: function() {
-        let hash = location.hash;
-        const args = {},
-             i = hash.indexOf('#');
-        if (i >= 0) {
-            hash = hash.substr(i + 1).trim();
-            let m, key, value;
-            for (let pair of hash.split('&')) {
-                m = /^([^=]+?)(?:=(.*))?$/.exec(pair);
-                if (m) {
-                    [, key, value] = m;
-                    if (value) {
-                        value = value.split('/');
-                        value = value.map(decodeURIComponent);
-                    } else {
-                        value = [];
-                    }
-                    args[key] = value;
-                }
-            }
-        }
-        return args;
+    hasKey: function(key) {
+        return this._state.hasOwnProperty(key);
     },
 
     _saveStateToHash: function() {
@@ -93,7 +97,7 @@ const hashState = {
         if (this._ignoreChanges) {
             return;
         }
-        const newState = this._parseHash();
+        const newState = parseHashParams(location.hash);
         const changedKeys = {};
         for (let key of Object.keys(newState)) {
             if (!(key in this._state)  || !arrayItemsEqual(newState[key], this._state[key])) {
@@ -130,5 +134,5 @@ window.addEventListener('hashchange', hashState.onHashChanged.bind(hashState));
 hashState.onHashChanged();
 
 
-export {hashState, bindHashStateReadOnly};
+export {hashState, bindHashStateReadOnly, parseHashParams};
 
