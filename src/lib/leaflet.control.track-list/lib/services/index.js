@@ -9,6 +9,7 @@ import Tracedetrail from './tracedetrail';
 import {YandexRuler} from './yandex';
 import {NakarteTrack, NakarteUrl} from './nakarte';
 import {MovescountMove, MovescountRoute} from './movescount';
+import {SportsTrackerActivity} from './sportstracker';
 
 export default [
     YandexRuler,
@@ -23,5 +24,6 @@ export default [
     Tracedetrail,
     MovescountMove,
     MovescountRoute,
+    SportsTrackerActivity,
     SimpleService
 ]
