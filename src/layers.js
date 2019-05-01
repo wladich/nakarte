@@ -817,8 +817,9 @@ export default function getLayers() {
                             tms: false,
                             print: true,
                             jnx: true,
+                            minZoom: 2,
                             scaleDependent: true,
-                            noCors: true,
+                            noCors: false,
                             shortName: 'norway_roads'
                         }
                     )
