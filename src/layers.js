@@ -6,7 +6,6 @@ import {BingDates} from 'lib/leaflet.layer.bing/dates';
 import config from './config';
 import 'lib/leaflet.layer.soviet-topomaps-grid';
 import 'lib/leaflet.layer.westraPasses';
-import 'lib/leaflet.layer.nordeskart';
 import 'lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
 import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
@@ -741,7 +740,7 @@ export default function getLayers() {
                 {
                     title: 'Norway paper map',
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer('https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}',
                         {
                             code: 'Np',
                             isOverlay: true,
@@ -751,14 +750,15 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             scaleDependent: true,
+                            noCors: false,
                             shortName: 'norway_paper'
                         }
                     )
                 },
                 {
-                    title: 'Norway map',
+                    title: 'Norway topo',
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=topo4&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer('https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
                         {
                             code: 'Nm',
                             isOverlay: true,
@@ -767,7 +767,8 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             scaleDependent: true,
-                            shortName: 'norway'
+                            noCors: false,
+                            shortName: 'norway_topo'
                         }
                     )
                 },
@@ -1070,7 +1071,7 @@ export default function getLayers() {
             layers: [
                 'Norway UT map',
                 'Norway paper map',
-                'Norway map',
+                'Norway topo',
                 'Norway summer trails',
                 'Norway winter trails',
                 'Norway roads'],
@@ -1122,7 +1123,7 @@ export default function getLayers() {
         'GGC 2 km',
         'ArbaletMO',
         'Norway paper map',
-        'Norway map',
+        'Norway topo',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
