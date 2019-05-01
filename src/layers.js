@@ -915,6 +915,7 @@ export default function getLayers() {
 		                    print: true,
 		                    jnx: true,
 		                    scaleDependent: true,
+		                    noCors: true,
 		                    shortName: 'finland_topo'
 		                }
 		            )
