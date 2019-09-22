@@ -22,7 +22,7 @@ function openPopupWindow(url, width, uniqName = null) {
     var features = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
     features += ',resizable,scrollbars';
     const eventId = logging.randId();
-    url = `http://nakarte.me/r/?url=${encodeURIComponent(url)}&event=${eventId}`;
+    url = `https://nakarte.me/r/?url=${encodeURIComponent(url)}&event=${eventId}`;
     let error;
     let isClosed;
     let win;
