@@ -4,6 +4,7 @@ import Gpsies from './gpsies';
 import Gpslib from './gpslib';
 import Osm from './osm';
 import Strava from './strava';
+import Tracedetrail from './tracedetrail';
 import {YandexRuler} from './yandex';
 import {NakarteTrack, NakarteUrl} from './nakarte';
 import {MovescountMove, MovescountRoute} from './movescount';
@@ -17,6 +18,7 @@ export default [
     Gpslib,
     Osm,
     Strava,
+    Tracedetrail,
     MovescountMove,
     MovescountRoute,
     SimpleService
