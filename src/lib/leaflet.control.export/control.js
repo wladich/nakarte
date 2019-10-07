@@ -71,6 +71,8 @@ L.Control.export = L.Control.extend({
             return this.getExportOptions();
         });
 
+        this.cancelFlag = ko.observable(false);
+
 
         this.on("selectionchange", () => {this.bounds.recalculate()});
     },
@@ -191,7 +193,8 @@ L.Control.export = L.Control.extend({
         const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.${format.fileExtension}`;
         const eventId = logging.randId();
         logging.logEvent('export start', {eventId, layerName, zoom, bounds});
-        exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
+        this.cancelFlag(false);
+        exportFromLayer(format, layer, layerName, zoom, bounds, this.notifyProgress.bind(this), this.cancelFlag)
             .then((fileData) => {
                 saveAs(fileData, fileName, true);
                 logging.logEvent('export end', {eventId, success: true});
@@ -199,7 +202,9 @@ L.Control.export = L.Control.extend({
             .catch((e) => {
                     logging.captureException(e);
                     logging.logEvent('export end', {eventId, success: false, error: e.stack});
-                    notify(`Export failed: ${e.message}`);
+                    if (e.message != 'canceled') {
+                        notify(`Export failed: ${e.message}`);
+                    }
                 }
             )
             .then(() => this.exportInProgress(false));
@@ -233,5 +238,9 @@ L.Control.export = L.Control.extend({
             this.addSelector();
         }
     },
+
+    cancelExport: function() {
+        this.cancelFlag(true);
+    }
 });
 

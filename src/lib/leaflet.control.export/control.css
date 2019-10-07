@@ -115,3 +115,22 @@
     background: white !important;
     cursor: default !important;
 }
+
+.leaflet-control-export a.cancel {
+    background-image: url("images/cancel.svg");
+    margin-right: 5px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.leaflet-control-export a.cancel.disabled {
+    cursor: progress;
+    background-color: #ebebeb;
+}
+
+.leaflet-control-export .cancel-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
