@@ -33,6 +33,7 @@
                         params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
                     },
                     visible: exportInProgress()"></div>
+                <a title="cancel" data-bind="visible: exportInProgress(), click: cancelExport, css: {disabled: cancelFlag}" class="button cancel cancel-button"></a>
             </div>
         </td></tr>
         </tbody>

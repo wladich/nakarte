@@ -55,7 +55,7 @@ function ensureImageJpg(image) {
     }
 }
 
-async function exportFromLayer(format, srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
+async function exportFromLayer(format, srcLayer, layerName, maxZoomLevel, latLngBounds, progress, cancelFlag) {
     const productId = L.stamp(srcLayer);
     const zOrder = Math.min(productId, 100);
     const writer = new format.encoder(layerName, productId, zOrder);
@@ -83,8 +83,18 @@ async function exportFromLayer(format, srcLayer, layerName, maxZoomLevel, latLng
         );
         for (let tilePromiseRec of iterateTilePromises()) {
             promises.push(tilePromiseRec);
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
         }
         for (let {tilePromise} of promises) {
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
             let imageRec;
             try {
                 imageRec = await tilePromise;
