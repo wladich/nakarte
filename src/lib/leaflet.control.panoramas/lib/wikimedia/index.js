@@ -20,6 +20,10 @@ function parseSearchResponse(resp) {
     const images = [];
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {
+            if (!page.coordinates || page.title.slice(-4).toLowerCase() != '.jpg') {
+                continue;
+            }
+
             const iinfo = page.imageinfo[0];
             let imageDescription = iinfo.extmetadata.ImageDescription ? iinfo.extmetadata.ImageDescription.value : null;
             let objectDescription = iinfo.extmetadata.ObjectName ? iinfo.extmetadata.ObjectName.value : null;
