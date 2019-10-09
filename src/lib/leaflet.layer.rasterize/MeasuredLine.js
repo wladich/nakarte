@@ -60,6 +60,7 @@ L.Polyline.include({
             const ctx = canvas.getContext('2d');
             ctx.lineWidth = this.printWidthMm / 25.4 * printOptions.resolution;
             ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
             ctx.strokeStyle = this.options.color;
             const transform = this._makelatLngToCanvasPixelTransformer(printOptions, shift.projected);
             let point;

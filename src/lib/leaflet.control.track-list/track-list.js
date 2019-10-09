@@ -33,7 +33,7 @@ const TrackSegment = L.MeasuredLine.extend({
 
     options: {
         weight: 6,
-        lineCap: 'butt',
+        lineCap: 'round',
         opacity: 0.5,
 
     }
@@ -285,7 +285,11 @@ L.Control.TrackList = L.Control.extend({
                     if (!data_empty) {
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
-                                    return L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
+                                    line = L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
+                                    if (line.length == 1) {
+                                        line.push(line[0]);
+                                    }
+                                    return line;
                                 }
                             );
                         }
