@@ -720,24 +720,6 @@ export default function getLayers() {
                     )
                 },
                 {
-                    // Вместо 404 отдают 500 для отсутствующих тайлов
-                    title: 'Norway UT map',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
-                        {
-                            code: 'Nu',
-                            isOverlay: false,
-                            tms: false,
-                            maxNativeZoom: 16,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            noCors: false,
-                            shortName: 'norway_ut'
-                        }
-                    )
-                },
-                {
                     title: 'Norway paper map',
                     isDefault: false,
                     layer: new L.TileLayer('https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}',
@@ -769,40 +751,6 @@ export default function getLayers() {
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_topo'
-                        }
-                    )
-                },
-                {
-                    title: 'Norway summer trails',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
-                        {
-                            code: 'Ns',
-                            isOverlay: true,
-                            isOverlayTransparent: true,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            noCors: false,
-                            shortName: 'norway_summer'
-                        }
-                    )
-                },
-                {
-                    title: 'Norway winter trails',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
-                        {
-                            code: 'Nw',
-                            isOverlay: true,
-                            isOverlayTransparent: true,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            noCors: false,
-                            shortName: 'norway_winter'
                         }
                     )
                 },
@@ -1071,11 +1019,8 @@ export default function getLayers() {
         {
             title: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
             layers: [
-                'Norway UT map',
                 'Norway paper map',
                 'Norway topo',
-                'Norway summer trails',
-                'Norway winter trails',
                 'Norway roads'],
 
         },
@@ -1114,7 +1059,6 @@ export default function getLayers() {
         'Czech summer',
         'Czech winter',
         'Czech geographical',
-        'Norway UT map',
         'Finland Topo',
 
         // map overlays
@@ -1147,8 +1091,6 @@ export default function getLayers() {
         // line overlays
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
-        'Norway summer trails',
-        'Norway winter trails',
         'Bing imagery acquisition dates',
         'OpenStreetMap GPS traces',
         'Strava heatmap (all)',
