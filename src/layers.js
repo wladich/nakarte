@@ -542,7 +542,7 @@ export default function getLayers() {
                             isOverlayTransparent: false,
                             tms: false,
                             minZoom: 2,
-                            maxNativeZoom: 15,
+                            maxNativeZoom: 14,
                             print: true,
                             jnx: true,
                             scaleDependent: false,
