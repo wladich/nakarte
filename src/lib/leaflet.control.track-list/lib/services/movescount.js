@@ -93,9 +93,12 @@ class MovescountMove extends MovescountBase {
             })
         );
 
+
         const dom = (new DOMParser()).parseFromString(pageResponse.responseBinaryText, "text/html");
-        const title = dom.querySelector('title').text.trim();
-        name = title ? title : name;
+        try {
+            const title = dom.querySelector('title').text.trim();
+            name = title ? title : name;
+        } catch (_) {}
 
         return [{
             name,
