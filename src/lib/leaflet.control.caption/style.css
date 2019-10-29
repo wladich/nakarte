@@ -6,6 +6,7 @@
     color: #333;
     text-decoration: none;
     font-size: 11px;
+    user-select: none;
 }
 
 .leaflet-control-container .leaflet-control-caption a {
