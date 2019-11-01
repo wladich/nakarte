@@ -1,6 +1,5 @@
 import BaseService from './baseService';
 import urlViaCorsProxy from 'lib/CORSProxy';
-import utf8 from 'utf8';
 
 class MovescountBase extends BaseService {
     isOurUrl() {
@@ -17,7 +16,7 @@ class MovescountRoute extends MovescountBase {
         return [{
             url: urlViaCorsProxy(`http://www.movescount.com/Move/Route/${trackId}`),
             options: {
-                responseType: 'binarystring',
+                responseType: 'json',
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
             },
         }]
@@ -28,13 +27,12 @@ class MovescountRoute extends MovescountBase {
         if (response.status === 403) {
             return [{error: 'Movescount user disabled viewing this route'}];
         }
-        let data;
-        let name = `Movescount route ${this.trackId}`;
-        try {
-            data = JSON.parse(utf8.decode(response.responseBinaryText));
-        } catch (e) {
+        const data = response.responseJSON;
+        if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
+        let name = `Movescount route ${this.trackId}`;
+
 
         let points = [];
         let track = [];
@@ -71,14 +69,13 @@ class MovescountMove extends MovescountBase {
             {
                 url: urlViaCorsProxy(`http://www.movescount.com/Move/Track2/${trackId}`),
                 options: {
-                    responseType: 'binarystring',
+                    responseType: 'json',
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
                 }
             },
             {
                 url: urlViaCorsProxy(`https://www.movescount.com/moves/move${trackId}`),
                 options: {
-                    responseType: 'binarystring',
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
                 }
             }
@@ -90,21 +87,19 @@ class MovescountMove extends MovescountBase {
         if (trackResponse.status === 403) {
             return [{error: 'Movescount user disabled viewing this activity'}];
         }
-        let data;
-        let name = `Movescount move ${this.trackId}`;
-        try {
-            data = JSON.parse(utf8.decode(trackResponse.responseBinaryText));
-        } catch (e) {
+        const data = trackResponse.responseJSON;
+        if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
+        let name = `Movescount move ${this.trackId}`;
+
         const track = data.TrackPoints.map(trackPoint => ({
                 lat: trackPoint.Latitude,
                 lng: trackPoint.Longitude
             })
         );
 
-
-        const dom = (new DOMParser()).parseFromString(pageResponse.responseBinaryText, "text/html");
+        const dom = (new DOMParser()).parseFromString(pageResponse.response, "text/html");
         try {
             const title = dom.querySelector('title').text.trim();
             name = title ? title : name;
@@ -114,7 +109,6 @@ class MovescountMove extends MovescountBase {
             name,
             tracks: [track]
         }];
-
     }
 }
 
