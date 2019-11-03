@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import getGoogle from 'lib/googleMapsApi';
+import logging from 'lib/logging';
 
 L.Layer.Google = L.GridLayer.extend({
         options: {},
@@ -44,6 +45,7 @@ L.Layer.Google = L.GridLayer.extend({
                             clickableIcons: false
                         }
                     );
+                    logging.logEvent('googleMapLoad');
                     google.maps.event.addListener(this._googleMap, 'tilesloaded', this._onTilesLoaded.bind(this));
                     setTimeout(this._syncPosition.bind(this), 0);
                 }
