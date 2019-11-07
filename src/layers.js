@@ -74,7 +74,7 @@ export default function getLayers() {
                 {
                     title: 'Google',
                     isDefault: true,
-                    layer: new L.Layer.Google('ROADMAP',
+                    layer: new L.Layer.GoogleMap(
                         {
                             code: 'G',
                             isOverlay: false,
@@ -86,9 +86,24 @@ export default function getLayers() {
                     )
                 },
                 {
+                    title: 'Google Hybrid',
+                    isDefault: true,
+                    layer: new L.Layer.GoogleHybrid(
+                        {
+                            code: 'Gh',
+                            isOverlay: true,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: false,
+                            shortName: 'google_hybrid',
+                            isOverlayTransparent: true
+                        }
+                    )
+                },
+                {
                     title: 'Google Satellite',
                     isDefault: true,
-                    layer: new L.Layer.Google('SATELLITE',
+                    layer: new L.Layer.GoogleSat(
                         {
                             code: 'L',
                             isOverlay: false,
@@ -102,8 +117,7 @@ export default function getLayers() {
                 {
                     title: 'Google Terrain',
                     isDefault: true,
-                    layer: new L.Layer.Google('TERRAIN',
-                        {
+                    layer: new L.Layer.GoogleTerrain({
                             code: 'P',
                             isOverlay: false,
                             scaleDependent: false,
@@ -996,6 +1010,7 @@ export default function getLayers() {
         {
             title: 'Miscellaneous',
             layers: [
+                'Google Hybrid',
                 'Mountains by Aleksey Tsvetkov',
                 'Bing imagery acquisition dates',
                 'geocaching.su']
@@ -1089,6 +1104,7 @@ export default function getLayers() {
         '#custom-top',
 
         // line overlays
+        'Google Hybrid',
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
         'Bing imagery acquisition dates',
