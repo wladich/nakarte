@@ -534,7 +534,7 @@ export default function getLayers() {
                     title: 'Mountains by Aleksey Tsvetkov',
                     description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     isDefault: false,
-                    layer: L.tileLayer("http://map.g-utka.ru/{z}/{x}/{y}.png",
+                    layer: L.tileLayer("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png",
                         // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
                         {
                             code: 'Mt',
