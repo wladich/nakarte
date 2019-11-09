@@ -27,12 +27,11 @@ class MovescountRoute extends MovescountBase {
         if (response.status === 403) {
             return [{error: 'Movescount user disabled viewing this route'}];
         }
+        let name = `Movescount route ${this.trackId}`;
         const data = response.responseJSON;
         if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        let name = `Movescount route ${this.trackId}`;
-
 
         let points = [];
         let track = [];
@@ -87,11 +86,11 @@ class MovescountMove extends MovescountBase {
         if (trackResponse.status === 403) {
             return [{error: 'Movescount user disabled viewing this activity'}];
         }
+        let name = `Movescount move ${this.trackId}`;
         const data = trackResponse.responseJSON;
         if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        let name = `Movescount move ${this.trackId}`;
 
         const track = data.TrackPoints.map(trackPoint => ({
                 lat: trackPoint.Latitude,
