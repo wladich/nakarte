@@ -5,6 +5,7 @@ import ko from 'vendored/knockout';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';
 import safeLocalStorage from 'lib/safe-localstorage';
+import './customLayer';
 
 function enableConfig(control, {layers, customLayersOrder}) {
     const originalOnAdd = control.onAdd;
@@ -384,7 +385,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             createCustomLayer: function(fieldValues) {
                 const serialized = this.serializeCustomLayer(fieldValues);
-                const tileLayer = L.tileLayer(fieldValues.url, {
+                const tileLayer = new L.Layer.CustomLayer(fieldValues.url, {
                         isOverlay: fieldValues.isOverlay,
                         tms: fieldValues.tms,
                         maxNativeZoom: fieldValues.maxZoom,
