@@ -94,7 +94,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'google_hybrid',
                             isOverlayTransparent: true
                         }
