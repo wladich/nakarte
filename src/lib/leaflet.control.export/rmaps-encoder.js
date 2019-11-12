@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import getSqlite3 from 'vendored/github.com/kripken/sql.js';
+import getSqlite3 from 'lib/sql-js';
 
 function rmapsTileInfo(latLngBounds, zoom) { // https://stackoverflow.com/a/23058284
     function toRad(x) {
