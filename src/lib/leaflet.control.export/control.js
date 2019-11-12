@@ -1,10 +1,10 @@
 import L from 'leaflet';
 import ko from 'vendored/knockout';
-import './style.css';
+import './selector.css';
 import 'lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import Contextmenu from 'lib/contextmenu';
-import {makeJnxFromLayer, minZoom} from './jnx-maker';
+import {makeJnxFromLayer, minZoom} from './export-maker';
 import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
 import {notify} from 'lib/notifications';
 import logging from 'lib/logging';

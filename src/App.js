@@ -22,7 +22,7 @@ import enableLayersConfig from 'lib/leaflet.control.layers.configure';
 import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
 import getLayers from 'layers';
 import 'lib/leaflet.control.layers.events';
-import 'lib/leaflet.control.export';
+import 'lib/leaflet.control.export/control';
 import 'lib/leaflet.control.export/hash-state';
 import 'lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
