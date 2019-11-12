@@ -22,7 +22,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osm'
                         }
                     )
@@ -38,7 +38,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 18,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'esri'
                         }
                     )
@@ -52,7 +52,7 @@ export default function getLayers() {
                             code: 'Y',
                             isOverlay: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'yandex'
                         }
                     )
@@ -66,7 +66,7 @@ export default function getLayers() {
                             code: 'S',
                             isOverlay: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'yandex_sat'
                         }
                     )
@@ -80,7 +80,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google'
                         }
                     )
@@ -94,7 +94,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'google_hybrid',
                             isOverlayTransparent: true
                         }
@@ -109,7 +109,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google_sat'
                         }
                     )
@@ -122,7 +122,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google_terrain'
                         }
                     )
@@ -136,7 +136,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'bing_sat'
                         }
                     )
@@ -152,7 +152,7 @@ export default function getLayers() {
                             noCors: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'marshruty'
                         }
                     )
@@ -169,7 +169,7 @@ export default function getLayers() {
                             maxNativeZoom: 13,
                             noCors: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topomapper_1k'
                         }
                     )
@@ -187,7 +187,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 9,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_10k'
                         }
                     )
@@ -204,7 +204,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 12,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_2k'
                         }
                     )
@@ -221,7 +221,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'arbalet'
                         }
                     )
@@ -238,7 +238,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'slazav_mountains'
                         }
                     )
@@ -255,7 +255,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_1k'
                         }
                     )
@@ -272,7 +272,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_1k'
                         }
                     )
@@ -289,7 +289,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_500'
                         }
                     )
@@ -306,7 +306,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_500'
                         }
                     )
@@ -323,7 +323,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_250'
                         }
                     )
@@ -340,7 +340,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'slazav'
                         }
                     )
@@ -357,7 +357,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'races'
                         }
                     )
@@ -374,7 +374,7 @@ export default function getLayers() {
                             scaleDependent: false,
                             maxNativeZoom: 17,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osport'
                         }
                     )
@@ -422,7 +422,7 @@ export default function getLayers() {
                             maxNativeZoom: 17,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             noCors: false,
                             shortName: 'opentopo'
                         }
@@ -438,7 +438,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'opencyclemap',
                         }
                     )
@@ -452,7 +452,7 @@ export default function getLayers() {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osm_outdoors',
                         }
                     )
@@ -469,7 +469,7 @@ export default function getLayers() {
                             tms: true,
                             maxNativeZoom: 9,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'eurasia_25k'
                         }
@@ -486,7 +486,7 @@ export default function getLayers() {
                             tms: true,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'caucasus_1k'
                         }
@@ -503,7 +503,7 @@ export default function getLayers() {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'caucasus_500'
                         }
@@ -520,7 +520,7 @@ export default function getLayers() {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'topo_250'
                         }
@@ -538,7 +538,7 @@ export default function getLayers() {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'montenegro_250'
                         }
@@ -558,7 +558,7 @@ export default function getLayers() {
                             minZoom: 2,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             noCors: true,
                             shortName: 'tsvetkov_mountains'
@@ -573,7 +573,7 @@ export default function getLayers() {
                         isOverlay: true,
                         maxNativeZoom: 18,
                         print: false,
-                        jnx: false,
+                        export: false,
                         scaleDependent: false,
                         noCors: true
                     })
@@ -586,7 +586,7 @@ export default function getLayers() {
                         isOverlay: true,
                         isOverlayTransparent: true,
                         print: true,
-                        jnx: false,
+                        export: false,
                         shortName: 'geocaching'
                     })
                 },
@@ -600,7 +600,7 @@ export default function getLayers() {
                             isOverlayTransparent: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'osm_gps_traces'
                         }
                     )
@@ -614,7 +614,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
                             noCors: true
@@ -630,7 +630,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
                             noCors: true
@@ -646,7 +646,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
                             noCors: true
@@ -662,7 +662,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
                             noCors: true
@@ -678,7 +678,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 12,
                             noCors: true
@@ -694,7 +694,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 12,
                             noCors: true
@@ -710,7 +710,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 12,
                             noCors: true
@@ -726,7 +726,7 @@ export default function getLayers() {
                             isOverlay: true,
                             scaleDependent: true,
                             print: false,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             maxNativeZoom: 12,
                             noCors: true
@@ -744,7 +744,7 @@ export default function getLayers() {
                             maxNativeZoom: 16,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_paper'
@@ -761,7 +761,7 @@ export default function getLayers() {
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_topo'
@@ -779,7 +779,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             minZoom: 2,
                             scaleDependent: true,
                             noCors: false,
@@ -796,7 +796,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech'
@@ -812,7 +812,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_tourist'
@@ -828,7 +828,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_summer'
@@ -844,7 +844,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_winter'
@@ -860,7 +860,7 @@ export default function getLayers() {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_geo'
@@ -877,7 +877,7 @@ export default function getLayers() {
 		                    isOverlay: false,
 		                    tms: false,
 		                    print: true,
-		                    jnx: true,
+		                    export: true,
 		                    scaleDependent: true,
 		                    noCors: true,
 		                    shortName: 'finland_topo'
@@ -897,7 +897,7 @@ export default function getLayers() {
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'france_topo_25k'
                         }
@@ -917,7 +917,7 @@ export default function getLayers() {
                             isOverlayTransparent: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'england_topo'
                         }
                     )
@@ -932,7 +932,7 @@ export default function getLayers() {
                             isOverlay: true,
                             tms: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             scaleDependent: true,
                             shortName: 'cycling_trails',
                             isOverlayTransparent: true
@@ -948,7 +948,7 @@ export default function getLayers() {
                             isOverlay: true,
                             tms: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             scaleDependent: true,
                             shortName: 'hiking_trails',
                             isOverlayTransparent: true

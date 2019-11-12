@@ -1,0 +1,25 @@
+.leaflet-rectangle-select-edge.edge-top, .leaflet-rectangle-select-edge.edge-bottom {
+    height: 30px !important;
+    margin-top: -15px !important;
+}
+
+.leaflet-rectangle-select-edge.edge-left, .leaflet-rectangle-select-edge.edge-right {
+    width: 30px !important;
+    margin-left: -15px !important;
+}
+
+.leaflet-rectangle-select-edge.edge-top {
+    cursor: n-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-bottom {
+    cursor: s-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-left {
+    cursor: w-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-right {
+    cursor: e-resize !important;
+}

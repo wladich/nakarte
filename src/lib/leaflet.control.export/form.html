@@ -1,0 +1,41 @@
+<a class="button" title="Export tiles for GPS receivers"
+     data-bind="click: setExpanded">JNX / RMaps
+</a>
+
+<div class="leaflet-control-content">
+    <table class="layout">
+        <tbody>
+        <tr>
+            <td colspan="2">
+                <b data-bind="text: exportLayer().layerName"></b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <select data-bind="options: _formats,
+                    optionsText: 'nameWithHint',
+                    optionsValue: 'name',
+                    value: formatName"></select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div data-bind="foreach: exportOptions, css: {disabled: exportInProgress()}" class="export-options">
+                    <div data-bind="html: $data.label, click: function() {$root.exportOptionClickHandler($data);}, attr: {'class': $data.itemClass, title: $data.tooltip}"></div>
+                </div>
+            </td>
+        </tr>
+        <tr class="border-top"><td colspan="2">
+            <div class="download-button-row">
+                <div class="button-minimize" data-bind="click: setMinimized"></div>
+                <div data-bind="component:{
+                        name: 'progress-indicator',
+                        params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
+                    },
+                    visible: exportInProgress()"></div>
+                <a title="cancel" data-bind="visible: exportInProgress(), click: cancelExport, css: {disabled: cancelFlag}" class="button cancel cancel-button"></a>
+            </div>
+        </td></tr>
+        </tbody>
+    </table>
+</div>

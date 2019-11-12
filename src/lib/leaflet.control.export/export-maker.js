@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import {JnxWriter} from './jnx-encoder';
 import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
 import {XHRQueue} from 'lib/xhr-promise';
 import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
@@ -56,10 +55,11 @@ function ensureImageJpg(image) {
     }
 }
 
-async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
-    const jnxProductId = L.stamp(srcLayer);
-    const jnxZOrder = Math.min(jnxProductId, 100);
-    const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder);
+async function exportFromLayer(format, srcLayer, layerName, maxZoomLevel, latLngBounds, progress, cancelFlag) {
+    const productId = L.stamp(srcLayer);
+    const zOrder = Math.min(productId, 100);
+    const writer = new format.encoder(layerName, productId, zOrder);
+    await writer.asyncInit();
     const xhrQueue = new XHRQueue();
     let doStop = false;
     let error;
@@ -83,8 +83,18 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
         );
         for (let tilePromiseRec of iterateTilePromises()) {
             promises.push(tilePromiseRec);
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
         }
         for (let {tilePromise} of promises) {
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
             let imageRec;
             try {
                 imageRec = await tilePromise;
@@ -115,8 +125,8 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
         progressWeight /= 4;
     }
 
-    return writer.getJnx();
+    return writer.getAsBlob();
 }
 
 
-export {makeJnxFromLayer, minZoom};
+export {exportFromLayer, minZoom};
