@@ -836,22 +836,6 @@ export default function getLayers() {
                         }
                     )
                 },
-                {
-                    title: 'Czech geographical',
-                    isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
-                        {
-                            code: 'Czg',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            subdomains: '1234',
-                            scaleDependent: true,
-                            shortName: 'czech_geo'
-                        }
-                    )
-                },
 		        {
 		            title: 'Finland Topo',
                     description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
@@ -1029,8 +1013,7 @@ export default function getLayers() {
             layers: [
                 'Czech base',
                 'mapy.cz tourist',
-                'Czech winter',
-                'Czech geographical'],
+                'Czech winter'],
         },
     ];
 
@@ -1055,7 +1038,6 @@ export default function getLayers() {
         'Czech base',
         'mapy.cz tourist',
         'Czech winter',
-        'Czech geographical',
         'Finland Topo',
 
         // map overlays
