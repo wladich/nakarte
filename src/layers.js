@@ -816,7 +816,7 @@ export default function getLayers() {
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_tourist',
-                            hotkey: ''
+                            hotkey: 'H'
                         }
                     )
                 },
