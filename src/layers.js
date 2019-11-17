@@ -804,8 +804,8 @@ export default function getLayers() {
                     )
                 },
                 {
-                    title: 'Czech tourist',
-                    isDefault: false,
+                    title: 'mapy.cz tourist',
+                    isDefault: true,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
                         {
                             code: 'Czt',
@@ -815,7 +815,8 @@ export default function getLayers() {
                             jnx: true,
                             subdomains: '1234',
                             scaleDependent: true,
-                            shortName: 'czech_tourist'
+                            shortName: 'czech_tourist',
+                            hotkey: ''
                         }
                     )
                 },
@@ -1027,7 +1028,7 @@ export default function getLayers() {
             title: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
             layers: [
                 'Czech base',
-                'Czech tourist',
+                'mapy.cz tourist',
                 'Czech winter',
                 'Czech geographical'],
         },
@@ -1052,7 +1053,7 @@ export default function getLayers() {
 
         // local base layers
         'Czech base',
-        'Czech tourist',
+        'mapy.cz tourist',
         'Czech winter',
         'Czech geographical',
         'Finland Topo',
