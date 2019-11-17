@@ -87,7 +87,7 @@ export default function getLayers() {
                 },
                 {
                     title: 'Google Hybrid',
-                    isDefault: true,
+                    isDefault: false,
                     layer: new L.Layer.GoogleHybrid(
                         {
                             code: 'Gh',
