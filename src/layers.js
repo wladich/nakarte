@@ -923,6 +923,27 @@ export default function getLayers() {
                             isOverlayTransparent: true
                         })
                 },
+                {
+                    title: 'Slovakia topo',
+                    description: '<a href="https://mapy.hiking.sk">https://mapy.hiking.sk/</a>',
+                    isDefault: false,
+                    layer: L.tileLayer('https://static.mapy.hiking.sk/topo/{z}/{x}/{y}.png',
+                        {
+                            code: 'St',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: false,
+                            shortName: 'slovakia_topo',
+                            isOverlayTransparent: false,
+                            maxNativeZoom: 15,
+                            minZoom: 10,
+                            bounds: [[47.51737, 16.74334], [49.66632, 22.74788]],
+                            noCors: true,
+                        })
+                },
+
     ];
 
     const groupsDefs = [
@@ -974,6 +995,7 @@ export default function getLayers() {
                 'Finland Topo',
                 'France Topo 250m',
                 'Great Britain Topo',
+                'Slovakia topo',
             ],
         },
         {
@@ -1049,6 +1071,7 @@ export default function getLayers() {
         'ArbaletMO',
         'Norway paper map',
         'Norway topo',
+        'Slovakia topo',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
