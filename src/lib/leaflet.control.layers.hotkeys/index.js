@@ -1,11 +1,25 @@
 import L from 'leaflet';
 import './style.css';
 
+function getLayerHotkey(layer) {
+    if (!layer || !layer.options) {
+        return null;
+    }
+    let hotkey = layer.options.hotkey;
+    if (hotkey) {
+        return hotkey;
+    }
+    hotkey = layer.options.code;
+    if (hotkey && hotkey.length === 1) {
+        return hotkey;
+    }
+}
+
 function extendLayerName(name, layer) {
     if (layer.options) {
-        const code = layer.options.code;
-        if (code && code.length === 1) {
-            name += `<span class="layers-control-hotkey">${code}</span>`;
+        const hotkey = getLayerHotkey(layer);
+        if (hotkey) {
+            name += `<span class="layers-control-hotkey">${hotkey}</span>`;
         }
     }
     return name;
@@ -67,7 +81,8 @@ function enableHotKeys(control) {
                 const key = String.fromCharCode(e.keyCode);
                 for (let layer of this._layers) {
                     let layerId = L.stamp(layer.layer);
-                    if (layer.layer.options && layer.layer.options.code && layer.layer.options.code.toUpperCase() === key) {
+                    const layerHotkey = getLayerHotkey(layer.layer);
+                    if (layerHotkey === key) {
                         const inputs = this._form.getElementsByTagName('input');
                         for (let input of [...inputs]) {
                             if (input.layerId === layerId) {
