@@ -820,22 +820,6 @@ export default function getLayers() {
                     )
                 },
                 {
-                    title: 'Czech summer',
-                    isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
-                        {
-                            code: 'Czs',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            subdomains: '1234',
-                            scaleDependent: true,
-                            shortName: 'czech_summer'
-                        }
-                    )
-                },
-                {
                     title: 'Czech winter',
                     isDefault: false,
                     layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
@@ -1044,10 +1028,8 @@ export default function getLayers() {
             layers: [
                 'Czech base',
                 'Czech tourist',
-                'Czech summer',
                 'Czech winter',
                 'Czech geographical'],
-
         },
     ];
 
@@ -1071,7 +1053,6 @@ export default function getLayers() {
         // local base layers
         'Czech base',
         'Czech tourist',
-        'Czech summer',
         'Czech winter',
         'Czech geographical',
         'Finland Topo',
