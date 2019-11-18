@@ -220,8 +220,8 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 '050k': '1:50 000'
             }[scale];
             const items = [
-                {'text': scaleString, disabled: true},
-                {'text': 'Click name to copy to clibpoard', disabled: true},
+                {'text': scaleString, header: true},
+                {'text': 'Click name to copy to clibpoard', header: true},
                 {
                     'text': titles[0], callback: () => {
                     copyToClipboard(titles[0], e.originalEvent)
