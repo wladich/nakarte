@@ -1,5 +1,5 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.canvasMarkers'
+import '~/lib/leaflet.layer.canvasMarkers'
 
 L.Layer.CanvasMarkers.include({
         _printProgressWeight: 0.1,

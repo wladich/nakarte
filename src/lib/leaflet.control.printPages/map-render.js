@@ -1,6 +1,6 @@
 import L from 'leaflet';
-import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
-import {XHRQueue} from 'lib/xhr-promise';
+import {getTempMap, disposeMap} from '~/lib/leaflet.layer.rasterize';
+import {XHRQueue} from '~/lib/xhr-promise';
 
 
 function getLayersForPrint(map, xhrQueue) {

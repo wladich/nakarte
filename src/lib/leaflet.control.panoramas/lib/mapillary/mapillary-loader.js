@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {TiledDataLoader} from 'lib/tiled-data-loader';
+import {TiledDataLoader} from '~/lib/tiled-data-loader';
 import {decodeMvt} from './mvt';
 
 

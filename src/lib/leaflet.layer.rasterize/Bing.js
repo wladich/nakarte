@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {BingLayer} from 'lib/leaflet.layer.bing';
+import {BingLayer} from '~/lib/leaflet.layer.bing';
 
 BingLayer.include({
         waitTilesReadyToGrab: function() {

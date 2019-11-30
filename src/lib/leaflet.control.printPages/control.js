@@ -1,19 +1,19 @@
 import L from 'leaflet'
-import ko from 'vendored/knockout';
-import 'lib/knockout.component.progress/progress';
-import 'lib/controls-styles/controls-styles.css';
+import ko from '~/vendored/knockout';
+import '~/lib/knockout.component.progress/progress';
+import '~/lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
-import Contextmenu from 'lib/contextmenu';
+import Contextmenu from '~/lib/contextmenu';
 import {renderPages} from './map-render'
 import formHtml from './form.html';
-import {notify} from 'lib/notifications';
+import {notify} from '~/lib/notifications';
 import {makePdf} from './pdf';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import {blobFromString} from 'lib/binary-strings';
-import 'lib/leaflet.hashState/leaflet.hashState';
-import 'lib/leaflet.control.commons';
-import logging from 'lib/logging';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import {blobFromString} from '~/lib/binary-strings';
+import '~/lib/leaflet.hashState/leaflet.hashState';
+import '~/lib/leaflet.control.commons';
+import logging from '~/lib/logging';
 import  {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';

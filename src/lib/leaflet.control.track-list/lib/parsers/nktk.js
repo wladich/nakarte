@@ -1,6 +1,6 @@
 import Pbf from 'pbf';
 import {TrackView} from './nktk_pb';
-import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
+import {arrayBufferToString, stringToArrayBuffer} from '~/lib/binary-strings';
 import utf8 from 'utf8';
 import urlSafeBase64 from './urlSafeBase64';
 

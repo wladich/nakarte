@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {notify} from 'lib/notifications';
+import {notify} from '~/lib/notifications';
 
 const StravaHeatmap = L.TileLayer.extend({
 

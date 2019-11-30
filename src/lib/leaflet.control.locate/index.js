@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import {makeButton} from 'lib/leaflet.control.commons';
+import {makeButton} from '~/lib/leaflet.control.commons';
 import './style.css';
-import localStorage from 'lib/safe-localstorage';
+import localStorage from '~/lib/safe-localstorage';
 
 const STATE_DISABLED = 'disabled';
 const STATE_LOCATING = 'locating';

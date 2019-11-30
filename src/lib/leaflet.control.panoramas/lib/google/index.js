@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import getGoogle from 'lib/googleMapsApi';
+import getGoogle from '~/lib/googleMapsApi';
 
 
 function getCoverageLayer(options) {

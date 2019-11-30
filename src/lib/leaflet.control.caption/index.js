@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './style.css';
-import 'lib/leaflet.control.commons';
+import '~/lib/leaflet.control.commons';
 
 L.Control.Caption = L.Control.extend({
     options: {

@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {MapillaryCoverage} from './mapillary-coverage-layer'
-import {fetch} from 'lib/xhr-promise';
-import config from 'config';
+import {fetch} from '~/lib/xhr-promise';
+import config from '~/config';
 import './style.css';
 import '../common/style.css';
 

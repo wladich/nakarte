@@ -1,4 +1,4 @@
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 
 class BaseService {
     constructor(url) {

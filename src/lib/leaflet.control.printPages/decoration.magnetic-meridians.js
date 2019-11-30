@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {getDeclination} from 'lib/magnetic-declination';
+import {getDeclination} from '~/lib/magnetic-declination';
 import {PrintStaticLayer} from './decorations';
 
 function radians(degrees) {

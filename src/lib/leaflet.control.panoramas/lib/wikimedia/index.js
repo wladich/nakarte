@@ -1,9 +1,9 @@
 import L from 'leaflet';
 import {MultiLayer, WikimediaVectorCoverage} from './coverage-layer';
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 import './style.css';
 import '../common/style.css';
-import config from 'config';
+import config from '~/config';
 
 
 function getCoverageLayer(options) {

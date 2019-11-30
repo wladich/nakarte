@@ -1,6 +1,6 @@
 import BaseService from './baseService';
 import parseGeoFile from '../parseGeoFile';
-import urlViaCorsProxy from 'lib/CORSProxy';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class SimpleService extends BaseService {
     isOurUrl() {

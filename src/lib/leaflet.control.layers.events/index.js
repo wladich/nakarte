@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.control.commons';
+import '~/lib/leaflet.control.commons';
 
 const originalLayerOnAdd = L.Control.Layers.prototype.onAdd;
 

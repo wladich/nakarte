@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.layer.yandex';
+import '~/lib/leaflet.layer.yandex';
 
 L.Layer.Yandex.include({
     cloneForPrint: function(options) {

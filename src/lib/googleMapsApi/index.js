@@ -1,5 +1,5 @@
 import loadScript from 'load-script';
-import config from 'config';
+import config from '~/config';
 
 let _google = null;
 let _pending = null;

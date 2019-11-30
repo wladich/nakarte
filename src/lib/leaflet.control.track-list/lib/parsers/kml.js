@@ -1,7 +1,7 @@
 import {decode as utf8_decode} from 'utf8';
 import {xmlGetNodeText} from './xmlUtils';
-import stripBom from 'lib/stripBom';
-import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
+import stripBom from '~/lib/stripBom';
+import JSUnzip from '~/vendored/github.com/augustl/js-unzip/js-unzip';
 import jsInflate from './jsInflate';
 
 function parseKml(txt, name) {

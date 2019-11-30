@@ -1,5 +1,5 @@
 import './style.css';
-import logging from 'lib/logging';
+import logging from '~/lib/logging';
 
 function showNotification(message, mouseEvent) {
     var el = document.createElement('div');

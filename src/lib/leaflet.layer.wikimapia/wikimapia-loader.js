@@ -1,6 +1,6 @@
-import {TiledDataLoader} from 'lib/tiled-data-loader';
+import {TiledDataLoader} from '~/lib/tiled-data-loader';
 import wmUtils from './wm-utils'
-import urlViaCorsProxy from 'lib/CORSProxy';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class WikimapiaLoader extends TiledDataLoader {
     maxZoom = 15;

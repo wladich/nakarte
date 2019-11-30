@@ -1,10 +1,10 @@
 import L from 'leaflet';
 import './style.css';
-import enableTopRow from 'lib/leaflet.control.layers.top-row';
-import ko from 'vendored/knockout';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
-import safeLocalStorage from 'lib/safe-localstorage';
+import enableTopRow from '~/lib/leaflet.control.layers.top-row';
+import ko from '~/vendored/knockout';
+import {notify} from '~/lib/notifications';
+import logging from '~/lib/logging';
+import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 
 function enableConfig(control, {layers, customLayersOrder}) {

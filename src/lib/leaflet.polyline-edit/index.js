@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './edit_line.css';
-import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
 L.Polyline.EditMixinOptions = {
     className: 'leaflet-editable-line'

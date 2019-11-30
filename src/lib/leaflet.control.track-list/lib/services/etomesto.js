@@ -1,4 +1,4 @@
-import urlViaCorsProxy from 'lib/CORSProxy';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 import BaseService from './baseService';
 import parseGpx from  '../parsers/gpx';
 

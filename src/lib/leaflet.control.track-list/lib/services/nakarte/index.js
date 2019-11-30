@@ -1,10 +1,10 @@
 import BaseService from '../baseService';
 import {parseNktkSequence, parseTrackUrlData, parseNktkFragment} from '../../parsers/nktk';
-import config from 'config';
-import {parseHashParams} from 'lib/leaflet.hashState/hashState';
+import config from '~/config';
+import {parseHashParams} from '~/lib/leaflet.hashState/hashState';
 import loadFromUrl from '../../loadFromUrl';
 import loadTracksFromJson from './loadTracksFromJson';
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 
 function flattenArray(ar) {
     return ar.reduce((cur, acc) => {

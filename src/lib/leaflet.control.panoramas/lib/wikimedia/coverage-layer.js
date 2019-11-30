@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {TiledDataLoader} from 'lib/tiled-data-loader';
+import {TiledDataLoader} from '~/lib/tiled-data-loader';
 
 const MultiLayer = L.Layer.extend({
     initialize: function(layers) {

@@ -1,10 +1,10 @@
 import L from 'leaflet';
-import ko from 'vendored/knockout';
+import ko from '~/vendored/knockout';
 import googleProvider from './lib/google';
 
 import './style.css';
-import 'lib/controls-styles/controls-styles.css';
-import {makeButtonWithBar} from 'lib/leaflet.control.commons';
+import '~/lib/controls-styles/controls-styles.css';
+import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import mapillaryProvider from './lib/mapillary';
 import wikimediaProvider from './lib/wikimedia';
 

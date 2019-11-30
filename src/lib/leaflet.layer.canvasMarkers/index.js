@@ -2,7 +2,7 @@ import L from 'leaflet';
 import './canvasMarkers.css';
 import rbush from 'rbush';
 import loadImage from 'image-promise';
-import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
 /*
  Marker definition:

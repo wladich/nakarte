@@ -2,35 +2,35 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'lib/leaflet.control.printPages/control'
-import 'lib/leaflet.control.caption'
+import '~/lib/leaflet.control.printPages/control'
+import '~/lib/leaflet.control.caption'
 import config from './config'
-import 'lib/leaflet.control.coordinates';
-import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys';
-import 'lib/leaflet.hashState/Leaflet.Map';
-import 'lib/leaflet.hashState/Leaflet.Control.Layers';
-import {fixAll} from 'lib/leaflet.fixes'
+import '~/lib/leaflet.control.coordinates';
+import enableLayersControlHotKeys from '~/lib/leaflet.control.layers.hotkeys';
+import '~/lib/leaflet.hashState/Leaflet.Map';
+import '~/lib/leaflet.hashState/Leaflet.Control.Layers';
+import {fixAll} from '~/lib/leaflet.fixes'
 import './adaptive.css';
-import 'lib/leaflet.control.panoramas';
-import 'lib/leaflet.control.track-list/track-list';
-import 'lib/leaflet.control.track-list/control-ruler';
-import 'lib/leaflet.control.track-list/track-list.hash-state';
-import 'lib/leaflet.control.track-list/track-list.localstorage';
-import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height';
-import enableLayersMinimize from 'lib/leaflet.control.layers.minimize';
-import enableLayersConfig from 'lib/leaflet.control.layers.configure';
-import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
-import getLayers from 'layers';
-import 'lib/leaflet.control.layers.events';
-import 'lib/leaflet.control.jnx';
-import 'lib/leaflet.control.jnx/hash-state';
-import 'lib/leaflet.control.azimuth';
-import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
-import {LocateControl} from 'lib/leaflet.control.locate';
-import {notify} from 'lib/notifications';
-import ZoomDisplay from 'lib/leaflet.control.zoom-display';
-import logging from 'lib/logging';
-import safeLocalStorage from 'lib/safe-localstorage';
+import '~/lib/leaflet.control.panoramas';
+import '~/lib/leaflet.control.track-list/track-list';
+import '~/lib/leaflet.control.track-list/control-ruler';
+import '~/lib/leaflet.control.track-list/track-list.hash-state';
+import '~/lib/leaflet.control.track-list/track-list.localstorage';
+import enableLayersControlAdaptiveHeight from '~/lib/leaflet.control.layers.adaptive-height';
+import enableLayersMinimize from '~/lib/leaflet.control.layers.minimize';
+import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
+import raiseControlsOnFocus from '~/lib/leaflet.controls.raise-on-focus';
+import getLayers from './layers';
+import '~/lib/leaflet.control.layers.events';
+import '~/lib/leaflet.control.jnx';
+import '~/lib/leaflet.control.jnx/hash-state';
+import '~/lib/leaflet.control.azimuth';
+import {hashState, bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
+import {LocateControl} from '~/lib/leaflet.control.locate';
+import {notify} from '~/lib/notifications';
+import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
+import logging from '~/lib/logging';
+import safeLocalStorage from '~/lib/safe-localstorage';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',

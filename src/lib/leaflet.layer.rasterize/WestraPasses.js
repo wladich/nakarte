@@ -1,7 +1,7 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.westraPasses';
-import {WestraPassesMarkers} from 'lib/leaflet.layer.westraPasses/westraPassesMarkers';
-import 'lib/leaflet.layer.canvasMarkers'
+import '~/lib/leaflet.layer.westraPasses';
+import {WestraPassesMarkers} from '~/lib/leaflet.layer.westraPasses/westraPassesMarkers';
+import '~/lib/leaflet.layer.canvasMarkers'
 import './CanvasMarkers';
 
 L.Layer.WestraPasses.addInitHook(function() {

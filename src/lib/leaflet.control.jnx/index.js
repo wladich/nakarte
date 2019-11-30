@@ -1,13 +1,13 @@
 import L from 'leaflet';
-import ko from 'vendored/knockout';
+import ko from '~/vendored/knockout';
 import './style.css';
-import 'lib/leaflet.control.commons';
+import '~/lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
-import Contextmenu from 'lib/contextmenu';
+import Contextmenu from '~/lib/contextmenu';
 import {makeJnxFromLayer, minZoom} from './jnx-maker';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import {notify} from '~/lib/notifications';
+import logging from '~/lib/logging';
 
 L.Control.JNX = L.Control.extend({
         includes: L.Mixin.Events,

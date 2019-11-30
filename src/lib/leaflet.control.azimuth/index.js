@@ -1,15 +1,15 @@
 import L from 'leaflet';
 import ko from 'knockout';
-import {makeButtonWithBar} from 'lib/leaflet.control.commons';
+import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import layout from './control.html';
-import 'lib/controls-styles/controls-styles.css';
+import '~/lib/controls-styles/controls-styles.css';
 import './style.css';
-import {getDeclination} from 'lib/magnetic-declination';
-import 'vendored/github.com/bbecquet/Leaflet.RotatedMarker/leaflet.rotatedMarker';
+import {getDeclination} from '~/lib/magnetic-declination';
+import '~/vendored/github.com/bbecquet/Leaflet.RotatedMarker/leaflet.rotatedMarker';
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
-import {ElevationProfile, calcSamplingInterval} from 'lib/leaflet.control.elevation-profile';
+import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
 
 function radians(x) {
     return x / 180 * Math.PI;

@@ -1,11 +1,11 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise';
-import 'lib/leaflet.layer.canvasMarkers';
-import logging from 'lib/logging';
-import {notify} from 'lib/notifications';
+import {fetch} from '~/lib/xhr-promise';
+import '~/lib/leaflet.layer.canvasMarkers';
+import logging from '~/lib/logging';
+import {notify} from '~/lib/notifications';
 import './style.css';
-import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
-import {openPopupWindow} from 'lib/popup-window';
+import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
+import {openPopupWindow} from '~/lib/popup-window';
 
 
 const GeocachingSu = L.Layer.CanvasMarkers.extend({

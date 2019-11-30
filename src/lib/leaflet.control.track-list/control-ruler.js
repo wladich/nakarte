@@ -2,7 +2,7 @@ import L from 'leaflet';
 import './track-list';
 import './ruler.css';
 import './track-list';
-import {makeButton} from 'lib/leaflet.control.commons';
+import {makeButton} from '~/lib/leaflet.control.commons';
 
 L.Control.TrackList.Ruler = L.Control.extend({
     options: {

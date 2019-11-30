@@ -1,11 +1,11 @@
 import L from 'leaflet'
-import ko from 'vendored/knockout';
+import ko from '~/vendored/knockout';
 import './coordinates.css';
-import copyToClipboard from 'lib/clipboardCopy';
-import Contextmenu from 'lib/contextmenu';
-import {makeButtonWithBar} from 'lib/leaflet.control.commons';
-import safeLocalStorage from 'lib/safe-localstorage';
-import 'lib/controls-styles/controls-styles.css';
+import copyToClipboard from '~/lib/clipboardCopy';
+import Contextmenu from '~/lib/contextmenu';
+import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
+import safeLocalStorage from '~/lib/safe-localstorage';
+import '~/lib/controls-styles/controls-styles.css';
 import formats from './formats';
 
 const DEFAULT_FORMAT = formats.DEGREES;

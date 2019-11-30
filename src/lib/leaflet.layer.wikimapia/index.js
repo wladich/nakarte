@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {WikimapiaLoader} from './wikimapia-loader';
 import './style.css';
-import {openPopupWindow} from 'lib/popup-window';
+import {openPopupWindow} from '~/lib/popup-window';
 
 
 function isPointInPolygon(polygon, p) {

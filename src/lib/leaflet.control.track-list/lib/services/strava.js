@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import urlViaCorsProxy from 'lib/CORSProxy';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 import {decode as utf8_decode} from 'utf8';
 
 class Strava extends BaseService {

@@ -1,5 +1,5 @@
 import declination from './declination.json';
-import {stringToArrayBuffer} from 'lib/binary-strings';
+import {stringToArrayBuffer} from '~/lib/binary-strings';
 
 let data;
 

@@ -1,4 +1,4 @@
-import {arrayBufferToString} from 'lib/binary-strings';
+import {arrayBufferToString} from '~/lib/binary-strings';
 
 function successIfStatus200(xhr) {
     return xhr.status >= 200 && xhr.status <= 299;

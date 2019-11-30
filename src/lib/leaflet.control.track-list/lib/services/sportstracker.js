@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import urlViaCorsProxy from 'lib/CORSProxy';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 import utf8 from 'utf8';
 
 class SportsTrackerBase extends BaseService {

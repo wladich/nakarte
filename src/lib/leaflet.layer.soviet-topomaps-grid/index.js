@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import './style.css';
-import Contextmenu from 'lib/contextmenu';
-import copyToClipboard from 'lib/clipboardCopy';
+import Contextmenu from '~/lib/contextmenu';
+import copyToClipboard from '~/lib/clipboardCopy';
 
 function zeroPad(num, size) {
     var s = num + "";

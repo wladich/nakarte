@@ -1,10 +1,10 @@
 import L from 'leaflet';
 import './elevation-profile.css';
-import {fetch} from 'lib/xhr-promise';
-import config from 'config';
-import 'lib/leaflet.control.commons';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
+import {fetch} from '~/lib/xhr-promise';
+import config from '~/config';
+import '~/lib/leaflet.control.commons';
+import {notify} from '~/lib/notifications';
+import logging from '~/lib/logging';
 
 function calcSamplingInterval(length) {
     var targetPointsN = 2000;

@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.layer.google';
+import '~/lib/leaflet.layer.google';
 
 L.Layer.GoogleBase.include({
     cloneForPrint: function(options) {

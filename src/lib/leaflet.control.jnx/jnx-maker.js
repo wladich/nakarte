@@ -1,8 +1,8 @@
 import L from 'leaflet';
 import {JnxWriter} from './jnx-encoder';
-import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
-import {XHRQueue} from 'lib/xhr-promise';
-import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
+import {getTempMap, disposeMap} from '~/lib/leaflet.layer.rasterize';
+import {XHRQueue} from '~/lib/xhr-promise';
+import {arrayBufferToString, stringToArrayBuffer} from '~/lib/binary-strings';
 
 const defaultXHROptions = {
     responseType: 'arraybuffer',

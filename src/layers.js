@@ -1,14 +1,14 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.yandex';
-import 'lib/leaflet.layer.google';
-import {BingLayer} from 'lib/leaflet.layer.bing';
-import {BingDates} from 'lib/leaflet.layer.bing/dates';
+import '~/lib/leaflet.layer.yandex';
+import '~/lib/leaflet.layer.google';
+import {BingLayer} from '~/lib/leaflet.layer.bing';
+import {BingDates} from '~/lib/leaflet.layer.bing/dates';
 import config from './config';
-import 'lib/leaflet.layer.soviet-topomaps-grid';
-import 'lib/leaflet.layer.westraPasses';
-import 'lib/leaflet.layer.wikimapia';
-import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
-import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
+import '~/lib/leaflet.layer.soviet-topomaps-grid';
+import '~/lib/leaflet.layer.westraPasses';
+import '~/lib/leaflet.layer.wikimapia';
+import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
+import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
 
 export default function getLayers() {
     const layers = [

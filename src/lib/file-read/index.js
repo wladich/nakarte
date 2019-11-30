@@ -1,4 +1,4 @@
-import {arrayBufferToString} from 'lib/binary-strings';
+import {arrayBufferToString} from '~/lib/binary-strings';
 
 const selectFiles = (() => {
     let fileInput;

@@ -1,4 +1,4 @@
-import logging from 'lib/logging';
+import logging from '~/lib/logging';
 
 function openPopupWindow(url, width, uniqName = null) {
     var left, top, height,

@@ -1,5 +1,5 @@
-import {Cache} from 'lib/cache';
-import {XHRQueue} from 'lib/xhr-promise';
+import {Cache} from '~/lib/cache';
+import {XHRQueue} from '~/lib/xhr-promise';
 
 
 class TiledDataLoader {
