@@ -27,6 +27,13 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.js$/,
+        include: paths.appSrc,
+        enforce: 'pre',
+        loader: 'eslint-loader',
+      },
+
+      {
+        test: /\.js$/,
         exclude: /node_modules/,
         use: 'babel-loader'
       },
