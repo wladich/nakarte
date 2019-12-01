@@ -1,14 +1,15 @@
-const Path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const paths = require('./paths');
+
 module.exports = {
   entry: {
-    app: Path.resolve(__dirname, '../src/index.js')
+    app: paths.appIndexJs
   },
   output: {
-    path: Path.join(__dirname, '../build'),
+    path: paths.appBuild,
     filename: 'js/[name].js'
   },
   optimization: {
@@ -20,15 +21,15 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
-      { from: Path.resolve(__dirname, '../public'), to: 'public' }
+      { from: paths.appPublic, to: 'public' }
     ]),
     new HtmlWebpackPlugin({
-      template: Path.resolve(__dirname, '../src/index.html')
+      template: paths.appIndexHtml
     })
   ],
   resolve: {
     alias: {
-      '~': Path.resolve(__dirname, '../src')
+      '~': paths.appSrc
     }
   },
   module: {
