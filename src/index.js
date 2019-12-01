@@ -20,10 +20,8 @@ function getUid() {
     return uid;
 }
 
-/* eslint-disable no-undef */
 if (NODE_ENV === 'production') {
     Raven.config(config.sentryDSN, {release: RELEASE_VER}).install();
-/* eslint-enable no-undef */
 }
 
 const oldOnunhandledrejection = window.onunhandledrejection;
@@ -43,9 +41,7 @@ window.onunhandledrejection = (e) => {
     return result;
 };
 
-/* eslint-disable no-undef */
 console.log('Version:', RELEASE_VER);
-/* eslint-enable no-undef */
 
 let uid;
 try {uid = getUid()} catch (e) {}
