@@ -1,14 +1,13 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "es2020": true
   },
   "parser": "babel-eslint",
+  "extends": "eslint:recommended",
   "parserOptions": {
-    "ecmaVersion": 6,
     "sourceType": "module"
   },
   "rules": {
-    "semi": 2
   }
 }
