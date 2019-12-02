@@ -44,7 +44,10 @@ window.onunhandledrejection = (e) => {
 console.log('Version:', RELEASE_VER);
 
 let uid;
-try {uid = getUid()} catch (e) {}
+try {
+    uid = getUid()} catch (e) {
+    // ignore error
+}
 console.log('UID:', uid);
 
 Raven.setUserContext({
