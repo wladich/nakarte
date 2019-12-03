@@ -37,7 +37,7 @@ function formatLatLng(latlng, format) {
     return {
         lat: format.formatter(coordinatePresentations(latlng.lat, true)),
         lng: format.formatter(coordinatePresentations(latlng.lng, false))
-    }
+    };
 }
 
 const SIGNED_DEGREES = {
@@ -73,4 +73,4 @@ export default {
     DEGREES_AND_MINUTES,
     DEGREES_AND_MINUTES_AND_SECONDS,
     formatLatLng
-}
+};

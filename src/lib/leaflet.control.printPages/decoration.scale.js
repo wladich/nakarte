@@ -11,7 +11,7 @@ function pageScaleRange(printOptions) {
     return {
         min: Math.min(nScale, sScale, printOptions.scale),
         max: Math.max(nScale, sScale, printOptions.scale)
-    }
+    };
 }
 
 function formatScale(nominalScale, scaleRange) {
@@ -22,9 +22,9 @@ function formatScale(nominalScale, scaleRange) {
         if (scaleRange.min >= 1000) {
             scaleRange.min /= 1000;
             scaleRange.max /= 1000;
-            unit = 'km'
+            unit = 'km';
         } else {
-            unit = 'm'
+            unit = 'm';
         }
         return `${scaleRange.min} – ${scaleRange.max} ${unit} in 1 cm`;
     } else {

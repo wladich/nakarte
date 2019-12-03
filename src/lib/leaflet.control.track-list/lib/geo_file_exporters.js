@@ -124,7 +124,7 @@ function saveKml(segments, name, points) {
             var label = marker.label;
             label = escapeHtml(label);
             label = utf8.encode(label);
-            var coordinates = marker.latlng.lng.toFixed(6) + ',' + marker.latlng.lat.toFixed(6) + ',0'
+            var coordinates = marker.latlng.lng.toFixed(6) + ',' + marker.latlng.lat.toFixed(6) + ',0';
 
             kml.push('\t\t<Placemark>');
             kml.push('\t\t\t<name>' + label + '</name>');

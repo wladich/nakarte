@@ -24,7 +24,7 @@ class Etomesto extends BaseService {
                     xhr.status === 200 &&
                     !xhr.responseBinaryText.startsWith('ERROR'))
             }
-        }]
+        }];
     }
 
     parseResponse(responses) {

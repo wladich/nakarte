@@ -34,7 +34,7 @@ function parseZip(txt, _unused_name) {
             if (item.error === 'UNSUPPORTED' && item.name.match(/\.pdf$|\.doc$|\.txt$\.jpg$/)) {
                 continue;
             }
-            geodata_array.push(item)
+            geodata_array.push(item);
         }
     }
     return geodata_array;

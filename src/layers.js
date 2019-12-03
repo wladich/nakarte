@@ -1114,7 +1114,7 @@ export default function getLayers() {
 
     // set metadata
     for (let layer of layers) {
-        layer.layer.meta = {title: layer.title}
+        layer.layer.meta = {title: layer.title};
     }
 
     // assign order to layers
@@ -1128,7 +1128,7 @@ export default function getLayers() {
         const title = layer.title;
         layer.order = orderByTitle[title];
         if (!layer.order) {
-            throw new Error(`Layer title not found in titlesByOrder list: ${title}`)
+            throw new Error(`Layer title not found in titlesByOrder list: ${title}`);
         }
     }
 
@@ -1144,7 +1144,7 @@ export default function getLayers() {
         for (let title of groupDef.layers) {
             let layer = layersByTitle[title];
             if (!layer) {
-                throw new Error(`Unknown layer in groups definitions: ${title}`)
+                throw new Error(`Unknown layer in groups definitions: ${title}`);
             }
             group.layers.push(layer);
         }
@@ -1214,7 +1214,7 @@ export default function getLayers() {
     for (let group of groupsDefs) {
         for (let title of group.layers) {
             if (seenLayerTitles.has(title)) {
-                throw new Error(`Duplicate layer in groups definition: ${title}`)
+                throw new Error(`Duplicate layer in groups definition: ${title}`);
             }
             seenLayerTitles.add(title);
         }

@@ -43,7 +43,7 @@ const PanoMarker = L.Marker.extend({
     setType: function(markerType) {
         const className = {
             'slim': 'leaflet-panorama-marker-circle',
-            'normal': 'leaflet-panorama-marker-binocular'}[markerType]
+            'normal': 'leaflet-panorama-marker-binocular'}[markerType];
         this.getIcon().className = className;
     }
 });
@@ -72,7 +72,7 @@ L.Control.Panoramas = L.Control.extend({
                     code: 'm',
                     selected: ko.observable(false),
                     mapMarkerType: 'normal'},
-            ]
+            ];
         },
 
         initialize: function(panoramaContainer, options) {
@@ -181,7 +181,7 @@ L.Control.Panoramas = L.Control.extend({
             if (L.DomUtil.hasClass(this._panoramaContainer, 'enabled')) {
                 for (let provider of this.providers) {
                     if (L.DomUtil.hasClass(provider.container, 'enabled')) {
-                        return provider
+                        return provider;
                     }
                 }
             }
@@ -190,7 +190,7 @@ L.Control.Panoramas = L.Control.extend({
 
         setupNearbyPoints: function(points) {
             for (let point of this.nearbyPoints) {
-                this._map.removeLayer(point)
+                this._map.removeLayer(point);
             }
             this.nearbyPoints = [];
             if (points) {
@@ -347,7 +347,7 @@ L.Control.Panoramas.include({
             }
             this.enableControl();
             for (let provider of this.providers) {
-                provider.selected(coverageCode.includes(provider.code))
+                provider.selected(coverageCode.includes(provider.code));
             }
             if (state.length > 2) {
                 const panoramaVisible = state[1];

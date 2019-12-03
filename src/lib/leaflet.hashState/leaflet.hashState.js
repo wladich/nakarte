@@ -21,7 +21,7 @@ L.Mixin.HashState = {
 
         const state = hashState.getState(key) || defaultInitialState;
         if (!state || !this.unserializeState(state)) {
-            this.unserializeState(defaultInitialState)
+            this.unserializeState(defaultInitialState);
         }
         hashState.updateState(this._hashStateKey, this.serializeState());
         return this;

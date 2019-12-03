@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {MapillaryCoverage} from './mapillary-coverage-layer'
+import {MapillaryCoverage} from './mapillary-coverage-layer';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import './style.css';
@@ -116,7 +116,7 @@ const Viewer = L.Evented.extend({
 
         updateZoomAndCenter: function() {
             this.viewer.getZoom().then((zoom) => {
-                this._zoom=zoom
+                this._zoom=zoom;
             });
             this.viewer.getCenter().then((center) => {
                 this._center = center;

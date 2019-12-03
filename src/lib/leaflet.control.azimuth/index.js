@@ -43,7 +43,7 @@ function calcAngle(latlng1, latlng2) {
 }
 
 function roundAzimuth(a) {
-    return (Math.round(a) + 360) % 360
+    return (Math.round(a) + 360) % 360;
 }
 
 L.Control.Azimuth = L.Control.extend({
@@ -203,12 +203,12 @@ L.Control.Azimuth = L.Control.extend({
 
         onMapClick: function(e) {
             if (!this.points.start && !this.points.end) {
-                this.setPoints({start: e.latlng})
+                this.setPoints({start: e.latlng});
             } else if (this.points.start && !this.points.end) {
-                this.setPoints({end: e.latlng})
+                this.setPoints({end: e.latlng});
             } else if (this.points.start && this.points.end) {
                 this.hideProfile();
-                this.setPoints({start: e.latlng, end: null})
+                this.setPoints({start: e.latlng, end: null});
             }
         },
 

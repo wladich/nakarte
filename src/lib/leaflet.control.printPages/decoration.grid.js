@@ -26,7 +26,7 @@ class Grid extends PrintStaticLayer {
         let intervalM;
         for (intervalM of this.intervals) {
             if (intervalM > minGridIntervalM) {
-                break
+                break;
             }
         }
         return intervalM;
@@ -66,7 +66,7 @@ class Grid extends PrintStaticLayer {
             let lat = L.Projection.SphericalMercator.unproject(L.point(0, yMerc)).lat;
             rows.push({lat, y});
             if (y < 0) {
-                break
+                break;
             }
             let lat2 = lat + intervalM / metersPerDegree;
             let yMerc2 = L.Projection.SphericalMercator.project(L.latLng(lat2, 0)).y;
@@ -103,7 +103,7 @@ class Grid extends PrintStaticLayer {
                         firstRow = false;
                     }
                     if (!hasPointInPage) {
-                        break
+                        break;
                     }
                     colN += 1;
                 }
@@ -150,7 +150,7 @@ class Grid extends PrintStaticLayer {
                     ),
                     abortLoading: () => {
                     }
-                }
+                };
             }).bind(this),
             count: 2
         };

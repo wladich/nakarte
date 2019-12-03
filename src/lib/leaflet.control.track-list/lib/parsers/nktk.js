@@ -208,7 +208,7 @@ function parseNktkOld(s, version) {
     }
     if (version >= 3) {
         try {
-            trackHidden = !!(s.readNumber())
+            trackHidden = !!(s.readNumber());
         } catch (e) {
             if (e.message.match('Unexpected end of line while unpacking number')) {
                 error = ['CORRUPT'];

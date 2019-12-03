@@ -1,4 +1,4 @@
-import SimpleService from './simpleService'
+import SimpleService from './simpleService';
 import Endomondo from './endomondo';
 import Etomesto from './etomesto';
 import Gpsies from './gpsies';
@@ -26,4 +26,4 @@ export default [
     MovescountRoute,
     SportsTrackerActivity,
     SimpleService
-]
+];

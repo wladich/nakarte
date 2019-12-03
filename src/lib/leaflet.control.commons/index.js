@@ -45,7 +45,7 @@ function makeButtonWithBar(containerClass, title, iconClass) {
 
     const barContainer = L.DomUtil.create('div', 'leaflet-bar bar', container);
     stopContainerEvents(barContainer);
-    return {container, buttonContainer, link, icon, barContainer}
+    return {container, buttonContainer, link, icon, barContainer};
 }
 
 export {stopContainerEvents, makeButton, makeButtonWithBar};

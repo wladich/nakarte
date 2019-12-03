@@ -19,7 +19,7 @@ class MovescountRoute extends MovescountBase {
                 responseType: 'json',
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
             },
-        }]
+        }];
     }
 
     parseResponse(responses) {
@@ -78,7 +78,7 @@ class MovescountMove extends MovescountBase {
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
                 }
             }
-        ]
+        ];
     }
 
     parseResponse(responses) {

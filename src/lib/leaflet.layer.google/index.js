@@ -46,6 +46,6 @@ L.Layer.GoogleSat = L.TileLayer.extend({
 
     initialize: function(options) {
         L.TileLayer.prototype.initialize.call(
-            this, 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', options)
+            this, 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', options);
     }
 });

@@ -30,7 +30,7 @@ function parseOziRte(txt, name) {
             currentSegment.push({lat, lng});
         } else {
             error = 'CORRUPT';
-            break
+            break;
         }
     }
     if (currentSegment.length) {

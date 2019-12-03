@@ -282,9 +282,9 @@ L.Polyline.EditMixin = {
         const midPoint = L.latLngBounds(latlngs[nodeIndex], latlngs[nodeIndex - 1]).getCenter();
         this.addNode(nodeIndex, wrapLatLngToTarget(e.latlng, midPoint));
         if (L.Draggable._dragging) {
-            L.Draggable._dragging.finishDrag()
+            L.Draggable._dragging.finishDrag();
         }
-        latlngs[nodeIndex]._nodeMarker.dragging._draggable._onDown(e.originalEvent)
+        latlngs[nodeIndex]._nodeMarker.dragging._draggable._onDown(e.originalEvent);
         this.fire('nodeschanged');
     },
 

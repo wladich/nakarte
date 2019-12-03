@@ -11,4 +11,4 @@ export default [
     parseOziPlt,
     parseOziWpt,
     parseKml,
-]
+];

@@ -31,7 +31,7 @@ function getLayersForPrint(map, xhrQueue) {
             order.push(getZIndex(el));
             el = el.parentNode;
         }
-        return order.reverse()
+        return order.reverse();
     }
 
 

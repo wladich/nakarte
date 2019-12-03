@@ -8,12 +8,12 @@ const sessionId = randId();
 
 function captureException(e, options) {
     console.log('captureException', e, options);
-    Raven.captureException(e, options)
+    Raven.captureException(e, options);
 }
 
 function captureMessage(msg, options) {
     console.log('captureMessage', msg, options);
-    Raven.captureMessage(msg, options)
+    Raven.captureMessage(msg, options);
 }
 
 function captureMessageWithUrl(msg) {
@@ -21,11 +21,11 @@ function captureMessageWithUrl(msg) {
 }
 
 function setExtraContext(data) {
-    Raven.setExtraContext(data)
+    Raven.setExtraContext(data);
 }
 
 function captureBreadcrumb(crumb) {
-    Raven.captureBreadcrumb(crumb)
+    Raven.captureBreadcrumb(crumb);
 }
 
 function captureBreadcrumbWithUrl(crumb) {
@@ -58,4 +58,4 @@ function logEvent(eventName, extra) {
 
 
 export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb,
-    captureMessageWithUrl, logEvent, randId}
+    captureMessageWithUrl, logEvent, randId};

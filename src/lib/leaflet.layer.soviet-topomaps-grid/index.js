@@ -56,7 +56,7 @@ var Nomenclature = {
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
             let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
-                    return replacer[s]
+                    return replacer[s];
                 }
             );
             names.push(name1 + name3);
@@ -94,7 +94,7 @@ var Nomenclature = {
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
             let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
-                    return replacer[s]
+                    return replacer[s];
                 }
             );
             names.push(name1 + name3);
@@ -224,20 +224,20 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 {'text': 'Click name to copy to clibpoard', header: true},
                 {
                     'text': titles[0], callback: () => {
-                    copyToClipboard(titles[0], e.originalEvent)
+                    copyToClipboard(titles[0], e.originalEvent);
                 }
                 }
             ];
             if (titles.length > 1) {
                 items.push({
                         'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>', callback: () => {
-                            copyToClipboard(titles[1], e.originalEvent)
+                            copyToClipboard(titles[1], e.originalEvent);
                         }
                     }
                 );
                 items.push({
                         'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>', callback: () => {
-                            copyToClipboard(titles[2], e.originalEvent)
+                            copyToClipboard(titles[2], e.originalEvent);
                         }
                     }
                 );

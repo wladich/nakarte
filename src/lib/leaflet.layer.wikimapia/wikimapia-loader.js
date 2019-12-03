@@ -1,5 +1,5 @@
 import {TiledDataLoader} from '~/lib/tiled-data-loader';
-import wmUtils from './wm-utils'
+import wmUtils from './wm-utils';
 import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class WikimapiaLoader extends TiledDataLoader {
@@ -43,7 +43,7 @@ class WikimapiaLoader extends TiledDataLoader {
                 x: Math.floor(layerTileCoords.x / multiplier),
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
-            }
+            };
         }
         else if (z < this.minZoom) {
             let z2 = this.minZoom,
@@ -52,10 +52,10 @@ class WikimapiaLoader extends TiledDataLoader {
                 x: Math.floor(layerTileCoords.x / multiplier),
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
-            }
+            };
         }
         else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y}
+            return {z, x: layerTileCoords.x, y: layerTileCoords.y};
         }
     }
 
@@ -65,7 +65,7 @@ class WikimapiaLoader extends TiledDataLoader {
         return {
             url,
             options: {timeout: 20000}
-        }
+        };
     }
 
     processResponse(xhr) {
@@ -74,7 +74,7 @@ class WikimapiaLoader extends TiledDataLoader {
                     return {
                         tileData,
                         coords: tileData.coords
-                    }
+                    };
                 }
             );
 

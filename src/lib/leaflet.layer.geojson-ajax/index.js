@@ -33,7 +33,7 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
                         }});
                         notify(`Failed to get GeoJSON data from ${this.url}: ${e.message}`);
                     }
-                )
+                );
         },
 
         onAdd: function(map) {

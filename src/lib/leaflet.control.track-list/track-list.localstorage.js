@@ -1,4 +1,4 @@
-import './track-list'
+import './track-list';
 import L from 'leaflet';
 import {parseNktkSequence} from './lib/parsers/nktk';
 import safeLocalStorage from '~/lib/safe-localstorage';
@@ -50,7 +50,7 @@ L.Control.TrackList.include({
             }
             if (keys.length > this.maxLocalStorageSessions) {
                 keys.sort(function(a, b) {
-                        return a - b
+                        return a - b;
                     }
                 );
                 for (i = 0; i < keys.length - this.maxLocalStorageSessions; i++) {

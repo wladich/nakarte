@@ -149,7 +149,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                             this._images[image.src] = image;
                         }
                     }
-                )
+                );
             } else {
                 return Promise.resolve();
             }
@@ -447,7 +447,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             this._map.off('contextmenu', this.onRightClick, this);
             if (this._hoverMarker) {
                 this._hoverMarker = null;
-                this.fire('markerleave', {marker: this._hoverMarker})
+                this.fire('markerleave', {marker: this._hoverMarker});
             }
             this._map.getPanes().markerPane.removeChild(this.toolTip);
             L.GridLayer.prototype.onRemove.call(this, map);

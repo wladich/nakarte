@@ -12,7 +12,7 @@ function getGoogle() {
         _pending = new Promise((resolve, reject) => {
                 loadScript(config.googleApiUrl, (error) => {
                         if (error) {
-                            reject(error)
+                            reject(error);
                         }
                         _google = window.google;
                         resolve(_google);

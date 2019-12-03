@@ -64,9 +64,9 @@ class WikimediaLoader extends TiledDataLoader {
         let z = layerTileCoords.z;
         let z2 = null;
         if (z > this.maxZoom) {
-            z2 = this.maxZoom
+            z2 = this.maxZoom;
         } else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y}
+            return {z, x: layerTileCoords.x, y: layerTileCoords.y};
         }
 
         let multiplier = 1 << (z - z2);
@@ -74,7 +74,7 @@ class WikimediaLoader extends TiledDataLoader {
             x: Math.floor(layerTileCoords.x / multiplier),
             y: Math.floor(layerTileCoords.y / multiplier),
             z: z2
-        }
+        };
     }
 
 
@@ -86,7 +86,7 @@ class WikimediaLoader extends TiledDataLoader {
                 timeout: 10000,
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
             }
-        }
+        };
     }
 
     async processResponse(xhr, originalDataTileCoords) {
@@ -100,7 +100,7 @@ class WikimediaLoader extends TiledDataLoader {
         return {
             tileData,
             coords: originalDataTileCoords
-        }
+        };
     }
 }
 

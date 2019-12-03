@@ -179,7 +179,7 @@ const LocateControl = L.Control.extend({
                 setTimeout(() => {
                         this._onLocationError(error);
                     }, 0
-                )
+                );
             }
             this._watchID = navigator.geolocation.watchPosition(
                 this._onLocationSuccess.bind(this), this._onLocationError.bind(this),
@@ -254,7 +254,7 @@ const LocateControl = L.Control.extend({
                 const screenSize = this._map.getSize();
                 const averageScreenSize = (screenSize.x + screenSize.y) / 2;
                 if (p1.distanceTo(p2) > averageScreenSize * this.options.minDistForAutoZoom) {
-                    newZoom = autoZoom
+                    newZoom = autoZoom;
                 } else {
                     newZoom = currentZoom > zoomFitAccuracy ? zoomFitAccuracy : currentZoom;
                 }
@@ -263,14 +263,14 @@ const LocateControl = L.Control.extend({
         },
 
         _onMapMove: function() {
-            this._handleEvent(EVENT_MAP_MOVE)
+            this._handleEvent(EVENT_MAP_MOVE);
         },
 
         _onMapMoveEnd: function() {
             const ll = this._map.getCenter();
             setTimeout(() => {
                     if (this._map.getCenter().equals(ll)) {
-                        this._handleEvent(EVENT_MAP_MOVE_END)
+                        this._handleEvent(EVENT_MAP_MOVE_END);
                     }
                 }, 100
             );
@@ -351,12 +351,12 @@ const LocateControl = L.Control.extend({
                         this._setViewToLocation();
                     } else if (this._state === STATE_ENABLED_FOLLOWING || state === STATE_UPDATING_FOLLOWING) {
                         this._updateMapPositionWhileFollowing();
-                        this._setState(STATE_UPDATING_FOLLOWING)
+                        this._setState(STATE_UPDATING_FOLLOWING);
                     }
                     break;
                 case EVENT_LOCATION_ERROR:
                     if (state === STATE_DISABLED) {
-                        return
+                        return;
                     }
                     this.options.showError(data);
                     this._setState(STATE_DISABLED);

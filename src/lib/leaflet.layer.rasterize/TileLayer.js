@@ -71,7 +71,7 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
             return {
                 tilePromise: printOptions.rawData ? promise : promise.then(imgFromDataString),
                 abortLoading: () => promise.abort()
-            }
+            };
         }
     }
 );
@@ -99,7 +99,7 @@ const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
         return {
             tilePromise: tilePromise.then(this.getCanvasFromTile),
             abortLoading: noop
-        }
+        };
     }
 });
 

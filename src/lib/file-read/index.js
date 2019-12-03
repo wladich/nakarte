@@ -21,7 +21,7 @@ const selectFiles = (() => {
         );
         fileInput.click();
         return result;
-    }
+    };
 })();
 
 function readFile(file) {

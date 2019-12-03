@@ -27,7 +27,7 @@ class PrintStaticLayer {
                     ),
                     abortLoading: () => {
                     }
-                }
+                };
             }).bind(this),
             count: 1
         };

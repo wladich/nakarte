@@ -42,7 +42,7 @@ const MapillaryCoverage = L.GridLayer.extend({
             canvasCtx.fillStyle = this.options.color;
             for (let feature of tileData['mapillary-sequence-overview']) {
                 if (feature.geometry.type !== 'Point') {
-                    throw new Error(`Invalid sequence overview geometry type "${feature.geometry.type}"`)
+                    throw new Error(`Invalid sequence overview geometry type "${feature.geometry.type}"`);
                 }
                 canvasCtx.beginPath();
                 let x = feature.geometry.coordinates[0] * multiplier - offsetX;
@@ -70,7 +70,7 @@ const MapillaryCoverage = L.GridLayer.extend({
             canvasCtx.lineJoin = "bevel";
             for (let feature of tileData['mapillary-sequences']) {
                 if (feature.geometry.type !== 'MultiLineString') {
-                    throw new Error(`Invalid sequence geometry type "${feature.geometry.type}"`)
+                    throw new Error(`Invalid sequence geometry type "${feature.geometry.type}"`);
                 }
                 let {multiplier, offsetX, offsetY} = adjustment;
 
@@ -109,7 +109,7 @@ const MapillaryCoverage = L.GridLayer.extend({
             canvasCtx.fillStyle = this.options.color;
             for (let feature of tileData['mapillary-images']) {
                 if (feature.geometry.type !== 'Point') {
-                    throw new Error(`Invalid image geometry type "${feature.geometry.type}"`)
+                    throw new Error(`Invalid image geometry type "${feature.geometry.type}"`);
                 }
                 canvasCtx.beginPath();
                 let x = feature.geometry.coordinates[0] * multiplier - offsetX;
@@ -134,7 +134,7 @@ const MapillaryCoverage = L.GridLayer.extend({
                 this.drawSequences(canvas, width);
             } else {
                 this.drawSequences(canvas, 2);
-                this.drawImages(canvas)
+                this.drawImages(canvas);
             }
 
         },

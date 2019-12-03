@@ -194,7 +194,7 @@ L.Control.TrackList = L.Control.extend({
             return track.feature.getLayers().filter(function(layer) {
                     return layer instanceof L.Polyline;
                 }
-            )
+            );
         },
 
         getTrackPoints: function(track) {
@@ -470,7 +470,7 @@ L.Control.TrackList = L.Control.extend({
 
         duplicateTrack: function(track) {
             const segments = this.getTrackPolylines(track).map((line) => {
-                return line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
+                return line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng]);
             });
             const points = this.getTrackPoints(track)
                 .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label}));

@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import ko from 'knockout';
 import './coordinates.css';
 import copyToClipboard from '~/lib/clipboardCopy';
@@ -37,7 +37,7 @@ L.Control.Coordinates = L.Control.extend({
                     for (let format of this.formats) {
                         if (value === format.code) {
                             this.format(format);
-                            break
+                            break;
                         }
                     }
                 }

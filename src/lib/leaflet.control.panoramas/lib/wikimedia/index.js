@@ -75,7 +75,7 @@ function parseSearchResponse(resp) {
                 description: description,
                 pageUrl: iinfo.descriptionurl,
                 pageId: page.pageid.toString()
-            })
+            });
         }
         if (images.length) {
             return images;
@@ -204,7 +204,7 @@ const Viewer = L.Evented.extend({
         let image = this.images[imageIdx];
         let mapSize = this.map.getSize();
         if (!mapSize.x || !mapSize.y) {
-            mapSize = {x: 500, y: 500}
+            mapSize = {x: 500, y: 500};
         }
         let maxZoom = Math.log2(Math.max(image.width / mapSize.x, image.height / mapSize.y)) + 2;
         if (maxZoom < 1) {
@@ -267,7 +267,7 @@ const Viewer = L.Evented.extend({
                     })
 
                 }
-            )
+            );
         }
     },
 

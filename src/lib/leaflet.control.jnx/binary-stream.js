@@ -1,4 +1,4 @@
-import utf8 from 'utf8'
+import utf8 from 'utf8';
 
 class BinStream {
     constructor(size, littlEndian) {
@@ -87,4 +87,4 @@ class BinStream {
     }
 }
 
-export {BinStream}
+export {BinStream};

@@ -153,7 +153,7 @@ class XHRQueue {
             .catch(() => {})
             .then(() => this._onRequestReady(promise));
         this._activeCount += 1;
-        promise.send()
+        promise.send();
     }
 
     _onRequestReady(promise) {

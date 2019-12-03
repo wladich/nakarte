@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import '~/lib/leaflet.layer.canvasMarkers'
+import '~/lib/leaflet.layer.canvasMarkers';
 import {openPopupWindow} from '~/lib/popup-window';
 import escapeHtml from 'escape-html';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
@@ -53,7 +53,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             var properties = marker.properties,
                 toolTip = properties.grade || '';
             if (toolTip && properties.elevation) {
-                toolTip += ', '
+                toolTip += ', ';
             }
             toolTip += properties.elevation || '';
             if (toolTip) {
@@ -167,7 +167,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 for (let comment of properties.comments) {
                     let user = '';
                     if (comment.user) {
-                        user = `<span class="westra-passes-description-comment-author">${comment.user}:</span>`
+                        user = `<span class="westra-passes-description-comment-author">${comment.user}:</span>`;
                     }
                     comments += `<p class="westra-passes-description-comment">${user}${comment.content}</p>`;
                 }
@@ -175,13 +175,13 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     <tr>
                         <td>Комментарии</td>
                         <td>${comments}</td>
-                    </tr>`
+                    </tr>`;
             }
             let reports;
             if (properties.reports_total) {
                 reports = `<br>Отчетов: ${properties.reports_total}, с фото: ${properties.reports_photo || 0}, с описанием: ${properties.reports_tech || 0}`;
             } else {
-                reports = '<br>Отчетов нет'
+                reports = '<br>Отчетов нет';
             }
             let description = `
                 <table class="pass-details">

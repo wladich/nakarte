@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import './page-feature.css';
 
 const PageFeature = L.Marker.extend({

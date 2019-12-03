@@ -9,4 +9,4 @@ function xmlGetNodeText(node) {
     }
 }
 
-export {xmlGetNodeText}
+export {xmlGetNodeText};

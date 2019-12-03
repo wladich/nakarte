@@ -48,7 +48,7 @@ function parseKml(txt, name) {
         for (i = 0; i < placemarks.length; i++) {
             pointObjs = placemarks[i].getElementsByTagName('Point');
             if (pointObjs.length === 0) {
-                continue
+                continue;
             } else if (pointObjs.length > 1) {
                 error = 'CORRUPT';
                 break;
@@ -159,4 +159,4 @@ function parseKmz(txt, name) {
     return geodata;
 }
 
-export {parseKml, parseKmz}
+export {parseKml, parseKmz};

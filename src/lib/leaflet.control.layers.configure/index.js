@@ -49,7 +49,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     } catch (e) {
                         logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
                             extra: {"localstorage.layersEnabled": serialized.slice(0, 1000)}
-                        })
+                        });
                     }
                 }
                 // restore custom layers;
@@ -75,7 +75,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             _onConfigButtonClick: function() {
-                this.showLayersSelectWindow()
+                this.showLayersSelectWindow();
             },
 
             _initLayersSelectWindow: function() {
@@ -350,10 +350,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             checkCustomLayerValues: function(fieldValues) {
                 if (!fieldValues.url) {
-                    return {'error': 'Url is empty'}
+                    return {'error': 'Url is empty'};
                 }
                 if (!fieldValues.name) {
-                    return {'error': 'Name is empty'}
+                    return {'error': 'Name is empty'};
                 }
                 return {};
             },
@@ -501,7 +501,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
         }
     );
     if (control._map) {
-        control.__injectConfigButton()
+        control.__injectConfigButton();
     }
     control._initializeLayersState();
 }

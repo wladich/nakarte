@@ -5,7 +5,7 @@ function cached(f) {
             cache[arg] = f(arg);
         }
         return cache[arg];
-    }
+    };
 }
 
 function iconFromBackgroundImage(className) {

@@ -25,7 +25,7 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
                     radius: searchRadiusMeters,
                     preference: google.maps.StreetViewPreference.NEAREST
                 }, (data, status) => resolve({data, status})
-            )
+            );
         }
     );
     if (status === google.maps.StreetViewStatus.OK) {
@@ -106,7 +106,7 @@ const Viewer = L.Evented.extend({
 
 async function getViewer(container) {
     const google = await getGoogle();
-    return new Viewer(google, container)
+    return new Viewer(google, container);
 }
 
 

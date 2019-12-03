@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {NakarteUrlLoader} from './lib/services/nakarte'
+import {NakarteUrlLoader} from './lib/services/nakarte';
 
 
 L.Control.TrackList.include({

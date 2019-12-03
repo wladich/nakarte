@@ -36,7 +36,7 @@ if (localStorageWorks()) {
         clear: function() {
             _storage = {};
         }
-    }
+    };
 }
 
 export default storage;

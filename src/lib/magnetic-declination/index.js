@@ -57,4 +57,4 @@ function getDeclination(lat, lon) {
 
 data = loadData();
 
-export {getDeclination}
+export {getDeclination};

@@ -38,7 +38,7 @@ class Endomondo extends BaseService {
 
         let data;
         try {
-            data = JSON.parse(response.responseBinaryText)
+            data = JSON.parse(response.responseBinaryText);
         } catch (e) {
             return [{name: 'Endomondo activity', error: 'UNSUPPORTED'}];
         }
@@ -52,7 +52,7 @@ class Endomondo extends BaseService {
                     return {
                         lat: p.latitude,
                         lng: p.longitude
-                    }
+                    };
                 }
             );
         if (track.length === 0) {

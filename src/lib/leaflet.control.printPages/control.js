@@ -1,11 +1,11 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import ko from 'knockout';
 import '~/lib/knockout.component.progress/progress';
 import '~/lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
 import Contextmenu from '~/lib/contextmenu';
-import {renderPages} from './map-render'
+import {renderPages} from './map-render';
 import formHtml from './form.html';
 import {notify} from '~/lib/notifications';
 import {makePdf} from './pdf';
@@ -137,7 +137,7 @@ L.Control.PrintPages = L.Control.extend({
             page.on('moveend', this.notifyChange, this);
             this.updateFormZooms();
             this.notifyChange();
-            return page
+            return page;
         },
 
         addLandscapePage: function() {
@@ -157,7 +157,7 @@ L.Control.PrintPages = L.Control.extend({
                 this.pages[i].setLabel((i + 1).toString());
             }
             this.notifyChange();
-            this.updateFormZooms()
+            this.updateFormZooms();
         },
 
         removePages: function() {
@@ -179,9 +179,9 @@ L.Control.PrintPages = L.Control.extend({
         zoomForPrint: function() {
             let zoom = this.zoomLevel();
             if (zoom === 'auto') {
-                zoom = this.suggestZooms()
+                zoom = this.suggestZooms();
             } else {
-                zoom = {mapZoom: zoom, satZoom: zoom}
+                zoom = {mapZoom: zoom, satZoom: zoom};
             }
             return zoom;
         },
@@ -204,7 +204,7 @@ L.Control.PrintPages = L.Control.extend({
                         latLngBounds: page.getLatLngBounds(),
                         printSize: page.getPrintSize(),
                         label: page.getLabel()
-                    }
+                    };
                 }
             );
             const resolution = this.resolution();
@@ -411,7 +411,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         hasPages: function() {
-            return !!this.pages.length
+            return !!this.pages.length;
         },
 
         _pagesNumLabel: function() {

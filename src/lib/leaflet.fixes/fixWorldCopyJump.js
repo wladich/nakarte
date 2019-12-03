@@ -40,7 +40,7 @@ function fixVectorMarkerWorldJump() {
             const mapCenter = this._map.getCenter();
 
             if (polylineCenter.lng < mapCenter.lng - 180) {
-                shift = worldWidth
+                shift = worldWidth;
             } else if (polylineCenter.lng > mapCenter.lng + 180) {
                 shift = -worldWidth;
             } else {
@@ -124,7 +124,7 @@ function fixVectorMarkerWorldJump() {
             } else if (Math.abs(lng - this._lastResetLongitude) > 90) {
                 this.fire('viewreset');
             }
-        })
+        });
     });
 
     // Avoid marker longitude change from 180 to -180 while dragging.
@@ -148,7 +148,7 @@ function fixVectorMarkerWorldJump() {
         marker
             .fire('move', e)
             .fire('drag', e);
-    }
+    };
 }
 
-export {wrapLatLngToTarget, fixVectorMarkerWorldJump, wrapLatLngBoundsToTarget}
+export {wrapLatLngToTarget, fixVectorMarkerWorldJump, wrapLatLngBoundsToTarget};

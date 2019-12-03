@@ -8,12 +8,12 @@ function parseWaypoint(rawPoint) {
     let lng = Number(rawPoint.ln);
     if (typeof name !== 'string' || !name || isNaN(lat) || isNaN(lng) ||
         lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        return {valid: false}
+        return {valid: false};
     }
     return {
         valid: true,
         point: {lat, lng, name}
-    }
+    };
 }
 
 function parseTrack(rawTrack) {
@@ -48,7 +48,7 @@ async function loadTracksFromJson(value) {
     const jsonString = urlSafeBase64.decode(value);
     let data;
     try {
-        data = JSON.parse(jsonString)
+        data = JSON.parse(jsonString);
     } catch (e) {
         return errCorrupt;
     }
@@ -106,7 +106,7 @@ async function loadTracksFromJson(value) {
             viewProps.measureTicksShown = !!el.m;
         }
         geodata.forEach((el) => Object.assign(el, viewProps));
-        geoDataArray.push(...geodata)
+        geoDataArray.push(...geodata);
     }
     return geoDataArray;
 }

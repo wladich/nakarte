@@ -53,7 +53,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
             label: marker.label,
             icon: marker.icon,
             _label: marker._label
-        }
+        };
     },
 
     _loadMarkers: function(data) {
@@ -69,7 +69,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                 _label: label,
                 label: getLabel,
                 icon, cacheId
-            }
+            };
         });
         this.addMarkers(markers);
         this._dataLoaded = true;
@@ -77,10 +77,10 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
     },
 
     openCachePage: function(e) {
-        const url = `https://geocaching.su/?pn=101&cid=${e.marker.cacheId}`
+        const url = `https://geocaching.su/?pn=101&cid=${e.marker.cacheId}`;
         openPopupWindow(url, 900, 'geocaching_su');
     }
 });
 
 
-export {GeocachingSu}
+export {GeocachingSu};

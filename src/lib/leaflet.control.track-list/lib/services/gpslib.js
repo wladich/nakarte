@@ -15,7 +15,7 @@ class Gpslib extends BaseService {
         return [{
             url: urlViaCorsProxy(`https://www.gpslib.ru/tracks/download/${trackId}.gpx`),
             options: {responseType: 'binarystring'}
-        }]
+        }];
     }
 
     parseResponse(responses) {

@@ -29,7 +29,7 @@ L.Control.JNX = L.Control.extend({
                     selectedLayer = {
                         layer,
                         layerName: layerRec.name
-                    }
+                    };
                 }
             }
             return selectedLayer;
@@ -139,7 +139,7 @@ L.Control.JNX = L.Control.extend({
                 .on('change', () => this.fire('selectionchange'))
                 .on('click contextmenu', (e) => {
                     L.DomEvent.stop(e);
-                    this.contextMenu.show(e)
+                    this.contextMenu.show(e);
                 });
             this.fire('selectionchange');
         },

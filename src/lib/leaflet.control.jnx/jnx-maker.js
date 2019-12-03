@@ -22,7 +22,7 @@ function imageFromarrayBuffer(arr) {
             image.onerror = () => reject(new Error('Tile image corrupt'));
             image.src = dataUrl;
         }
-    )
+    );
 }
 
 async function convertToJpeg(image) {
@@ -47,7 +47,7 @@ function ensureImageJpg(image) {
     }
     if (arrayBufferToString(image.slice(0, 4)) === '\x89PNG' &&
         arrayBufferToString(image.slice(-8)) === 'IEND\xae\x42\x60\x82') {
-        return convertToJpeg(image)
+        return convertToJpeg(image);
     } else if (arrayBufferToString(image.slice(0, 2)) === '\xff\xd8' &&
         arrayBufferToString(image.slice(-2)) === '\xff\xd9') {
         return Promise.resolve(image);

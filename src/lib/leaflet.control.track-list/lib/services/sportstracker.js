@@ -29,7 +29,7 @@ class SportsTrackerActivity extends SportsTrackerBase {
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
                 }
             }
-        ]
+        ];
     }
 
     parseResponse(responses) {

@@ -1,11 +1,11 @@
 import L from 'leaflet';
-import './TileLayer'
-import './Bing'
-import './Yandex'
-import './Google'
-import './WestraPasses'
-import './CanvasMarkers'
-import './MeasuredLine'
+import './TileLayer';
+import './Bing';
+import './Yandex';
+import './Google';
+import './WestraPasses';
+import './CanvasMarkers';
+import './MeasuredLine';
 
 function getTempMap(zoom, fullSize, pixelBounds) {
     const container = L.DomUtil.create('div', '', document.body);
@@ -44,4 +44,4 @@ function disposeMap(map) {
 }
 
 
-export {getTempMap, disposeMap}
+export {getTempMap, disposeMap};

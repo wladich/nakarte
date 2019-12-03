@@ -2,14 +2,14 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '~/lib/leaflet.control.printPages/control'
-import '~/lib/leaflet.control.caption'
-import config from './config'
+import '~/lib/leaflet.control.printPages/control';
+import '~/lib/leaflet.control.caption';
+import config from './config';
 import '~/lib/leaflet.control.coordinates';
 import enableLayersControlHotKeys from '~/lib/leaflet.control.layers.hotkeys';
 import '~/lib/leaflet.hashState/Leaflet.Map';
 import '~/lib/leaflet.hashState/Leaflet.Control.Layers';
-import {fixAll} from '~/lib/leaflet.fixes'
+import {fixAll} from '~/lib/leaflet.fixes';
 import './adaptive.css';
 import '~/lib/leaflet.control.panoramas';
 import '~/lib/leaflet.control.track-list/track-list';
@@ -166,7 +166,7 @@ function setUp() {
     }
 
     if (L.Browser.mobile) {
-        map.on('mousedown dragstart', () => layersControl.setMinimized())
+        map.on('mousedown dragstart', () => layersControl.setMinimized());
     }
 
     raiseControlsOnFocus(map);

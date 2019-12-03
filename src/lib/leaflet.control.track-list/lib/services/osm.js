@@ -19,7 +19,7 @@ class Osm extends BaseService {
         return [{
             url: urlViaCorsProxy(`https://www.openstreetmap.org/trace/${trackId}/data`),
             options: {responseType: 'binarystring'}
-        }]
+        }];
     }
 
     parseResponse(responses) {

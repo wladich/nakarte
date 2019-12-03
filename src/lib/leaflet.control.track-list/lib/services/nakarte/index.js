@@ -78,7 +78,7 @@ class NakarteUrlLoader {
     }
 
     async loadPoint(values) {
-        return parsePointFromHashValues(values)
+        return parsePointFromHashValues(values);
     }
 }
 
@@ -104,12 +104,12 @@ class NakarteUrl {
 
 function parsePointFromHashValues(values) {
     if (values.length < 2) {
-        return [{name: 'Point in url', error: 'CORRUPT'}]
+        return [{name: 'Point in url', error: 'CORRUPT'}];
     }
     const lat = parseFloat(values[0]);
     const lng = parseFloat(values[1]);
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        return [{name: 'Point in url', error: 'CORRUPT'}]
+        return [{name: 'Point in url', error: 'CORRUPT'}];
     }
     const name = ((values[2] || '').trim()) || 'Point';
     return [{name, points: [{name, lat, lng}]}];

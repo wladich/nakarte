@@ -142,7 +142,7 @@ function simplifyPolygon(latlngs, tileCoords, tileHasChildren, projectObj) {
         let p = points[i];
         latlngs.push([p.x, p.y]);
     }
-    return latlngs
+    return latlngs;
 }
 
 async function parseTile(s, projectObj) {
@@ -190,7 +190,7 @@ async function parseTile(s, projectObj) {
             throw new Error('Invalid place bounds');
         }
         place.boundsWESN = bounds.slice(1).map((x) => {
-                return parseInt(x, 10) / 1e7
+                return parseInt(x, 10) / 1e7;
             }
         );
 
@@ -264,4 +264,4 @@ async function parseTile(s, projectObj) {
 //     }
 // },
 
-export default {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl}
+export default {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl};

@@ -88,12 +88,12 @@ function offestFromEvent(e) {
         return {
             offsetX: e.clientX - rect.left,
             offestY: e.clientY - rect.top
-        }
+        };
     } else {
         return {
             offsetX: e.offsetX,
             offestY: e.offsetY
-        }
+        };
     }
 }
 
@@ -101,7 +101,7 @@ function movementFromEvents(e1, e2) {
     return {
         movementX: e2.clientX - e1.clientX,
         movementY: e2.clientY - e1.clientY
-    }
+    };
 }
 
 var DragEvents = L.Class.extend({
@@ -507,7 +507,7 @@ const ElevationProfile = L.Class.extend({
                     endApprox: '',
                     approx: '',
                     incomplete: 'No elevation data',
-                }
+                };
             } else {
                 d = {
                     maxElev: Math.round(stats.max),
@@ -546,7 +546,7 @@ const ElevationProfile = L.Class.extend({
                 <tr class="start-group"><td>Distance:</td><td>${d.dist} km</td></tr>
                 <tr><td colspan="2" style="text-align: center">${d.incomplete}</td></tr>
                 </table>
-                `
+                `;
         },
 
         calcGridValues: function(minValue, maxValue) {
@@ -564,7 +564,7 @@ const ElevationProfile = L.Class.extend({
                     tick2 = Math.ceil(maxValue / tickStep);
                     if ((tick2 - tick1) < ticksN) {
                         matchFound = true;
-                        break
+                        break;
                     }
                 }
                 if (matchFound) {
@@ -596,7 +596,7 @@ const ElevationProfile = L.Class.extend({
                 for (i = scanStart + 1; i < scanEnd; i++) {
                     linearValue += linearDelta;
                     if (filtered[i] === null) {
-                        continue
+                        continue;
                     }
                     error = Math.abs(filtered[i] - linearValue);
                     if (error === null || error > maxError) {
@@ -656,7 +656,7 @@ const ElevationProfile = L.Class.extend({
             for (let i = firstNotNullIndex + 1; i <= lastNotNullIndex; i++) {
                 let value = values[i];
                 if (value === null) {
-                    continue
+                    continue;
                 }
                 let length = i - prevNotNullIndex;
                 let gradient = (value - prevNotNullValue) / length;
@@ -854,7 +854,7 @@ const ElevationProfile = L.Class.extend({
                     if (prevDist < minDist + prevSampleDist) {
                         di = -((minDist - prevDist) / 2 / prevSampleDist + 1 / 2);
                     } else {
-                        di = -0.001
+                        di = -0.001;
                     }
                 } else {
                     if (prevDist < nextDist) {

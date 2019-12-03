@@ -109,7 +109,7 @@ L.Wikimapia = L.GridLayer.extend({
                     canvas._tileData = data.tileData;
                     canvas._adjustment = data.adjustment;
                     this.drawTile(canvas);
-                    this._tileOnLoad(done, canvas)
+                    this._tileOnLoad(done, canvas);
                 }
             );
 

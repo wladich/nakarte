@@ -1,6 +1,6 @@
 import Raven from 'raven-js';
 import './index.css';
-import App from './App'
+import App from './App';
 import config from './config';
 
 function getUid() {
@@ -45,7 +45,7 @@ console.log('Version:', RELEASE_VER);
 
 let uid;
 try {
-    uid = getUid()} catch (e) {
+    uid = getUid();} catch (e) {
     // ignore error
 }
 console.log('UID:', uid);

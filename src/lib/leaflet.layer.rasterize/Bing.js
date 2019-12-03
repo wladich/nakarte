@@ -13,7 +13,7 @@ BingLayer.include({
                                     resolve();
                                 }
                             }, 50
-                        )
+                        );
                     }
                 );
             }

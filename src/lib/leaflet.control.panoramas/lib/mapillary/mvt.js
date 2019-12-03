@@ -40,7 +40,7 @@ function parseGeometry(geometryType, ints, coordinatesScale) {
                     throw new Error(`repeat=${cmdRepeat} for command LineTo`);
                 }
                 if (!line) {
-                    throw new Error('LineTo with empty linestring')
+                    throw new Error('LineTo with empty linestring');
                 }
                 pos +=1;
                 for (let cmdN = 0; cmdN < cmdRepeat; cmdN++){
@@ -49,7 +49,7 @@ function parseGeometry(geometryType, ints, coordinatesScale) {
                     }
                     x += decodeCoordinate(ints[pos]);
                     y += decodeCoordinate(ints[pos + 1]);
-                    line.push([x * coordinatesScale, y * coordinatesScale])
+                    line.push([x * coordinatesScale, y * coordinatesScale]);
                     pos += 2;
                 }
                 break;
@@ -58,7 +58,7 @@ function parseGeometry(geometryType, ints, coordinatesScale) {
                     throw new Error(`ClosePath command for non-polygon type ${geometryType}`);
                 }
                 if (!line) {
-                    throw new Error('ClosePath with empty linestring')
+                    throw new Error('ClosePath with empty linestring');
                 }
                 if (cmdRepeat !== 1) {
                     throw new Error(`ClosePath repeats ${cmdRepeat} times`);

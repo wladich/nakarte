@@ -29,7 +29,7 @@ function fixPanAnimationBug() {
 }
 
 function fixTouchDetection() {
-    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints)
+    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints);
 }
 
 function fixMapKeypressEvent() {
@@ -40,7 +40,7 @@ function fixMapKeypressEvent() {
         } else {
             originalHandleDOMEvent.call(this, e);
         }
-    }
+    };
 }
 
 function fixVectorDrawWhileAnimation() {
@@ -90,7 +90,7 @@ function allowControlHorizontalStacking() {
             L.DomUtil.addClass(this._container, 'leaflet-control-horizontal-stack');
         }
         return result;
-    }
+    };
 }
 
 function addTooltipDelay() {
@@ -108,7 +108,7 @@ function addTooltipDelay() {
     L.Layer.prototype.closeTooltip = function() {
         clearInterval(this._pendingTooltip);
         origCloseTooltip.call(this);
-    }
+    };
 }
 
-export {fixAll}
+export {fixAll};

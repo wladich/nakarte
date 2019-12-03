@@ -20,7 +20,7 @@ L.Polyline.include({
                     .subtract(origin)
                     .add(L.point([shift, 0]))
                     .unscaleBy(scale);
-            }
+            };
         },
 
         _shift: function(targetBounds, zoom) {
@@ -32,7 +32,7 @@ L.Polyline.include({
                 const targetCenter = targetBounds.getCenter();
 
                 if (polylineCenter.lng < targetCenter.lng - 180) {
-                    shift = 1
+                    shift = 1;
                 } else if (polylineCenter.lng > targetCenter.lng + 180) {
                     shift = -1;
                 } else {
@@ -88,7 +88,7 @@ L.Polyline.include({
                         ),
                         abortLoading: () => {
                         }
-                    }
+                    };
                 }).bind(this),
                 count: 1
             };

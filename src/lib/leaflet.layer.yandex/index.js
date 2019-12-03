@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import './style.css';
 
 const yandexCrs = L.CRS.EPSG3395;
@@ -40,7 +40,7 @@ L.Layer.Yandex = L.TileLayer.extend({
             const coordsBelow = L.point(coords).add([0, 1]);
             coordsBelow.z = coords.z;
             tile._adjustHeight = this._getTilePos(coordsBelow).y - this._getTilePos(coords).y;
-            return tile
+            return tile;
         },
 
         _initTile: function(tile) {

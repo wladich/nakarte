@@ -26,9 +26,9 @@ class MapillaryLoader extends TiledDataLoader {
         } else if (z < 0) {
             z2 = 0;
         } else if (z > this.maxZoom) {
-            z2 = this.maxZoom
+            z2 = this.maxZoom;
         } else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y}
+            return {z, x: layerTileCoords.x, y: layerTileCoords.y};
         }
 
         let multiplier = 1 << (z - z2);
@@ -36,7 +36,7 @@ class MapillaryLoader extends TiledDataLoader {
             x: Math.floor(layerTileCoords.x / multiplier),
             y: Math.floor(layerTileCoords.y / multiplier),
             z: z2
-        }
+        };
     }
 
 
@@ -48,7 +48,7 @@ class MapillaryLoader extends TiledDataLoader {
                 timeout: 10000,
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
             }
-        }
+        };
     }
 
     calcAdjustment(layerTileCoords, dataTileCoords) {
@@ -82,7 +82,7 @@ class MapillaryLoader extends TiledDataLoader {
         return {
             tileData,
             coords: originalDataTileCoords
-        }
+        };
     }
 }
 

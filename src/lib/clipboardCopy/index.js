@@ -11,10 +11,10 @@ function showNotification(message, mouseEvent) {
         x = mouseEvent.clientX - w - 8,
         y = mouseEvent.clientY - h / 2;
     if (x < 0) {
-        x = 0
+        x = 0;
     }
     if (y < 0) {
-        y = 0
+        y = 0;
     }
     el.style.top = y + 'px';
     el.style.left = x + 'px';

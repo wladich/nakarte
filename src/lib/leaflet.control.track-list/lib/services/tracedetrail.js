@@ -16,7 +16,7 @@ class Tracedetrail extends BaseService {
         return [{
             url: urlViaCorsProxy(`https://tracedetrail.com/en/trace/geomSections/${trackId}`),
             options: {responseType: 'json'}
-        }]
+        }];
     }
 
     parseResponse(responses) {
