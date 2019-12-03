@@ -4,7 +4,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js --hot",
-    "lint": "eslint '**/*.js'"
+    "lint": "eslint '**/*.js' && stylelint '**/*.css'"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,9 @@
     "raw-loader": "^4.0.0",
     "recursive-readdir": "^2.2.2",
     "style-loader": "^1.0.0",
+    "stylelint": "^12.0.0",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-webpack-plugin": "^1.1.1",
     "url-loader": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
