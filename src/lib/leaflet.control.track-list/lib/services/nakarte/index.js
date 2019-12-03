@@ -89,7 +89,7 @@ class NakarteUrl {
             .filter(([name, ]) => paramNames.includes(name));
     }
 
-    isOurUrl(url) {
+    isOurUrl() {
         return this._params.length > 0;
     }
 

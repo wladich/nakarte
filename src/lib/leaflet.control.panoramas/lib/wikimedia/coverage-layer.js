@@ -134,7 +134,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
             delete tile._adjustment;
         },
 
-        drawTile: function(canvas, coords) {
+        drawTile: function(canvas, _unused_coords) {
             if (!this._map) {
                 return;
             }

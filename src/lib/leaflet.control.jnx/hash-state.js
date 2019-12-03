@@ -21,7 +21,7 @@ L.Control.JNX.include({
 
         unserializeState: function(values) {
 
-            function validateFloat(value, min, max) {
+            function validateFloat(value) {
                 value = parseFloat(value);
                 if (isNaN(value)) {
                     throw new Error('INVALID VALUE');

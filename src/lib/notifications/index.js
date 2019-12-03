@@ -1,7 +1,7 @@
 import alertify from 'alertify.js';
 import './style.css';
 
-function notify(message, level) {
+function notify(message) {
     alertify.alert(message);
 }
 

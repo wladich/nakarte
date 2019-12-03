@@ -7,7 +7,7 @@ L.Control.Layers.include({
         stateChangeEvents: ['baselayerchange', 'overlayadd', 'overlayremove'],
         stateChangeEventsSource: '_map',
 
-        serializeState: function(e) {
+        serializeState: function() {
 
             const keys = [];
             this._map.eachLayer((layer) => {

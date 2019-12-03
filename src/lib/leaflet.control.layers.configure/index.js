@@ -429,7 +429,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 L.DomEvent.stop(e);
                 this.showCustomLayerForm([
                         {caption: 'Save', callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues)},
-                        {caption: 'Delete', callback: (fieldValues) => this.onCustomLayerDeletelClicked(layer)},
+                        {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
                         {caption: 'Cancel', callback: () => this.onCustomLayerCancelClicked()}
                     ], layer.fieldValues
                 );

@@ -511,9 +511,8 @@ L.Control.TrackList = L.Control.extend({
             const key = btoa(hashDigest).replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
             const url = window.location + '&nktl=' + key;
             copyToClipboard(url, mouseEvent);
-            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then((xhr) => {
-                },
-                (e) => {
+            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then(
+                null, (e) => {
                     let message = e.message || e;
                     if (e.xhr.status === 413) {
                         message = 'track is too big';

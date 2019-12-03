@@ -278,7 +278,7 @@ L.Control.Panoramas = L.Control.extend({
             this.notifyChanged();
         },
 
-        onPanoramaCloseClick: function(e) {
+        onPanoramaCloseClick: function() {
             this.hidePanoViewer();
         },
 

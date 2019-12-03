@@ -3,7 +3,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 import {imgFromDataString} from './imgFromDataString';
 
 const GridLayerGrabMixin = {
-    tileImagePromiseFromCoords: function(coords) {
+    tileImagePromiseFromCoords: function(_unused_coords) {
         throw new Error('Method not implemented');
     },
 

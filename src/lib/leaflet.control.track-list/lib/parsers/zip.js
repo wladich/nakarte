@@ -3,7 +3,7 @@ import jsInflate from './jsInflate';
 import {decode866} from './codePages';
 import parseGeoFile from '../parseGeoFile';
 
-function parseZip(txt, name) {
+function parseZip(txt, _unused_name) {
     try {
         var unzipper = new JSUnzip(txt);
     } catch (e) {

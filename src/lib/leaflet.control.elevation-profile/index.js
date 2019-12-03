@@ -113,7 +113,7 @@ var DragEvents = L.Class.extend({
         includes: L.Mixin.Events,
 
         initialize: function(eventsSource, eventsTarget, options) {
-            options = L.setOptions(this, options);
+            L.setOptions(this, options);
             if (eventsTarget) {
                 this.eventsTarget = eventsTarget;
             } else {

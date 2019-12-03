@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 
 function resolveApp(relativePath) {
   return path.resolve(__dirname, '..', relativePath);

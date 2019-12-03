@@ -33,7 +33,7 @@ class PrintStaticLayer {
         };
     }
 
-    _drawRaster(canvas, printOptions) {
+    _drawRaster(_unused_canvas, _unused_printOptions) {
         return;
     }
 }

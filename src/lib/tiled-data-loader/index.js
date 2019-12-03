@@ -24,7 +24,7 @@ class TiledDataLoader {
         return Object.assign({}, layerTileCoords);
     }
 
-    makeRequestData(dataTileCoords) {
+    makeRequestData(_unused_dataTileCoords) {
         throw new Error('Not implemented');
         // return {
         //     url,
@@ -32,7 +32,7 @@ class TiledDataLoader {
         // }
     }
 
-    processResponse(xhr, originalDataTileCoords) {
+    processResponse(_unused_xhr, _unused_originalDataTileCoords) {
         throw new Error('Not implemented');
         // return {
         //     tileData,

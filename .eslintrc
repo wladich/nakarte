@@ -10,6 +10,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
   "globals": {
     "NODE_ENV": true,
     "RELEASE_VER": true

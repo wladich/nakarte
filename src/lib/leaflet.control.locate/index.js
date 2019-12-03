@@ -92,7 +92,7 @@ const PositionMarker = L.LayerGroup.extend({
         this._updatePrecisionState();
     },
 
-    _onZoom: function(e) {
+    _onZoom: function() {
         this._updatePrecisionState();
     }
 

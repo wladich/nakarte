@@ -117,7 +117,7 @@ function fixVectorMarkerWorldJump() {
             this._lastResetLongitude = this.getCenter().lng;
         });
 
-        this.on('move', (e) => {
+        this.on('move', () => {
             const lng = this.getCenter().lng;
             if (this._lastResetLongitude === null) {
                 this._lastResetLongitude = lng;

@@ -93,7 +93,7 @@ const PageFeature = L.Marker.extend({
             return L.point(...this.paperSize);
         },
 
-        rotate: function(e) {
+        rotate: function() {
             this.paperSize = [this.paperSize[1], this.paperSize[0]];
             this.updateView();
         }

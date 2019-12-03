@@ -54,9 +54,7 @@ L.Control.Coordinates = L.Control.extend({
                 return this.format().wrapperClass;
             }, this);
 
-            this.formatCode.subscribe((_) => {
-                this.saveStateToStorage();
-            }, this);
+            this.formatCode.subscribe(this.saveStateToStorage, this);
         },
 
         onAdd: function(map) {
@@ -160,7 +158,7 @@ L.Control.Coordinates = L.Control.extend({
             return !!this._isEnabled;
         },
 
-        onClick: function(e) {
+        onClick: function() {
             this.setEnabled(!this.isEnabled());
             this.saveStateToStorage();
         }
