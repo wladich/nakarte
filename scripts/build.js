@@ -64,7 +64,7 @@ function printFileSizes(sizeMap, previousSizeMap) {
             } else {
                 differenceColor = chalk.green;
             }
-            differenceLabel = asset.difference.toString();
+            differenceLabel = filesize(asset.difference);
             if (asset.difference > 0) {
                 differenceLabel = '+' + differenceLabel;
             }
