@@ -14,6 +14,7 @@
     "no-constant-condition": ["error", {"checkLoops":  false}],
     "no-prototype-builtins": "off",
     "semi": "error",
+    "eol-last": "error"
   },
   "globals": {
     "NODE_ENV": true,
