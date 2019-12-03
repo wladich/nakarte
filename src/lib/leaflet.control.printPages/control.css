@@ -54,22 +54,17 @@
     padding: 0;
 }
 
-.control-print-pages td {
+.control-print-pages .layout > tbody > tr > td {
     border-top: 1px solid #eee;
     padding-top: 1.5mm;
     padding-bottom: 1mm;
 }
 
-.control-print-pages tr:first-child td {
-    border: 0;
-}
-
-.control-print-pages td:nth-child(2) {
+.control-print-pages .layout > tbody > tr > td:nth-child(2) {
     padding-left: 2mm;
 }
 
-.control-print-pages .margins td {
-    padding: 0;
+.control-print-pages .layout >  tbody > tr:first-child td {
     border: 0;
 }
 
@@ -78,7 +73,7 @@
     margin-left: 3mm;
 }
 
-.control-print-pages tr:last-child td {
+.control-print-pages .layout > tbody > tr:last-child > td {
     text-align: center;
 }
 

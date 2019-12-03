@@ -102,48 +102,45 @@
     border-collapse: collapse;
 }
 
-.pass-details td {
+.pass-details > tbody > tr > td {
     border-bottom: 1px solid #ccc;
     padding: 1mm 0;
 }
 
-.pass-details td:last-child {
+.pass-details > tbody > tr > td:last-child {
     padding-left: 1em;
 }
 
-.pass-details td:first-child {
-    /*white-space: nowrap;*/
+.pass-details > tbody > tr:last-child > td {
+    border-bottom: none;
 }
 
-.pass-details tr:last-child td {
-    border: none;
-}
-
-.westra-passes-description-coords {
+.pass-details .coords {
     border-collapse: collapse;
 }
 
-.pass-details .westra-passes-description-coords td {
-    border: none;
-    padding: 0 0 0 1em;
-}
-
-
-.pass-details .westra-passes-description-coords td:first-child {
+.pass-details .coords > tbody > tr > td {
     padding: 0;
+    padding-left: 1em;
 }
 
-.westra-passes-description-coords a {
+.pass-details .coords td:first-child {
+    padding-left: 0;
+}
+
+.pass-details .coords .header {
+    color: #999;
+    font-size: 9px;
+}
+
+
+.pass-details .coords a {
     color: #000;
     border-bottom: 1px dashed #000;
     text-decoration: none;
     cursor: pointer;
 }
 
-.westra-passes-description-coords tr:first-child td {
-    color: #999;
-    font-size: 9px;
-}
 
 
 .westra-passes-description-comment {

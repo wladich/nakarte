@@ -206,8 +206,8 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     <tr>
                         <td>Координаты</td>
                         <td>
-                            <table class="westra-passes-description-coords">
-                                <tr>
+                            <table class="coords">
+                                <tr class="header">
                                     <td>Широта</td>
                                     <td>Долгота</td>
                                 </tr>

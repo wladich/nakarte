@@ -20,15 +20,9 @@
     background-position: 50% 50%;
     background-repeat: no-repeat;
     display: inline-block;
-    height: 26px;
     border-radius: 4px 4px 4px 4px;
     border: 1px solid #ccc;
     cursor: pointer;
-}
-
-.leaflet-control .image-button:hover,
-.leaflet-control .text-button:hover {
-    background-color: #f4f4f4;
 }
 
 .leaflet-control .text-button {
@@ -41,6 +35,11 @@
     line-height: 26px;
     font-weight: bold;
     color: #333;
+}
+
+.leaflet-control .image-button:hover,
+.leaflet-control .text-button:hover {
+    background-color: #f4f4f4;
 }
 
 .leaflet-control-button {
@@ -97,14 +96,11 @@
     background-position: 50% 50%;
     background-repeat: no-repeat;
     margin: 5px;
+    display: none;
 }
 
 .leaflet-control.minimized {
     padding: 0;
-}
-
-.leaflet-control-button-toggle {
-    display: none;
 }
 
 .leaflet-control.minimized .leaflet-control-content {
