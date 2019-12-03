@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js  --colors",
-    "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js"
+    "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js",
+    "lint": "eslint '**/*.js' --ignore-pattern node_modules/  --ignore-pattern build/"
   },
   "repository": {
     "type": "git",
