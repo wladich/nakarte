@@ -12,6 +12,8 @@
   "rules": {
     "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
     "no-constant-condition": ["error", {"checkLoops":  false}],
+    "no-prototype-builtins": 0
+  },
   "globals": {
     "NODE_ENV": true,
     "RELEASE_VER": true
