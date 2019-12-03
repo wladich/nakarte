@@ -10,5 +10,8 @@
     "sourceType": "module"
   },
   "rules": {
+  "globals": {
+    "NODE_ENV": true,
+    "RELEASE_VER": true
   }
 }

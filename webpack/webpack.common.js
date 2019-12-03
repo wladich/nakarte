@@ -1,3 +1,4 @@
+const Webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -25,6 +26,10 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       template: paths.appIndexHtml
+    }),
+    new Webpack.DefinePlugin({
+      'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel')
     })
   ],
   resolve: {
