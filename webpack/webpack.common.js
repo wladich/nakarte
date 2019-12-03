@@ -11,7 +11,7 @@ module.exports = {
   },
   output: {
     path: paths.appBuild,
-    filename: 'js/[name].js'
+    filename: 'js/[name].[chunkhash:8].js',
   },
   optimization: {
     splitChunks: {

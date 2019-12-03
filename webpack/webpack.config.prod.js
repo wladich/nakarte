@@ -10,10 +10,6 @@ module.exports = merge(common, {
   devtool: 'source-map',
   stats: 'errors-warnings',
   bail: true,
-  output: {
-    filename: 'js/[name].[chunkhash:8].js',
-    chunkFilename: 'js/[name].[chunkhash:8].js'
-  },
   plugins: [
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
