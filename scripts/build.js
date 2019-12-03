@@ -17,18 +17,18 @@ function getVersionFromGit() {
 // Output: /static/js/main.js
 function removeFileNameHash(fileName) {
     return fileName
-        .replace(paths.appBuild, '')
-        .replace(/\/?(.*)(\.\w+)(\.js|\.css)/, (match, p1, p2, p3) => p1 + p3);
+        .replace(/\/?(.*)(\.[0-9a-f]+)(\.js|\.css)/, (match, p1, p2, p3) => p1 + p3);
 }
 
-function getSizes() {
+function getSizes(removeNameHash) {
     return new Promise((resolve) => {
         recursive(paths.appBuild, (err, fileNames) => {
             const previousSizeMap = (fileNames || [])
                 .filter(fileName => /\.(js|css)$/.test(fileName))
                 .reduce((memo, fileName) => {
                     const contents = fs.readFileSync(fileName);
-                    const key = removeFileNameHash(fileName);
+                    fileName = fileName.replace(paths.appBuild + '/', '');
+                    const key = removeNameHash ? removeFileNameHash(fileName) : fileName;
                     memo[key] = gzipSize(contents);
                     return memo;
                 }, {});
@@ -42,7 +42,7 @@ function printFileSizes(sizeMap, previousSizeMap) {
     const FIFTY_KILOBYTES = 1024 * 50;
     const assets = Object.entries(sizeMap)
         .map(([filename, size]) => {
-            const difference = size - (previousSizeMap[filename] || 0);
+            const difference = size - (previousSizeMap[removeFileNameHash(filename)] || 0);
             return {
                 folder: path.join('build', path.dirname(filename)),
                 name: path.basename(filename),
@@ -85,7 +85,7 @@ async function main() {
     process.env.RELEASE_VER = version;
     console.log('Creating an optimized production build...');
     console.log('Version:', version);
-    const prevSizes = await getSizes();
+    const prevSizes = await getSizes(true);
     try {
         execSync("webpack --config webpack/webpack.config.prod.js  --colors", {stdio: "inherit"});
     }
@@ -93,7 +93,7 @@ async function main() {
         process.exit(1);
     }
     console.log(chalk.green('Compiled successfully.'));
-    const newSizes = await getSizes();
+    const newSizes = await getSizes(false);
     console.log('File sizes after gzip:\n');
     printFileSizes(newSizes, prevSizes);
 }
