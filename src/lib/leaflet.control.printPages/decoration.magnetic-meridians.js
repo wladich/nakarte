@@ -25,7 +25,7 @@ class MagneticMeridians extends PrintStaticLayer {
         return function(pixel) {
             return L.CRS.EPSG3857.pointToLatLng(pixel.scaleBy(scale).add(origin), printOptions.zoom);
         }
-    };
+    }
 
     _drawRaster(canvas, printOptions) {
         const toLatLng = this._makeCanvasToLatLngTransformer(printOptions);

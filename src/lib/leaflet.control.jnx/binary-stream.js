@@ -18,7 +18,7 @@ class BinStream {
         for (let i = 0; i < oldAr.length; i++) {
             newAr[i] = oldAr[i];
         }
-    };
+    }
 
     checkSize(size) {
         if (this._pos + size >= this.maxSize) {
@@ -26,43 +26,43 @@ class BinStream {
         }
         const newPos = this._pos + size;
         this.size = (newPos > this.size) ? newPos : this.size;
-    };
+    }
 
     writeUint8(value) {
         this.checkSize(1);
         this.dv.setUint8(this._pos, value);
         this._pos += 1;
-    };
+    }
 
     writeInt8(value) {
         this.checkSize(1);
         this.dv.setInt8(this._pos, value);
         this._pos += 1;
-    };
+    }
 
     writeInt16(value) {
         this.checkSize(2);
         this.dv.setInt16(this._pos, value, this.littlEndian);
         this._pos += 2;
-    };
+    }
 
     writeUint16(value) {
         this.checkSize(2);
         this.dv.setUint16(this._pos, value, this.littlEndian);
         this._pos += 2;
-    };
+    }
 
     writeInt32(value) {
         this.checkSize(4);
         this.dv.setInt32(this._pos, value, this.littlEndian);
         this._pos += 4;
-    };
+    }
 
     writeUint32(value) {
         this.checkSize(4);
         this.dv.setUint32(this._pos, value, this.littlEndian);
         this._pos += 4;
-    };
+    }
 
     writeString(s, zeroTerminated) {
         s = utf8.encode(s);
@@ -72,19 +72,19 @@ class BinStream {
         if (zeroTerminated) {
             this.writeUint8(0);
         }
-    };
+    }
 
     tell() {
         return this._pos;
-    };
+    }
 
     seek(pos) {
         this._pos = pos;
-    };
+    }
 
     getBuffer() {
         return this.dv.buffer.slice(0, this.size);
-    };
+    }
 }
 
 export {BinStream}

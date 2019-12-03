@@ -4,7 +4,7 @@ class PrintStaticLayer {
 
     cloneForPrint() {
         return this;
-    };
+    }
 
     // printOptions = {
     //     xhrOptions,
