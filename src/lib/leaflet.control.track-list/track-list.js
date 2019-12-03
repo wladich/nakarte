@@ -22,7 +22,7 @@ import logging from '~/lib/logging';
 import {notify} from '~/lib/notifications';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
-import md5 from './lib/md5';
+import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];

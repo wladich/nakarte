@@ -44,6 +44,7 @@
     "@babel/polyfill": "^7.7.0",
     "alertify.js": "^1.0.12",
     "babel-polyfill": "^6.23.0",
+    "blueimp-md5": "^2.12.0",
     "browser-filesaver": "^1.1.1",
     "core-js": "^3.4.2",
     "escape-html": "^1.0.3",
