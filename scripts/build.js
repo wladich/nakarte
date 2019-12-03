@@ -42,9 +42,7 @@ function printFileSizes(sizeMap, previousSizeMap) {
     const FIFTY_KILOBYTES = 1024 * 50;
     const assets = Object.entries(sizeMap)
         .map(([filename, size]) => {
-            // const previousSize = previousSizeMap[filename];
-            const difference = size - previousSizeMap[filename];
-            // const difference = getDifferenceLabel(size, previousSize);
+            const difference = size - (previousSizeMap[filename] || 0);
             return {
                 folder: path.join('build', path.dirname(filename)),
                 name: path.basename(filename),
