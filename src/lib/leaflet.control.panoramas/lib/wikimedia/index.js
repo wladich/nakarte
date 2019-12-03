@@ -97,6 +97,8 @@ function isCloser(target, a, b) {
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
+    latlng = L.latLng(latlng.lat, latlng.lng); // make independent copy
+
     const clusterSize = 10;
     const urlTemplate = 'https://commons.wikimedia.org/w/api.php?' +
                         'origin=*&format=json&action=query&generator=geosearch&' +
@@ -117,10 +119,9 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     if (resp.status === 200) {
         let photos = parseSearchResponse(resp.responseJSON);
         if (photos) {
-            latlng = L.latLng(latlng.lat, latlng.lng);
             photos.sort(isCloser.bind(null, latlng));
-            latlng = L.latLng(photos[0].lat, photos[0].lng);
-            photos = photos.filter((photo) => latlng.distanceTo(L.latLng(photo.lat, photo.lng)) <= clusterSize, latlng);
+            const nearestLatlng = L.latLng(photos[0].lat, photos[0].lng);
+            photos = photos.filter((photo) => nearestLatlng.distanceTo(L.latLng(photo.lat, photo.lng)) <= clusterSize);
             return {
                 found: true,
                 data: photos
