@@ -140,7 +140,9 @@ const LocateControl = L.Control.extend({
                 } else {
                     storedPosition = null;
                 }
-            } catch (e) {}
+            } catch (e) {
+                // ignore invalid data from localstorage
+            }
 
             if (storedPosition) {
                 this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {animate: false});

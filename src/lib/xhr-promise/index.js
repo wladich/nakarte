@@ -75,6 +75,7 @@ class XMLHttpRequestPromise {
                     // xhr.response is readonly
                     xhr.responseJSON = JSON.parse(xhr.response);
                 } catch (e) {
+                    // leave xhr.responseJSON undefined if response is not valid JSON
                 }
             } else {
                 xhr.responseJSON = xhr.response;

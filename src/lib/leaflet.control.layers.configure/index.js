@@ -480,6 +480,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         s = atob(s);
                         fieldValues = JSON.parse(s);
                     } catch (e) {
+                        //ignore malformed data
                     }
 
                     if (fieldValues) {

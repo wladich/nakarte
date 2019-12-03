@@ -15,6 +15,7 @@ function decode(s) {
     try {
         decoded = atob(s);
     } catch (e) {
+        //will return null for malformed data
     }
     if (decoded && decoded.length) {
         return decoded;

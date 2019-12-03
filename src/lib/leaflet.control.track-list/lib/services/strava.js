@@ -63,7 +63,9 @@ class Strava extends BaseService {
                 }
             }
             name = name2;
-        } catch (e) {}
+        } catch (e) {
+            // use previously constructed name
+        }
 
 
         return [{

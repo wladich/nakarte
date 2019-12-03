@@ -102,7 +102,9 @@ class MovescountMove extends MovescountBase {
         try {
             const title = dom.querySelector('title').text.trim();
             name = title ? title : name;
-        } catch (_) {}
+        } catch (_) {
+            // use previously constructed name
+        }
 
         return [{
             name,

@@ -36,6 +36,7 @@ class BaseService {
         try {
             url = decodeURIComponent(url);
         } catch (e) {
+            // leave url as is
         }
 
         return url
