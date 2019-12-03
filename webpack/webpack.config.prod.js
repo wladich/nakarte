@@ -41,9 +41,12 @@ module.exports = merge(common, {
           {
             loader: 'postcss-loader',
             options: {
-              config: {
-                path: __dirname + '/postcss.config.js'
-              }
+              ident: 'postcss',
+              plugins: () => [
+                require('postcss-import')(),
+                require('postcss-preset-env')(),
+                require('cssnano')()
+              ]
             }
           },
         ]
