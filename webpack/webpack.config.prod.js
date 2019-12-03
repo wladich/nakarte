@@ -8,7 +8,7 @@ const paths = require('./paths');
 module.exports = merge(common, {
   mode: 'production',
   devtool: 'source-map',
-  stats: 'errors-only',
+  stats: 'errors-warnings',
   bail: true,
   output: {
     filename: 'js/[name].[chunkhash:8].js',
