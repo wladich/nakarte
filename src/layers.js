@@ -836,23 +836,23 @@ export default function getLayers() {
                         }
                     )
                 },
-		        {
-		            title: 'Finland Topo',
+                {
+                    title: 'Finland Topo',
                     description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
-		            isDefault: false,
-		            layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
-		                {
-		                    code: 'Fmk',
-		                    isOverlay: false,
-		                    tms: false,
-		                    print: true,
-		                    jnx: true,
-		                    scaleDependent: true,
-		                    noCors: true,
-		                    shortName: 'finland_topo'
-		                }
-		            )
-		        },
+                    isDefault: false,
+                    layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
+                        {
+                            code: 'Fmk',
+                            isOverlay: false,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: true,
+                            noCors: true,
+                            shortName: 'finland_topo'
+                        }
+                    )
+                },
                 {
                     title: 'France Topo 250m',
                     isDefault: false,
