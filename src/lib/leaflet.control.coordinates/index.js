@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import ko from '~/vendored/knockout';
+import ko from 'knockout';
 import './coordinates.css';
 import copyToClipboard from '~/lib/clipboardCopy';
 import Contextmenu from '~/lib/contextmenu';

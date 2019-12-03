@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import ko from '~/vendored/knockout';
+import ko from 'knockout';
 import '~/lib/knockout.component.progress/progress';
 import '~/lib/controls-styles/controls-styles.css';
 import './control.css';

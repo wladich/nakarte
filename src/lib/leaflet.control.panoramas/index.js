@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import ko from '~/vendored/knockout';
+import ko from 'knockout';
 import googleProvider from './lib/google';
 
 import './style.css';

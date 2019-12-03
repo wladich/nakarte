@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import ko from '~/vendored/knockout';
+import ko from 'knockout';
 import './style.css';
 import '~/lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';

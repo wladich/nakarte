@@ -1,4 +1,4 @@
-import ko from '~/vendored/knockout';
+import ko from 'knockout';
 import './style.css';
 import '~/lib/controls-styles/controls-styles.css';
 
