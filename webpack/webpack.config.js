@@ -109,7 +109,9 @@ const loaders = [
 
     {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [
+            /node_modules\/css-loader/
+        ],
         loader: 'babel-loader',
         options: babelConfig
     },
