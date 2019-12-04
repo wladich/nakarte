@@ -65,7 +65,6 @@
     "load-script": "^1.0.0",
     "mapillary-js": "2.5.2",
     "pbf": "^3.0.5",
-    "postcss": "^7.0.23",
     "raven-js": "^3.27.0",
     "rbush": "^2.0.1",
     "regenerator-runtime": "^0.13.3",
