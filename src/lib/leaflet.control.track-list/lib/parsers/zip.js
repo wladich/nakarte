@@ -1,4 +1,4 @@
-import JSUnzip from '~/vendored/github.com/augustl/js-unzip/js-unzip';
+import {JSUnzip} from '~/vendored/github.com/augustl/js-unzip/js-unzip';
 import jsInflate from './jsInflate';
 import {decode866} from './codePages';
 import parseGeoFile from '../parseGeoFile';
