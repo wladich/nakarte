@@ -87,7 +87,7 @@ async function main() {
     console.log('Version:', version);
     const prevSizes = await getSizes(true);
     try {
-        execSync("webpack --config webpack/webpack.config.prod.js  --colors", {stdio: "inherit"});
+        execSync("webpack --config webpack/webpack.config.js  --colors", {stdio: "inherit"});
     }
     catch (e) {
         process.exit(1);

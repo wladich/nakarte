@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node scripts/build.js",
-    "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js --hot",
+    "start": "webpack-dev-server --open --config webpack/webpack.config.js --hot",
     "lint": "eslint '**/*.js' && stylelint '**/*.css'"
   },
   "repository": {
