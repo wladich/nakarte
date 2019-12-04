@@ -15,6 +15,30 @@ const productionOutput = {
     filename: 'js/[name].[contenthash:8].js'
 };
 
+const babelConfig = {
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "useBuiltIns": "usage",
+                "corejs": "3.0.0",
+                "modules": "commonjs"
+            }
+        ]
+    ],
+    "overrides": [
+        {
+            "test": "./src/vendored/github.com/augustl/js-unzip/js-unzip.js",
+            "sourceType": "script"
+        }
+    ],
+
+    "plugins": [
+        "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-proposal-class-properties"
+    ]
+};
+
 const plugins = [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
@@ -75,7 +99,8 @@ const loaders = [
     {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: 'babel-loader'
+        loader: 'babel-loader',
+        options: babelConfig
     },
 
     {
