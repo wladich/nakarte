@@ -23,7 +23,7 @@ const isProduction = mode === 'production';
 
 const productionOutput = {
     path: paths.appBuild,
-    filename: 'js/[name].[contenthash:8].js'
+    filename: 'static/js/[name].[contenthash:8].js'
 };
 
 const babelConfig = {
@@ -59,7 +59,7 @@ const plugins = [
         template: paths.appIndexHtml
     }),
     new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash:8].css'
+        filename: 'static/css/[name].[contenthash:8].css'
     }),
     new Webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(mode),
