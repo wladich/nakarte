@@ -76,6 +76,13 @@ const plugins = [
     })
 ];
 
+const cacheLoader = {
+    loader: 'cache-loader',
+    options: {
+        cacheDirectory: 'build_cache'
+    }
+};
+
 const loaders = [
     {
         test: /\.mjs$/,
@@ -112,8 +119,13 @@ const loaders = [
         exclude: [
             /node_modules\/css-loader/
         ],
-        loader: 'babel-loader',
-        options: babelConfig
+        loaders: [
+            cacheLoader,
+            {
+                loader: 'babel-loader',
+                options: babelConfig
+            }
+        ],
     },
 
     {

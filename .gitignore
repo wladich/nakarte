@@ -4,3 +4,4 @@ build
 deploy
 secrets.js
 _trash
+build_cache
