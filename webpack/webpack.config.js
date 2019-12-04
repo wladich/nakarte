@@ -53,7 +53,7 @@ const babelConfig = {
 const plugins = [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
-        { from: paths.appPublic, to: 'public' }
+        { from: paths.appPublic, to: '' }
     ]),
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml,
