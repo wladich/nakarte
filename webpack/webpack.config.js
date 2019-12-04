@@ -56,7 +56,8 @@ const plugins = [
         { from: paths.appPublic, to: 'public' }
     ]),
     new HtmlWebpackPlugin({
-        template: paths.appIndexHtml
+        template: paths.appIndexHtml,
+        minify: false
     }),
     new MiniCssExtractPlugin({
         filename: 'static/css/[name].[contenthash:8].css'
