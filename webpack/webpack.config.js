@@ -3,7 +3,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const paths = require('./paths');
 
@@ -58,9 +58,9 @@ const plugins = [
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml
     }),
-    // new MiniCssExtractPlugin({
-    //     filename: 'css/[name].[contenthash:8].css'
-    // }),
+    new MiniCssExtractPlugin({
+        filename: 'css/[name].[contenthash:8].css'
+    }),
     new Webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(mode),
         'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel')
@@ -117,8 +117,7 @@ const loaders = [
     {
         test: /\.s?css/i,
         use : [
-            // MiniCssExtractPlugin.loader,
-            'style-loader',
+            MiniCssExtractPlugin.loader,
             {loader: 'css-loader', options: {importLoaders: 1}},
             {
                 loader: 'postcss-loader',
