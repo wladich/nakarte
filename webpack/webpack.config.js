@@ -83,6 +83,27 @@ const cacheLoader = {
     }
 };
 
+const productionCSSLoader = [
+    MiniCssExtractPlugin.loader,
+    {loader: 'css-loader', options: {importLoaders: 1}},
+    {
+        loader: 'postcss-loader',
+        options: {
+            ident: 'postcss',
+            plugins: () => [
+                require('postcss-import')(),
+                require('postcss-preset-env')(),
+                require('cssnano')()
+            ]
+        }
+    },
+];
+
+const developmentCSSLoader = [
+    'style-loader',
+    {loader: 'css-loader', options: {importLoaders: 1}},
+];
+
 const loaders = [
     {
         test: /\.mjs$/,
@@ -130,21 +151,7 @@ const loaders = [
 
     {
         test: /\.s?css/i,
-        use : [
-            MiniCssExtractPlugin.loader,
-            {loader: 'css-loader', options: {importLoaders: 1}},
-            {
-                loader: 'postcss-loader',
-                options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                        require('postcss-import')(),
-                        require('postcss-preset-env')(),
-                        require('cssnano')()
-                    ]
-                }
-            },
-        ]
+        loaders : isProduction ? productionCSSLoader : developmentCSSLoader
     }
 ];
 
