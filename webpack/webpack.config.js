@@ -7,7 +7,18 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 const paths = require('./paths');
 
-const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+const envs = {
+    production: true,
+    development: true
+};
+
+const mode = process.env.NODE_ENV;
+
+if (!envs[mode]) {
+    console.log(`NODE_ENV has invalid value "${mode}"`);
+    process.exit(1);
+}
+
 const isProduction = mode === 'production';
 
 const productionOutput = {
