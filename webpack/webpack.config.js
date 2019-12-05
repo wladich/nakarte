@@ -4,6 +4,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const fs = require('fs');
+const path = require('path');
 
 const paths = require('./paths');
 
@@ -20,6 +22,24 @@ if (!envs[mode]) {
 }
 
 const isProduction = mode === 'production';
+
+function dependenciesPaths() {
+    const blackList = ['core-js', 'regenerator-runtime'];
+    const paths = [];
+    const package_json_path = path.resolve(__dirname, '../package.json');
+    const package_json = JSON.parse(fs.readFileSync(package_json_path));
+    for (let dependency in package_json.dependencies) {
+        if (blackList.includes(dependency)) {
+            continue;
+        }
+        const depPath = path.resolve(__dirname, '../node_modules', dependency);
+        if (!fs.existsSync(depPath)) {
+            throw new Error(`Dependency ${dependency} not found at path ${depPath}`);
+        }
+        paths.push(depPath);
+    }
+    return paths;
+}
 
 const productionOutput = {
     path: paths.appBuild,
@@ -138,9 +158,7 @@ const loaders = [
 
     {
         test: /\.js$/,
-        exclude: [
-            /node_modules\/css-loader/
-        ],
+        include: [paths.appSrc].concat(isProduction ? dependenciesPaths() : []),
         loaders: [
             cacheLoader,
             {
