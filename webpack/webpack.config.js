@@ -188,7 +188,8 @@ module.exports = {
         splitChunks: {
             chunks: 'all',
             name: true
-        }
+        },
+        runtimeChunk: 'single',
     },
 
     resolve: {
