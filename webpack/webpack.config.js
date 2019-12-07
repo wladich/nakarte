@@ -23,23 +23,6 @@ if (!envs[mode]) {
 
 const isProduction = mode === 'production';
 
-function dependenciesPaths() {
-    const blackList = ['core-js', 'regenerator-runtime'];
-    const paths = [];
-    const package_json = require(path.resolve(__dirname, '../package.json'));
-    for (let dependency in package_json.dependencies) {
-        if (blackList.includes(dependency)) {
-            continue;
-        }
-        const depPath = path.resolve(__dirname, '../node_modules', dependency);
-        if (!fs.existsSync(depPath)) {
-            throw new Error(`Dependency ${dependency} not found at path ${depPath}`);
-        }
-        paths.push(depPath);
-    }
-    return paths;
-}
-
 const productionOutput = {
     path: paths.appBuild,
     filename: 'static/js/[name].[contenthash:8].js'
@@ -157,7 +140,10 @@ const loaders = [
 
     {
         test: /\.js$/,
-        include: [paths.appSrc].concat(isProduction ? dependenciesPaths() : []),
+        exclude: [
+            /node_modules\/core-js/,
+            /node_modules\/webpack/,
+        ],
         loaders: [
             cacheLoader,
             {
