@@ -131,10 +131,10 @@ const loaders = [
 
     {
         test: /\.js$/,
-        exclude: [
+        exclude: isProduction ? [
             /node_modules\/core-js/,
             /node_modules\/webpack/,
-        ],
+        ] : /node_modules/,
         loaders: [
             {
                 loader: 'babel-loader',
