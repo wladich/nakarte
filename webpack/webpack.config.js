@@ -52,6 +52,15 @@ const babelConfig = {
     ]
 };
 
+function babelCacheIdentifier() {
+    const cacheLoaderVersion = require(path.resolve(__dirname, '../node_modules/cache-loader/package.json')).version;
+    const babelLoaderVersion = require(path.resolve(__dirname, '../node_modules/babel-loader/package.json')).version;
+    const babelCoreVersion = require(path.resolve(__dirname, '../node_modules/@babel/core/package.json')).version;
+    const babelPresetEnvVersion = require(path.resolve(__dirname, '../node_modules/@babel/preset-env/package.json')).version;
+    const babelConfigStr = JSON.stringify(babelConfig);
+    const browserlist = fs.readFileSync(path.resolve(__dirname, '../.browserslistrc'));
+    return `cache-loader: ${cacheLoaderVersion} ${babelLoaderVersion} ${babelCoreVersion} ${babelPresetEnvVersion} ${babelConfigStr} ${browserlist}`;
+}
 const plugins = [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
@@ -79,10 +88,11 @@ const plugins = [
     })
 ];
 
-const cacheLoader = {
+const babelCacheLoader = {
     loader: 'cache-loader',
     options: {
-        cacheDirectory: 'build_cache'
+        cacheDirectory: 'build_cache',
+        cacheIdentifier: babelCacheIdentifier()
     }
 };
 
@@ -145,7 +155,7 @@ const loaders = [
             /node_modules\/webpack/,
         ],
         loaders: [
-            cacheLoader,
+            babelCacheLoader,
             {
                 loader: 'babel-loader',
                 options: babelConfig
