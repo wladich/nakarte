@@ -13,6 +13,11 @@ Run dev server:
 npm start
 ```
 
+Check code for errors:
+```bash
+npm run lint
+```
+
 Some features require keys stored in src/secrets.js. 
 In repository those keys are replaced with dummy ones.
     
