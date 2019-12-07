@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - "node"
 
+before_script: cp src/secrets.js.template src/secrets.js
+
 script:
   - npm run lint
   - npm run build
