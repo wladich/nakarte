@@ -4,8 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const fs = require('fs-extra');
-const path = require('path');
 
 const paths = require('./paths');
 
@@ -52,15 +50,6 @@ const babelConfig = {
     ]
 };
 
-function babelCacheIdentifier() {
-    const cacheLoaderVersion = require(path.resolve(__dirname, '../node_modules/cache-loader/package.json')).version;
-    const babelLoaderVersion = require(path.resolve(__dirname, '../node_modules/babel-loader/package.json')).version;
-    const babelCoreVersion = require(path.resolve(__dirname, '../node_modules/@babel/core/package.json')).version;
-    const babelPresetEnvVersion = require(path.resolve(__dirname, '../node_modules/@babel/preset-env/package.json')).version;
-    const babelConfigStr = JSON.stringify(babelConfig);
-    const browserlist = fs.readFileSync(path.resolve(__dirname, '../.browserslistrc'));
-    return `cache-loader: ${cacheLoaderVersion} ${babelLoaderVersion} ${babelCoreVersion} ${babelPresetEnvVersion} ${babelConfigStr} ${browserlist}`;
-}
 const plugins = [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
@@ -87,14 +76,6 @@ const plugins = [
         emitError: isProduction
     })
 ];
-
-const babelCacheLoader = {
-    loader: 'cache-loader',
-    options: {
-        cacheDirectory: 'build_cache',
-        cacheIdentifier: babelCacheIdentifier()
-    }
-};
 
 const productionCSSLoader = [
     MiniCssExtractPlugin.loader,
@@ -155,7 +136,6 @@ const loaders = [
             /node_modules\/webpack/,
         ],
         loaders: [
-            babelCacheLoader,
             {
                 loader: 'babel-loader',
                 options: babelConfig
