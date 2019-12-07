@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
 const paths = require('./paths');
@@ -26,8 +26,7 @@ const isProduction = mode === 'production';
 function dependenciesPaths() {
     const blackList = ['core-js', 'regenerator-runtime'];
     const paths = [];
-    const package_json_path = path.resolve(__dirname, '../package.json');
-    const package_json = JSON.parse(fs.readFileSync(package_json_path));
+    const package_json = require(path.resolve(__dirname, '../package.json'));
     for (let dependency in package_json.dependencies) {
         if (blackList.includes(dependency)) {
             continue;
