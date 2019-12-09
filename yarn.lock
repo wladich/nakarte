@@ -4294,10 +4294,10 @@ ignore@^5.1.4:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.4.tgz#84b7b3dbe64552b6ef0eca99f6743dbec6d97adf"
   integrity sha512-MzbUSahkTW1u7JpKKjY7LCARd1fU5W2rLdxlM4kdkayuCwZImjkpluF9CM1aLewYJguPDqewLam18Y6AU69A8A==
 
-image-promise@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-6.1.0.tgz#eb6ae14a6c9acad03089731f6c5a717b935fee22"
-  integrity sha512-QCa1pyJrZwhqjvfPuW0S+mXk7dX/hs4Gvoe759S1+cLRlc0UqzaaDsH4Dy//KRlYe0DnXbAAfG9movdyYC03FA==
+image-promise@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-7.0.0.tgz#a15ab40e59b9cdc7e3974d93949faa4f06cad4da"
+  integrity sha512-jDye/LXbcgBZxdu6okhxlwGMbnjLorop98hxgWgcsGsJ5ARp+r7etOIeqvw/biSCgbycqRtgpCDUd/BMaTz5zQ==
 
 immediate@~3.0.5:
   version "3.0.6"
