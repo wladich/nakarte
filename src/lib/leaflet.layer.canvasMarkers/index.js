@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './canvasMarkers.css';
-import rbush from 'rbush';
+import RBush from 'rbush';
 import loadImage from 'image-promise';
 import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
@@ -31,6 +31,26 @@ function calcIntersectionSum(rect, rects) {
     return sum;
 }
 
+class MarkerRBush extends RBush {
+    toBBox(marker) {
+        const  x = marker.latlng.lng;
+        const  y = marker.latlng.lat;
+        return {
+            minX: x,
+            minY: y,
+            maxX: x,
+            maxY: y};
+    }
+
+    compareMinX(a, b) {
+        return a.latlng.lng - b.latlng.lng;
+    }
+
+    compareMinY(a, b) {
+        return a.latlng.lat - b.latlng.lat;
+    }
+}
+
 L.Layer.CanvasMarkers = L.GridLayer.extend({
         options: {
             async: true,
@@ -44,8 +64,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
 
         initialize: function(markers, options) {
             L.GridLayer.prototype.initialize.call(this, options);
-            this.rtree = rbush(9, ['.latlng.lng', '.latlng.lat', '.latlng.lng', '.latlng.lat']);
-            this._regions = rbush();
+            this.rtree = new MarkerRBush(9);
+            this._regions = new RBush();
             this._iconPositions = {};
             this._labelPositions = {};
             this._labelPositionsZoom = null;
