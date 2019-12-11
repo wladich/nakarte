@@ -5,17 +5,17 @@ Install locally for development
 ```bash
 git clone git://github.com/wladich/nakarte
 cd nakarte
-npm install
+yarn
 ```
 
 Run dev server:
 ```bash
-npm start
+yarn start
 ```
 
 Check code for errors:
 ```bash
-npm run lint
+yarn run lint
 ```
 
 Some features require keys stored in src/secrets.js. 
