@@ -192,7 +192,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         savePdf: function() {
-            logging.captureBreadcrumbWithUrl({message: 'start save pdf'});
+            logging.captureBreadcrumb('start save pdf');
             if (!this._map) {
                 return;
             }
@@ -244,7 +244,7 @@ L.Control.PrintPages = L.Control.extend({
                     }
                 }
             ).catch((e) => {
-                    logging.captureException(e);
+                    logging.captureException(e, 'raster creation failed');
                     logging.logEvent('print pdf end', {eventId, success: false, error: e.stack});
                     notify(`Failed to create PDF: ${e.message}`);
                 }
@@ -252,7 +252,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         savePageJpg: function(page) {
-            logging.captureBreadcrumbWithUrl({message: 'start save page jpg', data: {pageNumber: page.getLabel()}});
+            logging.captureBreadcrumb('start save page jpg', {pageNumber: page.getLabel()});
             const pages = [{
                 latLngBounds: page.getLatLngBounds(),
                 printSize: page.getPrintSize(),
@@ -296,7 +296,7 @@ L.Control.PrintPages = L.Control.extend({
                     logging.logEvent('print jpg end', {eventId, success: true});
                 })
                 .catch((e) => {
-                        logging.captureException(e);
+                        logging.captureException(e, 'raster creation failed');
                         logging.logEvent('print jpg end', {eventId, success: false, error: e.stack});
                         notify(`Failed to create JPEG from page: ${e.message}`);
                     }

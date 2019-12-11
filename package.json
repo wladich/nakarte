@@ -52,6 +52,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@sentry/browser": "^5.10.2",
     "alertify.js": "^1.0.12",
     "blueimp-md5": "^2.12.0",
     "browser-filesaver": "^1.1.1",
@@ -63,7 +64,6 @@
     "load-script": "^1.0.0",
     "mapillary-js": "2.20.0",
     "pbf": "^3.0.5",
-    "raven-js": "^3.27.0",
     "rbush": "^3.0.1",
     "regenerator-runtime": "^0.13.3",
     "tiny-inflate": "^1.0.2",

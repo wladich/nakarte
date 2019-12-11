@@ -31,14 +31,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     (xhr) => this._loadMarkers(xhr),
                     (e) => {
                         this._downloadStarted = false;
-                        logging.captureException(e, {
-                                extra: {
-                                    description: 'failed to get westra passes',
-                                    url: this.url,
-                                    status: e.xhr.status
-                                }
-                            }
-                        );
+                        logging.captureException(e, 'failed to get westra passes');
                         notify('Failed to get Westra passes data');
                     }
                 );

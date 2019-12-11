@@ -239,7 +239,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         loadFilesFromDisk: function() {
-            logging.captureBreadcrumb({message: 'load track from disk'});
+            logging.captureBreadcrumb('load track from disk');
             selectFiles(true).then(this.loadFilesFromFilesObject.bind(this));
         },
 
@@ -251,7 +251,7 @@ L.Control.TrackList = L.Control.extend({
 
             this.readingFiles(this.readingFiles() + 1);
 
-            logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
+            logging.captureBreadcrumb('load track from url', {trackUrl: url});
             loadFromUrl(url)
                 .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
@@ -317,7 +317,7 @@ L.Control.TrackList = L.Control.extend({
                 }.bind(this)
             );
             if (messages.length) {
-                logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n'), debugData}});
+                logging.captureMessage('errors in loaded tracks', {message: messages.join('\n'), debugData});
                 notify(messages.join('\n'));
             }
             return hasData;
@@ -518,7 +518,7 @@ L.Control.TrackList = L.Control.extend({
                         message = 'track is too big';
                     }
                     logging.captureMessage('Failed to save track to server',
-                        {extra: {status: e.xhr.status, response: e.xhr.responseText}});
+                        {status: e.xhr.status, response: e.xhr.responseText});
                     notify('Error making link: ' + message);
                 }
             );

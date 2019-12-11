@@ -34,14 +34,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                 (xhr) => this._loadMarkers(xhr.response),
                 (e) => {
                     this._downloadStarted = false;
-                    logging.captureException(e, {
-                            extra: {
-                                description: 'failed to get geocaching kml',
-                                url: this.url,
-                                status: e.xhr.status
-                            }
-                        }
-                    );
+                    logging.captureException(e, 'failed to get geocaching kml');
                     notify('Failed to get geocaching data');
                 }
             );

@@ -26,11 +26,7 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
                         this.addData(JSON.parse(xhr.response));
                     },
                     (e) => {
-                        logging.captureException(e, {extra: {
-                            description: 'failed to get geojson',
-                            url: this.url,
-                            status: e.xhr.status
-                        }});
+                        logging.captureException(e, 'failed to get geojson');
                         notify(`Failed to get GeoJSON data from ${this.url}: ${e.message}`);
                     }
                 );

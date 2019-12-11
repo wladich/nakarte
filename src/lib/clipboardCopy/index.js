@@ -36,7 +36,7 @@ function copyToClipboard(s, mouseEvent) {
             showNotification('Copied', mouseEvent);
         }
     } catch (e) {
-        logging.captureException(e, {extra: {description: 'clipborad to copy failed'}});
+        logging.captureException(e, 'clipborad to copy failed');
     } finally {
         document.body.removeChild(ta);
     }

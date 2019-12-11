@@ -34,7 +34,7 @@ L.Mixin.HashState = {
 
     _onExternalStateChanged: function(state) {
         if (!this.unserializeState(state)) { // state from hash is invalid, update hash from component state
-            logging.captureMessageWithUrl(`Invalid state in hash string (key "${this._hashStateKey}")`);
+            logging.captureMessage(`Invalid state in hash string (key "${this._hashStateKey}")`);
             hashState.updateState(this._hashStateKey, this.serializeState());
         }
     }

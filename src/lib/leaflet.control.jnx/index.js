@@ -82,7 +82,7 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeJnx: function(layer, layerName, zoom) {
-            logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
+            logging.captureBreadcrumb('start making jnx');
             this.makingJnx(true);
             this.downloadProgressDone(0);
 
@@ -97,7 +97,7 @@ L.Control.JNX = L.Control.extend({
                     logging.logEvent('jnx end', {eventId, success: true});
                 })
                 .catch((e) => {
-                        logging.captureException(e);
+                        logging.captureException(e, 'Failed to create JNX');
                         logging.logEvent('jnx end', {eventId, success: false, error: e.stack});
                         notify(`Failed to create JNX: ${e.message}`);
                     }

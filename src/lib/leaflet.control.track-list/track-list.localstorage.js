@@ -79,7 +79,7 @@ L.Control.TrackList.include({
                 s = safeLocalStorage.getItem(key);
                 safeLocalStorage.removeItem(key);
                 if (s) {
-                    logging.captureBreadcrumb({message: 'load track from localStorage'});
+                    logging.captureBreadcrumb('load track from localStorage');
                     s = s.slice(6); // remove "#nktk=" prefix
                     geodata = parseNktkSequence(s);
                     this.addTracksFromGeodataArray(geodata, {localStorage: {key, value: s}});

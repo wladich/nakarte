@@ -1,4 +1,4 @@
-import Raven from 'raven-js';
+import * as Sentry from '@sentry/browser';
 
 function randId() {
     return Math.random().toString(36).substring(2, 13);
@@ -6,32 +6,30 @@ function randId() {
 
 const sessionId = randId();
 
-function captureException(e, options) {
-    console.log('captureException', e, options);
-    Raven.captureException(e, options);
+function captureMessage(msg, extra={}) {
+    extra.url = window.location.toString();
+    console.log('captureMessage', msg, extra);
+    Sentry.withScope(function(scope) {
+        scope.setExtras(extra);
+        Sentry.captureMessage(msg);
+    });
 }
 
-function captureMessage(msg, options) {
-    console.log('captureMessage', msg, options);
-    Raven.captureMessage(msg, options);
+function captureException(e, description) {
+    console.log('captureException', e, description);
+    Sentry.withScope(function(scope) {
+        if (description) {
+            scope.setTag('description', description);
+        }
+        scope.setExtra('url', window.location.toString());
+        Sentry.captureException(e);
+    });
 }
-
-function captureMessageWithUrl(msg) {
-    captureMessage(msg, {extra: {url: window.location.toString()}});
-}
-
-function setExtraContext(data) {
-    Raven.setExtraContext(data);
-}
-
-function captureBreadcrumb(crumb) {
-    Raven.captureBreadcrumb(crumb);
-}
-
-function captureBreadcrumbWithUrl(crumb) {
-    const data = Object.assign(crumb.data || {}, {'url': window.location.toString()});
-    crumb = Object.assign({}, crumb, {data});
-    captureBreadcrumb(crumb);
+function captureBreadcrumb(message, data={}) {
+    data.url = window.location.toString();
+    Sentry.addBreadcrumb({
+        message, data
+    });
 }
 
 function logEvent(eventName, extra) {
@@ -55,7 +53,4 @@ function logEvent(eventName, extra) {
     }
 }
 
-
-
-export default {captureMessage, captureException, setExtraContext, captureBreadcrumbWithUrl, captureBreadcrumb,
-    captureMessageWithUrl, logEvent, randId};
+export default {captureMessage, captureException, captureBreadcrumb, logEvent, randId};
