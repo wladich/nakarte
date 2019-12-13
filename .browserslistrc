@@ -1,6 +1,6 @@
 [production]
 >0%
 
-[development]
+[development testing]
 last 2 chrome version
 last 2 firefox version

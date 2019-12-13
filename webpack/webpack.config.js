@@ -9,7 +9,8 @@ const paths = require('./paths');
 
 const envs = {
     production: true,
-    development: true
+    development: true,
+    testing: true
 };
 
 const mode = process.env.NODE_ENV;
@@ -20,6 +21,8 @@ if (!envs[mode]) {
 }
 
 const isProduction = mode === 'production';
+const isDevelopment = mode === 'development';
+const isTesting = mode === 'testing';
 
 const productionOutput = {
     path: paths.appBuild,
@@ -51,30 +54,32 @@ const babelConfig = {
 };
 
 const plugins = [
-    new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([
+    ...(isProduction ? [new CleanWebpackPlugin()] : []),
+    ...(isProduction ? [new CopyWebpackPlugin([
         { from: paths.appPublic, to: '' }
-    ]),
+    ])] : []),
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml,
         minify: false
     }),
-    new MiniCssExtractPlugin({
+    ...((isProduction || isDevelopment) ? [new MiniCssExtractPlugin({
         filename: 'static/css/[name].[contenthash:8].css'
-    }),
+    })] : []),
+    ...(isProduction ? [] : []),
+    ...(isProduction ? [] : []),
     new Webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(mode),
         'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel')
     }),
-    new StyleLintPlugin({
+    ...(isProduction || isDevelopment) ? [new StyleLintPlugin({
         config: {"extends": "stylelint-config-recommended"},
         files: [
             'src/**/*.css',
             'vendored/**/*.css',
         ],
-        emitWarning: !isProduction,
+        emitWarning: isTesting || isDevelopment,
         emitError: isProduction
-    })
+    })] : []
 ];
 
 const productionCSSLoader = [
@@ -109,7 +114,7 @@ const loaders = [
         use: {
             loader: 'url-loader',
             options: {
-                limit: 10000,
+                limit: (isProduction || isDevelopment) ? 10000 : false,
                 name: '[path][name].[ext]'
             }
         }
@@ -119,7 +124,7 @@ const loaders = [
         loader: 'raw-loader'
     },
 
-    {
+    ...((isProduction || isDevelopment) ? [{
         test: /\.js$/,
         include: paths.appSrc,
         enforce: 'pre',
@@ -127,7 +132,7 @@ const loaders = [
         options: {
             emitWarning: !isProduction
         }
-    },
+    }] : []),
 
     {
         test: /\.js$/,
@@ -150,12 +155,12 @@ const loaders = [
 ];
 
 module.exports = {
-    mode: mode,
+    mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'source-map' : 'cheap-eval-source-map',
     stats: 'errors-warnings',
-    bail: isProduction,
+    bail: isProduction || isTesting,
 
-    entry: {
+    entry: isTesting ? false : {
         app: paths.appIndexJs
     },
 
