@@ -65,6 +65,7 @@
     "browser-filesaver": "^1.1.1",
     "core-js": "^3.4.8",
     "escape-html": "^1.0.3",
+    "file-loader": "^5.0.2",
     "image-promise": "^7.0.0",
     "karma-webpack": "^4.0.2",
     "knockout": "^3.4.0",
