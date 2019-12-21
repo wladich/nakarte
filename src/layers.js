@@ -10,8 +10,7 @@ import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
 import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
 
-export default function getLayers() {
-    const layers = [
+    const layersDefs = [
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
@@ -1112,8 +1111,9 @@ export default function getLayers() {
         'geocaching.su',
     ];
 
+function getLayers() {
     // set metadata
-    for (let layer of layers) {
+    for (let layer of layersDefs) {
         layer.layer.meta = {title: layer.title};
     }
 
@@ -1124,7 +1124,7 @@ export default function getLayers() {
         orderByTitle[title] = i + 1;
     }
 
-    for (let layer of layers) {
+    for (let layer of layersDefs) {
         const title = layer.title;
         layer.order = orderByTitle[title];
         if (!layer.order) {
@@ -1135,7 +1135,7 @@ export default function getLayers() {
     // divide layers by groups
     const grouppedLayers = [];
     const layersByTitle = {};
-    for (let layer of layers) {
+    for (let layer of layersDefs) {
         layersByTitle[layer.title] = layer;
     }
     for (let groupDef of groupsDefs) {
@@ -1143,86 +1143,7 @@ export default function getLayers() {
         grouppedLayers.push(group);
         for (let title of groupDef.layers) {
             let layer = layersByTitle[title];
-            if (!layer) {
-                throw new Error(`Unknown layer in groups definitions: ${title}`);
-            }
             group.layers.push(layer);
-        }
-    }
-
-    // TODO: move it to tests
-    const codes = new Set();
-    const titles = new Set();
-    const shortNames = new Set();
-    for (let layer of layers) {
-        const {title, layer: {options}} = layer;
-        if (!options) {
-            throw new Error(`Layer without options: ${layer.title}`);
-        }
-        if (titles.has(title)) {
-            throw new Error(`Duplicate layer title "${title}"`);
-        }
-        titles.add(title);
-        const {
-            code,
-            shortName,
-            print,
-            isOverlay,
-            isOverlayTransparent
-        } = options;
-        if (!code) {
-            throw new Error('Layer without code: ' + layer.title);
-        }
-        if (codes.has(code)) {
-            throw new Error(`Duplicate layer code "${code}"`);
-        }
-        codes.add(code);
-
-        if (print) {
-            if (isOverlay && (isOverlayTransparent === undefined)) {
-                throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
-            }
-            if (!shortName) {
-                throw new Error('Layer without shortName: ' + layer.title);
-            }
-            if (shortNames.has(shortName)) {
-                throw new Error(`Duplicate layer shortName: "${shortName}"`);
-            }
-            shortNames.add(shortName);
-        }
-    }
-
-    // check order definition
-    let seenOverlay = false;
-    for (let title of titlesByOrder) {
-        if (title[0] !== '#') {
-            if (!titles.has(title)) {
-                throw new Error(`Unknown layer title in order list: ${title}`);
-            }
-            let isOverlay = layersByTitle[title];
-            if (isOverlay) {
-                seenOverlay = true;
-            } else {
-                if (seenOverlay) {
-                    throw new Error(`Base layer after overlays: ${title}`);
-                }
-            }
-        }
-    }
-    // check groups definitions
-    const seenLayerTitles = new Set();
-    for (let group of groupsDefs) {
-        for (let title of group.layers) {
-            if (seenLayerTitles.has(title)) {
-                throw new Error(`Duplicate layer in groups definition: ${title}`);
-            }
-            seenLayerTitles.add(title);
-        }
-    }
-    // unknown layers in groupsDefs already checked, check only that all layers assigned to groups
-    for (let title of titles) {
-        if (!seenLayerTitles.has(title)) {
-            throw new Error(`Layer not assigned to any group: ${title}`);
         }
     }
 
@@ -1235,3 +1156,4 @@ export default function getLayers() {
         }};
 }
 
+export {getLayers, layersDefs, groupsDefs, titlesByOrder};

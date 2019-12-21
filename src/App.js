@@ -20,7 +20,7 @@ import enableLayersControlAdaptiveHeight from '~/lib/leaflet.control.layers.adap
 import enableLayersMinimize from '~/lib/leaflet.control.layers.minimize';
 import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
 import raiseControlsOnFocus from '~/lib/leaflet.controls.raise-on-focus';
-import getLayers from './layers';
+import {getLayers} from './layers';
 import '~/lib/leaflet.control.layers.events';
 import '~/lib/leaflet.control.jnx';
 import '~/lib/leaflet.control.jnx/hash-state';
