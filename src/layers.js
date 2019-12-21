@@ -383,7 +383,9 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({
                         code: 'Ng',
-                        isOverlay: true
+                        isOverlay: true,
+                        print: false,
+                        jnx: false
                     })
                 },
                 {
@@ -391,7 +393,9 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                     isDefault: true,
                     layer: new L.Wikimapia({
                         code: 'W',
-                        isOverlay: true
+                        isOverlay: true,
+                        print: false,
+                        jnx: false
                     })
                 },
                 {
@@ -400,6 +404,7 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
                         code: 'Wp',
                         print: true,
+                        jnx: false,
                         scaleDependent: true,
                         isOverlay: true,
                         isOverlayTransparent: true,
