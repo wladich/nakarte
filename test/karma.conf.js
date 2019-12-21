@@ -25,5 +25,8 @@ module.exports = function(config) {
                 reporter: 'spec',
             }
         },
+        mochaReporter: {
+            showDiff: true
+        }
       });
 };
