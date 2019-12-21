@@ -2,8 +2,12 @@ language: node_js
 node_js:
   - "node"
 
+addons:
+  chrome: stable
+
 before_script: cp src/secrets.js.template src/secrets.js
 
 script:
   - npm run lint
+  - npm run test
   - npm run build
