@@ -5,7 +5,7 @@ module.exports = function(config) {
         basePath: '../',
         frameworks: ['mocha', 'chai'],
         files: [
-            { pattern: './test/**/*.js', watched: false },
+            { pattern: './test/**/*.js'},
         ],
         preprocessors: {
             './test/**/*.js': ['webpack']
