@@ -67,6 +67,7 @@
     "escape-html": "^1.0.3",
     "file-loader": "^5.0.2",
     "image-promise": "^7.0.0",
+    "karma-mocha-reporter": "^2.2.5",
     "karma-webpack": "^4.0.2",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
