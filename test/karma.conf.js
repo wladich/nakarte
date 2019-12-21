@@ -14,10 +14,16 @@ module.exports = function(config) {
         webpackMiddleware: {
             stats: 'errors-only',
         },
-        reporters: ['progress'],
+        reporters: ['mocha'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
         browsers: ['ChromeHeadless'],
+        client: {
+            mocha: {
+                ui: 'qunit',
+                reporter: 'spec',
+            }
+        },
       });
 };
