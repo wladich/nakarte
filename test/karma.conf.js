@@ -18,7 +18,6 @@ module.exports = function(config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
-        browsers: ['ChromeHeadless'],
         client: {
             mocha: {
                 ui: 'qunit',
