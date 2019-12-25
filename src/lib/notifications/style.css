@@ -1,5 +1,6 @@
 .alertify {
     z-index: 100000 !important;
+    overflow: hidden;
 }
 
 .alertify .alert>*, .alertify .dialog>* {
@@ -8,4 +9,19 @@
 
 .alertify .alert .msg, .alertify .dialog .msg {
     white-space: pre-line;
+}
+
+.alertify .alert, .alertify .dialog {
+    overflow: auto;
+    animation: alertifyMaxHeight 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes alertifyMaxHeight {
+    from {
+        max-height: inherit;
+    }
+    to {
+        max-height: 100%;
+    }
 }
