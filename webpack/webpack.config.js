@@ -75,7 +75,7 @@ const plugins = [
             'src/**/*.css',
             'vendored/**/*.css',
         ],
-        emitWarning: isTesting || isDevelopment,
+        emitWarning: isDevelopment,
         emitError: isProduction
     })] : []
 ];
