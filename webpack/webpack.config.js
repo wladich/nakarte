@@ -65,8 +65,6 @@ const plugins = [
     ...((isProduction || isDevelopment) ? [new MiniCssExtractPlugin({
         filename: 'static/css/[name].[contenthash:8].css'
     })] : []),
-    ...(isProduction ? [] : []),
-    ...(isProduction ? [] : []),
     new Webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(mode),
         'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel')
