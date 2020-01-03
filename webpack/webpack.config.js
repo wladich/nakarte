@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const paths = require('./paths');
 
@@ -53,6 +54,14 @@ const babelConfig = {
     ]
 };
 
+const sourceMapOption = {
+    filename: '[file].map',
+    columns: isProduction,
+    exclude: /mapillary/
+};
+
+const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.EvalSourceMapDevToolPlugin;
+
 const plugins = [
     ...(isProduction ? [new CleanWebpackPlugin()] : []),
     ...(isProduction ? [new CopyWebpackPlugin([
@@ -77,7 +86,8 @@ const plugins = [
         ],
         emitWarning: isDevelopment,
         emitError: isProduction
-    })] : []
+    })] : [],
+    new devToolPlugin(sourceMapOption),
 ];
 
 const productionCSSLoader = [
@@ -154,7 +164,7 @@ const loaders = [
 
 module.exports = {
     mode: isProduction ? 'production' : 'development',
-    devtool: isProduction ? 'source-map' : 'cheap-eval-source-map',
+    devtool: false,
     stats: 'errors-warnings',
     bail: isProduction || isTesting,
 
@@ -168,6 +178,13 @@ module.exports = {
             name: true
         },
         runtimeChunk: 'single',
+        minimizer: [new TerserPlugin({
+            cache: true,
+            parallel: true,
+            sourceMap: true,
+            exclude: /mapillary/
+        })],
+
     },
 
     resolve: {
