@@ -8,6 +8,7 @@ addons:
 before_script: cp src/secrets.js.template src/secrets.js
 
 script:
-  - npm run lint
+  - npm run lint:code
+  - npm run lint:style
   - npm run test
   - npm run build
