@@ -2,27 +2,72 @@
   "root": true,
   "ignorePatterns": [
     "node_modules",
-    "build"
+    "build",
+    "deploy"
   ],
-  "env": {
-    "browser": true,
-    "es2020": true,
-    "commonjs": true
-  },
-  "parser": "babel-eslint",
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "sourceType": "module"
-  },
-  "rules": {
-    "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
-    "no-constant-condition": ["error", {"checkLoops":  false}], // allow `while (true)`
-    "no-prototype-builtins": "off",
-    "semi": "error", // missing in eslint:recommended
-    "eol-last": "error" // missing in eslint:recommended
-  },
-  "globals": {
-    "NODE_ENV": true,
-    "RELEASE_VER": true
-  }
+  "extends": [
+    "eslint:recommended"
+  ],
+  "overrides": [
+    {
+      "files": "src/**/*.js",
+      "env": {
+        "browser": true,
+        "es2020": true,
+        "commonjs": true
+      },
+      "parser": "babel-eslint",
+      "parserOptions": {
+        "sourceType": "module"
+      },
+      "rules": {
+        "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
+        "no-constant-condition": ["error", {"checkLoops":  false}], // allow `while (true)`
+        "no-prototype-builtins": "off",
+        "semi": "error", // missing in eslint:recommended
+        "eol-last": "error" // missing in eslint:recommended
+      },
+      "globals": {
+        "NODE_ENV": true,
+        "RELEASE_VER": true
+      }
+    },
+    {
+      "files": "src/vendored/**/*.js",
+      "rules": {
+        "semi": "off"
+      }
+    },
+    {
+      "files": "test/**/*.js",
+      "excludedFiles": "test/karma.conf.js",
+      "parser": "babel-eslint",
+      "env": {
+        "browser": true,
+        "mocha": true,
+        "es2020": true
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      },
+      "rules": {
+        "semi": "error", // missing in eslint:recommended
+        "eol-last": "error" // missing in eslint:recommended
+      },
+      "globals": {
+        "assert": true
+      }
+    },
+    {
+      "files": [
+        "webpack/**/*.js",
+        "test/karma.conf.js",
+        "scripts/**/*.js"
+      ],
+      "env": {
+        "node": true,
+        "es2017": true
+      }
+    }
+  ]
 }
