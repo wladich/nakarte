@@ -11,10 +11,10 @@
   },
   "rules": {
     "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
-    "no-constant-condition": ["error", {"checkLoops":  false}],
+    "no-constant-condition": ["error", {"checkLoops":  false}], // allow `while (true)`
     "no-prototype-builtins": "off",
-    "semi": "error",
-    "eol-last": "error"
+    "semi": "error", // missing in eslint:recommended
+    "eol-last": "error" // missing in eslint:recommended
   },
   "globals": {
     "NODE_ENV": true,
