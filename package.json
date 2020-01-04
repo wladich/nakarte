@@ -4,7 +4,9 @@
   "scripts": {
     "build": "node scripts/build.js",
     "start": "cross-env NODE_ENV=development webpack-dev-server --open --config webpack/webpack.config.js --hot",
-    "lint": "eslint --ext js . && stylelint '**/*.css'",
+    "lint:code": "eslint --ext js .",
+    "lint:style": "stylelint '**/*.css'",
+    "lint": "npm run lint:code && npm run lint:style",
     "test": "cross-env NODE_ENV=testing  karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
     "testdev": "cross-env NODE_ENV=testing karma start --browsers ChromeHeadless test/karma.conf.js"
   },
