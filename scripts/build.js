@@ -29,8 +29,8 @@ function getSizes(removeNameHash) {
                 .filter(fileName => /\.(js|css)$/.test(fileName))
                 .reduce((memo, fileName) => {
                     const contents = fs.readFileSync(fileName);
-                    fileName = fileName.replace(paths.appBuild + '/', '');
-                    const key = removeNameHash ? removeFileNameHash(fileName) : fileName;
+                    const relativeFileName = fileName.replace(paths.appBuild + '/', '');
+                    const key = removeNameHash ? removeFileNameHash(relativeFileName) : relativeFileName;
                     memo[key] = gzipSize(contents);
                     return memo;
                 }, {});
