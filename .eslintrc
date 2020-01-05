@@ -54,7 +54,8 @@
       "files": [
         "webpack/**/*.js",
         "test/karma.conf.js",
-        "scripts/**/*.js"
+        "scripts/**/*.js",
+        "./myEslintRules.js"
       ],
       "env": {
         "node": true,
