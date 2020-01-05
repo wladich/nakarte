@@ -37,8 +37,6 @@ function enableAdaptiveHeight(control) {
         control.__setupResizeEventsHandler();
         setTimeout(() => control.__setAdaptiveHeight(), 0);
     }
-
-    return control;
 }
 
 export default enableAdaptiveHeight;

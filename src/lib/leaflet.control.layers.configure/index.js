@@ -495,6 +495,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
 
                 }
+                return null;
             }
 
 

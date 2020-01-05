@@ -185,6 +185,7 @@ L.Control.TrackList = L.Control.extend({
             if (e.keyCode === 13) {
                 this_.loadFilesFromUrl();
                 L.DomEvent.stop(e);
+                return false;
             } else {
                 return true;
             }

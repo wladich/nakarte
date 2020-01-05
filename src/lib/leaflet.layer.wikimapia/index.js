@@ -208,6 +208,7 @@ L.Wikimapia = L.GridLayer.extend({
                     return place;
                 }
             }
+            return null;
         }
 
     }

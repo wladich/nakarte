@@ -7,6 +7,7 @@ async function loadFromUrl(url) {
             return service.geoData();
         }
     }
+    return null;
 }
 
 export default loadFromUrl;

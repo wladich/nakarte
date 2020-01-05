@@ -72,6 +72,7 @@ function chooseTitle(titles) {
     for (let langCode of Object.keys(titles)) {
         return titles[langCode];
     }
+    return "";
 }
 
 function decodePolygon(s) {

@@ -9,7 +9,7 @@ L.Control.TrackList.include({
 
         loadTrackFromParam: async function(paramName, values) {
             if (!values || !values.length) {
-                return false;
+                return;
             }
             this.readingFiles(this.readingFiles() + 1);
             const geodata = await new NakarteUrlLoader().geoData(paramName, values);

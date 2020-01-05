@@ -327,7 +327,7 @@ const ElevationProfile = L.Class.extend({
                 this.abortLoading();
             }
             if (!this._map) {
-                return;
+                return this;
             }
             this._map._controlContainer.removeChild(this._container);
             map.removeLayer(this.polyline);

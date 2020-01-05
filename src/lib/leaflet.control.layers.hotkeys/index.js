@@ -13,6 +13,7 @@ function getLayerHotkey(layer) {
     if (hotkey && hotkey.length === 1) {
         return hotkey;
     }
+    return null;
 }
 
 function extendLayerName(name, layer) {

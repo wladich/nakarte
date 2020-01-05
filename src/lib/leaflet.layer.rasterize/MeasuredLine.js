@@ -47,14 +47,14 @@ L.Polyline.include({
             const shift = this._shift(printOptions.latLngBounds, printOptions.zoom);
             const lineBounds = this.getBounds();
             if (latlngs.length < 2) {
-                return;
+                return false;
             }
             const shiftedLineBounds = L.latLngBounds([
                 [lineBounds.getNorth(), lineBounds.getWest() + shift.lng],
                 [lineBounds.getSouth(), lineBounds.getEast() + shift.lng]
             ]);
             if (!shiftedLineBounds.intersects(printOptions.latLngBounds)) {
-                return;
+                return false;
             }
 
             const ctx = canvas.getContext('2d');

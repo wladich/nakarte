@@ -304,7 +304,7 @@ const Viewer = L.Evented.extend({
             let imageIdx = -1;
             getPanoramaAtPos({lat, lng}, 0).then((resp) => {
                 if (!resp.found) {
-                    return false;
+                    return;
                 }
                 for (let [i, image] of resp.data.entries()) {
                     if (image.pageId === pageId) {
