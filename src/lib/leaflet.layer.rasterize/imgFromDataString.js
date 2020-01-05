@@ -15,9 +15,8 @@ function imgFromDataString(xhr) {
         );
         image.src = blobUrl;
         return promise;
-    } else {
-        return null;
     }
+    return null;
 }
 
 export {imgFromDataString};

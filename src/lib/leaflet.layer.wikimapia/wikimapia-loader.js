@@ -54,9 +54,7 @@ class WikimapiaLoader extends TiledDataLoader {
                 z: z2
             };
         }
-        else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y};
-        }
+        return {z, x: layerTileCoords.x, y: layerTileCoords.y};
     }
 
     makeRequestData(dataTileCoords) {

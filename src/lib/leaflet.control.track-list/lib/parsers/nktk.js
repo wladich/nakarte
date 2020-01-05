@@ -305,9 +305,8 @@ function parseNktkFragment(s) {
         return parseNktkOld(s.substring(reader.position), version);
     } else if (version === 4) {
         return parseNktkProtobuf(s.substring(reader.position));
-    } else {
-        return [{name: 'Text encoded track', error: ['CORRUPT']}];
     }
+    return [{name: 'Text encoded track', error: ['CORRUPT']}];
 }
 
 function parseNktkSequence(s) {

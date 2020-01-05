@@ -54,9 +54,8 @@ L.Control.JNX.include({
                 this.removeSelector();
                 this.addSelector([[south, west], [north, east]]);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 );

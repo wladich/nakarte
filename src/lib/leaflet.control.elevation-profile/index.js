@@ -89,12 +89,11 @@ function offestFromEvent(e) {
             offsetX: e.clientX - rect.left,
             offestY: e.clientY - rect.top
         };
-    } else {
-        return {
-            offsetX: e.offsetX,
-            offestY: e.offsetY
-        };
     }
+    return {
+        offsetX: e.offsetX,
+        offestY: e.offsetY
+    };
 }
 
 function movementFromEvents(e1, e2) {

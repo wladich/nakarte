@@ -170,9 +170,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                         }
                     }
                 );
-            } else {
-                return Promise.resolve();
             }
+            return Promise.resolve();
         },
 
         createTile: function(coords, done) {

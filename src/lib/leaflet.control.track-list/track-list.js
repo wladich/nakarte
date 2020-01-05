@@ -186,9 +186,8 @@ L.Control.TrackList = L.Control.extend({
                 this_.loadFilesFromUrl();
                 L.DomEvent.stop(e);
                 return false;
-            } else {
-                return true;
             }
+            return true;
         },
 
         getTrackPolylines: function(track) {

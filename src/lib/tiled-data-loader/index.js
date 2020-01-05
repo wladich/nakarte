@@ -49,14 +49,13 @@ class TiledDataLoader {
         if (dataTileCoords.z > layerTileCoords.z) {
             const multiplier = 1 << (dataTileCoords.z - layerTileCoords.z);
             return {multiplier: 1 / multiplier, offsetX: 0, offsetY: 0};
-        } else {
-            const multiplier = 1 << (layerTileCoords.z - dataTileCoords.z);
-            return {
-                multiplier,
-                offsetX: (layerTileCoords.x - dataTileCoords.x * multiplier),
-                offsetY: (layerTileCoords.y - dataTileCoords.y * multiplier)
-            };
         }
+        const multiplier = 1 << (layerTileCoords.z - dataTileCoords.z);
+        return {
+            multiplier,
+            offsetX: (layerTileCoords.x - dataTileCoords.x * multiplier),
+            offsetY: (layerTileCoords.y - dataTileCoords.y * multiplier)
+        };
     }
 
     requestTileData(layerTileCoords) {

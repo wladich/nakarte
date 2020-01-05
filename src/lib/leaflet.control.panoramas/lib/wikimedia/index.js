@@ -91,9 +91,8 @@ function isCloser(target, a, b) {
         return -1;
     } else if (d1 === d2) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
@@ -126,10 +125,9 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
                 found: true,
                 data: photos
             };
-        } else {
-            return {found: false};
         }
-        
+        return {found: false};
+
     }
     return {found: false};
 }
@@ -140,9 +138,8 @@ function formatDateTime(dateStr) {
     if (m) {
         let [year, month, day] = m.slice(1);
         return `${day} ${months[month - 1]} ${year}`;
-    } else {
-        return dateStr;
     }
+    return dateStr;
 }
 
 const Viewer = L.Evented.extend({

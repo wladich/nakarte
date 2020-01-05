@@ -30,9 +30,8 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     );
     if (status === google.maps.StreetViewStatus.OK) {
         return {found: true, data};
-    } else {
-        return {found: false};
     }
+    return {found: false};
 }
 
 
@@ -83,9 +82,8 @@ const Viewer = L.Evented.extend({
         if (pos && pov) {
             return [pos.lat().toFixed(6), pos.lng().toFixed(6),
                 (pov.heading || 0).toFixed(1), (pov.pitch || 0).toFixed(1), (pov.zoom || 1).toFixed(1)];
-        } else {
-            return null;
         }
+        return null;
     },
 
     setState: function(state) {

@@ -51,9 +51,8 @@ function ensureImageJpg(image) {
     } else if (arrayBufferToString(image.slice(0, 2)) === '\xff\xd8' &&
         arrayBufferToString(image.slice(-2)) === '\xff\xd9') {
         return Promise.resolve(image);
-    } else {
-        return null;
     }
+    return null;
 }
 
 async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {

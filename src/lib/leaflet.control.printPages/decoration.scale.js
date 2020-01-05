@@ -27,16 +27,15 @@ function formatScale(nominalScale, scaleRange) {
             unit = 'm';
         }
         return `${scaleRange.min} – ${scaleRange.max} ${unit} in 1 cm`;
-    } else {
-        let unit;
-        if (nominalScale >= 1000) {
-            nominalScale /= 1000;
-            unit = 'km';
-        } else {
-            unit = 'm';
-        }
-        return `${nominalScale} ${unit} in 1 cm`;
     }
+    let unit;
+    if (nominalScale >= 1000) {
+        nominalScale /= 1000;
+        unit = 'km';
+    } else {
+        unit = 'm';
+    }
+    return `${nominalScale} ${unit} in 1 cm`;
 }
 
 
