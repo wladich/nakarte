@@ -26,6 +26,6 @@ WestraPassesMarkers.include({
 
     getTilesInfo: async function(printOptions) {
         await this.waitDataReady();
-        return await L.Layer.CanvasMarkers.prototype.getTilesInfo.call(this, printOptions);
+        return L.Layer.CanvasMarkers.prototype.getTilesInfo.call(this, printOptions);
     }
 });
