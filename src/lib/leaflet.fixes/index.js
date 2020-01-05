@@ -2,16 +2,6 @@ import L from 'leaflet';
 import './style.css';
 import {fixVectorMarkerWorldJump} from './fixWorldCopyJump';
 
-function fixAll() {
-    fixPanAnimationBug();
-    fixTouchDetection();
-    fixMapKeypressEvent();
-    fixVectorDrawWhileAnimation();
-    fixVectorMarkerWorldJump();
-    allowControlHorizontalStacking();
-    addTooltipDelay();
-}
-
 // https://github.com/Leaflet/Leaflet/issues/3575
 function fixPanAnimationBug() {
     if (!L.Browser.chrome) {
@@ -109,6 +99,16 @@ function addTooltipDelay() {
         clearInterval(this._pendingTooltip);
         origCloseTooltip.call(this);
     };
+}
+
+function fixAll() {
+    fixPanAnimationBug();
+    fixTouchDetection();
+    fixMapKeypressEvent();
+    fixVectorDrawWhileAnimation();
+    fixVectorMarkerWorldJump();
+    allowControlHorizontalStacking();
+    addTooltipDelay();
 }
 
 export {fixAll};

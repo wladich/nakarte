@@ -2,6 +2,10 @@ import L from 'leaflet';
 import urlViaCorsProxy from '~/lib/CORSProxy';
 import {imgFromDataString} from './imgFromDataString';
 
+function noop() {
+    // dummy function
+}
+
 const GridLayerGrabMixin = {
     tileImagePromiseFromCoords: function(_unused_coords) {
         throw new Error('Method not implemented');
@@ -75,10 +79,6 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
         }
     }
 );
-
-function noop() {
-    // dummy function
-}
 
 const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
     getCanvasFromTile: function(tile) {

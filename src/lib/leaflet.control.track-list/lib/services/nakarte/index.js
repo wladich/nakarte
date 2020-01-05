@@ -14,6 +14,20 @@ function flattenArray(ar) {
 
 }
 
+function parsePointFromHashValues(values) {
+    if (values.length < 2) {
+        return [{name: 'Point in url', error: 'CORRUPT'}];
+    }
+    const lat = parseFloat(values[0]);
+    const lng = parseFloat(values[1]);
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        return [{name: 'Point in url', error: 'CORRUPT'}];
+    }
+    const name = ((values[2] || '').trim()) || 'Point';
+    return [{name, points: [{name, lat, lng}]}];
+
+}
+
 class NakarteTrack extends BaseService {
     isOurUrl() {
         return this.origUrl.indexOf('track://') > -1;
@@ -100,21 +114,5 @@ class NakarteUrl {
         return flattenArray(await Promise.all(promises));
     }
 }
-
-
-function parsePointFromHashValues(values) {
-    if (values.length < 2) {
-        return [{name: 'Point in url', error: 'CORRUPT'}];
-    }
-    const lat = parseFloat(values[0]);
-    const lng = parseFloat(values[1]);
-    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        return [{name: 'Point in url', error: 'CORRUPT'}];
-    }
-    const name = ((values[2] || '').trim()) || 'Point';
-    return [{name, points: [{name, lat, lng}]}];
-
-}
-
 
 export {NakarteTrack, NakarteUrl, NakarteUrlLoader};

@@ -11,18 +11,6 @@ function PackedStreamReader(s) {
     this.position = 0;
 }
 
-PackedStreamReader.prototype.readNumber = function() {
-    var n = unpackNumber(this._string, this.position);
-    this.position += n[1];
-    return n[0];
-};
-
-PackedStreamReader.prototype.readString = function(size) {
-    var s = this._string.slice(this.position, this.position + size);
-    this.position += size;
-    return s;
-};
-
 function unpackNumber(s, position) {
     var x,
         n = 0;
@@ -63,6 +51,18 @@ function unpackNumber(s, position) {
     n -= 268435456;
     return [n, 4];
 }
+
+PackedStreamReader.prototype.readNumber = function() {
+    var n = unpackNumber(this._string, this.position);
+    this.position += n[1];
+    return n[0];
+};
+
+PackedStreamReader.prototype.readString = function(size) {
+    var s = this._string.slice(this.position, this.position + size);
+    this.position += size;
+    return s;
+};
 
 function deltaEncodeSegment(points) {
     let deltaLats = [],
@@ -142,14 +142,6 @@ function saveNktk(segments, name, color, measureTicksShown, waypoints, trackHidd
     TrackView.write(trackView, pbf);
     const s = versionStr + arrayBufferToString(pbf.finish());
     return urlSafeBase64.encode(s);
-}
-
-function parseTrackUrlData(s) {
-    s = urlSafeBase64.decode(s);
-    if (!s) {
-        return [{name: 'Text encoded track', error: ['CORRUPT']}];
-    }
-    return parseNktkOld(s, 0);
 }
 
 function parseNktkOld(s, version) {
@@ -260,6 +252,14 @@ function parseNktkOld(s, version) {
         trackHidden: trackHidden
     };
     return [geoData];
+}
+
+function parseTrackUrlData(s) {
+    s = urlSafeBase64.decode(s);
+    if (!s) {
+        return [{name: 'Text encoded track', error: ['CORRUPT']}];
+    }
+    return parseNktkOld(s, 0);
 }
 
 function parseNktkProtobuf(s) {

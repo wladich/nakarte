@@ -17,10 +17,6 @@ function getLayersForPrint(map, xhrQueue) {
         return 0;
     }
 
-    function compareLayersOrder(layer1, layer2) {
-        return compareArrays(getLayerZOrder(layer1), getLayerZOrder(layer2));
-    }
-
     function getLayerZOrder(layer) {
         let el = layer._container || layer._path;
         if (!el) {
@@ -34,7 +30,6 @@ function getLayersForPrint(map, xhrQueue) {
         return order.reverse();
     }
 
-
     function compareArrays(ar1, ar2) {
         const len = Math.min(ar1.length, ar2.length);
         for (let i = 0; i < len; i++) {
@@ -44,6 +39,10 @@ function getLayersForPrint(map, xhrQueue) {
             }
         }
         return compare(ar1.length, ar2.length);
+    }
+
+    function compareLayersOrder(layer1, layer2) {
+        return compareArrays(getLayerZOrder(layer1), getLayerZOrder(layer2));
     }
 
     let layers = [];
