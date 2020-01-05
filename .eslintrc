@@ -18,6 +18,7 @@
       "parserOptions": {
         "sourceType": "module"
       },
+      "extends": ["./myEslintBrowserRules.js"],
       "rules": {
         "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
         "no-constant-condition": ["error", {"checkLoops":  false}], // allow `while (true)`
@@ -31,7 +32,8 @@
     {
       "files": "src/vendored/**/*.js",
       "rules": {
-        "semi": "off"
+        "semi": "off",
+        "no-console": "off"
       }
     },
     {
@@ -55,7 +57,8 @@
         "webpack/**/*.js",
         "test/karma.conf.js",
         "scripts/**/*.js",
-        "./myEslintRules.js"
+        "./myEslintRules.js",
+        "./myEslintBrowserRules.js",
       ],
       "env": {
         "node": true,
