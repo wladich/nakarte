@@ -36,11 +36,11 @@ test('Layers titles unique', function() {
     const seen = new Set();
     const duplicates = new Set();
     for (let layerDef of layersDefs) {
-        const name = layerDef.title;
-        if (seen.has(name)) {
-            duplicates.add(name);
+        const title = layerDef.title;
+        if (seen.has(title)) {
+            duplicates.add(title);
         }
-        seen.add(name);
+        seen.add(title);
     }
     assert.isEmpty(Array.from(duplicates), 'duplicate layers');
 });
@@ -105,7 +105,7 @@ test('All baselayers ordered before overlays', function() {
         if (layerName[0] === '#') {
             continue;
         }
-        let layerDef = layersDefs.filter((layerDef) => layerDef.title === layerName)[0];
+        let layerDef = layersDefs.filter((item) => item.title === layerName)[0];
         let isOverlay = layerDef.layer.options.isOverlay;
         if (seenOverlay && !isOverlay) {
             outOfOrder.push(layerName);
