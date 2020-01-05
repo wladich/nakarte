@@ -8,7 +8,7 @@ const sessionId = randId();
 
 function captureMessage(msg, extra={}) {
     extra.url = window.location.toString();
-    console.log('captureMessage', msg, extra);
+    console.log('captureMessage', msg, extra); // eslint-disable-line no-console
     Sentry.withScope(function(scope) {
         scope.setExtras(extra);
         Sentry.captureMessage(msg);
@@ -16,7 +16,7 @@ function captureMessage(msg, extra={}) {
 }
 
 function captureException(e, description) {
-    console.log('captureException', e, description);
+    console.log('captureException', e, description); // eslint-disable-line no-console
     Sentry.withScope(function(scope) {
         if (description) {
             scope.setTag('description', description);

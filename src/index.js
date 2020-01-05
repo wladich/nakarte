@@ -26,14 +26,14 @@ if (NODE_ENV === 'production') {
         release: RELEASE_VER});
 }
 
-console.log('Version:', RELEASE_VER);
+console.log('Version:', RELEASE_VER); // eslint-disable-line no-console
 
 let uid;
 try {
     uid = getUid();} catch (e) {
     // ignore error
 }
-console.log('UID:', uid);
+console.log('UID:', uid); // eslint-disable-line no-console
 
 Sentry.configureScope(function(scope) {
     scope.setUser({id: uid});
