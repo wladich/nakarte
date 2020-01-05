@@ -7,7 +7,7 @@ layersDefs.forEach(function(layerDef) {
         assert.isString(layerDef.title, 'title defined');
         assert.isNotEmpty(layerDef.title, 'title not empty');
         assert.oneOf(typeof layerDef.description, ['undefined', 'string'], 'description undefined or string');
-        if (typeof layerDef.description == 'string') {
+        if (typeof layerDef.description === 'string') {
             assert.isNotEmpty(layerDef.description);
         }
         assert.oneOf(layerDef.isDefault, [true, false], 'isDefault');

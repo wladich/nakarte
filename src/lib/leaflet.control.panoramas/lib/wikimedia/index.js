@@ -20,7 +20,7 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
     const images = [];
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {
-            if (!page.coordinates || page.title.slice(-4).toLowerCase() != '.jpg') {
+            if (!page.coordinates || page.title.slice(-4).toLowerCase() !== '.jpg') {
                 continue;
             }
 

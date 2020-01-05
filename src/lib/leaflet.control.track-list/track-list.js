@@ -287,7 +287,7 @@ L.Control.TrackList = L.Control.extend({
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
                                     line = L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
-                                    if (line.length == 1) {
+                                    if (line.length === 1) {
                                         line.push(line[0]);
                                     }
                                     return line;
