@@ -4,8 +4,9 @@ import {decode866} from './codePages';
 import parseGeoFile from '../parseGeoFile';
 
 function parseZip(txt, _unused_name) {
+    let unzipper;
     try {
-        var unzipper = new JSUnzip(txt);
+        unzipper = new JSUnzip(txt);
     } catch (e) {
         return null;
     }

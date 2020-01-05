@@ -39,10 +39,11 @@ L.Control.JNX.include({
             }
 
             if (values && values.length === 4) {
+                let south, west, north, east;
                 try {
-                    var south = validateFloatRange(values[0], -86, 86),
-                        west = validateFloat(values[1]),
-                        north = validateFloatRange(values[2], -86, 86),
+                        south = validateFloatRange(values[0], -86, 86);
+                        west = validateFloat(values[1]);
+                        north = validateFloatRange(values[2], -86, 86);
                         east = validateFloat(values[3]);
                 } catch (e) {
                     if (e.message === 'INVALID VALUE') {

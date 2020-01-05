@@ -26,8 +26,9 @@ function showNotification(message, mouseEvent) {
 
 function copyToClipboard(s, mouseEvent) {
     let success = false;
+    let ta;
     try {
-        var ta = document.createElement('textarea');
+        ta = document.createElement('textarea');
         ta.value = s;
         document.body.appendChild(ta);
         ta.select();

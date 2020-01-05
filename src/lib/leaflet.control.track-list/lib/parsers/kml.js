@@ -89,8 +89,9 @@ function parseKml(txt, name) {
 
     txt = stripBom(txt);
     txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    let dom;
     try {
-        var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+        dom = (new DOMParser()).parseFromString(txt, "text/xml");
     } catch (e) {
         return null;
     }
@@ -106,8 +107,9 @@ function parseKml(txt, name) {
 
 function parseKmz(txt, name) {
     var uncompressed;
+    let unzipper;
     try {
-        var unzipper = new JSUnzip(txt);
+        unzipper = new JSUnzip(txt);
     } catch (e) {
         return null;
     }

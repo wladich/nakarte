@@ -824,6 +824,10 @@ const ElevationProfile = L.Class.extend({
                 minDist = null,
                 mouseLatlng = e.latlng,
                 i, sampleLatlng, dist, di;
+            let nextDist,
+                nextSampleDist,
+                prevDist,
+                prevSampleDist;
             for (i = 0; i < this.samples.length; i++) {
                 sampleLatlng = this.samples[i];
                 dist = sqrDist(sampleLatlng, mouseLatlng);
@@ -836,12 +840,12 @@ const ElevationProfile = L.Class.extend({
             if (nearestInd !== null) {
                 ind = nearestInd;
                 if (nearestInd > 0) {
-                    var prevDist = sqrDist(mouseLatlng, this.samples[nearestInd - 1]),
-                        prevSampleDist = sqrDist(this.samples[nearestInd], this.samples[nearestInd - 1]);
+                    prevDist = sqrDist(mouseLatlng, this.samples[nearestInd - 1]);
+                    prevSampleDist = sqrDist(this.samples[nearestInd], this.samples[nearestInd - 1]);
                 }
                 if (nearestInd < this.samples.length - 1) {
-                    var nextDist = sqrDist(mouseLatlng, this.samples[nearestInd + 1]),
-                        nextSampleDist = sqrDist(this.samples[nearestInd], this.samples[nearestInd + 1]);
+                    nextDist = sqrDist(mouseLatlng, this.samples[nearestInd + 1]);
+                    nextSampleDist = sqrDist(this.samples[nearestInd], this.samples[nearestInd + 1]);
                 }
 
                 if (nearestInd === 0) {
