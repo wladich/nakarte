@@ -866,7 +866,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onEscPressedStopLineJoinSelection: function(e) {
-            if ('input' === e.target.tagName.toLowerCase()) {
+            if (e.target.tagName.toLowerCase() === 'input') {
                 return;
             }
             switch (e.keyCode) {

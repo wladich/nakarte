@@ -158,7 +158,7 @@ L.Polyline.EditMixin = {
     },
 
     onKeyPress: function(e) {
-        if ('input' === e.target.tagName.toLowerCase()) {
+        if (e.target.tagName.toLowerCase() === 'input') {
             return;
         }
         var code = e.keyCode;
