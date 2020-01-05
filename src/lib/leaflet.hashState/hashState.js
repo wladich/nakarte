@@ -18,7 +18,7 @@ function parseHashParams(s) {
         s = s.substr(i + 1).trim();
         let m, key, value;
         for (let pair of s.split('&')) {
-            m = /^([^=]+?)(?:=(.*))?$/.exec(pair);
+            m = /^([^=]+?)(?:=(.*))?$/u.exec(pair);
             if (m) {
                 [, key, value] = m;
                 if (value) {

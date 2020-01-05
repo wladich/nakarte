@@ -1,7 +1,7 @@
 import BaseService from './baseService';
 
 class YandexRuler extends BaseService {
-    urlRe = /yandex\..+[?&]rl=([^&]+)/;
+    urlRe = /yandex\..+[?&]rl=([^&]+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
@@ -17,7 +17,7 @@ class YandexRuler extends BaseService {
         let error;
         const points = [];
         let s = this.urlRe.exec(this.origUrl)[1];
-        s = s.replace(/%2C/ig, ',');
+        s = s.replace(/%2C/iug, ',');
         const points_str = s.split('~');
         for (let i = 0; i < points_str.length; i++) {
             let point = points_str[i].split(',');

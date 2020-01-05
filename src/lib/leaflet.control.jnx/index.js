@@ -87,7 +87,7 @@ L.Control.JNX = L.Control.extend({
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
-            const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
+            const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/u, '_');
             const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.jnx`;
             const eventId = logging.randId();
             logging.logEvent('jnx start', {eventId, layerName, zoom, bounds});

@@ -17,7 +17,7 @@ function getTileId({x, y, z}) {
 function makeTileUrl(coords) {
     const
         tileId = getTileId(coords),
-        urlPath = tileId.replace(/(\d{3})(?!$)/g, '$1/'); // "033331022" -> "033/331/022"
+        urlPath = tileId.replace(/(\d{3})(?!$)/gu, '$1/'); // "033331022" -> "033/331/022"
     return `http://wikimapia.org/z1/itiles/${urlPath}.xy?342342`;
 }
 
@@ -155,7 +155,7 @@ async function parseTile(s, projectObj) {
     }
     const fields = lines[0].split('|');
     const tileId = fields[0];
-    if (!tileId || !tileId.match(/^[0-3]+$/)) {
+    if (!tileId || !tileId.match(/^[0-3]+$/u)) {
         throw new Error('Invalid tile header');
     }
     tile.tileId = tileId;
@@ -176,7 +176,7 @@ async function parseTile(s, projectObj) {
             continue;
         }
         let placeId = fields[0];
-        if (!placeId.match(/^\d+$/)) {
+        if (!placeId.match(/^\d+$/u)) {
             // throw new Error('Invalid place id');
             continue;
         }
@@ -186,7 +186,7 @@ async function parseTile(s, projectObj) {
             throw new Error(`Unknown wikimapia polygon encoding type: "${fields[6]}"`);
         }
 
-        let bounds = fields[2].match(/^([-\d]+),([-\d]+),([-\d]+),([-\d]+)$/);
+        let bounds = fields[2].match(/^([-\d]+),([-\d]+),([-\d]+),([-\d]+)$/u);
         if (!bounds) {
             throw new Error('Invalid place bounds');
         }

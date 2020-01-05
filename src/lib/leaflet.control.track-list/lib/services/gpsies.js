@@ -4,7 +4,7 @@ import parseGpx from '../parsers/gpx';
 import urlEncode from './urlEncode';
 
 class Gpsies extends BaseService {
-    urlRe = /^https?:\/\/www\.gpsies\.com\/map\.do[^?]*\?fileId=([a-z]+)/;
+    urlRe = /^https?:\/\/www\.gpsies\.com\/map\.do[^?]*\?fileId=([a-z]+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);

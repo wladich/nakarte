@@ -15,7 +15,7 @@ L.Control.TrackList.include({
 
             for (i = 0; i < safeLocalStorage.length; i++) {
                 key = safeLocalStorage.key(i);
-                m = key.match(/^trackList_(\d+)$/);
+                m = key.match(/^trackList_(\d+)$/u);
                 if (m && m[1] !== undefined) {
                     if (Number(m[1]) > maxKey) {
                         maxKey = Number(m[1]);
@@ -43,7 +43,7 @@ L.Control.TrackList.include({
             //cleanup stale records
             for (i = 0; i < safeLocalStorage.length; i++) {
                 key = safeLocalStorage.key(i);
-                m = key.match(/^trackList_(\d+)$/);
+                m = key.match(/^trackList_(\d+)$/u);
                 if (m && m[1] !== undefined) {
                     keys.push(Number(m[1]));
                 }
@@ -67,7 +67,7 @@ L.Control.TrackList.include({
 
             for (i = 0; i < safeLocalStorage.length; i++) {
                 key = safeLocalStorage.key(i);
-                m = key.match(/^trackList_(\d+)$/);
+                m = key.match(/^trackList_(\d+)$/u);
                 if (m && m[1] !== undefined) {
                     if (Number(m[1]) > maxKey) {
                         maxKey = Number(m[1]);

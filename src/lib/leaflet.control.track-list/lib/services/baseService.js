@@ -42,7 +42,7 @@ class BaseService {
         return url
             .split('#')[0]
             .split('?')[0]
-            .replace(/\/*$/, '')
+            .replace(/\/*$/u, '')
             .split('/')
             .pop();
     }

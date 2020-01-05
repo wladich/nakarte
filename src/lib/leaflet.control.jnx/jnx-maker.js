@@ -37,7 +37,7 @@ async function convertToJpeg(image) {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(image, 0, 0);
     const dataURL = canvas.toDataURL("image/jpeg");
-    const s = atob(dataURL.replace(/^data:image\/jpeg;base64,/, ""));
+    const s = atob(dataURL.replace(/^data:image\/jpeg;base64,/u, ""));
     return stringToArrayBuffer(s);
 }
 

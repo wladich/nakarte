@@ -8,7 +8,7 @@ class MovescountBase extends BaseService {
 }
 
 class MovescountRoute extends MovescountBase {
-    urlRe = /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?map.*[?&]route=(\d+)/;
+    urlRe = /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?map.*[?&]route=(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
@@ -59,7 +59,7 @@ class MovescountRoute extends MovescountBase {
 }
 
 class MovescountMove extends MovescountBase {
-    urlRe = /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?moves\/move(\d+)/;
+    urlRe = /^https?:\/\/www.movescount.com\/([a-z]{2}\/)?moves\/move(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);

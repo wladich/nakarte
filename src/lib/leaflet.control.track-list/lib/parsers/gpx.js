@@ -89,7 +89,7 @@ function parseGpx(txt, name, preferNameFromFile) {
 
     txt = stripBom(txt);
     // remove namespaces
-    txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    txt = txt.replace(/<([^ >]+):([^ >]+)/ug, '<$1_$2');
     let dom;
     try {
         dom = (new DOMParser()).parseFromString(txt, "text/xml");

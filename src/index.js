@@ -5,7 +5,7 @@ import config from './config';
 
 function getUid() {
     const cookie = document.cookie;
-    const cookieUid = cookie.match(/\buid=([^;]+)/)[1];
+    const cookieUid = cookie.match(/\buid=([^;]+)/u)[1];
     const uidRaw = atob(cookieUid);
     const l = [];
     for (let i = 0; i < uidRaw.length; i++) {

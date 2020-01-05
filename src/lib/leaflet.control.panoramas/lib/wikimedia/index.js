@@ -27,12 +27,12 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
             const iinfo = page.imageinfo[0];
             let imageDescription = iinfo.extmetadata.ImageDescription ? iinfo.extmetadata.ImageDescription.value : null;
             let objectDescription = iinfo.extmetadata.ObjectName ? iinfo.extmetadata.ObjectName.value : null;
-            if (imageDescription && /^<table (.|\n)+<\/table>$/.test(imageDescription)) {
+            if (imageDescription && /^<table (.|\n)+<\/table>$/u.test(imageDescription)) {
                 imageDescription = null;
             }
             if (imageDescription) {
-                imageDescription = imageDescription.replace(/<[^>]+>/g, '');
-                imageDescription = imageDescription.replace(/[\n\r]/g, '');
+                imageDescription = imageDescription.replace(/<[^>]+>/ug, '');
+                imageDescription = imageDescription.replace(/[\n\r]/ug, '');
             }
             if (imageDescription && objectDescription && objectDescription.toLowerCase().includes(imageDescription.toLowerCase())) {
                 imageDescription = null;
@@ -55,7 +55,7 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
             }
 
             let author = iinfo.extmetadata.Artist ? iinfo.extmetadata.Artist.value : null;
-            if (author && /^<table (.|\n)+<\/table>$/.test(author)) {
+            if (author && /^<table (.|\n)+<\/table>$/u.test(author)) {
                 author = `See author info at <a href="${iinfo.descriptionurl}">Wikimedia commons</a>`;
             }
 
@@ -133,7 +133,7 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
 }
 
 function formatDateTime(dateStr) {
-    const m = /^(\d+)-(\d+)-(\d+)/.exec(dateStr);
+    const m = /^(\d+)-(\d+)-(\d+)/u.exec(dateStr);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     if (m) {
         let [year, month, day] = m.slice(1);

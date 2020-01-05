@@ -9,7 +9,7 @@ function parseKml(txt, name) {
     var getSegmentPoints = function(coordinates_element) {
         // convert multiline text value of tag to single line
         var coordinates_string = xmlGetNodeText(coordinates_element);
-        var points_strings = coordinates_string.split(/\s+/);
+        var points_strings = coordinates_string.split(/\s+/u);
         var points = [];
         for (var i = 0; i < points_strings.length; i++) {
             if (points_strings[i].length) {
@@ -88,7 +88,7 @@ function parseKml(txt, name) {
     }
 
     txt = stripBom(txt);
-    txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    txt = txt.replace(/<([^ >]+):([^ >]+)/ug, '<$1_$2');
     let dom;
     try {
         dom = (new DOMParser()).parseFromString(txt, "text/xml");
@@ -140,7 +140,7 @@ function parseKmz(txt, name) {
 
     for (i = 0; i < unzipper.entries.length; i++) {
         entry = unzipper.entries[i];
-        if (entry.fileName.match(/\.kml$/i)) {
+        if (entry.fileName.match(/\.kml$/iu)) {
             if (entry.compressionMethod === 0) {
                 uncompressed = entry.data;
             } else if (entry.compressionMethod === 8) {

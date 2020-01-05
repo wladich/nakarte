@@ -508,7 +508,7 @@ L.Control.TrackList = L.Control.extend({
             }
             let serialized = tracks.map((track) => this.trackToString(track)).join('/');
             const hashDigest = md5(serialized, null, true);
-            const key = btoa(hashDigest).replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
+            const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
             const url = window.location + '&nktl=' + key;
             copyToClipboard(url, mouseEvent);
             fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then(
@@ -1008,7 +1008,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerLabel: function(marker, label) {
-            if (label.match(/^\d{3,}/)) {
+            if (label.match(/^\d{3,}/u)) {
                 var n = parseInt(label, 10);
                 marker._parentTrack._pointAutoInc =
                     Math.max(n, marker._parentTrack._pointAutoInc | 0);

@@ -16,7 +16,7 @@ function iconFromBackgroundImage(className) {
     el.className = className;
     container.appendChild(el);
     const st = window.getComputedStyle(el),
-        url = st.backgroundImage.replace(/^url\("?/, '').replace(/"?\)$/, '');
+        url = st.backgroundImage.replace(/^url\("?/u, '').replace(/"?\)$/u, '');
     let icon = {'url': url, 'center': [-el.offsetLeft, -el.offsetTop]};
     document.body.removeChild(container);
     container.removeChild(el);

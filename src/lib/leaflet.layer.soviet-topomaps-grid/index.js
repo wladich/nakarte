@@ -55,7 +55,7 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => {
                     return replacer[s];
                 }
             );
@@ -93,7 +93,7 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => {
                     return replacer[s];
                 }
             );
@@ -202,7 +202,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 rect.bringToBack();
             }
             var objects = [rect];
-            const title = titles[0].replace(/-/g, ' &ndash; ');
+            const title = titles[0].replace(/-/gu, ' &ndash; ');
             var html = L.Util.template(`<span style="color:{color}">{title}</span>`, {color: color, title: title});
             var icon = L.divIcon({html: html, className: 'leaflet-sovietgrid-quadtitle-' + layer, iconSize: null});
             var marker = L.marker(L.latLngBounds(bounds).getCenter(), {icon: icon});

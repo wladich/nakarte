@@ -3,7 +3,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 import {decode as utf8_decode} from 'utf8';
 
 class Strava extends BaseService {
-    urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/;
+    urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
@@ -52,12 +52,12 @@ class Strava extends BaseService {
             let title = dom.querySelector('meta[property=og\\:title]').content;
             title = utf8_decode(title);
             // name and description
-            const m = title.match(/^(.+) - ([^-]+)/);
+            const m = title.match(/^(.+) - ([^-]+)/u);
             if (m) {
                 // reverse name and description
                 name2 = `${m[2]} ${m[1]}`;
                 title = dom.querySelector('title').text;
-                let date = title.match(/ (on \d{1,2} \w+ \d{4}) /)[1];
+                let date = title.match(/ (on \d{1,2} \w+ \d{4}) /u)[1];
                 if (date) {
                     name2 += ' ' + date;
                 }

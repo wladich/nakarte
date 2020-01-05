@@ -3,7 +3,7 @@ import BaseService from './baseService';
 import parseGpx from '../parsers/gpx';
 
 class Gpslib extends BaseService {
-    urlRe = /^https?:\/\/(?:.+\.)?gpslib\.[^.]+\/tracks\/info\/(\d+)/;
+    urlRe = /^https?:\/\/(?:.+\.)?gpslib\.[^.]+\/tracks\/info\/(\d+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);

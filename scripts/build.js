@@ -19,14 +19,14 @@ function getVersionFromGit() {
 // Output: /static/js/main.js
 function removeFileNameHash(fileName) {
     return fileName
-        .replace(/\/?(.*)(\.[0-9a-f]+)(\.js|\.css)/, (match, p1, p2, p3) => p1 + p3);
+        .replace(/\/?(.*)(\.[0-9a-f]+)(\.js|\.css)/u, (match, p1, p2, p3) => p1 + p3);
 }
 
 function getSizes(removeNameHash) {
     return new Promise((resolve) => {
         recursive(paths.appBuild, (err, fileNames) => {
             const previousSizeMap = (fileNames || [])
-                .filter(fileName => /\.(js|css)$/.test(fileName))
+                .filter(fileName => /\.(js|css)$/u.test(fileName))
                 .reduce((memo, fileName) => {
                     const contents = fs.readFileSync(fileName);
                     const relativeFileName = fileName.replace(paths.appBuild + '/', '');

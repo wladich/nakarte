@@ -3,7 +3,7 @@ import BaseService from './baseService';
 import parseGpx from '../parsers/gpx';
 
 class Osm extends BaseService {
-    urlRe = /^https?:\/\/www\.openstreetmap\.org\/user\/(?:.*)\/traces\/(\d+)/;
+    urlRe = /^https?:\/\/www\.openstreetmap\.org\/user\/(?:.*)\/traces\/(\d+)/u;
 
     getTrackId() {
         const m = this.urlRe.exec(this.origUrl);

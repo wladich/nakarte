@@ -60,7 +60,7 @@ const babelConfig = {
 const sourceMapOption = {
     filename: '[file].map',
     columns: isProduction,
-    exclude: /mapillary/
+    exclude: /mapillary/u
 };
 
 const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.EvalSourceMapDevToolPlugin;
@@ -116,12 +116,12 @@ const developmentCSSLoader = [
 
 const loaders = [
     {
-        test: /\.mjs$/,
-        include: /node_modules/,
+        test: /\.mjs$/u,
+        include: /node_modules/u,
         type: 'javascript/auto'
     },
     {
-        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/u,
         use: {
             loader: 'url-loader',
             options: {
@@ -131,12 +131,12 @@ const loaders = [
         }
     },
     {
-        test: /\.(html)(\?.*)?$/,
+        test: /\.(html)(\?.*)?$/u,
         loader: 'raw-loader'
     },
 
     ...((isProduction || isDevelopment) ? [{
-        test: /\.js$/,
+        test: /\.js$/u,
         include: paths.appSrc,
         enforce: 'pre',
         loader: 'eslint-loader',
@@ -146,11 +146,11 @@ const loaders = [
     }] : []),
 
     {
-        test: /\.js$/,
+        test: /\.js$/u,
         exclude: isProduction ? [
-            /node_modules\/core-js/,
-            /node_modules\/webpack/,
-        ] : /node_modules/,
+            /node_modules\/core-js/u,
+            /node_modules\/webpack/u,
+        ] : /node_modules/u,
         loaders: [
             {
                 loader: 'babel-loader',
@@ -160,7 +160,7 @@ const loaders = [
     },
 
     {
-        test: /\.s?css/i,
+        test: /\.s?css/iu,
         loaders : isProduction ? productionCSSLoader : developmentCSSLoader
     }
 ];
@@ -185,7 +185,7 @@ module.exports = {
             cache: true,
             parallel: true,
             sourceMap: true,
-            exclude: /mapillary/
+            exclude: /mapillary/u
         })],
 
     },

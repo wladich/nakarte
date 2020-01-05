@@ -327,7 +327,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             serializeCustomLayer: function(fieldValues) {
                 let s = JSON.stringify(fieldValues);
-                s = s.replace(/[\u007f-\uffff]/g,
+                s = s.replace(/[\u007f-\uffff]/ug,
                     function(c) {
                         return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
                     }
@@ -335,8 +335,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 function encodeUrlSafeBase64(s) {
                     return btoa(s)
-                        .replace(/\+/g, '-')
-                        .replace(/\//g, '_');
+                        .replace(/\+/ug, '-')
+                        .replace(/\//ug, '_');
                 }
 
                 return '-cs' + encodeUrlSafeBase64(s);
@@ -477,9 +477,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             loadCustomLayerFromString: function(s) {
                 let fieldValues;
-                const m = s.match(/^-cs(.+)$/);
+                const m = s.match(/^-cs(.+)$/u);
                 if (m) {
-                    s = m[1].replace(/-/g, '+').replace(/_/g, '/');
+                    s = m[1].replace(/-/ug, '+').replace(/_/ug, '/');
                     try {
                         s = atob(s);
                         fieldValues = JSON.parse(s);
