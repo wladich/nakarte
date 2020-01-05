@@ -47,16 +47,6 @@ const hashState = {
         this._listeners.push([key, callback]);
     },
 
-    removeEventListener: function(key, callback) {
-        this._listeners.forEach(([k, c], i) => {
-                if (k === key && c === callback) {
-                    this._listeners.splice(i, 1);
-                    return;
-                }
-            }
-        );
-    },
-
     updateState: function(key, values) {
         if (values) {
             this._state[key] = values;

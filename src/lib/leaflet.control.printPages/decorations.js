@@ -35,7 +35,7 @@ class PrintStaticLayer {
     }
 
     _drawRaster(_unused_canvas, _unused_printOptions) {
-        return;
+        throw new Error("Method not implemented");
     }
 }
 
