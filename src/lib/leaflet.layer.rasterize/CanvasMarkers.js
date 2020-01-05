@@ -62,6 +62,7 @@ L.Layer.CanvasMarkers.include({
                             }
                         ),
                         abortLoading: () => {
+                            // no actions needed
                         }
                     };
                 }).bind(this),

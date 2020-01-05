@@ -139,6 +139,7 @@ class Grid extends PrintStaticLayer {
                         }
                     ),
                     abortLoading: () => {
+                        // no actions needed
                     }
                 };
                 yield {
@@ -149,6 +150,7 @@ class Grid extends PrintStaticLayer {
                         }
                     ),
                     abortLoading: () => {
+                        // no actions needed
                     }
                 };
             }).bind(this),

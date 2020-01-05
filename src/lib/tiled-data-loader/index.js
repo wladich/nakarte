@@ -70,6 +70,7 @@ class TiledDataLoader {
                     }
                 ),
                 abortLoading: () => {
+                    // no need to abort Promise which is resolved immediately
                 }
             };
         }

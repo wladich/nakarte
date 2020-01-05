@@ -77,7 +77,7 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
 );
 
 function noop() {
-
+    // dummy function
 }
 
 const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {

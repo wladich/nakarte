@@ -87,6 +87,7 @@ L.Polyline.include({
                             }
                         ),
                         abortLoading: () => {
+                            // no actions needed
                         }
                     };
                 }).bind(this),

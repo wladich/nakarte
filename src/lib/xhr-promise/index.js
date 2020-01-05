@@ -150,7 +150,9 @@ class XHRQueue {
         }
         const promise = this._queue.shift();
         promise
-            .catch(() => {})
+            .catch(() => {
+                // do not throw if XHR request fails
+            })
             .then(() => this._onRequestReady(promise));
         this._activeCount += 1;
         promise.send();
