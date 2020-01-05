@@ -279,7 +279,7 @@ const ElevationProfile = L.Class.extend({
             this.polyline.on('mousemove', this.onLineMouseMove, this);
             this.polyline.on('mouseover', this.onLineMouseEnter, this);
             this.polyline.on('mouseout', this.onLineMouseLeave, this);
-            this.polyLineSelection = L.polyline([], {weight: 20, opacity: .5, color: 'yellow', lineCap: 'butt'});
+            this.polyLineSelection = L.polyline([], {weight: 20, opacity: 0.5, color: 'yellow', lineCap: 'butt'});
             return this;
         },
 
@@ -851,7 +851,7 @@ const ElevationProfile = L.Class.extend({
                     if (nextDist < minDist + nextSampleDist) {
                         di = (minDist - nextDist) / 2 / nextSampleDist + 1 / 2;
                     } else {
-                        di = .001;
+                        di = 0.001;
                     }
                 } else if (nearestInd === this.samples.length - 1) {
                     if (prevDist < minDist + prevSampleDist) {

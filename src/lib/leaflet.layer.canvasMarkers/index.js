@@ -127,7 +127,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 xPositions = [iconCenter[0] + iconSize[0] / 2 + 2, iconCenter[0] - iconSize[0] / 2 - textWidth - 2],
                 yPositions = [
                     iconCenter[1] - textHeight / 2 + verticalPadding,
-                    iconCenter[1] - textHeight * .75 - iconSize[1] / 4 + verticalPadding,
+                    iconCenter[1] - textHeight * 0.75 - iconSize[1] / 4 + verticalPadding,
                     iconCenter[1] - textHeight / 4 + iconSize[1] / 4 + verticalPadding,
                     iconCenter[1] - textHeight - iconSize[1] / 2 + verticalPadding,
                     iconCenter[1] + iconSize[1] / 2 + verticalPadding
