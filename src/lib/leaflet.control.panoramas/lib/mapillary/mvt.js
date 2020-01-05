@@ -1,5 +1,5 @@
 import Pbf from 'pbf';
-import {Tile as TileProto} from './vector_tile_proto';
+import {Tile as TileProto} from './vector_tile_pb';
 
 function decodeCoordinate(x) {
     return ((x >> 1) ^ (-(x & 1)));

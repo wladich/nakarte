@@ -3,7 +3,9 @@ function formatNumber(value, size, precision = 0) {
       return value.toFixed(precision);
     }
 
-    if (precision > 0) size++;
+    if (precision > 0) {
+        size++;
+    }
 
     return value.toFixed(precision).padStart(size + precision, '0');
 }

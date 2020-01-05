@@ -6,8 +6,12 @@ function tile2quad(x, y, z) {
     for (var i = z; i > 0; i--) {
         var digit = 0;
         var mask = 1 << (i - 1);
-        if ((x & mask) !== 0) digit += 1;
-        if ((y & mask) !== 0) digit += 2;
+        if ((x & mask) !== 0) {
+            digit += 1;
+        }
+        if ((y & mask) !== 0) {
+            digit += 2;
+        }
         quad += digit;
     }
     return quad;
@@ -41,7 +45,9 @@ const BingLayer = L.TileLayer.extend({
     },
 
     loadMetadata: function () {
-        if (this.metaRequested) return;
+        if (this.metaRequested) {
+            return;
+        }
         this.metaRequested = true;
         var _this = this;
         var cbid = '_bing_metadata_' + L.Util.stamp(this);
@@ -89,7 +95,9 @@ const BingLayer = L.TileLayer.extend({
     },
 
     _update: function () {
-        if (this._url === null || !this._map) return;
+        if (this._url === null || !this._map) {
+            return;
+        }
         this._update_attribution();
         L.TileLayer.prototype._update.apply(this, []);
     },
@@ -101,12 +109,14 @@ const BingLayer = L.TileLayer.extend({
             var p = this._providers[i];
             if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
                 bounds.intersects(p.bounds)) {
-                if (!p.active && this._map.attributionControl)
+                if (!p.active && this._map.attributionControl) {
                     this._map.attributionControl.addAttribution(p.attrib);
+                }
                 p.active = true;
             } else {
-                if (p.active && this._map.attributionControl)
+                if (p.active && this._map.attributionControl) {
                     this._map.attributionControl.removeAttribution(p.attrib);
+                }
                 p.active = false;
             }
         }
