@@ -1,3 +1,5 @@
+"use strict";
+
 const recursive = require('recursive-readdir');
 const fs = require('fs-extra');
 const gzipSize = require('gzip-size').sync;
