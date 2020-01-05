@@ -129,7 +129,7 @@ var Nomenclature = {
                 var column_east = column_west + column_width * joined_quads;
                 var quad_bounds = L.latLngBounds([[row_south, column_west], [row_north, column_east]]);
                 // shift column to positive numbers, calc modulo, shift back
-                const wrappedColumn = ((column  + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
+                const wrappedColumn = ((column + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
                 var names = name_factory(wrappedColumn, row, joined_quads);
                 quads.push({'names': names, 'bounds': quad_bounds});
             }

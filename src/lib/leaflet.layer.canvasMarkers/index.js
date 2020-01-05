@@ -33,8 +33,8 @@ function calcIntersectionSum(rect, rects) {
 
 class MarkerRBush extends RBush {
     toBBox(marker) {
-        const  x = marker.latlng.lng;
-        const  y = marker.latlng.lat;
+        const x = marker.latlng.lng;
+        const y = marker.latlng.lat;
         return {
             minX: x,
             minY: y,
@@ -193,7 +193,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             }
             const
                 iconsHorPad = withoutPadding ? 0 : 520,
-                iconsVertPad = withoutPadding ? 0 :  50,
+                iconsVertPad = withoutPadding ? 0 : 50,
                 labelsHorPad = withoutPadding ? 0 : 256,
                 labelsVertPad = withoutPadding ? 0 : 20;
             const

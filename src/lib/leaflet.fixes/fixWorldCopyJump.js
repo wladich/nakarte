@@ -62,7 +62,7 @@ function fixVectorMarkerWorldJump() {
         if (this.options.projectedShift) {
             shift = this.options.projectedShift();
         }
-        if (shift === null)  {
+        if (shift === null) {
             shift = this.shiftProjectedFitMapView();
         }
 

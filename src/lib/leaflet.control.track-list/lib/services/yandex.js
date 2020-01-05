@@ -1,7 +1,7 @@
 import BaseService from './baseService';
 
 class YandexRuler extends BaseService {
-    urlRe =  /yandex\..+[?&]rl=([^&]+)/;
+    urlRe = /yandex\..+[?&]rl=([^&]+)/;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);

@@ -11,11 +11,11 @@ function formatNumber(value, size, precision = 0) {
 }
 
 function coordinatePresentations(coordinate, isLat) {
-    const degrees    = Math.abs(coordinate);
+    const degrees = Math.abs(coordinate);
     const intDegrees = Math.floor(degrees);
-    const minutes    = (degrees - intDegrees) * 60;
+    const minutes = (degrees - intDegrees) * 60;
     const intMinutes = Math.floor(minutes);
-    const seconds    = (minutes - intMinutes) * 60;
+    const seconds = (minutes - intMinutes) * 60;
 
     let direction;
     if (isLat) {
@@ -26,11 +26,11 @@ function coordinatePresentations(coordinate, isLat) {
 
     return {
         signedDegrees: formatNumber(coordinate, 0, 5),
-        degrees:       formatNumber(degrees, 0, 5),
-        intDegrees:    formatNumber(intDegrees, 0),
-        minutes:       formatNumber(minutes, 2, 3),
-        intMinutes:    formatNumber(intMinutes, 2),
-        seconds:       formatNumber(seconds, 2, 2),
+        degrees: formatNumber(degrees, 0, 5),
+        intDegrees: formatNumber(intDegrees, 0),
+        minutes: formatNumber(minutes, 2, 3),
+        intMinutes: formatNumber(intMinutes, 2),
+        seconds: formatNumber(seconds, 2, 2),
         direction
     };
 }

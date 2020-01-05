@@ -101,7 +101,7 @@ const hashState = {
         const newState = parseHashParams(location.hash);
         const changedKeys = {};
         for (let key of Object.keys(newState)) {
-            if (!(key in this._state)  || !arrayItemsEqual(newState[key], this._state[key])) {
+            if (!(key in this._state) || !arrayItemsEqual(newState[key], this._state[key])) {
                 changedKeys[key] = 1;
             }
         }

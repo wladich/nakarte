@@ -41,7 +41,7 @@ function getDeclination(lat, lon) {
     let col2 = col1 + 1;
     const dlon = (lon - (col1 * declination.step - 180)) / declination.step;
     col1 %= declination.colsCount;
-    col2 %=  declination.colsCount;
+    col2 %= declination.colsCount;
     let a1 = getArrayValue(row1, col1);
     let a2 = getArrayValue(row1, col2);
     const v1 = a1 * (1 - dlon) + a2 * dlon;

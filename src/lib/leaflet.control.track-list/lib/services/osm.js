@@ -1,6 +1,6 @@
 import urlViaCorsProxy from '~/lib/CORSProxy';
 import BaseService from './baseService';
-import parseGpx from  '../parsers/gpx';
+import parseGpx from '../parsers/gpx';
 
 class Osm extends BaseService {
     urlRe = /^https?:\/\/www\.openstreetmap\.org\/user\/(?:.*)\/traces\/(\d+)/;

@@ -6,7 +6,7 @@ import {saveNktk} from './parsers/nktk';
 function getSegmentLatForLng(latLng1, latLng2, lng) {
     const deltaLat = latLng2.lat - latLng1.lat;
     const deltaLng = latLng2.lng - latLng1.lng;
-    return  latLng1.lat + deltaLat / deltaLng * (lng - latLng1.lng);
+    return latLng1.lat + deltaLat / deltaLng * (lng - latLng1.lng);
 }
 
 function splitLineAt180Meridian(latLngs) {

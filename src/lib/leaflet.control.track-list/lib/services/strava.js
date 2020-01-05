@@ -55,7 +55,7 @@ class Strava extends BaseService {
             const m = title.match(/^(.+) - ([^-]+)/);
             if (m) {
                 // reverse name and description
-                name2 =  `${m[2]} ${m[1]}`;
+                name2 = `${m[2]} ${m[1]}`;
                 title = dom.querySelector('title').text;
                 let date = title.match(/ (on \d{1,2} \w+ \d{4}) /)[1];
                 if (date) {

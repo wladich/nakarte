@@ -1,6 +1,6 @@
 import urlViaCorsProxy from '~/lib/CORSProxy';
 import BaseService from './baseService';
-import parseGpx from  '../parsers/gpx';
+import parseGpx from '../parsers/gpx';
 
 class Gpslib extends BaseService {
     urlRe = /^https?:\/\/(?:.+\.)?gpslib\.[^.]+\/tracks\/info\/(\d+)/;

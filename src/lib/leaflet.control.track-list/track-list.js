@@ -175,7 +175,7 @@ L.Control.TrackList = L.Control.extend({
         onFileDragDrop: function(e) {
             L.DomEvent.stopPropagation(e);
             L.DomEvent.preventDefault(e);
-            const files  = e.dataTransfer.files;
+            const files = e.dataTransfer.files;
             if (files && files.length) {
                 this.loadFilesFromFilesObject(files);
             }

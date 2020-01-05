@@ -31,7 +31,7 @@ const JnxWriter = L.Class.extend({
         },
 
         getJnx: function() {
-            const  HEADER_SIZE = 52,
+            const HEADER_SIZE = 52,
                 LEVEL_INFO_SIZE = 17,
                 TILE_INFO_SIZE = 28;
 
@@ -61,7 +61,7 @@ const JnxWriter = L.Class.extend({
                     south = (south < tile.extents.south) ? south : tile.extents.south;
                 }
             }
-            const  stream = new BinStream(1024, true);
+            const stream = new BinStream(1024, true);
             // header
             stream.writeInt32(4); // version
             stream.writeInt32(0); // device id
@@ -95,7 +95,7 @@ const JnxWriter = L.Class.extend({
             }
             let tileDescriptorOffset = stream.tell();
             // level info
-            let  jnxScale;
+            let jnxScale;
             stream.seek(HEADER_SIZE);
             for (level of Object.keys(this.tiles)) {
                 level = parseInt(level, 10);
@@ -128,7 +128,7 @@ const JnxWriter = L.Class.extend({
                 }
             }
 
-            const  blob = [];
+            const blob = [];
             blob.push(stream.getBuffer());
             for (level of Object.keys(this.tiles)) {
                 tiles = this.tiles[level];

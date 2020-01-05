@@ -14,7 +14,7 @@ import {blobFromString} from '~/lib/binary-strings';
 import '~/lib/leaflet.hashState/leaflet.hashState';
 import '~/lib/leaflet.control.commons';
 import logging from '~/lib/logging';
-import  {MagneticMeridians} from './decoration.magnetic-meridians';
+import {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';
 
@@ -485,7 +485,7 @@ L.Control.PrintPages = L.Control.extend({
             }
             if (state.length) {
                 const flags = parseInt(state.shift(), 10);
-                if (flags >= 0  && flags <= 3) {
+                if (flags >= 0 && flags <= 3) {
                     this.magneticMeridiansOn(Boolean(flags & 1));
                     this.gridOn(Boolean(flags & 2));
                 }

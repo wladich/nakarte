@@ -1,6 +1,6 @@
 import urlViaCorsProxy from '~/lib/CORSProxy';
 import BaseService from './baseService';
-import parseGpx from  '../parsers/gpx';
+import parseGpx from '../parsers/gpx';
 
 class Etomesto extends BaseService {
     urlRe = /^https?:\/\/www\.etomesto\.ru\/track([a-z0-9]+)/;

@@ -3,7 +3,7 @@ import './style.css';
 import '~/lib/controls-styles/controls-styles.css';
 
 ko.components.register('progress-indicator', {
-    template:   `
+    template: `
         <div class="ko-progress-unknown icon-spinner-nuclear" data-bind="visible: progress() === undefined"></div>
         <div class="ko-progress" data-bind="visible: progress() !== undefined">
             <div class="ko-progress-bkg">
