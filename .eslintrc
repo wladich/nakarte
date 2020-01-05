@@ -5,9 +5,7 @@
     "build",
     "deploy"
   ],
-  "extends": [
-    "eslint:recommended"
-  ],
+  "extends": ["./myEslintRules.js" ],
   "overrides": [
     {
       "files": "src/**/*.js",
@@ -24,8 +22,6 @@
         "no-unused-vars": ["error", {"argsIgnorePattern": "_unused(_.+)?"}],
         "no-constant-condition": ["error", {"checkLoops":  false}], // allow `while (true)`
         "no-prototype-builtins": "off",
-        "semi": "error", // missing in eslint:recommended
-        "eol-last": "error" // missing in eslint:recommended
       },
       "globals": {
         "NODE_ENV": true,
@@ -49,10 +45,6 @@
       },
       "parserOptions": {
         "sourceType": "module"
-      },
-      "rules": {
-        "semi": "error", // missing in eslint:recommended
-        "eol-last": "error" // missing in eslint:recommended
       },
       "globals": {
         "assert": true
