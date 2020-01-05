@@ -42,7 +42,7 @@ function parseTrack(rawTrack) {
 
 }
 
-async function loadTracksFromJson(value) {
+async function loadTracksFromJson(value) { // eslint-disable-line complexity
     const errCorrupt = [{name: 'Track in url', error: 'CORRUPT'}];
 
     const jsonString = urlSafeBase64.decode(value);

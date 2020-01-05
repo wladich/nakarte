@@ -16,7 +16,7 @@ function getCoverageLayer(options) {
     ]);
 }
 
-function parseSearchResponse(resp) {
+function parseSearchResponse(resp) { // eslint-disable-line complexity
     const images = [];
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {

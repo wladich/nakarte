@@ -5,7 +5,7 @@ function decodeCoordinate(x) {
     return ((x >> 1) ^ (-(x & 1)));
 }
 
-function parseGeometry(geometryType, ints, coordinatesScale) {
+function parseGeometry(geometryType, ints, coordinatesScale) { // eslint-disable-line complexity
     if (geometryType !== TileProto.GeomType.POINT && geometryType !== TileProto.GeomType.LINESTRING &&
         geometryType !== TileProto.GeomType.POLYGON) {
         throw new Error(`Unknown feature geometry type ${geometryType}`);

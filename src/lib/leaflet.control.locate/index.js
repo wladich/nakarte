@@ -321,7 +321,7 @@ const LocateControl = L.Control.extend({
             }
         },
 
-        _processEvent: function({event, data}) {
+        _processEvent: function({event, data}) { // eslint-disable-line complexity
             // console.log('PROCESS EVENT', event);
             const state = this._state;
             switch (event) {
