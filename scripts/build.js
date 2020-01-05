@@ -6,6 +6,8 @@ const filesize = require('filesize');
 const chalk = require('chalk');
 const path = require('path');
 
+const errorExitStatus = 1;
+
 const paths = require('../webpack/paths');
 
 function getVersionFromGit() {
@@ -39,7 +41,7 @@ function getSizes(removeNameHash) {
 
 // Print a detailed summary of build files.
 function printFileSizes(sizeMap, previousSizeMap) {
-    const FIFTY_KILOBYTES = 1024 * 50;
+    const ASSET_DIFF_SIZE_WARNING_THRESHOLD = 50000;
     const assets = Object.entries(sizeMap)
         .map(([filename, size]) => {
             const difference = size - (previousSizeMap[removeFileNameHash(filename)] || 0);
@@ -57,7 +59,7 @@ function printFileSizes(sizeMap, previousSizeMap) {
         let labelSize = sizeLabel.length;
         if (asset.difference !== 0) {
             let differenceColor;
-            if (asset.difference > FIFTY_KILOBYTES) {
+            if (asset.difference > ASSET_DIFF_SIZE_WARNING_THRESHOLD) {
                 differenceColor = chalk.red;
             } else if (asset.difference > 0) {
                 differenceColor = chalk.yellow;
@@ -71,9 +73,11 @@ function printFileSizes(sizeMap, previousSizeMap) {
             labelSize += differenceLabel.length;
             differenceLabel = differenceColor(differenceLabel);
             differenceLabel = `  (${differenceLabel})`;
-            labelSize += 4;
+            const labelSizeAllowance = 4;
+            labelSize += labelSizeAllowance;
         }
-        const padding = ' '.repeat(Math.max(30 - labelSize, 0));
+        const maxLabelSize = 30;
+        const padding = ' '.repeat(Math.max(maxLabelSize - labelSize, 0));
         console.log(sizeLabel + differenceLabel + padding + chalk.dim(asset.folder + path.sep) + chalk.cyan(asset.name));
     }
 }
@@ -91,7 +95,7 @@ async function main() {
             {stdio: "inherit"});
     }
     catch (e) {
-        process.exit(1);
+        process.exit(errorExitStatus);
     }
     console.log(chalk.green('Compiled successfully.'));
     const newSizes = await getSizes(false);

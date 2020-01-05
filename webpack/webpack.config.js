@@ -8,6 +8,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 const paths = require('./paths');
 
+const errorExitStatus = 1;
+const urlLoaderSizeLimit = 10000;
+
 const envs = {
     production: true,
     development: true,
@@ -18,7 +21,7 @@ const mode = process.env.NODE_ENV;
 
 if (!envs[mode]) {
     console.log(`NODE_ENV has invalid value "${mode}"`);
-    process.exit(1);
+    process.exit(errorExitStatus);
 }
 
 const isProduction = mode === 'production';
@@ -122,7 +125,7 @@ const loaders = [
         use: {
             loader: 'url-loader',
             options: {
-                limit: (isProduction || isDevelopment) ? 10000 : false,
+                limit: (isProduction || isDevelopment) ? urlLoaderSizeLimit : false,
                 name: '[path][name].[ext]'
             }
         }
