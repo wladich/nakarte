@@ -103,7 +103,7 @@ async function loadTracksFromJson(value) { // eslint-disable-line complexity
             viewProps.trackHidden = !el.v;
         }
         if ('m' in el) {
-            viewProps.measureTicksShown = !!el.m;
+            viewProps.measureTicksShown = Boolean(el.m);
         }
         geodata.forEach((el) => Object.assign(el, viewProps));
         geoDataArray.push(...geodata);

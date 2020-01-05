@@ -4,7 +4,7 @@ import Contextmenu from '~/lib/contextmenu';
 import copyToClipboard from '~/lib/clipboardCopy';
 
 function zeroPad(num, size) {
-    var s = num + "";
+    var s = String(num);
     while (s.length < size) {
         s = "0" + s;
     }

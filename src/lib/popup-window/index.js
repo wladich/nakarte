@@ -34,7 +34,7 @@ function openPopupWindow(url, width, uniqName = null) {
     if (win) {
         isClosed = win.closed;
     }
-    logging.logEvent('openPopupWindow', {win: !!win, error, isClosed, eventId});
+    logging.logEvent('openPopupWindow', {win: Boolean(win), error, isClosed, eventId});
 }
 
 export {openPopupWindow};

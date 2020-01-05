@@ -184,7 +184,7 @@ const Viewer = L.Evented.extend({
 
             for (let i = 0; i < count; i++) {
                 let button = L.DomUtil.create('div', 'wikimedia-viewer-page-button', this.pageButtonContainer);
-                button.innerHTML = '' + (i + 1);
+                button.innerHTML = String(i + 1);
                 this._buttons.push(button);
                 L.DomEvent.on(button, 'click', () => this.switchPhoto(i));
             }

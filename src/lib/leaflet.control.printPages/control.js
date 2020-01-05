@@ -411,7 +411,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         hasPages: function() {
-            return !!this.pages.length;
+            return this.pages.length > 0;
         },
 
         _pagesNumLabel: function() {
@@ -481,13 +481,13 @@ L.Control.PrintPages = L.Control.extend({
                 if (isNaN(lat) || isNaN(lng) || lat < -85 || lat > 85 || lng < -180 || lng > 180) {
                     break;
                 }
-                this.addPage(!!rotated, L.latLng(lat, lng));
+                this.addPage(Boolean(rotated), L.latLng(lat, lng));
             }
             if (state.length) {
                 const flags = parseInt(state.shift(), 10);
                 if (flags >= 0  && flags <= 3) {
-                    this.magneticMeridiansOn(!!(flags & 1));
-                    this.gridOn(!!(flags & 2));
+                    this.magneticMeridiansOn(Boolean(flags & 1));
+                    this.gridOn(Boolean(flags & 2));
                 }
             }
             return true;

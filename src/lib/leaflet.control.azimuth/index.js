@@ -147,7 +147,7 @@ L.Control.Azimuth = L.Control.extend({
         },
 
         isEnabled: function() {
-            return !!this._enabled;
+            return Boolean(this._enabled);
         },
 
         setPoints: function(points) {

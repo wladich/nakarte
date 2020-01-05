@@ -1178,7 +1178,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         hasTracks: function() {
-            return !!this.tracks().length;
+            return this.tracks().length > 0;
         }
     }
 );

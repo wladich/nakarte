@@ -9,7 +9,7 @@ const selectFiles = (() => {
         fileInput = document.createElement('input');
         document.body.appendChild(fileInput);
         fileInput.type = 'file';
-        fileInput.multiple = !!multiple;
+        fileInput.multiple = Boolean(multiple);
         fileInput.style.display = 'none';
 
         const result = new Promise(function(resolve) {

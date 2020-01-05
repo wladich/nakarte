@@ -59,7 +59,8 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             iconScale: 1,
             pane: 'rasterMarker',
             updateWhenZooming: !L.Browser.mobile,
-            iconsOpacity: 1
+            iconsOpacity: 1,
+            labelShadowWidth: 1,
         },
 
         initialize: function(markers, options) {
@@ -133,7 +134,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     iconCenter[1] + iconSize[1] / 2 + verticalPadding
                 ];
 
-            let minIntersectionSum = +Infinity;
+            let minIntersectionSum = Infinity;
             let bestX = xPositions[0],
                 bestY = yPositions[0];
             for (let x of xPositions) {
@@ -322,7 +323,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.strokeStyle = '#fff';
                     ctx.fillStyle = '#000';
                     ctx.lineWidth = 1.2 * this.options.iconScale;
-                    ctx.shadowBlur = 1 * this.options.iconScale;
+                    ctx.shadowBlur = this.options.labelShadowWidth * this.options.iconScale;
                     ctx.strokeText(job.label, x, y + textHeight);
                     ctx.shadowBlur = 0;
                     ctx.fillText(job.label, x, y + textHeight);

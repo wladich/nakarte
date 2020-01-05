@@ -17,8 +17,8 @@ L.Control.TrackList.include({
                 key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
-                    if (+m[1] > maxKey) {
-                        maxKey = +m[1];
+                    if (Number(m[1]) > maxKey) {
+                        maxKey = Number(m[1]);
                     }
                 }
             }
@@ -45,7 +45,7 @@ L.Control.TrackList.include({
                 key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
-                    keys.push(+m[1]);
+                    keys.push(Number(m[1]));
                 }
             }
             if (keys.length > this.maxLocalStorageSessions) {
@@ -69,8 +69,8 @@ L.Control.TrackList.include({
                 key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/);
                 if (m && m[1] !== undefined) {
-                    if (+m[1] > maxKey) {
-                        maxKey = +m[1];
+                    if (Number(m[1]) > maxKey) {
+                        maxKey = Number(m[1]);
                     }
                 }
             }

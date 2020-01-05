@@ -117,7 +117,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         setEnabled: function(enabled) {
-            if (!!enabled === this.isEnabled()) {
+            if (Boolean(enabled) === this.isEnabled()) {
                 return;
             }
             const classFunc = enabled ? 'addClass' : 'removeClass';
@@ -127,7 +127,7 @@ L.Control.Coordinates = L.Control.extend({
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
-            this._isEnabled = !!enabled;
+            this._isEnabled = Boolean(enabled);
             this.latlng(null);
         },
 
@@ -155,7 +155,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         isEnabled: function() {
-            return !!this._isEnabled;
+            return Boolean(this._isEnabled);
         },
 
         onClick: function() {
