@@ -225,7 +225,9 @@ L.Control.Azimuth = L.Control.extend({
                 samplingInterval: calcSamplingInterval(dist),
                 sightLine: true
             });
-            this.elevationControl.on('remove', () => this.elevationControl = null);
+            this.elevationControl.on('remove', () => {
+                this.elevationControl = null;
+            });
             this.fire('elevation-shown');
 
         },
