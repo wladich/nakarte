@@ -86,7 +86,7 @@
         },
 
         isUsingZip64: function () {
-            this.compressedSize === 0xFFFFFFFF ||
+            return this.compressedSize === 0xFFFFFFFF ||
                 this.uncompressedSize === 0xFFFFFFFF;
         }
     }

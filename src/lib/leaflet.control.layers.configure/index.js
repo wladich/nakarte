@@ -197,7 +197,11 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
                         const { layer: { options: { isOverlay } } } = l;
-                        isOverlay ? this.addOverlay(l.layer, l.title) : this.addBaseLayer(l.layer, l.title);
+                        if (isOverlay) {
+                            this.addOverlay(l.layer, l.title);
+                        } else {
+                            this.addBaseLayer(l.layer, l.title);
+                        }
                         if (!isOverlay && this._map.hasLayer(l.layer)) {
                               hasBaselayerOnMap = true;
                         }
