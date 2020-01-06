@@ -100,7 +100,7 @@ class NakarteUrl {
     constructor(url) {
         const paramNames = new NakarteUrlLoader().paramNames();
         this._params = Object.entries(parseHashParams(url))
-            .filter(([name, ]) => paramNames.includes(name));
+            .filter(([name]) => paramNames.includes(name));
     }
 
     isOurUrl() {
