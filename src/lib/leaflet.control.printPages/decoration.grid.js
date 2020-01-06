@@ -13,13 +13,17 @@ class Grid extends PrintStaticLayer {
     font = 'verdana';
     paddingMm = 1;
 
-    intervals = [1, 1.5, 2, 3.3, 5, 7.5,
+    /* eslint-disable array-element-newline*/
+    intervals = [
+        1, 1.5, 2, 3.3, 5, 7.5,
         10, 15, 20, 33, 50, 75,
         100, 150, 200, 333, 500, 750,
         1000, 1500, 2000, 4000, 5000, 7500,
         10000, 15000, 20000, 40000, 50000, 75000,
         100000, 150000, 200000, 400000, 500000, 750000,
-        1000000, 1500000, 2000000, 4000000, 5000000, 7500000];
+        1000000, 1500000, 2000000, 4000000, 5000000, 7500000
+    ];
+    /* eslint-enable array-element-newline*/
 
     getGridInterval(printOptions) {
         const minGridIntervalM = this.minGridIntervalMm / 10 * printOptions.scale;

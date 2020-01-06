@@ -139,8 +139,13 @@ const Viewer = L.Evented.extend({
                 return [];
             }
             const {lat, lon} = this._node.originalLatLon;
-            return [lat.toFixed(6), lon.toFixed(6),
-                this._center[0].toFixed(4), this._center[1].toFixed(4), this._zoom.toFixed(2)];
+            return [
+                lat.toFixed(6),
+                lon.toFixed(6),
+                this._center[0].toFixed(4),
+                this._center[1].toFixed(4),
+                this._zoom.toFixed(2)
+            ];
         },
     
         setState: function(state) {

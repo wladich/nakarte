@@ -80,8 +80,13 @@ const Viewer = L.Evented.extend({
         const pos = this.panorama.getPosition();
         const pov = this.panorama.getPov();
         if (pos && pov) {
-            return [pos.lat().toFixed(6), pos.lng().toFixed(6),
-                (pov.heading || 0).toFixed(1), (pov.pitch || 0).toFixed(1), (pov.zoom || 1).toFixed(1)];
+            return [
+                pos.lat().toFixed(6),
+                pos.lng().toFixed(6),
+                (pov.heading || 0).toFixed(1),
+                (pov.pitch || 0).toFixed(1),
+                (pov.zoom || 1).toFixed(1)
+            ];
         }
         return null;
     },
