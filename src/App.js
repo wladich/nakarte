@@ -107,7 +107,7 @@ function setUp() {
 
     const layersControl = L.control.layers(null, null, {collapsed: false})
         .addTo(map);
-    enableLayersControlHotKeys (layersControl);
+    enableLayersControlHotKeys(layersControl);
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
     enableLayersConfig(layersControl, getLayers());
