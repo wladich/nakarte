@@ -95,8 +95,7 @@ async function main() {
     try {
         execSync("webpack --config webpack/webpack.config.js  --colors --profile --progress",
             {stdio: "inherit"});
-    }
-    catch (e) {
+    } catch (e) {
         process.exit(errorExitStatus);
     }
     console.log(chalk.green('Compiled successfully.'));

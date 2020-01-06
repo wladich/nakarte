@@ -30,7 +30,8 @@ console.log('Version:', RELEASE_VER); // eslint-disable-line no-console
 
 let uid;
 try {
-    uid = getUid();} catch (e) {
+    uid = getUid();
+} catch (e) {
     // ignore error
 }
 console.log('UID:', uid); // eslint-disable-line no-console

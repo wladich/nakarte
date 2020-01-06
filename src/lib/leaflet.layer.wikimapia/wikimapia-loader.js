@@ -44,8 +44,7 @@ class WikimapiaLoader extends TiledDataLoader {
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
             };
-        }
-        else if (z < this.minZoom) {
+        } else if (z < this.minZoom) {
             let z2 = this.minZoom,
                 multiplier = 1 / (1 << (z2 - z));
             return {
