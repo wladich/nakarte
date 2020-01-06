@@ -16,7 +16,7 @@ const urlLoaderSizeLimit = 10000;
 const envs = {
     production: true,
     development: true,
-    testing: true
+    testing: true,
 };
 
 const mode = process.env.NODE_ENV;
@@ -32,7 +32,7 @@ const isTesting = mode === 'testing';
 
 const productionOutput = {
     path: paths.appBuild,
-    filename: 'static/js/[name].[contenthash:8].js'
+    filename: 'static/js/[name].[contenthash:8].js',
 };
 
 const babelConfig = {
@@ -42,27 +42,27 @@ const babelConfig = {
             {
                 "useBuiltIns": "usage",
                 "corejs": "3.0.0",
-                "modules": "commonjs"
-            }
-        ]
+                "modules": "commonjs",
+            },
+        ],
     ],
     "overrides": [
         {
             "test": "./src/vendored/github.com/augustl/js-unzip/js-unzip.js",
-            "sourceType": "script"
-        }
+            "sourceType": "script",
+        },
     ],
 
     "plugins": [
         "@babel/plugin-syntax-dynamic-import",
-        "@babel/plugin-proposal-class-properties"
-    ]
+        "@babel/plugin-proposal-class-properties",
+    ],
 };
 
 const sourceMapOption = {
     filename: '[file].map',
     columns: isProduction,
-    exclude: /mapillary/u
+    exclude: /mapillary/u,
 };
 
 const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.EvalSourceMapDevToolPlugin;
@@ -70,18 +70,18 @@ const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.Ev
 const plugins = [
     ...(isProduction ? [new CleanWebpackPlugin()] : []),
     ...(isProduction ? [new CopyWebpackPlugin([
-        { from: paths.appPublic, to: '' }
+        { from: paths.appPublic, to: '' },
     ])] : []),
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml,
-        minify: false
+        minify: false,
     }),
     ...((isProduction || isDevelopment) ? [new MiniCssExtractPlugin({
-        filename: 'static/css/[name].[contenthash:8].css'
+        filename: 'static/css/[name].[contenthash:8].css',
     })] : []),
     new Webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(mode),
-        'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel')
+        'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel'),
     }),
     ...(isProduction || isDevelopment) ? [new StyleLintPlugin({
         config: {"extends": "stylelint-config-recommended"},
@@ -90,7 +90,7 @@ const plugins = [
             'vendored/**/*.css',
         ],
         emitWarning: isDevelopment,
-        emitError: isProduction
+        emitError: isProduction,
     })] : [],
     new devToolPlugin(sourceMapOption),
 ];
@@ -105,9 +105,9 @@ const productionCSSLoader = [
             plugins: () => [
                 require('postcss-import')(),
                 require('postcss-preset-env')(),
-                require('cssnano')()
-            ]
-        }
+                require('cssnano')(),
+            ],
+        },
     },
 ];
 
@@ -120,7 +120,7 @@ const loaders = [
     {
         test: /\.mjs$/u,
         include: /node_modules/u,
-        type: 'javascript/auto'
+        type: 'javascript/auto',
     },
     {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/u,
@@ -128,13 +128,13 @@ const loaders = [
             loader: 'url-loader',
             options: {
                 limit: (isProduction || isDevelopment) ? urlLoaderSizeLimit : false,
-                name: '[path][name].[ext]'
-            }
-        }
+                name: '[path][name].[ext]',
+            },
+        },
     },
     {
         test: /\.(html)(\?.*)?$/u,
-        loader: 'raw-loader'
+        loader: 'raw-loader',
     },
 
     ...((isProduction || isDevelopment) ? [{
@@ -143,8 +143,8 @@ const loaders = [
         enforce: 'pre',
         loader: 'eslint-loader',
         options: {
-            emitWarning: !isProduction
-        }
+            emitWarning: !isProduction,
+        },
     }] : []),
 
     {
@@ -156,15 +156,15 @@ const loaders = [
         loaders: [
             {
                 loader: 'babel-loader',
-                options: babelConfig
-            }
+                options: babelConfig,
+            },
         ],
     },
 
     {
         test: /\.s?css/iu,
-        loaders : isProduction ? productionCSSLoader : developmentCSSLoader
-    }
+        loaders : isProduction ? productionCSSLoader : developmentCSSLoader,
+    },
 ];
 
 module.exports = {
@@ -174,33 +174,33 @@ module.exports = {
     bail: isProduction || isTesting,
 
     entry: isTesting ? false : {
-        app: paths.appIndexJs
+        app: paths.appIndexJs,
     },
 
     optimization: {
         splitChunks: {
             chunks: 'all',
-            name: true
+            name: true,
         },
         runtimeChunk: 'single',
         minimizer: [new TerserPlugin({
             cache: true,
             parallel: true,
             sourceMap: true,
-            exclude: /mapillary/u
+            exclude: /mapillary/u,
         })],
 
     },
 
     resolve: {
         alias: {
-            '~': paths.appSrc
-        }
+            '~': paths.appSrc,
+        },
     },
 
     output: isProduction ? productionOutput : {},
     plugins: plugins,
     module: {
-        rules: loaders
-    }
+        rules: loaders,
+    },
 };

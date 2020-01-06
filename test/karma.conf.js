@@ -10,7 +10,7 @@ module.exports = function(config) {
             { pattern: './test/**/*.js'},
         ],
         preprocessors: {
-            './test/**/*.js': ['webpack']
+            './test/**/*.js': ['webpack'],
         },
         webpack: webpackConfig,
         webpackMiddleware: {
@@ -24,10 +24,10 @@ module.exports = function(config) {
             mocha: {
                 ui: 'qunit',
                 reporter: 'spec',
-            }
+            },
         },
         mochaReporter: {
-            showDiff: true
-        }
+            showDiff: true,
+        },
       });
 };
