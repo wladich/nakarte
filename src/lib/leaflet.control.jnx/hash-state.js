@@ -14,7 +14,8 @@ L.Control.JNX.include({
                     bounds.getSouth().toFixed(5),
                     bounds.getWest().toFixed(5),
                     bounds.getNorth().toFixed(5),
-                    bounds.getEast().toFixed(5)];
+                    bounds.getEast().toFixed(5)
+                ];
             }
             return state;
         },

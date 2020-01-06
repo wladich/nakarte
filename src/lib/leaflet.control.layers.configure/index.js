@@ -167,14 +167,18 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             onCustomLayerCreateClicked: function() {
-                this.showCustomLayerForm([
+                this.showCustomLayerForm(
+                    [
                         {
                             caption: 'Add layer',
                             callback: (fieldValues) => this.onCustomLayerAddClicked(fieldValues)
-                        }, {
+                        },
+                        {
                             caption: 'Cancel',
                             callback: () => this.onCustomLayerCancelClicked()
-                        }], {
+                        }
+                    ],
+                    {
                         name: 'Custom layer',
                         url: '',
                         tms: false,

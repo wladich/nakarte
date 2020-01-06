@@ -26,7 +26,8 @@ class Strava extends BaseService {
                     responseType: 'binarystring',
                     isResponseSuccess: (xhr) => (xhr.status === 200 || xhr.status === 401)
                 }
-            }];
+            }
+        ];
     }
 
     parseResponse(responses) {

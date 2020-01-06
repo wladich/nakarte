@@ -986,7 +986,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
             layers: [
                 'OpenTopoMap',
                 'OpenCycleMap',
-                'OSM Outdoors'],
+                'OSM Outdoors'
+            ],
         },
         {
             title: 'Topo maps',
@@ -1008,7 +1009,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 'Google Hybrid',
                 'Mountains by Aleksey Tsvetkov',
                 'Bing imagery acquisition dates',
-                'geocaching.su']
+                'geocaching.su'
+            ]
         },
         {
             title: 'Routes and traces',
@@ -1023,7 +1025,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 'Strava heatmap lowres (all)',
                 'Strava heatmap lowres (run)',
                 'Strava heatmap lowres (ride)',
-                'Strava heatmap lowres (winter)'],
+                'Strava heatmap lowres (winter)'
+            ],
 
         },
         {
@@ -1031,7 +1034,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
             layers: [
                 'Norway paper map',
                 'Norway topo',
-                'Norway roads'],
+                'Norway roads'
+            ],
 
         },
         {
@@ -1039,7 +1043,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
             layers: [
                 'Czech base',
                 'mapy.cz tourist',
-                'Czech winter'],
+                'Czech winter'
+            ],
         },
     ];
 
