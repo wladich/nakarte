@@ -52,9 +52,9 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
     _loadMarkers: function(data) {
         const icon = iconFromBackgroundImage('geocaching-icon');
 
-        const getLabel = function(marker, zoom) {
+        function getLabel(marker, zoom) {
             return zoom >= 10 ? marker._label : null;
-        };
+        }
 
         const markers = data.map(([label, cacheId, lat, lng]) => {
             return {

@@ -6,7 +6,7 @@ import jsInflate from './jsInflate';
 
 function parseKml(txt, name) {
     var error;
-    var getSegmentPoints = function(coordinates_element) {
+    function getSegmentPoints(coordinates_element) {
         // convert multiline text value of tag to single line
         var coordinates_string = xmlGetNodeText(coordinates_element);
         var points_strings = coordinates_string.split(/\s+/u);
@@ -24,9 +24,9 @@ function parseKml(txt, name) {
             }
         }
         return points;
-    };
+    }
 
-    var getTrackSegments = function(xml) {
+    function getTrackSegments(xml) {
         var segments_elements = xml.getElementsByTagName('LineString');
         var segments = [];
         for (var i = 0; i < segments_elements.length; i++) {
@@ -39,7 +39,7 @@ function parseKml(txt, name) {
             }
         }
         return segments;
-    };
+    }
 
     function getPoints(dom) {
         var points = [],

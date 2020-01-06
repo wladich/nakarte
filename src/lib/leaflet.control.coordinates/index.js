@@ -134,7 +134,7 @@ L.Control.Coordinates = L.Control.extend({
         onMapRightClick: function(e) {
             L.DomEvent.stop(e);
 
-            const createItem = (format, options = {}) => {
+            function createItem(format, options = {}) {
                 const {lat, lng} = formats.formatLatLng(e.latlng.wrap(), format);
                 const coordinates = `${lat} ${lng}`;
 
@@ -142,7 +142,7 @@ L.Control.Coordinates = L.Control.extend({
                     text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
                     callback: () => copyToClipboard(coordinates, e.originalEvent)
                 }, options);
-            };
+            }
 
             const header = createItem(this.format(), {
                 text: '<b>Copy coordinates to clipboard</b>',

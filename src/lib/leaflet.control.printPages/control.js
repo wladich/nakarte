@@ -523,9 +523,9 @@ L.Control.PrintPages = L.Control.extend({
                 }
             });
 
-            const appendLayerShortName = (layer) => {
+            function appendLayerShortName(layer) {
                 fileName += `${layer.options.shortName}_`;
-            };
+            }
             if (opaqueLayer) {
                 appendLayerShortName(opaqueLayer);
             }

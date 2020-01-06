@@ -42,7 +42,7 @@ function fixVectorDrawWhileAnimation() {
 
     const originalGetEvents = L.Renderer.prototype.getEvents;
 
-    const onZoom = function() {
+    function onZoom() {
         const now = Date.now();
         if (!this._lastReset || (now - this._lastReset > resetInterval)) {
             this._reset();
@@ -51,22 +51,22 @@ function fixVectorDrawWhileAnimation() {
             L.Renderer.prototype._onZoom.call(this);
         }
 
-    };
+    }
 
-    const onMove = function() {
+    function onMove() {
         const now = Date.now();
         if (!this._lastReset || (now - this._lastReset > resetInterval)) {
             this._reset();
             this._lastReset = now;
         }
-    };
+    }
 
-    const getEvents = function() {
+    function getEvents() {
         const result = originalGetEvents.call(this);
         result.move = onMove;
         result.zoom = onZoom;
         return result;
-    };
+    }
 
     L.Renderer.prototype.getEvents = getEvents;
     L.Renderer.__animationFixed = true;
