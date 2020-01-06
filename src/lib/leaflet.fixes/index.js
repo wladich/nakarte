@@ -87,8 +87,8 @@ function addTooltipDelay() {
     const origOpenTooltip = L.Layer.prototype._openTooltip;
     L.Layer.prototype._openTooltip = function(e) {
         if (this._tooltip.options.delay) {
-            const self = this;
-            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(self, e), this._tooltip.options.delay);
+            const that = this;
+            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(that, e), this._tooltip.options.delay);
         } else {
             origOpenTooltip.call(this, e);
         }

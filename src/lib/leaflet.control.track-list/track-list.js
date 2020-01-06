@@ -494,9 +494,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         reverseTrack: function(track) {
-            var self = this;
+            var that = this;
             this.getTrackPolylines(track).forEach(function(trackSegment) {
-                    self.reverseTrackSegment(trackSegment);
+                    that.reverseTrackSegment(trackSegment);
                 }
             );
         },
@@ -806,9 +806,9 @@ L.Control.TrackList = L.Control.extend({
             this.map.on('click', this.stopLineJoinSelection, this);
             L.DomUtil.addClass(this.map.getContainer(), 'join-line-selecting');
             L.DomEvent.on(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
-            var self = this;
+            var that = this;
             setTimeout(function() {
-                    self._editedLine.preventStopEdit = true;
+                    that._editedLine.preventStopEdit = true;
                 }, 0
             );
         },
@@ -887,9 +887,9 @@ L.Control.TrackList = L.Control.extend({
                 L.DomEvent.off(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
                 this.map.removeLayer(this._lineJoinCursor);
                 this._lineJoinCursor = null;
-                var self = this;
+                var that = this;
                 setTimeout(function() {
-                        self._editedLine.preventStopEdit = false;
+                        that._editedLine.preventStopEdit = false;
                     }, 0
                 );
             }
@@ -1110,10 +1110,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         exportTracks: function(minTicksIntervalMeters) {
-            var self = this;
+            var that = this;
             return this.tracks()
                 .filter(function(track) {
-                        return self.getTrackPolylines(track).length;
+                        return that.getTrackPolylines(track).length;
                     }
                 )
                 .map(function(track) {

@@ -160,12 +160,12 @@ var DragEvents = L.Class.extend({
         },
 
         onMouseMove: function(e) {
-            var i, button, self = this;
+            var i, button, that = this;
 
             function exceedsTolerance(button) {
-                var tolerance = self.options.dragTolerance;
-                return Math.abs(e.clientX - self.dragStartPos[button].clientX) > tolerance ||
-                    Math.abs(e.clientY - self.dragStartPos[button].clientY) > tolerance;
+                var tolerance = that.options.dragTolerance;
+                return Math.abs(e.clientX - that.dragStartPos[button].clientX) > tolerance ||
+                    Math.abs(e.clientY - that.dragStartPos[button].clientY) > tolerance;
             }
 
             var dragButtons = this.options.dragButtons;
@@ -186,7 +186,7 @@ var DragEvents = L.Class.extend({
                     this.eventsTarget.fire('drag', L.extend({
                             dragButton: button,
                             origEvent: e,
-                            startEvent: self.dragStartPos[button]
+                            startEvent: that.dragStartPos[button]
                         }, offestFromEvent(e), movementFromEvents(this.prevEvent[button], e)
                         )
                     );
@@ -231,19 +231,19 @@ const ElevationProfile = L.Class.extend({
                 notify('Track is empty');
                 return;
             }
-            var self = this;
+            var that = this;
             this.horizZoom = 1;
             this.dragStart = null;
             this._getElevation(samples)
                 .then(function(values) {
-                        self.values = values;
-                        self._addTo(map);
+                        that.values = values;
+                        that._addTo(map);
                     }
                 )
                 .catch((e) => {
                     logging.captureException(e, 'error getting elevation');
                     notify(`Failed to get elevation data: ${e.message}`);
-                    self._addTo(map);
+                    that._addTo(map);
                 });
             this.values = null;
         },

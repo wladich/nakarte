@@ -90,11 +90,11 @@ L.MeasuredLine = L.Polyline.extend({
             var steps = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000];
             var ticks = [];
 
-            const self = this;
+            const that = this;
             function addTick(position, segment, distanceValue) {
                 if (bounds) {
                     // create markers only in visible part of map
-                    const normalizedBounds = self._map.wrapLatLngBounds(bounds);
+                    const normalizedBounds = that._map.wrapLatLngBounds(bounds);
                     const normalizedPosition = position.wrap();
                     // account for worldCopyJump
                     const positionMinus360 = L.latLng(normalizedPosition.lat, normalizedPosition.lng - 360);
