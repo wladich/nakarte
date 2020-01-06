@@ -884,7 +884,7 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                             type: 'OrdnanceSurvey',
                             minZoom: 12,
                             maxNativeZoom: 16,
-                            bounds: [[49.85171,-7.74708], [60.86949,1.80382]],
+                            bounds: [[49.85171, -7.74708], [60.86949, 1.80382]],
                             code: 'Gbt',
                             isOverlay: true,
                             isOverlayTransparent: false,

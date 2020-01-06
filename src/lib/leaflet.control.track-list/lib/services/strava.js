@@ -45,7 +45,7 @@ class Strava extends BaseService {
         if (!data.latlng) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        const tracks = [data.latlng.map((p) => ({lat: p[0],lng: p[1]}))];
+        const tracks = [data.latlng.map((p) => ({lat: p[0], lng: p[1]}))];
 
         try {
             let name2;

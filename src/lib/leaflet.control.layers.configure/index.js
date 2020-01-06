@@ -47,7 +47,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     try {
                         storedLayersEnabled = JSON.parse(serialized);
                     } catch (e) {
-                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
+                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json', {
                             "localstorage.layersEnabled": serialized.slice(0, 1000)
                         });
                     }
