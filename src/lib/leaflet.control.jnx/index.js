@@ -56,7 +56,7 @@ L.Control.JNX = L.Control.extend({
 
             const equatorLength = 40075016;
             const lat = this._selector.getBounds().getCenter().lat;
-            let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
+            let metersPerPixel = equatorLength / 2 ** maxLevel / 256 * Math.cos(lat / 180 * Math.PI);
 
             const items = [{text: layerName, header: true}];
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
