@@ -2,7 +2,8 @@ import {decodeCP1251} from './codePages';
 import stripBom from '~/lib/stripBom';
 
 function parseOziRte(txt, name) {
-    let error, segments = [];
+    let error,
+        segments = [];
     txt = stripBom(txt);
     const lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Route File') !== 0) {

@@ -14,7 +14,8 @@ function parseGeometry(geometryType, ints, coordinatesScale) { // eslint-disable
     let pos = 0;
     const lineStrings = [];
     let line;
-    let x = 0, y = 0;
+    let x = 0,
+        y = 0;
     while (pos < len) {
         let i = ints[pos];
         let cmd = i & 0x7;

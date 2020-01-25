@@ -154,7 +154,9 @@ function parseNktkOld(s, version) {
         arcUnit = ((1 << 24) - 1) / 360,
         x, y,
         error, midX, midY, /*symbol,*/ waypointName,
-        wayPoints = [], color, measureTicksShown, trackHidden = false;
+        wayPoints = [],
+        color, measureTicksShown,
+        trackHidden = false;
     s = new PackedStreamReader(s);
     try {
         n = s.readNumber();

@@ -159,7 +159,8 @@ var DragEvents = L.Class.extend({
         },
 
         onMouseMove: function(e) {
-            var i, button, that = this;
+            var i, button,
+                that = this;
 
             function exceedsTolerance(button) {
                 var tolerance = that.options.dragTolerance;
@@ -819,7 +820,8 @@ const ElevationProfile = L.Class.extend({
                 return dx * dx + dy * dy;
             }
 
-            var nearestInd = null, ind,
+            var nearestInd = null,
+                ind,
                 minDist = null,
                 mouseLatlng = e.latlng,
                 i, sampleLatlng, dist, di;
@@ -955,7 +957,8 @@ const ElevationProfile = L.Class.extend({
 
         _getElevation: function(latlngs) {
             function parseResponse(s) {
-                var values = [], v;
+                var values = [],
+                    v;
                 s = s.split('\n');
                 for (var i = 0; i < s.length; i++) {
                     if (s[i]) {

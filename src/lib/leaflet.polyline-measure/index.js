@@ -110,7 +110,8 @@ L.MeasuredLine = L.Polyline.extend({
                 }
 
                 var sinCos = sinCosFromLatLonSegment(segment),
-                    sin = sinCos[0], cos = sinCos[1],
+                    sin = sinCos[0],
+                    cos = sinCos[1],
                     transformMatrix;
 
                 if (sin > 0) {

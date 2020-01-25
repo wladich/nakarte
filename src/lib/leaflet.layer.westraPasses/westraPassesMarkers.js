@@ -141,7 +141,9 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             const properties = e.marker.properties,
                 latLng = e.marker.latlng,
                 url = 'https://westra.ru/passes/Passes/' + properties.id;
-            let altnames = '', connects = '', comments = '';
+            let altnames = '',
+                connects = '',
+                comments = '';
             if (properties.altnames) {
                 altnames = `
                     <tr>

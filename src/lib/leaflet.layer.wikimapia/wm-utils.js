@@ -80,7 +80,8 @@ function decodePolygon(s) {
         lat = 0,
         lng = 0;
     while (i < s.length) {
-        var p, l = 0,
+        var p,
+            l = 0,
             c = 0;
         do {
             p = s.charCodeAt(i++) - 63; // eslint-disable-line no-plusplus

@@ -11,7 +11,8 @@ L.Control.TrackList.include({
             var tracks = this.tracks(),
                 serialized = [],
                 maxKey = -1,
-                i, track, s, key, m, keys = [];
+                i, track, s, key, m,
+                keys = [];
 
             for (i = 0; i < safeLocalStorage.length; i++) {
                 key = safeLocalStorage.key(i);
