@@ -44,7 +44,7 @@ function parseGeometry(geometryType, ints, coordinatesScale) { // eslint-disable
                     throw new Error('LineTo with empty linestring');
                 }
                 pos +=1;
-                for (let cmdN = 0; cmdN < cmdRepeat; cmdN++){
+                for (let cmdN = 0; cmdN < cmdRepeat; cmdN++) {
                     if (pos + 2 > len) {
                         throw new Error('Not enough elements for LineTo arguments');
                     }

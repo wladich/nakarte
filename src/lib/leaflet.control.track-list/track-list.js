@@ -856,7 +856,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackRowMouseLeave: function(track) {
-            if (this._highlightedTrack === track){
+            if (this._highlightedTrack === track) {
                 this._highlightedTrack = null;
                 this.updateTrackHighlight();
             }
