@@ -191,7 +191,6 @@ L.Control.Azimuth = L.Control.extend({
                     this.magneticAzimuth(roundAzimuth(azimuth - declination));
                 }
                 this.distance(points.start.distanceTo(points.end));
-
             } else {
                 this.distance(null);
                 this.trueAzimuth(null);
@@ -227,7 +226,6 @@ L.Control.Azimuth = L.Control.extend({
                 this.elevationControl = null;
             });
             this.fire('elevation-shown');
-
         },
 
         hideProfile: function() {
@@ -247,7 +245,6 @@ L.Control.Azimuth = L.Control.extend({
                 if (this.elevationControl) {
                     this.showProfile();
                 }
-
             }
         }
 

@@ -348,7 +348,6 @@ L.Control.TrackList = L.Control.extend({
                 this._markerLayer.removeMarkers(track.markers);
             }
             this.updateTrackHighlight();
-
         },
 
         onTrackLengthChanged: function(track) {
@@ -703,7 +702,6 @@ L.Control.TrackList = L.Control.extend({
                 this.deleteTrackSegment(newSegment);
             }
             this.addTrackSegment(originalSegment._parentTrack, latlngs);
-
         },
 
         onLineEditEnd: function(e, track, polyline) {
@@ -766,7 +764,6 @@ L.Control.TrackList = L.Control.extend({
 
             var menu = new Contextmenu(items);
             menu.show(e.mouseEvent);
-
         },
 
         onSegmentRightClickShowMenu: function(e) {

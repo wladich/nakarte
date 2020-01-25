@@ -21,7 +21,6 @@ L.Control.JNX.include({
         },
 
         unserializeState: function(values) {
-
             function validateFloat(value) {
                 value = parseFloat(value);
                 if (isNaN(value)) {
@@ -36,7 +35,6 @@ L.Control.JNX.include({
                     throw new Error('INVALID VALUE');
                 }
                 return value;
-
             }
 
             if (values && values.length === 4) {

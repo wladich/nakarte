@@ -7,7 +7,6 @@ function pointOnSegmentAtDistance(p1, p2, dist) {
         x = p1.lng + (p2.lng - p1.lng) * q,
         y = p1.lat + (p2.lat - p1.lat) * q;
     return L.latLng(y, x);
-
 }
 
 function sinCosFromLatLonSegment(segment) {

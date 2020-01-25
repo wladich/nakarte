@@ -293,7 +293,6 @@ function parseNktkProtobuf(s) {
         }
     }
     return [geoData];
-
 }
 
 function parseNktkFragment(s) {

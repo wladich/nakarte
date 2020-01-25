@@ -18,7 +18,6 @@ function getGoogle() {
                         resolve(_google);
                     }
                 );
-
             }
         );
     }

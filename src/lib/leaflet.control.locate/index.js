@@ -49,7 +49,6 @@ const PositionMarker = L.LayerGroup.extend({
             }),
         };
         this.addLayer(this._elements.accuracyCircle);
-
     },
 
     onAdd: function(map) {
@@ -77,7 +76,6 @@ const PositionMarker = L.LayerGroup.extend({
                 this._elements.accuracyCircle.setStyle({opacity: 0.8, fillOpacity: 0.4});
                 this.removeLayer(this._elements.markerPoint);
                 this.removeLayer(this._elements.markerCircle);
-
             }
             this._precise = precise;
         }
@@ -174,7 +172,6 @@ const LocateControl = L.Control.extend({
                 this._map.setView(forceLatLng ? forceLatLng : fallbackLatLng, forceZoom ? forceZoom : zoom,
                     {animate: false});
             }
-
         },
 
         _startLocating: function() {

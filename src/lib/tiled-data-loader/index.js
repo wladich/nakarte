@@ -114,7 +114,6 @@ class TiledDataLoader {
             })),
             abortLoading: () => pendingRequest.abortLoading()
         };
-
     }
 }
 

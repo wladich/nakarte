@@ -51,7 +51,6 @@ L.Wikimapia = L.GridLayer.extend({
             }
             L.TileLayer.prototype.onRemove.call(this, map);
             this.off('tileunload', this.onTileUnload, this);
-
         },
 
         drawTile: function(canvas) {
@@ -96,7 +95,6 @@ L.Wikimapia = L.GridLayer.extend({
                 canvasCtx.lineTo(polygon[0].x, polygon[0].y);
             }
             canvasCtx.stroke();
-
         },
 
         createTile: function(coords, done) {

@@ -11,7 +11,6 @@ function flattenArray(ar) {
         acc.push(...cur);
         return acc;
     }, []);
-
 }
 
 function parsePointFromHashValues(values) {
@@ -25,7 +24,6 @@ function parsePointFromHashValues(values) {
     }
     const name = ((values[2] || '').trim()) || 'Point';
     return [{name, points: [{name, lat, lng}]}];
-
 }
 
 class NakarteTrack extends BaseService {

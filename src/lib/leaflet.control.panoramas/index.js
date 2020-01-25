@@ -125,7 +125,6 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         switchControl: function() {
-
             if (this.controlEnabled) {
                 this.disableControl();
             } else {
@@ -397,5 +396,4 @@ L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
             return null;
         },
     });
-
 };

@@ -158,7 +158,6 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 if (minIntersectionSum === 0) {
                     break;
                 }
-
             }
             return [bestX, bestY];
         },
@@ -419,7 +418,6 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
         onMarkerEnter: function(e) {
             this._map._container.style.cursor = 'pointer';
             this.showTooltip(e);
-
         },
 
         onMarkerLeave: function() {

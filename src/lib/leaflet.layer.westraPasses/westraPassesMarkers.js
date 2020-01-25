@@ -161,7 +161,6 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             }
 
             if (properties.comments) {
-
                 for (let comment of properties.comments) {
                     let user = '';
                     if (comment.user) {

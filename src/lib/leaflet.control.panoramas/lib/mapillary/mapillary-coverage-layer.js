@@ -21,7 +21,6 @@ const MapillaryCoverage = L.GridLayer.extend({
         onRemove: function(map) {
             L.GridLayer.prototype.onRemove.call(this, map);
             this.off('tileunload', this.onTileUnload, this);
-
         },
 
         onTileUnload: function(e) {
@@ -50,7 +49,6 @@ const MapillaryCoverage = L.GridLayer.extend({
                 canvasCtx.arc(x, y, 5, 0, 2 * Math.PI);
                 canvasCtx.fill();
             }
-
         },
 
         drawSequences: function(canvas, lineWidth) {
@@ -117,7 +115,6 @@ const MapillaryCoverage = L.GridLayer.extend({
                 canvasCtx.arc(x, y, 4, 0, 2 * Math.PI);
                 canvasCtx.fill();
             }
-
         },
 
         drawTile: function(canvas, coords) {
@@ -136,7 +133,6 @@ const MapillaryCoverage = L.GridLayer.extend({
                 this.drawSequences(canvas, 2);
                 this.drawImages(canvas);
             }
-
         },
 
         createTile: function(coords, done) {

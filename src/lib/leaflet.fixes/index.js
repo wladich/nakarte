@@ -50,7 +50,6 @@ function fixVectorDrawWhileAnimation() {
         } else {
             L.Renderer.prototype._onZoom.call(this);
         }
-
     }
 
     function onMove() {

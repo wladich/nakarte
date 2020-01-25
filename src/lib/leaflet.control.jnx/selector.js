@@ -70,7 +70,6 @@ const RectangleSelect = L.Rectangle.extend({
                     [this.markers['bottom'].getLatLng().lat, this.markers['right'].getLatLng().lng]
                 ]
             );
-
         },
         onMarkerDrag: function() {
             this.setBoundsFromMarkers();

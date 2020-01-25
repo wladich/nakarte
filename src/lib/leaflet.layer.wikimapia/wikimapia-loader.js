@@ -10,7 +10,6 @@ class WikimapiaLoader extends TiledDataLoader {
     constructor(projectObj) {
         super();
         this._projectObj = projectObj;
-
     }
 
     getFromCache(dataTileCoords) {
@@ -71,7 +70,6 @@ class WikimapiaLoader extends TiledDataLoader {
                         tileData,
                         coords: tileData.coords
             }));
-
     }
 
     calcAdjustment(layerTileCoords, dataTileCoords) {

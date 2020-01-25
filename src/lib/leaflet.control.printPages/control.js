@@ -447,7 +447,6 @@ L.Control.PrintPages = L.Control.extend({
                     (this.magneticMeridiansOn() ? 1 : 0) |
                     (this.gridOn() ? 2 : 0);
                 state.push(flags.toString());
-
             }
             return state;
         },

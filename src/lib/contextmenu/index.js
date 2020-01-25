@@ -148,7 +148,6 @@ class Contextmenu {
         }
         return el;
     }
-
 }
 
 export default Contextmenu;

@@ -123,7 +123,6 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
         onRemove: function(map) {
             L.GridLayer.prototype.onRemove.call(this, map);
             this.off('tileunload', this.onTileUnload, this);
-
         },
 
         onTileUnload: function(e) {

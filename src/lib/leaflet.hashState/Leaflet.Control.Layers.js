@@ -8,7 +8,6 @@ L.Control.Layers.include({
         stateChangeEventsSource: '_map',
 
         serializeState: function() {
-
             const keys = [];
             this._map.eachLayer((layer) => {
                     let key = layer.options.code;

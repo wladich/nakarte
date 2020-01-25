@@ -118,7 +118,6 @@ class Grid extends PrintStaticLayer {
             }
             ctx.stroke();
         }
-
     }
 
     _drawLabel(canvas, printOptions) {
@@ -166,7 +165,6 @@ class Grid extends PrintStaticLayer {
             count: 2
         };
     }
-
 }
 
 export {Grid};

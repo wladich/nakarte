@@ -512,7 +512,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         }
                         return this.serializeCustomLayer(fieldValues);
                     }
-
                 }
                 return null;
             }

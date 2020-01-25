@@ -25,7 +25,6 @@ L.Layer.CanvasMarkers.include({
                 options.iconsOpacity = options.printIconsOpacity;
             }
             return new L.Layer.CanvasMarkers(this.cloneMarkers(), options);
-
         },
 
         getTilesInfo: async function(printOptions) {

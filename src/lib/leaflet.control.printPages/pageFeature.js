@@ -35,7 +35,6 @@ const PageFeature = L.Marker.extend({
         },
 
         _getLatLngBounds: function() {
-
             const centerLatLng = this.getLatLng();
             const centerMerc = L.Projection.SphericalMercator.project(centerLatLng);
             const mercatorScale =

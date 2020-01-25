@@ -21,7 +21,6 @@ function showNotification(message, mouseEvent) {
     setTimeout(function() {
         document.body.removeChild(el);
     }, 1000);
-
 }
 
 function copyToClipboard(s, mouseEvent) {

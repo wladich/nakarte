@@ -152,7 +152,6 @@ L.Control.JNX = L.Control.extend({
                     this.removeSelector();
                     this.addSelector();
                 }
-
             } else {
                 this.addSelector();
             }

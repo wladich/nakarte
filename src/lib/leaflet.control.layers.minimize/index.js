@@ -46,7 +46,6 @@ function enableMinimize(control) {
     if (control._map) {
         control.__injectMinimizeButtons();
     }
-
 }
 
 export default enableMinimize;

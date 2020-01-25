@@ -8,7 +8,6 @@ L.Control.Layers.include({
         const container = originalLayerOnAdd.call(this, map);
         this._stopContainerEvents();
         return container;
-
     }
 });
 
@@ -20,6 +19,5 @@ L.Control.Zoom.include({
         this._container = container;
         this._stopContainerEvents();
         return container;
-
     }
 });

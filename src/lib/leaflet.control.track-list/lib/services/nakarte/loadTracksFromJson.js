@@ -39,7 +39,6 @@ function parseTrack(rawTrack) {
         track.push(segment);
     }
     return {valid: true, track};
-
 }
 
 async function loadTracksFromJson(value) { // eslint-disable-line complexity

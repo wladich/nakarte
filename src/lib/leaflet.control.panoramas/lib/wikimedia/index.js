@@ -133,7 +133,6 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
             };
         }
         return {found: false};
-
     }
     return {found: false};
 }

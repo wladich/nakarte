@@ -70,7 +70,6 @@ class Endomondo extends BaseService {
             tracks: [track]
         }];
     }
-
 }
 
 export default Endomondo;

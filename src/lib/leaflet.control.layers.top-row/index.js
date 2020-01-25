@@ -25,7 +25,6 @@ function enableTopRow(control) {
     if (control._map) {
         control.__injectTopRow();
     }
-
 }
 
 export default enableTopRow;

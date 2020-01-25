@@ -43,7 +43,6 @@ const StravaHeatmap = L.TileLayer.extend({
         };
 
         image.src = url;
-
     },
 
     onAdd: function(map) {

@@ -385,7 +385,6 @@ const ElevationProfile = L.Class.extend({
                 if (this.selEndInd > this.values.length - 1) {
                     this.selEndInd = this.values.length - 1;
                 }
-
             } else {
                 selStart = this.selStartInd * (this.svgWidth - 1) / (this.values.length - 1);
                 selEnd = this.selEndInd * (this.svgWidth - 1) / (this.values.length - 1);
@@ -575,7 +574,6 @@ const ElevationProfile = L.Class.extend({
                 ticks.push(k * tickStep);
             }
             return ticks;
-
         },
 
         filterElevations: function(values, tolerance) {
@@ -682,7 +680,6 @@ const ElevationProfile = L.Class.extend({
                 stats.angleAvgAscent = gradientToAngle(stats.gradientAvgAscent);
                 stats.angleMinAscent = gradientToAngle(stats.gradientMinAscent);
                 stats.angleMaxAscent = gradientToAngle(stats.gradientMaxAscent);
-
             }
             if (descents.length !== 0) {
                 stats.gradientAvgDescent = descents.reduce(sum, 0) / descents.length / this.options.samplingInterval;
@@ -717,7 +714,6 @@ const ElevationProfile = L.Class.extend({
             stats.descent = descent;
 
             return stats;
-
         },
 
         setCursorPosition: function(ind) {
@@ -876,7 +872,6 @@ const ElevationProfile = L.Class.extend({
                 }
                 this.setCursorPosition(ind + di);
             }
-
         },
 
         setupGraph: function() {

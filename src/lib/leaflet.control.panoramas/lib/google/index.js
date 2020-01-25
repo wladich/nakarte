@@ -99,7 +99,6 @@ const Viewer = L.Evented.extend({
             return true;
         }
         return false;
-
     }
 });
 

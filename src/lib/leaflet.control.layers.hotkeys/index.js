@@ -56,7 +56,6 @@ function enableHotKeys(control) {
                 L.DomEvent.off(document, 'keyup', this._onHotkeyUp, this);
                 L.DomEvent.off(document, 'keydown', this.onKeyDown, this);
                 originalOnRemove.call(this, map);
-
             },
 
             _addHotKetEvents: function() {

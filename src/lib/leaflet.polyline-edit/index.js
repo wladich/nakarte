@@ -153,7 +153,6 @@ L.Polyline.EditMixin = {
         this._map.clickLocked = false;
         this._setupEndMarkers();
         this.fire('drawend');
-
     },
 
     onKeyPress: function(e) {
@@ -228,7 +227,6 @@ L.Polyline.EditMixin = {
         marker._lineNode = node;
         node._nodeMarker = marker;
         marker.addTo(this._map);
-
     },
 
     onNodeMarkerClickStartStopDrawing: function(e) {
