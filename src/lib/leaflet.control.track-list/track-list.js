@@ -689,9 +689,9 @@ L.Control.TrackList = L.Control.extend({
                 latngs2.reverse();
             }
             if (this._lineJoinFromStart) {
-                latlngs.unshift.apply(latlngs, latngs2);
+                latlngs.unshift(...latngs2);
             } else {
-                latlngs.push.apply(latlngs, latngs2);
+                latlngs.push(...latngs2);
             }
             latlngs = latlngs.map(function(ll) {
                     return [ll.lat, ll.lng];
@@ -1133,7 +1133,7 @@ L.Control.TrackList = L.Control.extend({
                             segments: capturedTrack,
                             bounds: capturedBounds,
                             measureTicksShown: track.measureTicksShown(),
-                            measureTicks: [].concat.apply([], track.feature.getLayers().map(function(pl) {
+                            measureTicks: [].concat(...track.feature.getLayers().map(function(pl) {
                                     return pl.getTicksPositions(minTicksIntervalMeters);
                                 }
                                 )

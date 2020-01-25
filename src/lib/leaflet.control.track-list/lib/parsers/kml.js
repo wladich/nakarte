@@ -151,8 +151,8 @@ function parseKmz(txt, name) {
             geodata = parseKml(uncompressed, 'dummmy');
             if (geodata) {
                 error = error || geodata[0].error;
-                tracks.push.apply(tracks, geodata[0].tracks);
-                points.push.apply(points, geodata[0].points);
+                tracks.push(...geodata[0].tracks);
+                points.push(...geodata[0].points);
             }
         }
     }
