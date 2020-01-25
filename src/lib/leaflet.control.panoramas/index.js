@@ -378,7 +378,7 @@ L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
                 if (oldState.length) {
                     upgradedState.push('g', ...oldState);
                 }
-                setTimeout(()=> panoramasControl.unserializeState(upgradedState), 0);
+                setTimeout(() => panoramasControl.unserializeState(upgradedState), 0);
             }
             return false;
         },

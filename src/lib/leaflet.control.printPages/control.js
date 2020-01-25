@@ -493,7 +493,7 @@ L.Control.PrintPages = L.Control.extend({
             let opaqueLayer;
             const transparentOverlayLayers = [];
 
-            renderedLayers.forEach(layer => {
+            renderedLayers.forEach((layer) => {
                 const {
                     options: {
                         isOverlay,

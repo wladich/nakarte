@@ -268,7 +268,7 @@ L.Control.TrackList = L.Control.extend({
                 cb();
                 return;
             }
-            const subscription = this.readingFiles.subscribe((value) =>{
+            const subscription = this.readingFiles.subscribe((value) => {
                 if (value === 0) {
                     subscription.dispose();
                     cb();

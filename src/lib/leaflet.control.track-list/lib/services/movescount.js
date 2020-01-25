@@ -92,7 +92,7 @@ class MovescountMove extends MovescountBase {
             return [{name, error: 'UNSUPPORTED'}];
         }
 
-        const track = data.TrackPoints.map(trackPoint => ({
+        const track = data.TrackPoints.map((trackPoint) => ({
                 lat: trackPoint.Latitude,
                 lng: trackPoint.Longitude
             })

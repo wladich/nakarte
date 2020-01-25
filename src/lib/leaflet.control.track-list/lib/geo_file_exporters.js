@@ -10,7 +10,7 @@ function getSegmentLatForLng(latLng1, latLng2, lng) {
 }
 
 function splitLineAt180Meridian(latLngs) {
-    const wrappedLatLngs = latLngs.map(ll => ll.wrap());
+    const wrappedLatLngs = latLngs.map((ll) => ll.wrap());
     const newLines = [];
     if (latLngs.length < 2) {
         return newLines;

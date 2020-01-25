@@ -19,7 +19,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
     L.Util.extend(control, {
             _configEnabled: true,
             _allLayersGroups: layers,
-            _allLayers: [].concat(...layers.map(group => group.layers)),
+            _allLayers: [].concat(...layers.map((group) => group.layers)),
             _customLayers: ko.observableArray(),
 
             onAdd: function(map) {
@@ -125,7 +125,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (this._configWindowVisible || this._customLayerWindow) {
                     return;
                 }
-                [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.enabled));
+                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.enabled));
                 this._initLayersSelectWindow();
                 this._map._controlContainer.appendChild(this._configWindow);
                 this._configWindowVisible = true;
@@ -147,7 +147,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (!this._configWindow) {
                     return;
                 }
-                [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.isDefault));
+                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.isDefault));
             },
 
             onSelectWindowOkClicked: function() {
@@ -191,12 +191,12 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             updateEnabledLayers: function(addedLayers) {
-                const disabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => !l.enabled);
+                const disabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
 
                 let hasBaselayerOnMap = false;
-                const enabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => l.enabled);
+                const enabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => l.enabled);
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);

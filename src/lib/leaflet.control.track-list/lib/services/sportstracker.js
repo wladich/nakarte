@@ -47,7 +47,7 @@ class SportsTrackerActivity extends SportsTrackerBase {
         } catch (e) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        const track = data.payload.locations.map(location => ({
+        const track = data.payload.locations.map((location) => ({
                 lat: location.la,
                 lng: location.ln
             })

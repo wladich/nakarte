@@ -26,7 +26,7 @@ class Tracedetrail extends BaseService {
             name = response.responseJSON.nom_fr || name;
             const geometry = JSON.parse(response.responseJSON.geometry);
             const proj = L.CRS.EPSG3857;
-            const points = geometry.map(item => proj.unproject(L.point(item.lon, item.lat)));
+            const points = geometry.map((item) => proj.unproject(L.point(item.lon, item.lat)));
 
             return [{
                 name,
