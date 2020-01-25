@@ -57,7 +57,7 @@ L.Control.Panoramas = L.Control.extend({
 
         getProviders: function() {
             return [
-                {name: 'google', title: 'Google street view', provider: googleProvider, layerOptions: {zIndex:10},
+                {name: 'google', title: 'Google street view', provider: googleProvider, layerOptions: {zIndex: 10},
                  code: 'g',
                  selected: ko.observable(true),
                  mapMarkerType: 'normal'},
