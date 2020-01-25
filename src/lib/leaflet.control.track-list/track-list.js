@@ -1115,6 +1115,7 @@ L.Control.TrackList = L.Control.extend({
 
         exportTracks: function(minTicksIntervalMeters) {
             var that = this;
+            /* eslint-disable max-nested-callbacks */
             return this.tracks()
                 .filter(function(track) {
                         return that.getTrackPolylines(track).length;
@@ -1147,6 +1148,7 @@ L.Control.TrackList = L.Control.extend({
                         };
                     }
                 );
+            /* eslint-enable max-nested-callbacks */
         },
 
         showElevationProfileForSegment: function(line) {
