@@ -35,7 +35,7 @@ layersDefs.forEach(function(layerDef) {
 test('Layers titles unique', function() {
     const seen = new Set();
     const duplicates = new Set();
-    for (let layerDef of layersDefs) {
+    for (const layerDef of layersDefs) {
         const title = layerDef.title;
         if (seen.has(title)) {
             duplicates.add(title);
@@ -48,7 +48,7 @@ test('Layers titles unique', function() {
 test('Layers codes unique', function() {
     const seen = new Set();
     const duplicates = new Set();
-    for (let layerDef of layersDefs) {
+    for (const layerDef of layersDefs) {
         const code = layerDef.layer.options.code;
         if (seen.has(code)) {
             duplicates.add(code);
@@ -61,7 +61,7 @@ test('Layers codes unique', function() {
 test('Layers short names unique', function() {
     const seen = new Set();
     const duplicates = new Set();
-    for (let layerDef of layersDefs) {
+    for (const layerDef of layersDefs) {
         if (!layerDef.layer.options.print) {
             continue;
         }
@@ -77,7 +77,7 @@ test('Layers short names unique', function() {
 suite('Layers groups definitions');
 
 test('Groups valid', function() {
-    for (let groupDef of groupsDefs) {
+    for (const groupDef of groupsDefs) {
         assert.isString(groupDef.title);
         assert.isNotEmpty(groupDef.title);
         assert.isNotEmpty(groupDef.layers);
@@ -100,13 +100,13 @@ test('titlesByOrder has same layers as layersDef', function() {
 
 test('All baselayers ordered before overlays', function() {
     let seenOverlay = false;
-    let outOfOrder = [];
-    for (let layerName of titlesByOrder) {
+    const outOfOrder = [];
+    for (const layerName of titlesByOrder) {
         if (layerName[0] === '#') {
             continue;
         }
-        let layerDef = layersDefs.filter((item) => item.title === layerName)[0];
-        let isOverlay = layerDef.layer.options.isOverlay;
+        const layerDef = layersDefs.filter((item) => item.title === layerName)[0];
+        const isOverlay = layerDef.layer.options.isOverlay;
         if (seenOverlay && !isOverlay) {
             outOfOrder.push(layerName);
         }

@@ -58,8 +58,8 @@ function printFileSizes(sizeMap, previousSizeMap) {
         };
     });
     assets.sort((a, b) => b.size - a.size);
-    for (let asset of assets) {
-        let sizeLabel = '  ' + filesize(asset.size);
+    for (const asset of assets) {
+        const sizeLabel = '  ' + filesize(asset.size);
         let differenceLabel = '';
         let labelSize = sizeLabel.length;
         if (asset.difference !== 0) {
