@@ -1,6 +1,6 @@
 import secrets from './secrets';
 
-export default Object.assign({
+export default {
     caption: `
         <a href="https://docs.nakarte.me">Documentation</a> |
         <a href="https://about.nakarte.me">News</a> |
@@ -12,4 +12,5 @@ export default Object.assign({
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',
     tracksStorageServer: 'https://tracks.nakarte.me',
-}, secrets);
+    ...secrets
+};

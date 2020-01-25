@@ -36,11 +36,12 @@ function logEvent(eventName, extra) {
     const url = 'https://nakarte.me/event';
 
     const data = {event: eventName.toString()};
-    data.data = Object.assign({}, extra, {
+    data.data = {
+        ...extra,
         beacon: true,
         session: sessionId,
         address: window.location.toString()
-    });
+    };
     let s = JSON.stringify(data);
     try {
         navigator.sendBeacon(url, s);

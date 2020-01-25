@@ -137,10 +137,9 @@ L.Control.Coordinates = L.Control.extend({
                 const {lat, lng} = formats.formatLatLng(e.latlng.wrap(), format);
                 const coordinates = `${lat} ${lng}`;
 
-                return Object.assign({
-                    text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
-                    callback: () => copyToClipboard(coordinates, e.originalEvent)
-                }, options);
+                return {text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
+                    callback: () => copyToClipboard(coordinates, e.originalEvent),
+                    ...options};
             }
 
             const header = createItem(this.format(), {

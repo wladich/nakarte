@@ -13,7 +13,7 @@ class WikimapiaLoader extends TiledDataLoader {
     }
 
     getFromCache(dataTileCoords) {
-        dataTileCoords = Object.assign({}, dataTileCoords);
+        dataTileCoords = {...dataTileCoords};
         let exactMatch = true;
         while (dataTileCoords.z >= 0) {
             let key = this.makeTileKey(dataTileCoords);

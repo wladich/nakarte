@@ -20,7 +20,7 @@ class TiledDataLoader {
     }
 
     layerTileToDataTileCoords(layerTileCoords) {
-        return Object.assign({}, layerTileCoords);
+        return {...layerTileCoords};
     }
 
     makeRequestData(_unused_dataTileCoords) {

@@ -228,7 +228,7 @@ async function* iterateLayersTiles(
             layerPromises.push(tilePromise.tilePromise);
             let progressInc = (layer._printProgressWeight || 1) / count;
             tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc, layer}, tileInfo));
+                tilePromise.tilePromise.then((tileInfo) => ({zoom, progressInc, layer, ...tileInfo}));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();

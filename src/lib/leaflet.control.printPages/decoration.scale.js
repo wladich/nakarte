@@ -20,7 +20,7 @@ function formatScale(nominalScale, scaleRange) {
         Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold
     ) {
         let unit;
-        scaleRange = Object.assign({}, scaleRange);
+        scaleRange = {...scaleRange};
         if (scaleRange.min >= 1000) {
             scaleRange.min /= 1000;
             scaleRange.max /= 1000;
