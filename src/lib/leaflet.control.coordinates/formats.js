@@ -4,7 +4,7 @@ function formatNumber(value, size, precision = 0) {
     }
 
     if (precision > 0) {
-        size++;
+        size += 1;
     }
 
     return value.toFixed(precision).padStart(size + precision, '0');

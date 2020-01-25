@@ -9,7 +9,7 @@ function getTileId({x, y, z}) {
         id.push((x & 1) + (y & 1) * 2);
         x >>= 1;
         y >>= 1;
-        z--;
+        z -= 1;
     }
     return id.reverse().join('');
 }
@@ -83,7 +83,7 @@ function decodePolygon(s) {
         var p, l = 0,
             c = 0;
         do {
-            p = s.charCodeAt(i++) - 63;
+            p = s.charCodeAt(i++) - 63; // eslint-disable-line no-plusplus
             c |= (p & 31) << l;
             l += 5;
         } while (p >= 32);
@@ -91,7 +91,7 @@ function decodePolygon(s) {
         l = 0;
         c = 0;
         do {
-            p = s.charCodeAt(i++) - 63;
+            p = s.charCodeAt(i++) - 63; // eslint-disable-line no-plusplus
             c |= (p & 31) << l;
             l += 5;
         } while (p >= 32);
