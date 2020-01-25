@@ -203,10 +203,10 @@ L.Control.TrackList = L.Control.extend({
         addNewTrack: function(name) {
             if (!name) {
                 name = this.url().slice(0, 50);
-                if (!name.length) {
-                    name = 'New track';
-                } else {
+                if (name.length) {
                     this.url('');
+                } else {
+                    name = 'New track';
                 }
             }
             this.stopPlacingPoint();

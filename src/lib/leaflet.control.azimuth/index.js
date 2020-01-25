@@ -185,10 +185,10 @@ L.Control.Azimuth = L.Control.extend({
                 const azimuth = calcAzimuth(points.start, points.end);
                 this.trueAzimuth(roundAzimuth(azimuth));
                 const declination = getDeclination(points.start.lat, points.start.lng);
-                if (declination !== null) {
-                    this.magneticAzimuth(roundAzimuth(azimuth - declination));
-                } else {
+                if (declination === null) {
                     this.magneticAzimuth(null);
+                } else {
+                    this.magneticAzimuth(roundAzimuth(azimuth - declination));
                 }
                 this.distance(points.start.distanceTo(points.end));
 

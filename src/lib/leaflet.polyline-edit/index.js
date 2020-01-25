@@ -371,7 +371,7 @@ L.Polyline.EditMixin = {
         const startIndex = this._drawingDirection === -1 ? 1 : 0;
         const endIndex = this._drawingDirection === 1 ? nodesCount - 2 : nodesCount - 1;
         const startIcon = this._latlngs[startIndex]._nodeMarker._icon;
-        L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](
+        L.DomUtil[this._drawingDirection === -1 ? 'removeClass' : 'addClass'](
             startIcon, 'line-editor-node-marker-start'
         );
         if (endIndex >= 0) {
