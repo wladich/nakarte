@@ -344,7 +344,7 @@ function getViewer(container) {
 }
 
 export default {
-    getCoverageLayer, 
+    getCoverageLayer,
     getPanoramaAtPos,
     getViewer
 };
