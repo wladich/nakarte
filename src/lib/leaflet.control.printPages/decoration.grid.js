@@ -119,6 +119,7 @@ class Grid extends PrintStaticLayer {
         }
 
     }
+
     _drawLabel(canvas, printOptions) {
         const intervalM = this.getGridInterval(printOptions);
         const height = printOptions.destPixelSize.y;
