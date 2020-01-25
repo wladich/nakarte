@@ -99,9 +99,11 @@ class Grid extends PrintStaticLayer {
                     let hasPointInPage = false;
                     for (let {lat, y} of rows) {
                         let dx = colN * intervalM / Math.cos(radians(lat)) / canvasToMercatorScale.x;
+                        // eslint-disable-next-line max-depth
                         if (dx < pageCanvasCenterX) {
                             hasPointInPage = true;
                         }
+                        // eslint-disable-next-line max-depth
                         if (firstRow) {
                             ctx.moveTo(pageCanvasCenterX + dx * direction + offset, y);
                         } else {

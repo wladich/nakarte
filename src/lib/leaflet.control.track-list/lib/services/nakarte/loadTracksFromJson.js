@@ -83,6 +83,7 @@ async function loadTracksFromJson(value) { // eslint-disable-line complexity
                 geodata.points = [];
                 for (let rawPoint of el.p) {
                     let res = parseWaypoint(rawPoint);
+                    // eslint-disable-next-line max-depth
                     if (!res.valid) {
                         return errCorrupt;
                     }

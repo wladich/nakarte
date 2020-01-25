@@ -55,6 +55,7 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
                     description = objectDescription;
                 }
                 if (imageDescription) {
+                    // eslint-disable-next-line max-depth
                     if (objectDescription) {
                         description += '</br>';
                     }
