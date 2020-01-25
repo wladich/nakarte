@@ -44,7 +44,7 @@ class MovescountRoute extends MovescountBase {
             track.push(latlng);
             const point = data.points.data[i];
             if (point) {
-                points.push({ ...latlng, name: point.name });
+                points.push({...latlng, name: point.name});
             }
         }
 

@@ -200,7 +200,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
-                        const { layer: { options: { isOverlay } } } = l;
+                        const {layer: {options: {isOverlay}}} = l;
                         if (isOverlay) {
                             this.addOverlay(l.layer, l.title);
                         } else {
