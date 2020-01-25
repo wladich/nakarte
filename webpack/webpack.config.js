@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const Webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
@@ -36,27 +36,24 @@ const productionOutput = {
 };
 
 const babelConfig = {
-    "presets": [
+    presets: [
         [
-            "@babel/preset-env",
+            '@babel/preset-env',
             {
-                "useBuiltIns": "usage",
-                "corejs": "3.0.0",
-                "modules": "commonjs",
+                useBuiltIns: 'usage',
+                corejs: '3.0.0',
+                modules: 'commonjs',
             },
         ],
     ],
-    "overrides": [
+    overrides: [
         {
-            "test": "./src/vendored/github.com/augustl/js-unzip/js-unzip.js",
-            "sourceType": "script",
+            test: './src/vendored/github.com/augustl/js-unzip/js-unzip.js',
+            sourceType: 'script',
         },
     ],
 
-    "plugins": [
-        "@babel/plugin-syntax-dynamic-import",
-        "@babel/plugin-proposal-class-properties",
-    ],
+    plugins: ['@babel/plugin-syntax-dynamic-import', '@babel/plugin-proposal-class-properties'],
 };
 
 const sourceMapOption = {
@@ -69,29 +66,32 @@ const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.Ev
 
 const plugins = [
     ...(isProduction ? [new CleanWebpackPlugin()] : []),
-    ...(isProduction ? [new CopyWebpackPlugin([
-        { from: paths.appPublic, to: '' },
-    ])] : []),
+    ...(isProduction ? [new CopyWebpackPlugin([{from: paths.appPublic, to: ''}])] : []),
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml,
         minify: false,
     }),
-    ...((isProduction || isDevelopment) ? [new MiniCssExtractPlugin({
-        filename: 'static/css/[name].[contenthash:8].css',
-    })] : []),
+    ...(isProduction || isDevelopment
+        ? [
+              new MiniCssExtractPlugin({
+                  filename: 'static/css/[name].[contenthash:8].css',
+              }),
+          ]
+        : []),
     new Webpack.DefinePlugin({
-        'NODE_ENV': JSON.stringify(mode),
-        'RELEASE_VER': JSON.stringify(process.env.RELEASE_VER || 'local devel'),
+        NODE_ENV: JSON.stringify(mode),
+        RELEASE_VER: JSON.stringify(process.env.RELEASE_VER || 'local devel'),
     }),
-    ...(isProduction || isDevelopment) ? [new StyleLintPlugin({
-        config: {"extends": "stylelint-config-recommended"},
-        files: [
-            'src/**/*.css',
-            'vendored/**/*.css',
-        ],
-        emitWarning: isDevelopment,
-        emitError: isProduction,
-    })] : [],
+    ...(isProduction || isDevelopment
+        ? [
+              new StyleLintPlugin({
+                  config: {extends: 'stylelint-config-recommended'},
+                  files: ['src/**/*.css', 'vendored/**/*.css'],
+                  emitWarning: isDevelopment,
+                  emitError: isProduction,
+              }),
+          ]
+        : []),
     new devToolPlugin(sourceMapOption),
 ];
 
@@ -102,19 +102,12 @@ const productionCSSLoader = [
         loader: 'postcss-loader',
         options: {
             ident: 'postcss',
-            plugins: () => [
-                require('postcss-import')(),
-                require('postcss-preset-env')(),
-                require('cssnano')(),
-            ],
+            plugins: () => [require('postcss-import')(), require('postcss-preset-env')(), require('cssnano')()],
         },
     },
 ];
 
-const developmentCSSLoader = [
-    'style-loader',
-    {loader: 'css-loader', options: {importLoaders: 1}},
-];
+const developmentCSSLoader = ['style-loader', {loader: 'css-loader', options: {importLoaders: 1}}];
 
 const loaders = [
     {
@@ -127,7 +120,7 @@ const loaders = [
         use: {
             loader: 'url-loader',
             options: {
-                limit: (isProduction || isDevelopment) ? urlLoaderSizeLimit : false,
+                limit: isProduction || isDevelopment ? urlLoaderSizeLimit : false,
                 name: '[path][name].[ext]',
             },
         },
@@ -137,22 +130,23 @@ const loaders = [
         loader: 'raw-loader',
     },
 
-    ...((isProduction || isDevelopment) ? [{
-        test: /\.js$/u,
-        include: paths.appSrc,
-        enforce: 'pre',
-        loader: 'eslint-loader',
-        options: {
-            emitWarning: !isProduction,
-        },
-    }] : []),
+    ...(isProduction || isDevelopment
+        ? [
+              {
+                  test: /\.js$/u,
+                  include: paths.appSrc,
+                  enforce: 'pre',
+                  loader: 'eslint-loader',
+                  options: {
+                      emitWarning: !isProduction,
+                  },
+              },
+          ]
+        : []),
 
     {
         test: /\.js$/u,
-        exclude: isProduction ? [
-            /node_modules\/core-js/u,
-            /node_modules\/webpack/u,
-        ] : /node_modules/u,
+        exclude: isProduction ? [/node_modules\/core-js/u, /node_modules\/webpack/u] : /node_modules/u,
         loaders: [
             {
                 loader: 'babel-loader',
@@ -163,7 +157,7 @@ const loaders = [
 
     {
         test: /\.s?css/iu,
-        loaders : isProduction ? productionCSSLoader : developmentCSSLoader,
+        loaders: isProduction ? productionCSSLoader : developmentCSSLoader,
     },
 ];
 
@@ -173,9 +167,11 @@ module.exports = {
     stats: 'errors-warnings',
     bail: isProduction || isTesting,
 
-    entry: isTesting ? false : {
-        app: paths.appIndexJs,
-    },
+    entry: isTesting
+        ? false
+        : {
+              app: paths.appIndexJs,
+          },
 
     optimization: {
         splitChunks: {
@@ -183,13 +179,14 @@ module.exports = {
             name: true,
         },
         runtimeChunk: 'single',
-        minimizer: [new TerserPlugin({
-            cache: true,
-            parallel: true,
-            sourceMap: true,
-            exclude: /mapillary/u,
-        })],
-
+        minimizer: [
+            new TerserPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true,
+                exclude: /mapillary/u,
+            }),
+        ],
     },
 
     resolve: {

@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = {
-    extends: ["./myEslintRules.js"],
+    extends: ['./myEslintRules.js'],
     rules: {
-        "no-console": "error"
-    }
+        'no-console': 'error',
+    },
 };

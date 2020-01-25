@@ -121,5 +121,4 @@ test('Order contains markers for custom layers in right order', function() {
     const customTopOrder = titlesByOrder.indexOf('#custom-top');
     const customBottomOrder = titlesByOrder.indexOf('#custom-bottom');
     assert.isAbove(customTopOrder, customBottomOrder);
-
 });

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const webpackConfig = require('../webpack/webpack.config');
 
@@ -6,9 +6,7 @@ module.exports = function(config) {
     config.set({
         basePath: '../',
         frameworks: ['mocha', 'chai'],
-        files: [
-            { pattern: './test/**/*.js'},
-        ],
+        files: [{pattern: './test/**/*.js'}],
         preprocessors: {
             './test/**/*.js': ['webpack'],
         },
@@ -17,7 +15,7 @@ module.exports = function(config) {
             stats: 'errors-only',
         },
         reporters: ['mocha'],
-        port: 9876,  // karma web server port
+        port: 9876, // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
         client: {
@@ -29,5 +27,5 @@ module.exports = function(config) {
         mochaReporter: {
             showDiff: true,
         },
-      });
+    });
 };

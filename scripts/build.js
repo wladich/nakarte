@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const recursive = require('recursive-readdir');
 const fs = require('fs-extra');
@@ -13,22 +13,22 @@ const errorExitStatus = 1;
 const paths = require('../webpack/paths');
 
 function getVersionFromGit() {
-    const verCmd = "echo -n `date +%Y-%m-%d_%H:%M:%S`-`git rev-parse --abbrev-ref HEAD`-`git rev-parse --short HEAD``git diff-index --quiet HEAD -- || echo '-dirty'`";
+    const verCmd =
+        "echo -n `date +%Y-%m-%d_%H:%M:%S`-`git rev-parse --abbrev-ref HEAD`-`git rev-parse --short HEAD``git diff-index --quiet HEAD -- || echo '-dirty'`";
     return execSync(verCmd).toString();
 }
 
 // Input: /User/dan/app/build/static/js/main.82be8.js
 // Output: /static/js/main.js
 function removeFileNameHash(fileName) {
-    return fileName
-        .replace(/\/?(.*)(\.[0-9a-f]+)(\.js|\.css)/u, (match, p1, p2, p3) => p1 + p3);
+    return fileName.replace(/\/?(.*)(\.[0-9a-f]+)(\.js|\.css)/u, (match, p1, p2, p3) => p1 + p3);
 }
 
 function getSizes(removeNameHash) {
     return new Promise((resolve) => {
         recursive(paths.appBuild, (err, fileNames) => {
             const previousSizeMap = (fileNames || [])
-                .filter(fileName => /\.(js|css)$/u.test(fileName))
+                .filter((fileName) => /\.(js|css)$/u.test(fileName))
                 .reduce((memo, fileName) => {
                     const contents = fs.readFileSync(fileName);
                     const relativeFileName = fileName.replace(paths.appBuild + '/', '');
@@ -44,16 +44,15 @@ function getSizes(removeNameHash) {
 // Print a detailed summary of build files.
 function printFileSizes(sizeMap, previousSizeMap) {
     const ASSET_DIFF_SIZE_WARNING_THRESHOLD = 50000;
-    const assets = Object.entries(sizeMap)
-        .map(([filename, size]) => {
-            const difference = size - (previousSizeMap[removeFileNameHash(filename)] || 0);
-            return {
-                folder: path.join('build', path.dirname(filename)),
-                name: path.basename(filename),
-                size: size,
-                difference: difference,
-            };
-        });
+    const assets = Object.entries(sizeMap).map(([filename, size]) => {
+        const difference = size - (previousSizeMap[removeFileNameHash(filename)] || 0);
+        return {
+            folder: path.join('build', path.dirname(filename)),
+            name: path.basename(filename),
+            size: size,
+            difference: difference,
+        };
+    });
     assets.sort((a, b) => b.size - a.size);
     for (let asset of assets) {
         let sizeLabel = '  ' + filesize(asset.size);
@@ -80,10 +79,11 @@ function printFileSizes(sizeMap, previousSizeMap) {
         }
         const maxLabelSize = 30;
         const padding = ' '.repeat(Math.max(maxLabelSize - labelSize, 0));
-        console.log(sizeLabel + differenceLabel + padding + chalk.dim(asset.folder + path.sep) + chalk.cyan(asset.name));
+        console.log(
+            sizeLabel + differenceLabel + padding + chalk.dim(asset.folder + path.sep) + chalk.cyan(asset.name)
+        );
     }
 }
-
 
 async function main() {
     process.env.NODE_ENV = 'production';
@@ -93,8 +93,9 @@ async function main() {
     console.log('Version:', version);
     const prevSizes = await getSizes(true);
     try {
-        execSync("webpack --config webpack/webpack.config.js  --colors --profile --progress",
-            {stdio: "inherit"});
+        execSync('webpack --config webpack/webpack.config.js  --colors --profile --progress', {
+            stdio: 'inherit',
+        });
     } catch (e) {
         process.exit(errorExitStatus);
     }
