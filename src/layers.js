@@ -1178,7 +1178,8 @@ function getLayers() {
             top: orderByTitle['#custom-top'],
             bottom: orderByTitle['#custom-bottom'],
 
-        }};
+        }
+    };
 }
 
 export {getLayers, layersDefs, groupsDefs, titlesByOrder};

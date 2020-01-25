@@ -42,7 +42,8 @@ const PanoMarker = L.Marker.extend({
     setType: function(markerType) {
         const className = {
             'slim': 'leaflet-panorama-marker-circle',
-            'normal': 'leaflet-panorama-marker-binocular'}[markerType];
+            'normal': 'leaflet-panorama-marker-binocular'
+        }[markerType];
         this.getIcon().className = className;
     }
 });
@@ -64,8 +65,7 @@ L.Control.Panoramas = L.Control.extend({
                     layerOptions: {opacity: 0.7, zIndex: 9},
                     code: 'w',
                     selected: ko.observable(false),
-                    mapMarkerType: 'slim'
-                },
+                    mapMarkerType: 'slim'},
                 {name: 'mapillary', title: 'Mapillary', provider: mapillaryProvider,
                     layerOptions: {opacity: 0.7, zIndex: 8},
                     code: 'm',

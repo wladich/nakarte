@@ -39,7 +39,8 @@ class MarkerRBush extends RBush {
             minX: x,
             minY: y,
             maxX: x,
-            maxY: y};
+            maxY: y
+        };
     }
 
     compareMinX(a, b) {

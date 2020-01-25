@@ -23,7 +23,8 @@ function getUid() {
 if (NODE_ENV === 'production') {
     Sentry.init({
         dsn: config.sentryDSN,
-        release: RELEASE_VER});
+        release: RELEASE_VER
+    });
 }
 
 console.log('Version:', RELEASE_VER); // eslint-disable-line no-console
