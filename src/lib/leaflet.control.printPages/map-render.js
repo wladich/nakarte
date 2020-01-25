@@ -20,7 +20,7 @@ function getLayersForPrint(map, xhrQueue) {
     function getLayerZOrder(layer) {
         let el = layer._container || layer._path;
         if (!el) {
-            throw TypeError('Unsupported layer type');
+            throw new TypeError('Unsupported layer type');
         }
         const order = [];
         while (el !== layer._map._container) {

@@ -62,7 +62,7 @@ const sourceMapOption = {
     exclude: /mapillary/u,
 };
 
-const devToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.EvalSourceMapDevToolPlugin;
+const DevToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.EvalSourceMapDevToolPlugin;
 
 const plugins = [
     ...(isProduction ? [new CleanWebpackPlugin()] : []),
@@ -92,7 +92,7 @@ const plugins = [
               }),
           ]
         : []),
-    new devToolPlugin(sourceMapOption),
+    new DevToolPlugin(sourceMapOption),
 ];
 
 const productionCSSLoader = [

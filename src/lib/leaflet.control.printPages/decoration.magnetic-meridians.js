@@ -8,7 +8,7 @@ function radians(degrees) {
 
 function movePoint(p, angle, dist) {
     angle = radians(angle);
-    return new L.point(p.x + Math.sin(angle) * dist, p.y - Math.cos(angle) * dist);
+    return L.point(p.x + Math.sin(angle) * dist, p.y - Math.cos(angle) * dist);
 }
 
 class MagneticMeridians extends PrintStaticLayer {
