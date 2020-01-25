@@ -190,10 +190,7 @@ async function parseTile(s, projectObj) {
         if (!bounds) {
             throw new Error('Invalid place bounds');
         }
-        place.boundsWESN = bounds.slice(1).map((x) => {
-                return parseInt(x, 10) / 1e7;
-            }
-        );
+        place.boundsWESN = bounds.slice(1).map((x) => parseInt(x, 10) / 1e7);
 
         let coords = fields.slice(7).join('|');
 

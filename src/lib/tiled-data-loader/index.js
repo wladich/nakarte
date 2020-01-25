@@ -109,14 +109,11 @@ class TiledDataLoader {
 
 
         return {
-            dataPromise: pendingRequest.dataPromise.then((data) => {
-                    return {
+            dataPromise: pendingRequest.dataPromise.then((data) => ({
                         coords: data.coords,
                         tileData: data.tileData,
                         adjustment: this.calcAdjustment(layerTileCoords, data.coords)
-                    };
-                }
-            ),
+            })),
             abortLoading: () => pendingRequest.abortLoading()
         };
 

@@ -108,9 +108,7 @@ class NakarteUrl {
     }
 
     async geoData() {
-        const promises = this._params.map(([paramName, value]) => {
-            return new NakarteUrlLoader().geoData(paramName, value);
-        });
+        const promises = this._params.map(([paramName, value]) => new NakarteUrlLoader().geoData(paramName, value));
         return flattenArray(await Promise.all(promises));
     }
 }

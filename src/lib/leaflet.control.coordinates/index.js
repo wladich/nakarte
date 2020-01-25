@@ -50,9 +50,7 @@ L.Control.Coordinates = L.Control.extend({
                 return UNKNOWN_COORDINATES;
             }, this);
 
-            this.wrapperClass = ko.pureComputed(() => {
-                return this.format().wrapperClass;
-            }, this);
+            this.wrapperClass = ko.pureComputed(() => this.format().wrapperClass, this);
 
             this.formatCode.subscribe(this.saveStateToStorage, this);
         },

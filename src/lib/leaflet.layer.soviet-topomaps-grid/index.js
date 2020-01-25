@@ -55,10 +55,7 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => {
-                    return replacer[s];
-                }
-            );
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => replacer[s]);
             names.push(name1 + name3);
         }
         return names;
@@ -93,10 +90,7 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => {
-                    return replacer[s];
-                }
-            );
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => replacer[s]);
             names.push(name1 + name3);
         }
         return names;

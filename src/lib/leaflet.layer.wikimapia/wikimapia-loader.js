@@ -67,13 +67,10 @@ class WikimapiaLoader extends TiledDataLoader {
 
     processResponse(xhr) {
         return wmUtils.parseTile(xhr.response, this._projectObj)
-            .then((tileData) => {
-                    return {
+            .then((tileData) => ({
                         tileData,
                         coords: tileData.coords
-                    };
-                }
-            );
+            }));
 
     }
 

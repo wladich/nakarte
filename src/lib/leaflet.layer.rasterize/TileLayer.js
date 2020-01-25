@@ -40,10 +40,7 @@ const GridLayerGrabMixin = {
                     let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(
                         this._wrapCoords(coords), printOptions);
                     yield {
-                        tilePromise: tilePromise.then((image) => {
-                                return {image, tilePos, tileSize, latLngBounds};
-                            }
-                        ),
+                        tilePromise: tilePromise.then((image) => ({image, tilePos, tileSize, latLngBounds})),
                         abortLoading
                     };
                 }

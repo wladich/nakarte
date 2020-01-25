@@ -199,14 +199,11 @@ L.Control.PrintPages = L.Control.extend({
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
-            const pages = this.pages.map((page) => {
-                    return {
+            const pages = this.pages.map((page) => ({
                         latLngBounds: page.getLatLngBounds(),
                         printSize: page.getPrintSize(),
                         label: page.getLabel()
-                    };
-                }
-            );
+            }));
             const resolution = this.resolution();
             const decorationLayers = [];
             if (this.gridOn()) {
@@ -366,10 +363,7 @@ L.Control.PrintPages = L.Control.extend({
                 resolution = this.resolution();
             let referenceLat;
             if (this.pages.length > 0) {
-                let absLats = this.pages.map((page) => {
-                        return Math.abs(page.getLatLngBounds().getCenter().lat);
-                    }
-                );
+                let absLats = this.pages.map((page) => Math.abs(page.getLatLngBounds().getCenter().lat));
                 referenceLat = Math.min(...absLats);
             } else {
                 if (!this._map) {
@@ -533,9 +527,9 @@ L.Control.PrintPages = L.Control.extend({
 
             fileName += `${scale}m`;
 
-            const currentPageSize = this.pageSizes.find((pageSize) => {
-                return (width === pageSize.width) && (height === pageSize.height);
-            });
+            const currentPageSize = this.pageSizes.find(
+                (pageSize) => width === pageSize.width && height === pageSize.height
+            );
 
             if (currentPageSize) {
                 fileName += `_${currentPageSize.name}`;

@@ -48,13 +48,10 @@ class Endomondo extends BaseService {
 
         const track = data.points.points
             .filter((p) => p.latitude)
-            .map((p) => {
-                    return {
+            .map((p) => ({
                         lat: p.latitude,
                         lng: p.longitude
-                    };
-                }
-            );
+            }));
         if (track.length === 0) {
             return [{error: 'Endomondo user disabled viewing this workout track'}];
         }

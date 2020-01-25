@@ -267,10 +267,7 @@ const Viewer = L.Evented.extend({
             const image = this.images[this._imageIdx];
             this.fire('change', {
                     latlng: L.latLng(image.lat, image.lng),
-                    latlngs: this.images.map((image) => {
-                        return L.latLng(image.lat, image.lng);
-                    })
-
+                    latlngs: this.images.map((image) => L.latLng(image.lat, image.lng))
                 }
             );
         }

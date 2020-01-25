@@ -56,14 +56,12 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
             return zoom >= 10 ? marker._label : null;
         }
 
-        const markers = data.map(([label, cacheId, lat, lng]) => {
-            return {
+        const markers = data.map(([label, cacheId, lat, lng]) => ({
                 latlng: {lat, lng},
                 _label: label,
                 label: getLabel,
                 icon, cacheId
-            };
-        });
+        }));
         this.addMarkers(markers);
         this._dataLoaded = true;
         this.fire('data-loaded');
