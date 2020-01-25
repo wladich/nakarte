@@ -1,7 +1,6 @@
 import {PrintStaticLayer} from './decorations';
 import L from 'leaflet';
 
-
 function radians(degrees) {
     return degrees * Math.PI / 180;
 }

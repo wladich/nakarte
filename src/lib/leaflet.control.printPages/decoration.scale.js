@@ -1,6 +1,5 @@
 import {PrintStaticLayer} from './decorations';
 
-
 function pageScaleRange(printOptions) {
     const pageSize = printOptions.destPixelSize.divideBy(printOptions.resolution / 25.4);
     const bounds = printOptions.latLngBounds;
@@ -40,7 +39,6 @@ function formatScale(nominalScale, scaleRange) {
     }
     return `${nominalScale} ${unit} in 1 cm`;
 }
-
 
 class OverlayScale extends PrintStaticLayer {
     fontSizeMm = 3;

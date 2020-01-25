@@ -33,7 +33,6 @@ function calcAzimuth(latlng1, latlng2) {
     return brng;
 }
 
-
 function calcAngle(latlng1, latlng2) {
     const p1 = L.Projection.SphericalMercator.project(latlng1);
     const p2 = L.Projection.SphericalMercator.project(latlng2);
@@ -112,7 +111,6 @@ L.Control.Azimuth = L.Control.extend({
                 this.enableControl();
             }
         },
-
 
         onMarkerDrag: function(e) {
             const marker = e.target;

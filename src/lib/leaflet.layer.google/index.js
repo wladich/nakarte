@@ -17,7 +17,6 @@ L.Layer.GoogleBase = L.TileLayer.extend({
     }
 });
 
-
 L.Layer.GoogleMap = L.Layer.GoogleBase.extend({
     initialize: function(options) {
         L.Layer.GoogleBase.prototype.initialize.call(

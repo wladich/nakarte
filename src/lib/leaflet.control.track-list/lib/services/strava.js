@@ -68,16 +68,11 @@ class Strava extends BaseService {
             // use previously constructed name
         }
 
-
         return [{
             name,
             tracks
         }];
     }
 }
-
-
-
-
 
 export default Strava;

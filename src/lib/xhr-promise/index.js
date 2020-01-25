@@ -110,7 +110,6 @@ class XMLHttpRequestPromise {
     }
 }
 
-
 class XHRQueue {
     constructor(maxSimultaneousRequests=6) {
         this._maxConnections = maxSimultaneousRequests;
@@ -166,14 +165,12 @@ class XHRQueue {
     }
 }
 
-
 function fetch(url, options) {
     // console.log('fetch', url);
     const promise = new XMLHttpRequestPromise(url, options);
     promise.send();
     return promise;
 }
-
 
 export {fetch, XHRQueue};
 

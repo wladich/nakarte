@@ -14,7 +14,6 @@ function fireRefreshEventOnWindow() {
     window.dispatchEvent(evt);
 }
 
-
 const PanoMarker = L.Marker.extend({
     options: {
         zIndexOffset: 10000
@@ -247,7 +246,6 @@ L.Control.Panoramas = L.Control.extend({
             this.notifyChanged();
         },
 
-
         placeMarker: function(latlng, heading) {
             if (!this.panoramaVisible()) {
                 return;
@@ -369,7 +367,6 @@ L.Control.Panoramas.include({
     }
 );
 
-
 L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
     return L.Util.extend({}, L.Mixin.HashState, {
         unserializeState: function(oldState) {
@@ -387,7 +384,5 @@ L.Control.Panoramas.hashStateUpgrader = function(panoramasControl) {
             return null;
         },
     });
-
-
 
 };

@@ -203,7 +203,6 @@ L.MeasuredLine = L.Polyline.extend({
     }
 );
 
-
 L.measuredLine = function(latlngs, options) {
     return new L.MeasuredLine(latlngs, options);
 };

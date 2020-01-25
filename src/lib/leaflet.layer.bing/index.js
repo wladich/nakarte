@@ -1,6 +1,5 @@
 import L from 'leaflet';
 
-
 function tile2quad(x, y, z) {
     var quad = '';
     for (var i = z; i > 0; i--) {
@@ -33,7 +32,6 @@ const BingLayer = L.TileLayer.extend({
         this._providers = [];
         this.metaRequested = false;
     },
-
 
     getTileUrl: function (tilePoint) {
         var zoom = this._getZoomForUrl();
@@ -141,6 +139,5 @@ const BingLayer = L.TileLayer.extend({
         L.TileLayer.prototype.onRemove.apply(this, [map]);
     }
 });
-
 
 export {BingLayer, tile2quad};

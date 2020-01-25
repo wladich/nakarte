@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import getGoogle from '~/lib/googleMapsApi';
 
-
 function getCoverageLayer(options) {
     return L.tileLayer(
         'https://maps.googleapis.com/maps/vt?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256!2m8!1e2!2ssvv!4m2!1scb_client!2sapiv3!4m2!1scc!2s*211m3*211e3*212b1*213e2*211m3*211e2*212b1*213e2!3m5!3sUS!12m1!1e40!12m1!1e18!4e0', // eslint-disable-line max-len
@@ -9,12 +8,10 @@ function getCoverageLayer(options) {
     );
 }
 
-
 async function getStreetViewService() {
     const google = await getGoogle();
     return new google.maps.StreetViewService();
 }
-
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     const google = await getGoogle();
@@ -33,7 +30,6 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     }
     return {found: false};
 }
-
 
 const Viewer = L.Evented.extend({
     initialize: function(google, container) {
@@ -111,6 +107,5 @@ async function getViewer(container) {
     const google = await getGoogle();
     return new Viewer(google, container);
 }
-
 
 export default {getCoverageLayer, getPanoramaAtPos, getViewer};

@@ -147,7 +147,6 @@ var Nomenclature = {
         return this._getQuads(bounds, 4 / 12 / 2, 6 / 12 / 2, this.getQuadName050k.bind(this));
     }
 
-
 };
 
 L.Layer.SovietTopoGrid = L.LayerGroup.extend({
@@ -245,7 +244,6 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             delete this._quads[id];
         },
 
-
         _addQuads: function(quads, scale, color, layer) {
             quads.forEach(function(quad) {
                     var id = scale + quad.names[0];
@@ -271,7 +269,6 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 layer = (zoom >= 10) ? 2 : 1;
                 this._addQuads(quads, '100k', '#d50', layer);
             }
-
 
             if (zoom >= 6 && zoom < 10) {
                 quads = Nomenclature.getQuads500k(map_bbox);

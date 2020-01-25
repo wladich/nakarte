@@ -95,7 +95,6 @@ function parseGeometry(geometryType, ints, coordinatesScale) { // eslint-disable
     return geometry;
 }
 
-
 function parseFeatures(layer, coordinatesScale) {
     const features = [];
     for (let feature of layer.features) {

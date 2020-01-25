@@ -50,7 +50,6 @@ function fixVectorMarkerWorldJump() {
         return shift;
     };
 
-
     // Shift line points longitude by +360 or -360, to minimize distance between line center and map view center
     // Longitude is changed only for display, longitude of pints is not changed
     // Breaks dipslay of lines spanning more then one world copy

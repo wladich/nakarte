@@ -3,7 +3,6 @@ import './style.css';
 import '~/lib/controls-styles/controls-styles.css';
 import enableTopRow from '~/lib/leaflet.control.layers.top-row';
 
-
 function enableMinimize(control) {
     const originalOnAdd = control.onAdd;
     if (control._minimizeEnabled) {
@@ -47,7 +46,6 @@ function enableMinimize(control) {
     if (control._map) {
         control.__injectMinimizeButtons();
     }
-
 
 }
 

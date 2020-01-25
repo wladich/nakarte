@@ -7,7 +7,6 @@ function localStorageWorks() {
     }
 }
 
-
 let storage;
 
 if (localStorageWorks()) {

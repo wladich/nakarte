@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import './style.css';
 
-
 function stopContainerEvents(container) {
     L.DomEvent.disableClickPropagation(container);
     L.DomEvent.disableScrollPropagation(container);

@@ -13,7 +13,6 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
             this.url = url;
         },
 
-
         // Promise can be rejected if json invalid or addData fails
         loadData: function() {
             if (this._loadStarted) {

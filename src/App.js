@@ -65,7 +65,6 @@ function setUp() {
         }
     ).addTo(map);
 
-
     new ZoomDisplay().addTo(map);
 
     new L.Control.Scale({
@@ -154,7 +153,6 @@ function setUp() {
     if (!validPositionInHash) {
         tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
     }
-
 
     ////////// adaptive layout
 

@@ -78,7 +78,6 @@ function parseOziPlt(txt, name) {
     return [{name: name, tracks: segments, error: error}];
 }
 
-
 function parseOziWpt(txt, name) {
     var points = [],
         error,

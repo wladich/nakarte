@@ -77,7 +77,6 @@ class WikimediaLoader extends TiledDataLoader {
         };
     }
 
-
     makeRequestData(dataTileCoords) {
         return {
             url: this.getTileUrl(dataTileCoords),

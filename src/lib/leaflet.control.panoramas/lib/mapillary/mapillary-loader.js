@@ -2,7 +2,6 @@ import L from 'leaflet';
 import {TiledDataLoader} from '~/lib/tiled-data-loader';
 import {decodeMvt} from './mvt';
 
-
 class MapillaryLoader extends TiledDataLoader {
     url = 'https://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt';
     maxZoom = 14;
@@ -38,7 +37,6 @@ class MapillaryLoader extends TiledDataLoader {
             z: z2
         };
     }
-
 
     makeRequestData(dataTileCoords) {
         return {

@@ -144,7 +144,6 @@ L.Control.JNX = L.Control.extend({
             this.fire('selectionchange');
         },
 
-
         onButtonClicked: function() {
             if (this._selector) {
                 if (this._selector.getBounds().intersects(this._map.getBounds().pad(-0.05))) {

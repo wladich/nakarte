@@ -39,8 +39,6 @@ class YandexRuler extends BaseService {
     }
 }
 
-
-
 // function parseYandexMap(txt) {
 //     var start_tag = '<script id="vpage" type="application/json">';
 //     var json_start = txt.indexOf(start_tag);
@@ -97,6 +95,5 @@ class YandexRuler extends BaseService {
 //     }
 //     return [{name: name, error: error, tracks: segments}];
 // }
-
 
 export {YandexRuler};

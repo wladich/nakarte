@@ -7,7 +7,6 @@ import './style.css';
 import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
 import {openPopupWindow} from '~/lib/popup-window';
 
-
 const GeocachingSu = L.Layer.CanvasMarkers.extend({
     options: {
         scaleDependent: true
@@ -72,6 +71,5 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
         openPopupWindow(url, 900, 'geocaching_su');
     }
 });
-
 
 export {GeocachingSu};

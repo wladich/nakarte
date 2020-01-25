@@ -43,5 +43,4 @@ function disposeMap(map) {
     L.DomUtil.remove(container);
 }
 
-
 export {getTempMap, disposeMap};

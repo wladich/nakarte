@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import {NakarteUrlLoader} from './lib/services/nakarte';
 
-
 L.Control.TrackList.include({
         hashParams: function() {
             return new NakarteUrlLoader().paramNames();
@@ -21,5 +20,4 @@ L.Control.TrackList.include({
         },
     }
 );
-
 

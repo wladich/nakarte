@@ -1064,7 +1064,6 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
         },
     ];
 
-
     const titlesByOrder = [
         // common base layers
         'OpenStreetMap',

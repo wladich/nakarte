@@ -25,5 +25,4 @@ function getGoogle() {
     return _pending;
 }
 
-
 export default getGoogle;

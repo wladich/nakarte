@@ -40,6 +40,5 @@ Sentry.configureScope(function(scope) {
     scope.setUser({id: uid});
 });
 
-
 App.setUp();
 

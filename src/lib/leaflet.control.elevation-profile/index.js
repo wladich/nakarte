@@ -47,7 +47,6 @@ function pointOnSegmentAtDistance(p1, p2, dist) {
     return L.latLng(y, x);
 }
 
-
 function gradientToAngle(g) {
     return Math.round(Math.atan(g) * 180 / Math.PI);
 }
@@ -477,7 +476,6 @@ const ElevationProfile = L.Class.extend({
             this.updateGraphSelection();
         },
 
-
         updateGraph: function() {
             if (!this._map || !this.values) {
                 return;
@@ -879,12 +877,10 @@ const ElevationProfile = L.Class.extend({
 
         },
 
-
         setupGraph: function() {
             if (!this._map || !this.values) {
                 return;
             }
-
 
             while (this.svg.hasChildNodes()) {
                 this.svg.removeChild(this.svg.lastChild);
@@ -897,7 +893,6 @@ const ElevationProfile = L.Class.extend({
                 minValue = Math.min.apply(null, this.values),
                 svg = this.svg,
                 path, i, horizStep, verticalMultiplier, x, y, gridValues, label;
-
 
             var paddingBottom = 8 + 16,
                 paddingTop = 8;

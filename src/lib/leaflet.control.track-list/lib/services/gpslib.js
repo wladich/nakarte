@@ -25,5 +25,4 @@ class Gpslib extends BaseService {
     }
 }
 
-
 export default Gpslib;

@@ -27,7 +27,6 @@ import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
-
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
 
@@ -40,14 +39,11 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
-
-
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
         includes: L.Mixin.Events,
 
         colors: TRACKLIST_TRACK_COLORS,
-
 
         initialize: function() {
             L.Control.prototype.initialize.call(this);
@@ -326,7 +322,6 @@ L.Control.TrackList = L.Control.extend({
             }
             return hasData;
         },
-
 
         onTrackColorChanged: function(track) {
             var color = this.colors[track.color()];

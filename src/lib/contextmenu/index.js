@@ -22,7 +22,6 @@ function isDescendant(parent, child) {
     return false;
 }
 
-
 class Contextmenu {
     constructor(items) {
         this.items = items;

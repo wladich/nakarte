@@ -50,7 +50,6 @@ function getWikimapiaTileCoords(coords, viewTileSize) {
     return {x, y, z};
 }
 
-
 function decodeTitles(s) {
     const titles = {};
     for (let title of s.split('\x1f')) {

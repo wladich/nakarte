@@ -2,7 +2,6 @@ import L from 'leaflet';
 import {getTempMap, disposeMap} from '~/lib/leaflet.layer.rasterize';
 import {XHRQueue} from '~/lib/xhr-promise';
 
-
 function getLayersForPrint(map, xhrQueue) {
     function getZIndex(el) {
         return parseInt(window.getComputedStyle(el).zIndex, 10) || 0;
@@ -277,7 +276,6 @@ async function* promiseQueueBuffer(source, maxActive) {
     }
 }
 
-
 async function renderPages({map, pages, zooms, resolution, scale, progressCallback, decorationLayers}) {
     const xhrQueue = new XHRQueue();
     const layers = getLayersForPrint(map, xhrQueue);
@@ -331,6 +329,5 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
     }
     return {images: pageImagesInfo, renderedLayers};
 }
-
 
 export {renderPages};

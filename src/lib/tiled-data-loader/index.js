@@ -1,7 +1,6 @@
 import {Cache} from '~/lib/cache';
 import {XHRQueue} from '~/lib/xhr-promise';
 
-
 class TiledDataLoader {
     constructor(cacheSize = 50) {
         this._cache = new Cache(cacheSize);
@@ -106,7 +105,6 @@ class TiledDataLoader {
 
         let pendingRequest = this._pendingRequests[dataTileKey];
         pendingRequest.refCount += 1;
-
 
         return {
             dataPromise: pendingRequest.dataPromise.then((data) => ({

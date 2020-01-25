@@ -10,7 +10,6 @@ function arrayItemsEqual(l1, l2) {
     return true;
 }
 
-
 function parseHashParams(s) {
     const args = {},
         i = s.indexOf('#');
@@ -83,7 +82,6 @@ const hashState = {
         this._ignoreChanges = false;
     },
 
-
     onHashChanged: function() {
         if (this._ignoreChanges) {
             return;
@@ -111,7 +109,6 @@ const hashState = {
     }
 };
 
-
 function bindHashStateReadOnly(key, target) {
     function onChange() {
         target(hashState.getState(key));
@@ -123,7 +120,6 @@ function bindHashStateReadOnly(key, target) {
 
 window.addEventListener('hashchange', hashState.onHashChanged.bind(hashState));
 hashState.onHashChanged();
-
 
 export {hashState, bindHashStateReadOnly, parseHashParams};
 

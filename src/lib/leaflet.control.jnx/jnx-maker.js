@@ -117,5 +117,4 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
     return writer.getJnx();
 }
 
-
 export {makeJnxFromLayer, minZoom};

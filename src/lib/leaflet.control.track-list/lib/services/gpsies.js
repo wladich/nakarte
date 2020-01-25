@@ -40,5 +40,4 @@ class Gpsies extends BaseService {
     }
 }
 
-
 export default Gpsies;

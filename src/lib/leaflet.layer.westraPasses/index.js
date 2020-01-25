@@ -118,4 +118,3 @@ L.Layer.WestraPasses = L.Layer.extend({
     }
 );
 
-

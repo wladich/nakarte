@@ -18,7 +18,6 @@ function getMapillary() {
     });
 }
 
-
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     const url = `https://a.mapillary.com/v3/images?` +
         `client_id=${config.mapillary}&closeto=${latlng.lng},${latlng.lat}&radius=${searchRadiusMeters}`;
@@ -34,7 +33,6 @@ function formatDateTime(ts) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
-
 
 const Viewer = L.Evented.extend({
         initialize: function(mapillary, container) {
@@ -166,7 +164,6 @@ const Viewer = L.Evented.extend({
         }
     }
 );
-
 
 async function getViewer(container) {
     const mapillary = await getMapillary();

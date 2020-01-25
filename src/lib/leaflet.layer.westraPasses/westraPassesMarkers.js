@@ -134,7 +134,6 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             this.fire('data-loaded');
         },
 
-
         showPassDescription: function(e) {
             if (!this._map) {
                 return;

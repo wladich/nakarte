@@ -3,7 +3,6 @@ import {WikimapiaLoader} from './wikimapia-loader';
 import './style.css';
 import {openPopupWindow} from '~/lib/popup-window';
 
-
 function isPointInPolygon(polygon, p) {
     var inside = false;
     var prevNode = polygon[polygon.length - 1],

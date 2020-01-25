@@ -76,7 +76,6 @@ L.Polyline.include({
             return true;
         },
 
-
         getTilesInfo: async function(printOptions) {
             return {
                 iterateTilePromises: (function*() {

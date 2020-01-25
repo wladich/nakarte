@@ -98,7 +98,6 @@ function saveGpx(segments, name, points) {
     return gpx.join('\n');
 }
 
-
 function saveKml(segments, name, points) {
     const kml = [];
 

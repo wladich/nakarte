@@ -140,7 +140,6 @@ L.Polyline.EditMixin = {
         this._map.clickLocked = true;
     },
 
-
     stopDrawingLine: function() {
         if (!this._drawingDirection) {
             return;

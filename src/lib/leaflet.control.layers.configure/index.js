@@ -517,7 +517,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 return null;
             }
 
-
         }
     );
     if (control._map) {
@@ -525,6 +524,5 @@ function enableConfig(control, {layers, customLayersOrder}) {
     }
     control._initializeLayersState();
 }
-
 
 export default enableConfig;

@@ -5,7 +5,6 @@ import './style.css';
 import '../common/style.css';
 import config from '~/config';
 
-
 function getCoverageLayer(options) {
     const url = config.wikimediaCommonsCoverageUrl;
     return new MultiLayer([
