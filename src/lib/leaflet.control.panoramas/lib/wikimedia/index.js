@@ -8,10 +8,8 @@ import config from '~/config';
 function getCoverageLayer(options) {
     const url = config.wikimediaCommonsCoverageUrl;
     return new MultiLayer([
-        {layer: L.tileLayer(url, L.extend({}, options, {tms: true})),
-         minZoom: 0, maxZoom: 10},
-        {layer: new WikimediaVectorCoverage(url, options),
-         minZoom: 11, maxZoom: 18}
+        {layer: L.tileLayer(url, L.extend({}, options, {tms: true})), minZoom: 0, maxZoom: 10},
+        {layer: new WikimediaVectorCoverage(url, options), minZoom: 11, maxZoom: 18}
     ]);
 }
 

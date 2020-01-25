@@ -273,10 +273,13 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     y = Math.round(y);
                     this._iconPositions[markerId] = [x, y];
                     this._regions.insert({
-                            minX: x, minY: y, maxX: x + imgW, maxY: y + imgH,
-                            marker: job.marker, isLabel: false
-                        }
-                    );
+                        minX: x,
+                        minY: y,
+                        maxX: x + imgW,
+                        maxY: y + imgH,
+                        marker: job.marker,
+                        isLabel: false
+                    });
                 }
                 let [x, y] = this._iconPositions[markerId];
                 job.iconCenter = [x + imgW / 2, y + imgH / 2];
@@ -298,11 +301,13 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                         this._labelPositions[markerId] = p;
                         let [x, y] = p;
                         this._regions.insert({
-                                minX: x, minY: y, maxX: x + textWidth, maxY: y + textHeight,
-                                marker: job.marker, isLabel: true
-                            }
-                        );
-
+                            minX: x,
+                            minY: y,
+                            maxX: x + textWidth,
+                            maxY: y + textHeight,
+                            marker: job.marker,
+                            isLabel: true
+                        });
                     }
                 } else {
                     this._labelPositions[markerId] = null;

@@ -216,20 +216,23 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 {'text': scaleString, header: true},
                 {'text': 'Click name to copy to clibpoard', header: true},
                 {
-                    'text': titles[0], callback: () => {
-                    copyToClipboard(titles[0], e.originalEvent);
-                }
+                    'text': titles[0],
+                    callback: () => {
+                        copyToClipboard(titles[0], e.originalEvent);
+                    }
                 }
             ];
             if (titles.length > 1) {
                 items.push({
-                        'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>', callback: () => {
+                        'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>',
+                        callback: () => {
                             copyToClipboard(titles[1], e.originalEvent);
                         }
                     }
                 );
                 items.push({
-                        'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>', callback: () => {
+                        'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>',
+                        callback: () => {
                             copyToClipboard(titles[2], e.originalEvent);
                         }
                     }

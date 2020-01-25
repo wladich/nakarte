@@ -59,7 +59,8 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                 latlng: {lat, lng},
                 _label: label,
                 label: getLabel,
-                icon, cacheId
+                icon,
+                cacheId
         }));
         this.addMarkers(markers);
         this._dataLoaded = true;

@@ -941,7 +941,8 @@ const ElevationProfile = L.Class.extend({
             // sightline
             if (this.options.sightLine) {
                 path = L.Util.template('M{x1} {y1} L{x2} {y2}', {
-                        x1: 0, x2: this.svgWidth * this.horizZoom,
+                        x1: 0,
+                        x2: this.svgWidth * this.horizZoom,
                         y1: valueToSvgCoord(this.values[0]),
                         y2: valueToSvgCoord(this.values[this.values.length - 1])
                     }

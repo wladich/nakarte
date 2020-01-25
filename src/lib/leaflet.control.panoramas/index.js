@@ -57,20 +57,33 @@ L.Control.Panoramas = L.Control.extend({
 
         getProviders: function() {
             return [
-                {name: 'google', title: 'Google street view', provider: googleProvider, layerOptions: {zIndex: 10},
-                 code: 'g',
-                 selected: ko.observable(true),
-                 mapMarkerType: 'normal'},
-                {name: 'wikimedia', title: 'Wikimedia commons', provider: wikimediaProvider,
+                {
+                    name: 'google',
+                    title: 'Google street view',
+                    provider: googleProvider,
+                    layerOptions: {zIndex: 10},
+                    code: 'g',
+                    selected: ko.observable(true),
+                    mapMarkerType: 'normal'
+                },
+                {
+                    name: 'wikimedia',
+                    title: 'Wikimedia commons',
+                    provider: wikimediaProvider,
                     layerOptions: {opacity: 0.7, zIndex: 9},
                     code: 'w',
                     selected: ko.observable(false),
-                    mapMarkerType: 'slim'},
-                {name: 'mapillary', title: 'Mapillary', provider: mapillaryProvider,
+                    mapMarkerType: 'slim'
+                },
+                {
+                    name: 'mapillary',
+                    title: 'Mapillary',
+                    provider: mapillaryProvider,
                     layerOptions: {opacity: 0.7, zIndex: 8},
                     code: 'm',
                     selected: ko.observable(false),
-                    mapMarkerType: 'normal'},
+                    mapMarkerType: 'normal'
+                },
             ];
         },
 
