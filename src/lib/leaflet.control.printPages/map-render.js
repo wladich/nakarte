@@ -180,7 +180,16 @@ class PageComposer {
     }
 }
 
-async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms, pageLabel, pagesCount) {
+async function* iterateLayersTiles(
+    layers,
+    latLngBounds,
+    destPixelSize,
+    resolution,
+    scale,
+    zooms,
+    pageLabel,
+    pagesCount
+) {
     const defaultXHROptions = {
         responseType: 'blob',
         timeout: 20000,

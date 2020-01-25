@@ -14,7 +14,11 @@ const paths = require('../webpack/paths');
 
 function getVersionFromGit() {
     const verCmd =
-        "echo -n `date +%Y-%m-%d_%H:%M:%S`-`git rev-parse --abbrev-ref HEAD`-`git rev-parse --short HEAD``git diff-index --quiet HEAD -- || echo '-dirty'`";
+        'echo -n ' +
+        '`date +%Y-%m-%d_%H:%M:%S`-' +
+        '`git rev-parse --abbrev-ref HEAD`-' +
+        '`git rev-parse --short HEAD`' +
+        '`git diff-index --quiet HEAD -- || echo -dirty`';
     return execSync(verCmd).toString();
 }
 

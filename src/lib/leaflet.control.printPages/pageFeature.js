@@ -38,7 +38,8 @@ const PageFeature = L.Marker.extend({
 
             const centerLatLng = this.getLatLng();
             const centerMerc = L.Projection.SphericalMercator.project(centerLatLng);
-            const mercatorScale = Math.cos(centerLatLng.lat * Math.PI / 180) * L.CRS.Earth.R / L.Projection.SphericalMercator.R;
+            const mercatorScale =
+                (Math.cos((centerLatLng.lat * Math.PI) / 180) * L.CRS.Earth.R) / L.Projection.SphericalMercator.R;
             const mercatorPageSize = L.point(...this.paperSize).multiplyBy(this.scale / 10 / mercatorScale);
             let sw = centerMerc.subtract(mercatorPageSize.divideBy(2));
             let ne = centerMerc.add(mercatorPageSize.divideBy(2));

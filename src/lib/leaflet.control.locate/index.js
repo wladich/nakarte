@@ -103,7 +103,7 @@ const LocateControl = L.Control.extend({
         // if button turned off -- turn on, maps follows marker
         // if button turned on
         //     if map is following marker -- turn off
-        //     if map not following marker -- center map at marker, start following   
+        //     if map not following marker -- center map at marker, start following
 
         options: {
             locationAcquireTimeoutMS: Infinity,
@@ -145,7 +145,9 @@ const LocateControl = L.Control.extend({
             }
 
             if (storedPosition) {
-                this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {animate: false});
+                this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {
+                    animate: false,
+                });
                 if (!('geolocation' in navigator)) {
                     return;
                 }
@@ -154,7 +156,9 @@ const LocateControl = L.Control.extend({
                         this._storePositionToLocalStorage(pos);
                         if (!forceLatLng) {
                             // TODO: check if map has not moved
-                            this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {animate: false});
+                            this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {
+                                animate: false,
+                            });
                         }
                     },
                     (e) => {
@@ -232,14 +236,15 @@ const LocateControl = L.Control.extend({
             if (!this._map || !this._latlng) {
                 return;
             }
-           
+
             // autoZoom -- to fit accuracy cirlce on screen, but not more then options.maxAutoZoom (17)
             // if current zoom more then options.minAutoZoomDeltaForAuto less then autoZoom, set autoZoom
             // if map center far from geolocation, set autoZoom
             // if map center not far from geolocation
-            //      if accuracy circle does not fit at current zoom, zoom out to fit 
-            //      if  current zoom is less then minAutoZoomDeltaForAuto less then autoZoom or >= autoZoom and circle fits screen, keep current zoom
-           
+            //      if accuracy circle does not fit at current zoom, zoom out to fit
+            //      if  current zoom is less then minAutoZoomDeltaForAuto less then autoZoom
+            //          or >= autoZoom and circle fits screen, keep current zoom
+
             const currentZoom = this._map.getZoom();
             let zoomFitAccuracy = this._map.getBoundsZoom(this._latlng.toBounds(this._accuracy * 2));
             let autoZoom = zoomFitAccuracy;

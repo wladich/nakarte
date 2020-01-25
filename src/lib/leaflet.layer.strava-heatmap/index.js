@@ -6,16 +6,20 @@ const StravaHeatmap = L.TileLayer.extend({
     _checkUserLoggedIn: function() {
         const message = `
             Для просмотра тепловой карты треков необходимо зарегистрироваться и залогиниться на сайте
-            <a title="Откроется в новом окне" target="_blank" href="https://strava.com/login">https://strava.com/login</a>, 
+            <a title="Откроется в новом окне" target="_blank" href="https://strava.com/login">
+                https://strava.com/login</a>,
             затем открыть карту на оригинальном сайте
-            <a title="Откроется в новом окне" target="_blank" href="https://www.strava.com/heatmap">https://www.strava.com/heatmap</a>, 
+            <a title="Откроется в новом окне" target="_blank" href="https://www.strava.com/heatmap">
+                https://www.strava.com/heatmap</a>,
             после чего перезагрузить эту страницу.<br>
             Если вы не хотите регистририваться в сервисе Strava, вы можете выбрать в настройках слои с низким 
             разрешением "Strava&nbsp;heatmap&nbsp;lowres", они доступны всем пользователям.<br><br>
 
             You have to login at
-            <a title="Will open in new window" target="_blank" href="https://strava.com/login">https://strava.com/login</a>
-             and then open <a title="Will open in new window" target="_blank" href="https://www.strava.com/heatmap">https://www.strava.com/heatmap</a> to be able to view tracks heatmap.
+            <a title="Will open in new window" target="_blank" href="https://strava.com/login">
+                https://strava.com/login</a>
+            and then open <a title="Will open in new window" target="_blank" href="https://www.strava.com/heatmap">
+            https://www.strava.com/heatmap</a> to be able to view tracks heatmap.
             Alternatively you can select low resolution layers in layers settings.`;
 
         const data = {

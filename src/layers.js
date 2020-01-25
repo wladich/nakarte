@@ -550,7 +550,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 },
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
-                    description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
+                    description:
+                        'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     isDefault: false,
                     layer: L.tileLayer("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png",
                         // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
@@ -612,7 +613,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (all)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap(
+                        'https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
                         {
                             code: 'Sa',
                             isOverlay: true,
@@ -628,7 +630,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (run)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap(
+                        'https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
                         {
                             code: 'Sr',
                             isOverlay: true,
@@ -644,7 +647,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (ride)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap(
+                        'https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
                         {
                             code: 'Sb',
                             isOverlay: true,
@@ -660,7 +664,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (winter)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new StravaHeatmap(
+                        'https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
                         {
                             code: 'Sw',
                             isOverlay: true,
@@ -724,7 +729,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap lowres (winter)',
                     isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
+                    layer: L.tileLayer(
+                        'https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
                         {
                             code: 'Swl',
                             isOverlay: true,
@@ -740,7 +746,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Norway paper map',
                     isDefault: false,
-                    layer: new L.TileLayer('https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}',
+                    layer: new L.TileLayer(
+                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}', // eslint-disable-line max-len
                         {
                             code: 'Np',
                             isOverlay: true,
@@ -758,7 +765,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Norway topo',
                     isDefault: false,
-                    layer: new L.TileLayer('https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
+                    layer: new L.TileLayer(
+                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
                         {
                             code: 'Nm',
                             isOverlay: true,
@@ -844,7 +852,10 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                     title: 'Finland Topo',
                     description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
                     isDefault: false,
-                    layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
+                    layer: L.tileLayer(
+                        "https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?" +
+                        "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&" +
+                        "TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
                         {
                             code: 'Fmk',
                             isOverlay: false,
@@ -860,7 +871,11 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'France Topo 250m',
                     isDefault: false,
-                    layer: L.tileLayer("https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+                    layer: L.tileLayer(
+                        "https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?" +
+                        "layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&" +
+                        "Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&" +
+                        "TileMatrix={z}&TileCol={x}&TileRow={y}",
                         {
                             minZoom: 6,
                             maxNativeZoom: 16,
@@ -897,7 +912,8 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 },
                 {
                     title: 'Waymarked Cycling Trails',
-                    description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
+                    description:
+                        '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
                         {

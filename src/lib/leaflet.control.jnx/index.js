@@ -66,7 +66,7 @@ L.Control.JNX = L.Control.extend({
                 let resolutionString = metersPerPixel.toFixed(2);
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
                 let item = {
-                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
+                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`, // eslint-disable-line max-len
                     callback: () => this.makeJnx(layer, layerName, zoom),
                     disabled: this.makingJnx()
                 };

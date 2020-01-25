@@ -65,7 +65,8 @@ L.MeasuredLine = L.Polyline.extend({
                 var labelText = Math.round((tick.distanceValue / 10)) / 100 + ' km',
                     icon = L.divIcon(
                         {
-                            html: '<div class="measure-tick-icon-text" style="transform:' + transformMatrixString + '">' +
+                            html: '<div class="measure-tick-icon-text" style="transform:'
+                                + transformMatrixString + '">' +
                             labelText + '</div>',
                             className: 'measure-tick-icon'
                         }

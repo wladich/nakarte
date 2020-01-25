@@ -16,7 +16,9 @@ class SportsTrackerActivity extends SportsTrackerBase {
         const activityId = m[3];
         return [
             {
-                url: urlViaCorsProxy(`https://www.sports-tracker.com/apiserver/v1/workouts/${activityId}/data?samples=100000`),
+                url: urlViaCorsProxy(
+                    `https://www.sports-tracker.com/apiserver/v1/workouts/${activityId}/data?samples=100000`
+                ),
                 options: {
                     responseType: 'binarystring',
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403

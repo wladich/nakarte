@@ -25,7 +25,8 @@ class Osm extends BaseService {
     parseResponse(responses) {
         const trackId = this.getTrackId();
         const response = responses[0];
-        return parseGpx(response.responseBinaryText, `OSM track ${trackId}`, true) || [{name: name, error: 'UNSUPPORTED'}];
+        return parseGpx(response.responseBinaryText, `OSM track ${trackId}`, true)
+            || [{name: name, error: 'UNSUPPORTED'}];
     }
 }
 

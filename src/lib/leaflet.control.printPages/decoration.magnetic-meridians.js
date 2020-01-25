@@ -35,7 +35,10 @@ class MagneticMeridians extends PrintStaticLayer {
         ctx.lineWidth = this.lineThicknessMm / 25.4 * printOptions.resolution;
         const intervalPx = this.lineIntervalMm / 25.4 * printOptions.resolution;
         const samplingPx = this.samplingIntervalMm / 25.4 * printOptions.resolution;
-        const pageDiagonal = Math.sqrt(printOptions.destPixelSize.x * printOptions.destPixelSize.x + printOptions.destPixelSize.y * printOptions.destPixelSize.y);
+        const pageDiagonal = Math.sqrt(
+            printOptions.destPixelSize.x * printOptions.destPixelSize.x +
+            printOptions.destPixelSize.y * printOptions.destPixelSize.y
+        );
         const maxSegments = pageDiagonal / 2 / samplingPx;
 
         function drawLine(p, directionDown) {

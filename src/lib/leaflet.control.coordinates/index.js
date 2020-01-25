@@ -78,7 +78,8 @@ L.Control.Coordinates = L.Control.extend({
                     <div data-bind="foreach: formats">
                         <div>
                             <label title="">
-                                <input type="radio" data-bind="checked: $parent.formatCode, value: code" class="leaflet-coordinates-format-radio"/>
+                                <input type="radio" data-bind="checked: $parent.formatCode, value: code" 
+                                       class="leaflet-coordinates-format-radio"/>
                                 <span data-bind="html: label"></span>
                             </label>
                         </div>

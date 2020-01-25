@@ -16,7 +16,10 @@ function pageScaleRange(printOptions) {
 
 function formatScale(nominalScale, scaleRange) {
     const threshold = 0.05;
-    if (Math.abs(nominalScale - scaleRange.min) / nominalScale > threshold || Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold) {
+    if (
+        Math.abs(nominalScale - scaleRange.min) / nominalScale > threshold ||
+        Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold
+    ) {
         let unit;
         scaleRange = Object.assign({}, scaleRange);
         if (scaleRange.min >= 1000) {

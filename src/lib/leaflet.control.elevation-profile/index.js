@@ -271,7 +271,9 @@ const ElevationProfile = L.Class.extend({
             this.updateGraph();
             const icon = L.divIcon({
                     className: 'elevation-profile-marker',
-                    html: '<div class="elevation-profile-marker-icon"></div><div class="elevation-profile-marker-label"></div>'
+                    html:
+                        '<div class="elevation-profile-marker-icon"></div>' +
+                        '<div class="elevation-profile-marker-label"></div>'
                 }
             );
             this.trackMarker = L.marker([1000, 0], {interactive: false, icon: icon});
@@ -905,7 +907,11 @@ const ElevationProfile = L.Class.extend({
             for (i = 0; i < gridValues.length; i++) {
                 y = Math.round(i * gridStep - 0.5) + 0.5 + paddingTop;
                 path = L.Util.template('M{x1} {y} L{x2} {y}', {x1: 0, x2: this.svgWidth * this.horizZoom, y: y});
-                createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'green', fill: 'none', 'stroke-opacity': '0.5'}, svg);
+                createSvg(
+                    'path',
+                    {'d': path, 'stroke-width': '1px', 'stroke': 'green', 'fill': 'none', 'stroke-opacity': '0.5'},
+                    svg
+                );
 
                 label = L.DomUtil.create('div', 'elevation-profile-grid-label', this.leftAxisLables);
                 label.innerHTML = gridValues[gridValues.length - i - 1];

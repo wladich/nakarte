@@ -201,7 +201,10 @@ L.Polyline.EditMixin = {
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
             marker = L.marker(node.clone(), {
-                    icon: L.divIcon({className: 'line-editor-node-marker-halo', 'html': '<div class="line-editor-node-marker"></div>'}),
+                    icon: L.divIcon({
+                        className: 'line-editor-node-marker-halo',
+                        'html': '<div class="line-editor-node-marker"></div>'
+                    }),
                     draggable: true,
                     zIndexOffset: this._nodeMarkersZOffset,
                     projectedShift: () => this.shiftProjectedFitMapView()
@@ -369,7 +372,9 @@ L.Polyline.EditMixin = {
         const startIndex = this._drawingDirection === -1 ? 1 : 0;
         const endIndex = this._drawingDirection === 1 ? nodesCount - 2 : nodesCount - 1;
         const startIcon = this._latlngs[startIndex]._nodeMarker._icon;
-        L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](startIcon, 'line-editor-node-marker-start');
+        L.DomUtil[this._drawingDirection !== -1 ? 'addClass' : 'removeClass'](
+            startIcon, 'line-editor-node-marker-start'
+        );
         if (endIndex >= 0) {
             const endIcon = this._latlngs[endIndex]._nodeMarker._icon;
             let func;

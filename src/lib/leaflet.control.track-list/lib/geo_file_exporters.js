@@ -28,8 +28,16 @@ function splitLineAt180Meridian(latLngs) {
             let positivePrevLng = L.Util.wrapNum(prevLatLng.lng, [0, 360]);
             let splitLng = 180 - 0.000001 * Math.sign(latLng.lng);
             let splitPrevLng = 180 - 0.000001 * Math.sign(prevLatLng.lng);
-            let splitLat = getSegmentLatForLng(L.latLng(prevLatLng.lat, positivePrevLng), L.latLng(latLng.lat, positiveLng), splitLng);
-            let splitPrevLat = getSegmentLatForLng(L.latLng(prevLatLng.lat, positivePrevLng), L.latLng(latLng.lat, positiveLng), splitPrevLng);
+            let splitLat = getSegmentLatForLng(
+                L.latLng(prevLatLng.lat, positivePrevLng),
+                L.latLng(latLng.lat, positiveLng),
+                splitLng
+            );
+            let splitPrevLat = getSegmentLatForLng(
+                L.latLng(prevLatLng.lat, positivePrevLng),
+                L.latLng(latLng.lat, positiveLng),
+                splitPrevLng
+            );
             newLine.push(L.latLng(splitPrevLat, splitPrevLng).wrap());
             newLine = [L.latLng(splitLat, splitLng).wrap(), latLng];
             newLines.push(newLine);
@@ -53,7 +61,9 @@ function saveGpx(segments, name, points) {
 
     gpx.push('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>');
     gpx.push(
-        '<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://nakarte.me" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1">'
+        '<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://nakarte.me" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 ' +
+        'http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1">'
     );
     points.forEach(function(marker) {
             var label = marker.label;

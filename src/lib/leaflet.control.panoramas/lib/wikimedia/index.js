@@ -34,10 +34,18 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
                 imageDescription = imageDescription.replace(/<[^>]+>/ug, '');
                 imageDescription = imageDescription.replace(/[\n\r]/ug, '');
             }
-            if (imageDescription && objectDescription && objectDescription.toLowerCase().includes(imageDescription.toLowerCase())) {
+            if (
+                imageDescription &&
+                objectDescription &&
+                objectDescription.toLowerCase().includes(imageDescription.toLowerCase())
+            ) {
                 imageDescription = null;
             }
-            if (objectDescription && imageDescription && imageDescription.toLowerCase().includes(objectDescription.toLowerCase())) {
+            if (
+                objectDescription &&
+                imageDescription &&
+                imageDescription.toLowerCase().includes(objectDescription.toLowerCase())
+            ) {
                 objectDescription = null;
             }
             let description = 'Wikimedia commons';

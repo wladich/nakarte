@@ -20,7 +20,8 @@ class Gpslib extends BaseService {
 
     parseResponse(responses) {
         const response = responses[0];
-        return parseGpx(response.responseBinaryText, `GPSLib ${this.trackId}`, true) || [{name: name, error: 'UNSUPPORTED'}];
+        return parseGpx(response.responseBinaryText, `GPSLib ${this.trackId}`, true)
+            || [{name: name, error: 'UNSUPPORTED'}];
     }
 }
 

@@ -218,7 +218,8 @@ L.Control.Panoramas = L.Control.extend({
             }
             L.DomUtil.addClass(provider.container, 'enabled');
             if (!provider.viewer) {
-                provider.viewer = await provider.provider.getViewer(provider.container); // eslint-disable-line require-atomic-updates
+                // eslint-disable-next-line require-atomic-updates
+                provider.viewer = await provider.provider.getViewer(provider.container);
                 this.setupViewerEvents(provider);
             }
             if (data) {

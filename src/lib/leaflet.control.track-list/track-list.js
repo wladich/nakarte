@@ -68,6 +68,7 @@ L.Control.TrackList = L.Control.extend({
             var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-tracklist');
             this._stopContainerEvents();
 
+            /* eslint-disable max-len */
             container.innerHTML = `
                 <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"
                  title="Load, edit and save tracks"></div>
@@ -116,6 +117,7 @@ L.Control.TrackList = L.Control.extend({
                 </div>
                 </div>
             `;
+            /* eslint-enable max-len */
 
             ko.applyBindings(this, container);
             // FIXME: add onRemove method and unsubscribe
@@ -153,7 +155,8 @@ L.Control.TrackList = L.Control.extend({
             let maxHeight;
             maxHeight = (mapHeight
             - this._container.offsetTop // controls above
-            - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
+            - (this._container.parentNode.offsetHeight - this._container.offsetTop
+                    - this._container.offsetHeight) //controls below
             - 105); // margin
             this.trackListHeight(maxHeight + 'px');
         },
@@ -280,7 +283,8 @@ L.Control.TrackList = L.Control.extend({
                 messages.push('No tracks loaded');
             }
             geodata_array.forEach(function(geodata) {
-                    var data_empty = !((geodata.tracks && geodata.tracks.length) || (geodata.points && geodata.points.length));
+                    var data_empty = !((geodata.tracks && geodata.tracks.length)
+                        || (geodata.points && geodata.points.length));
 
                     if (!data_empty) {
                         if (geodata.tracks) {
@@ -429,8 +433,8 @@ L.Control.TrackList = L.Control.extend({
         attachColorSelector: function(track) {
             var items = this.colors.map(function(color, index) {
                     return {
-                        text: '<div style="display: inline-block; vertical-align: middle; width: 50px; height: 0; border-top: 4px solid ' +
-                        color + '"></div>',
+                        text: '<div style="display: inline-block; vertical-align: middle; width: 50px; height: 0; ' +
+                            'border-top: 4px solid ' + color + '"></div>',
                         callback: track.color.bind(null, index)
                     };
                 }
@@ -1125,7 +1129,10 @@ L.Control.TrackList = L.Control.extend({
                             }
                         );
                         var bounds = track.feature.getBounds();
-                        var capturedBounds = [[bounds.getSouth(), bounds.getWest()], [bounds.getNorth(), bounds.getEast()]];
+                        var capturedBounds = [
+                            [bounds.getSouth(), bounds.getWest()],
+                            [bounds.getNorth(), bounds.getEast()]
+                        ];
                         return {
                             color: track.color(),
                             visible: track.visible(),

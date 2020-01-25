@@ -78,7 +78,10 @@ class Grid extends PrintStaticLayer {
         }
         const lineWidthMm = 0.15;
         let lineWidthPx = lineWidthMm * pixelsPerMm;
-        for (let {color, offset} of [{color: '#D9D9D9', offset: lineWidthPx / 2}, {color: '#8C8C8C', offset: -lineWidthPx / 2}]) {
+        for (let {color, offset} of [
+            {color: '#D9D9D9', offset: lineWidthPx / 2},
+            {color: '#8C8C8C', offset: -lineWidthPx / 2},
+        ]) {
             ctx.beginPath();
 
             ctx.lineWidth = lineWidthPx;

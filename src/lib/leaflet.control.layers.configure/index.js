@@ -289,6 +289,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                 };
 
+/* eslint-disable max-len */
                 const formHtml = `
 <p><a class="doc-link" href="http://leafletjs.com/reference-1.0.2.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
 <label>Layer name<br/><input data-bind="value: name"/></label><br/>
@@ -309,6 +310,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 <div data-bind="foreach: buttons">
     <a class="button" data-bind="click: $root.buttonClicked.bind(null, $index()), text: caption"></a>
 </div>`;
+/* eslint-enable max-len */
                 form.innerHTML = formHtml;
                 ko.applyBindings(dialogModel, form);
             },
@@ -318,7 +320,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (obj.layer.__customLayer) {
                     const editButton = L.DomUtil.create('div', 'custom-layer-edit-button icon-edit', label.children[0]);
                     editButton.title = 'Edit layer';
-                    L.DomEvent.on(editButton, 'click', (e) => this.onCustomLayerEditClicked(obj.layer.__customLayer, e));
+                    L.DomEvent.on(editButton, 'click', (e) =>
+                        this.onCustomLayerEditClicked(obj.layer.__customLayer, e)
+                    );
                 }
                 if (obj.layer._justAdded) {
                     L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-1');
@@ -412,7 +416,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
+                    order:
+                        (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
@@ -436,8 +441,11 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onCustomLayerEditClicked: function(layer, e) {
                 L.DomEvent.stop(e);
                 this.showCustomLayerForm([
-                        {caption: 'Save', callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues)},
-                        {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
+                    {
+                        caption: 'Save',
+                        callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues),
+                    },
+                    {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
                         {caption: 'Cancel', callback: () => this.onCustomLayerCancelClicked()}
                     ], layer.fieldValues
                 );
@@ -464,7 +472,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const newLayer = this.createCustomLayer(newFieldValues);
                 this._customLayers.splice(layerPos, 0, newLayer);
-                if (this._map.hasLayer(layer.layer) && (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)) {
+                if (
+                    this._map.hasLayer(layer.layer) &&
+                    (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)
+                ) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);

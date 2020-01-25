@@ -67,7 +67,8 @@ const DEGREES_AND_MINUTES_AND_SECONDS = {
     code: 'DMS',
     label: 'ddd°mm′ss.s″',
     wrapperClass: 'leaflet-coordinates-wrapper-degrees-and-minutes-and-seconds',
-    formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`};
+    formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`
+};
 
 export default {
     SIGNED_DEGREES,
