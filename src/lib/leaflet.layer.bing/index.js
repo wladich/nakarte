@@ -59,8 +59,8 @@ const BingLayer = L.TileLayer.extend({
             that.initMetadata(meta);
         };
         var urlScheme = 'https';
-        var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/'
-            + this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
+        var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' +
+            this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
             '&key=' + this._key + '&UriScheme=' + urlScheme;
         var script = document.createElement('script');
         script.type = 'text/javascript';

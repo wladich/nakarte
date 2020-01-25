@@ -149,11 +149,12 @@ L.Control.TrackList = L.Control.extend({
         _setAdaptiveHeight: function() {
             const mapHeight = this._map.getSize().y;
             let maxHeight;
-            maxHeight = (mapHeight
-            - this._container.offsetTop // controls above
-            - (this._container.parentNode.offsetHeight - this._container.offsetTop
-                    - this._container.offsetHeight) //controls below
-            - 105); // margin
+            maxHeight =
+                mapHeight -
+                this._container.offsetTop - // controls above
+                //controls below
+                (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) -
+                105; // margin
             this.trackListHeight(maxHeight + 'px');
         },
 
@@ -279,8 +280,8 @@ L.Control.TrackList = L.Control.extend({
                 messages.push('No tracks loaded');
             }
             geodata_array.forEach(function(geodata) {
-                    var data_empty = !((geodata.tracks && geodata.tracks.length)
-                        || (geodata.points && geodata.points.length));
+                    var data_empty = !((geodata.tracks && geodata.tracks.length) ||
+                        (geodata.points && geodata.points.length));
 
                     if (!data_empty) {
                         if (geodata.tracks) {

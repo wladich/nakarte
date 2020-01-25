@@ -35,8 +35,8 @@ class Gpsies extends BaseService {
 
     parseResponse(responses) {
         const response = responses[0];
-        return parseGpx(response.responseBinaryText, this.nameFromUrl(response.responseURL), true)
-            || [{name: name, error: 'UNSUPPORTED'}];
+        return parseGpx(response.responseBinaryText, this.nameFromUrl(response.responseURL), true) ||
+            [{name: name, error: 'UNSUPPORTED'}];
     }
 }
 
