@@ -8,12 +8,12 @@ L.Control.Caption = L.Control.extend({
         className: 'leaflet-control-caption'
     },
 
-    initialize: function (contents, options) {
+    initialize: function(contents, options) {
         L.setOptions(this, options);
         this._contents = contents;
     },
 
-    onAdd: function (map) {
+    onAdd: function(map) {
         this._map = map;
         this._container = L.DomUtil.create('div', this.options.className);
         this._container.innerHTML = this._contents;

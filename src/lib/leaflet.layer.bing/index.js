@@ -24,7 +24,7 @@ const BingLayer = L.TileLayer.extend({
         culture: ''
     },
 
-    initialize: function (key, options) {
+    initialize: function(key, options) {
         L.Util.setOptions(this, options);
 
         this._key = key;
@@ -33,7 +33,7 @@ const BingLayer = L.TileLayer.extend({
         this.metaRequested = false;
     },
 
-    getTileUrl: function (tilePoint) {
+    getTileUrl: function(tilePoint) {
         var zoom = this._getZoomForUrl();
         var subdomains = this.options.subdomains,
             s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
@@ -42,14 +42,14 @@ const BingLayer = L.TileLayer.extend({
             .replace('{culture}', this.options.culture);
     },
 
-    loadMetadata: function () {
+    loadMetadata: function() {
         if (this.metaRequested) {
             return;
         }
         this.metaRequested = true;
         var that = this;
         var cbid = '_bing_metadata_' + L.Util.stamp(this);
-        window[cbid] = function (meta) {
+        window[cbid] = function(meta) {
             window[cbid] = undefined;
             var e = document.getElementById(cbid);
             e.parentNode.removeChild(e);
@@ -69,7 +69,7 @@ const BingLayer = L.TileLayer.extend({
         document.getElementsByTagName('head')[0].appendChild(script);
     },
 
-    initMetadata: function (meta) {
+    initMetadata: function(meta) {
         var r = meta.resourceSets[0].resources[0];
         this.options.subdomains = r.imageUrlSubdomains;
         this._url = r.imageUrl;
@@ -92,7 +92,7 @@ const BingLayer = L.TileLayer.extend({
         this._update();
     },
 
-    _update: function () {
+    _update: function() {
         if (this._url === null || !this._map) {
             return;
         }
@@ -100,7 +100,7 @@ const BingLayer = L.TileLayer.extend({
         L.TileLayer.prototype._update.apply(this, []);
     },
 
-    _update_attribution: function () {
+    _update_attribution: function() {
         var bounds = L.latLngBounds(
             this._map.getBounds().getSouthWest().wrap(),
             this._map.getBounds().getNorthEast().wrap()
@@ -123,12 +123,12 @@ const BingLayer = L.TileLayer.extend({
         }
     },
 
-    onAdd: function (map) {
+    onAdd: function(map) {
         this.loadMetadata();
         L.TileLayer.prototype.onAdd.apply(this, [map]);
     },
 
-    onRemove: function (map) {
+    onRemove: function(map) {
         for (var i = 0; i < this._providers.length; i++) {
             var p = this._providers[i];
             if (p.active && this._map.attributionControl) {

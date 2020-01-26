@@ -1,7 +1,7 @@
 import L from 'leaflet';
 
 L.Layer.CustomLayer = L.TileLayer.extend({
-    getTileUrl: function (coords) {
+    getTileUrl: function(coords) {
         const z = this._getZoomForUrl();
         var data = {
             r: L.Browser.retina ? '@2x' : '',
