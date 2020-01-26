@@ -19,7 +19,7 @@ function loadData() {
 }
 
 function getArrayValue(row, col) {
-    if (row < 0 || col < 0 || col >= declination.colsCount || row >= declination.rowsCount ) {
+    if (row < 0 || col < 0 || col >= declination.colsCount || row >= declination.rowsCount) {
         throw new Error(`Invalid col/row value col=${col} row=${row}`);
     }
     const ind = row * declination.colsCount + col;

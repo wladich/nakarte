@@ -145,7 +145,7 @@ function setUp() {
     }
     startInfo.tracksAfterLoadFromStorage = trackNames();
 
-    for (let param of tracksHashParams ) {
+    for (let param of tracksHashParams) {
         bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
     }
     startInfo.tracksAfterLoadFromHash = trackNames();

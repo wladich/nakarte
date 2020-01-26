@@ -124,7 +124,7 @@ const MapillaryCoverage = L.GridLayer.extend({
             if (!canvas._tileData) {
                 return;
             }
-            if (coords.z < 6 + 2 ) {
+            if (coords.z < 6 + 2) {
                 this.drawOverview(canvas);
             } else if (coords.z < 14 + 2) {
                 let width = coords.z < 14 ? 10 : 5;
