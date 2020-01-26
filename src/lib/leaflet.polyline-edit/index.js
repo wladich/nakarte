@@ -201,7 +201,7 @@ L.Polyline.EditMixin = {
             marker = L.marker(node.clone(), {
                     icon: L.divIcon({
                         className: 'line-editor-node-marker-halo',
-                        'html': '<div class="line-editor-node-marker"></div>'
+                        html: '<div class="line-editor-node-marker"></div>'
                     }),
                     draggable: true,
                     zIndexOffset: this._nodeMarkersZOffset,

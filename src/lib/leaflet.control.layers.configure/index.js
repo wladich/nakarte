@@ -362,10 +362,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             checkCustomLayerValues: function(fieldValues) {
                 if (!fieldValues.url) {
-                    return {'error': 'Url is empty'};
+                    return {error: 'Url is empty'};
                 }
                 if (!fieldValues.name) {
-                    return {'error': 'Name is empty'};
+                    return {error: 'Name is empty'};
                 }
                 return {};
             },

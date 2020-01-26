@@ -934,7 +934,7 @@ const ElevationProfile = L.Class.extend({
                 startNewSegment = false;
             }
             path = path.join('');
-            createSvg('path', {d: path, 'stroke-width': '1px', stroke: 'brown', fill: 'none'}, svg);
+            createSvg('path', {'d': path, 'stroke-width': '1px', 'stroke': 'brown', 'fill': 'none'}, svg);
             // sightline
             if (this.options.sightLine) {
                 path = L.Util.template('M{x1} {y1} L{x2} {y2}', {
@@ -944,8 +944,10 @@ const ElevationProfile = L.Class.extend({
                         y2: valueToSvgCoord(this.values[this.values.length - 1])
                     }
                 );
-                createSvg('path',
-                    {d: path, 'stroke-width': '3px', stroke: '#94b1ff', fill: 'none', 'stroke-opacity': '0.5'}, svg
+                createSvg(
+                    'path',
+                    {'d': path, 'stroke-width': '3px', 'stroke': '#94b1ff', 'fill': 'none', 'stroke-opacity': '0.5'},
+                    svg
                 );
             }
         },

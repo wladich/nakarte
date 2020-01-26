@@ -298,9 +298,9 @@ L.Control.TrackList = L.Control.extend({
                         this.addTrack(geodata);
                     }
                     var error_messages = {
-                        'CORRUPT': 'File "{name}" is corrupt',
-                        'UNSUPPORTED': 'File "{name}" has unsupported format or is badly corrupt',
-                        'NETWORK': 'Could not download file from url "{name}"'
+                        CORRUPT: 'File "{name}" is corrupt',
+                        UNSUPPORTED: 'File "{name}" has unsupported format or is badly corrupt',
+                        NETWORK: 'Could not download file from url "{name}"'
                     };
                     var message;
                     if (geodata.error) {

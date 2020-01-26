@@ -23,8 +23,8 @@ const RectangleSelect = L.Rectangle.extend({
                 )
                     .addTo(map);
                 marker.on({
-                        'drag': this.onMarkerDrag,
-                        'dragend': this.onMarkerDragEnd
+                        drag: this.onMarkerDrag,
+                        dragend: this.onMarkerDragEnd
                     }, this
                 );
                 this.markers[position] = marker;

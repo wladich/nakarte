@@ -258,7 +258,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             }
             const ctx = canvas.getContext('2d');
             ctx.font = L.Util.template('bold {size}px {name}',
-                {'name': this.options.labelFontName, 'size': this.options.labelFontSize * this.options.iconScale}
+                {name: this.options.labelFontName, size: this.options.labelFontSize * this.options.iconScale}
             );
             for (let [markerId, job] of Object.entries(markerJobs)) {
                 let img = this._images[job.icon.url];

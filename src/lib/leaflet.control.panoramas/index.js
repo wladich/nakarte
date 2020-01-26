@@ -41,8 +41,8 @@ const PanoMarker = L.Marker.extend({
 
     setType: function(markerType) {
         const className = {
-            'slim': 'leaflet-panorama-marker-circle',
-            'normal': 'leaflet-panorama-marker-binocular'
+            slim: 'leaflet-panorama-marker-circle',
+            normal: 'leaflet-panorama-marker-binocular'
         }[markerType];
         this.getIcon().className = className;
     }
@@ -243,8 +243,8 @@ L.Control.Panoramas = L.Control.extend({
 
         setupViewerEvents: function(provider) {
             provider.viewer.on({
-                'change': this.onPanoramaChangeView.bind(this, provider),
-                'closeclick': this.onPanoramaCloseClick
+                change: this.onPanoramaChangeView.bind(this, provider),
+                closeclick: this.onPanoramaCloseClick
             }, this);
         },
 

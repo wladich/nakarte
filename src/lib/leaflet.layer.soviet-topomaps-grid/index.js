@@ -12,6 +12,7 @@ function zeroPad(num, size) {
 }
 
 const bigLetterReplacers = [
+    /* eslint-disable quote-props */
     {
         '1': 'А',
         '2': 'Б',
@@ -24,6 +25,7 @@ const bigLetterReplacers = [
         '3': 'C',
         '4': 'D'
     }
+    /* eslint-enable quote-props */
 ];
 
 var Nomenclature = {
@@ -125,7 +127,7 @@ var Nomenclature = {
                 // shift column to positive numbers, calc modulo, shift back
                 const wrappedColumn = ((column + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
                 var names = name_factory(wrappedColumn, row, joined_quads);
-                quads.push({'names': names, 'bounds': quad_bounds});
+                quads.push({names: names, bounds: quad_bounds});
             }
         }
         return quads;
@@ -213,10 +215,10 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 '050k': '1:50 000'
             }[scale];
             const items = [
-                {'text': scaleString, header: true},
-                {'text': 'Click name to copy to clibpoard', header: true},
+                {text: scaleString, header: true},
+                {text: 'Click name to copy to clibpoard', header: true},
                 {
-                    'text': titles[0],
+                    text: titles[0],
                     callback: () => {
                         copyToClipboard(titles[0], e.originalEvent);
                     }
@@ -224,14 +226,14 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             ];
             if (titles.length > 1) {
                 items.push({
-                        'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>',
+                        text: titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>',
                         callback: () => {
                             copyToClipboard(titles[1], e.originalEvent);
                         }
                     }
                 );
                 items.push({
-                        'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>',
+                        text: titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>',
                         callback: () => {
                             copyToClipboard(titles[2], e.originalEvent);
                         }
