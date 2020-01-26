@@ -19,7 +19,7 @@ function fixPanAnimationBug() {
 }
 
 function fixTouchDetection() {
-    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints);
+    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie) || navigator.maxTouchPoints);
 }
 
 function fixMapKeypressEvent() {

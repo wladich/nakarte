@@ -553,7 +553,7 @@ const ElevationProfile = L.Class.extend({
                 tickSteps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
                 ticks = [],
                 i, j, k, ticksN, tickStep, tick1, tick2,
-                matchFound=false;
+                matchFound = false;
 
             for (i = 0; i < tickSteps.length; i++) {
                 tickStep = tickSteps[i];
@@ -650,7 +650,7 @@ const ElevationProfile = L.Class.extend({
             const ascents = [],
                 descents = [];
             let prevNotNullValue = values[firstNotNullIndex],
-                prevNotNullIndex=firstNotNullIndex;
+                prevNotNullIndex = firstNotNullIndex;
             for (let i = firstNotNullIndex + 1; i <= lastNotNullIndex; i++) {
                 let value = values[i];
                 if (value === null) {

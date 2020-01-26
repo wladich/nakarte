@@ -115,7 +115,7 @@ const Viewer = L.Evented.extend({
 
         updateZoomAndCenter: function() {
             this.viewer.getZoom().then((zoom) => {
-                this._zoom=zoom;
+                this._zoom = zoom;
             });
             this.viewer.getCenter().then((center) => {
                 this._center = center;

@@ -10,7 +10,7 @@ function parseOziRte(txt, name) {
         return null;
     }
     let currentSegment = [];
-    for (let i=4; i < lines.length; i++) {
+    for (let i = 4; i < lines.length; i++) {
         let line = lines[i].trim();
         if (!line) {
             continue;

@@ -20,9 +20,9 @@ class XMLHttpRequestPromiseError extends Error {
 
 class XMLHttpRequestPromise {
     constructor(
-        url, {method='GET', data=null, responseType='', timeout=30000, maxTries=3, retryTimeWait=500,
-            isResponseSuccess=successIfStatus200, responseNeedsRetry=retryIfNetworkErrorOrServerError,
-        headers=null} = {}) {
+        url, {method = 'GET', data = null, responseType = '', timeout = 30000, maxTries = 3, retryTimeWait = 500,
+            isResponseSuccess = successIfStatus200, responseNeedsRetry = retryIfNetworkErrorOrServerError,
+        headers = null} = {}) {
         // console.log('promise constructor', url);
         const promise = new Promise((resolve, reject) => {
                 this._resolve = resolve;
@@ -111,7 +111,7 @@ class XMLHttpRequestPromise {
 }
 
 class XHRQueue {
-    constructor(maxSimultaneousRequests=6) {
+    constructor(maxSimultaneousRequests = 6) {
         this._maxConnections = maxSimultaneousRequests;
         this._queue = [];
         this._activeCount = 0;

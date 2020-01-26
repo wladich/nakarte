@@ -198,7 +198,7 @@ const Viewer = L.Evented.extend({
         }
     },
 
-    switchPhoto: function(imageIdx, imagePos=null) {
+    switchPhoto: function(imageIdx, imagePos = null) {
         this._imageIdx = imageIdx;
         if (this.imageLayer) {
             this.map.removeLayer(this.imageLayer);
@@ -270,7 +270,7 @@ const Viewer = L.Evented.extend({
         }
     },
 
-    _showPano: function(images, imageIdx=0, imagePos=null) {
+    _showPano: function(images, imageIdx = 0, imagePos = null) {
         this.images = images;
         this.setupPageButtons(images.length);
         this.switchPhoto(imageIdx, imagePos);

@@ -38,7 +38,7 @@ L.Control.JNX = L.Control.extend({
         estimateTilesCount: function(maxZoom) {
             let tilesCount = 0;
             const bounds = this._selector.getBounds();
-            for (let zoom=minZoom(maxZoom); zoom <= maxZoom; zoom++) {
+            for (let zoom = minZoom(maxZoom); zoom <= maxZoom; zoom++) {
                 const topLeftTile = this._map.project(bounds.getNorthWest(), zoom).divideBy(256).floor();
                 const bottomRightTile = this._map.project(bounds.getSouthEast(), zoom).divideBy(256).ceil();
                 tilesCount += Math.ceil((bottomRightTile.x - topLeftTile.x) * (bottomRightTile.y - topLeftTile.y));

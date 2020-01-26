@@ -1144,7 +1144,7 @@ function getLayers() {
 
     // assign order to layers
     const orderByTitle = {};
-    for (let i=0; i < titlesByOrder.length; i++) {
+    for (let i = 0; i < titlesByOrder.length; i++) {
         let title = titlesByOrder[i];
         orderByTitle[title] = i + 1;
     }

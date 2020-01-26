@@ -80,8 +80,8 @@ const BingLayer = L.TileLayer.extend({
                     var c = p.coverageAreas[j];
                     var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
                     var bounds = new L.LatLngBounds(
-                        new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
-                        new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+                        new L.LatLng(c.bbox[0] + 0.01, c.bbox[1] + 0.01),
+                        new L.LatLng(c.bbox[2] - 0.01, c.bbox[3] - 0.01)
                     );
                     coverage.bounds = bounds;
                     coverage.attrib = p.attribution;

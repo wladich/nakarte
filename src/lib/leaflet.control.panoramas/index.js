@@ -327,7 +327,7 @@ L.Control.Panoramas.include({
             let state = null;
             if (this.controlEnabled) {
                 state = [];
-                let coverageCode='_';
+                let coverageCode = '_';
                 for (let provider of this.providers) {
                     if (provider.selected()) {
                         coverageCode += provider.code;

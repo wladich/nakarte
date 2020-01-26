@@ -6,7 +6,7 @@ function randId() {
 
 const sessionId = randId();
 
-function captureMessage(msg, extra={}) {
+function captureMessage(msg, extra = {}) {
     extra.url = window.location.toString();
     console.log('captureMessage', msg, extra); // eslint-disable-line no-console
     Sentry.withScope(function(scope) {
@@ -25,7 +25,7 @@ function captureException(e, description) {
         Sentry.captureException(e);
     });
 }
-function captureBreadcrumb(message, data={}) {
+function captureBreadcrumb(message, data = {}) {
     data.url = window.location.toString();
     Sentry.addBreadcrumb({
         message, data

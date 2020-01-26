@@ -43,7 +43,7 @@ function parseGeometry(geometryType, ints, coordinatesScale) { // eslint-disable
                 if (!line) {
                     throw new Error('LineTo with empty linestring');
                 }
-                pos +=1;
+                pos += 1;
                 for (let cmdN = 0; cmdN < cmdRepeat; cmdN++) {
                     if (pos + 2 > len) {
                         throw new Error('Not enough elements for LineTo arguments');
@@ -105,7 +105,7 @@ function parseFeatures(layer, coordinatesScale) {
     return features;
 }
 
-function decodeMvt(ar, tileExtent=256) {
+function decodeMvt(ar, tileExtent = 256) {
     const
         pbf = new Pbf(new Uint8Array(ar)),
         tileData = TileProto.read(pbf);
