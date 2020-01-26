@@ -153,7 +153,7 @@ function parseNktkOld(s, version) {
         pointsCount,
         arcUnit = ((1 << 24) - 1) / 360,
         x, y,
-        error, midX, midY, /*symbol,*/ waypointName,
+        error, midX, midY, /* symbol,*/ waypointName,
         wayPoints = [],
         color, measureTicksShown,
         trackHidden = false;

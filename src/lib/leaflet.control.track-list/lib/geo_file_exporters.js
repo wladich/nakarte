@@ -87,7 +87,7 @@ function saveGpx(segments, name, points) {
             for (let point of segment) {
                 let x = point.lng.toFixed(6);
                 let y = point.lat.toFixed(6);
-                //time element is not necessary, added for compatibility to Garmin Connect only
+                // time element is not necessary, added for compatibility to Garmin Connect only
                 gpx.push(`\t\t\t<trkpt lat="${y}" lon="${x}"><time>${fakeTime}</time></trkpt>`);
             }
             gpx.push('\t\t</trkseg>');

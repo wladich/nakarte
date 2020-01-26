@@ -41,7 +41,7 @@ L.Control.TrackList.include({
 
             safeLocalStorage.setItem(key, s);
 
-            //cleanup stale records
+            // cleanup stale records
             for (i = 0; i < safeLocalStorage.length; i++) {
                 key = safeLocalStorage.key(i);
                 m = key.match(/^trackList_(\d+)$/u);

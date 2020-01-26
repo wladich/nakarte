@@ -40,7 +40,7 @@ function createSvg(tagName, attributes, parent) {
 }
 
 function pointOnSegmentAtDistance(p1, p2, dist) {
-    //FIXME: we should place markers along projected line to avoid transformation distortions
+    // FIXME: we should place markers along projected line to avoid transformation distortions
     var q = dist / p1.distanceTo(p2),
         x = p1.lng + (p2.lng - p1.lng) * q,
         y = p1.lat + (p2.lat - p1.lat) * q;

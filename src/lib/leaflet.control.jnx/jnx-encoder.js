@@ -71,7 +71,7 @@ const JnxWriter = L.Class.extend({
             stream.writeInt32(extents[2]); // south
             stream.writeInt32(extents[3]); // east
             stream.writeInt32(levels_n); // number of zoom levels
-            stream.writeInt32(0); //expiration date
+            stream.writeInt32(0); // expiration date
             stream.writeInt32(this.productId);
             stream.writeInt32(0); // tiles CRC32
             stream.writeInt32(0); // signature version
@@ -101,7 +101,7 @@ const JnxWriter = L.Class.extend({
                 level = parseInt(level, 10);
                 stream.writeInt32(this.tiles[level].length);
                 stream.writeUint32(tileDescriptorOffset);
-                //jnxScale = JnxScales[level + 3];
+                // jnxScale = JnxScales[level + 3];
                 jnxScale = 34115555 / (2 ** level) * Math.cos((north + south) / 2 / 180 * Math.PI) / 1.1;
                 stream.writeInt32(jnxScale);
                 stream.writeInt32(2);

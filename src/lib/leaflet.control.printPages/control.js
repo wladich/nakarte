@@ -20,7 +20,7 @@ import {Grid} from './decoration.grid';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
-            read: target,  //always return the original observables value
+            read: target,  // always return the original observables value
             write: function(newValue) {
                 newValue = parseFloat(newValue);
                 if (newValue >= range[0] && newValue <= range[1]) {
@@ -85,7 +85,7 @@ L.Control.PrintPages = L.Control.extend({
             this.gridOn = ko.observable(false);
             this.magneticMeridiansOn = ko.observable(false);
 
-            //hash state notifications
+            // hash state notifications
             this.scale.subscribe(this.notifyChange, this);
             this.printSize.subscribe(this.notifyChange, this);
             this.resolution.subscribe(this.notifyChange, this);

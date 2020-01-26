@@ -68,7 +68,7 @@ L.Polyline.EditMixin = {
     onNodeMarkerMovedChangeNode: function(e) {
         var marker = e.target,
             latlng = marker.getLatLng(),
-        //nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+        // nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
             node = marker._lineNode;
         node.lat = latlng.lat;
         node.lng = latlng.lng;
@@ -210,7 +210,7 @@ L.Polyline.EditMixin = {
             );
         marker
             .on('drag', this.onNodeMarkerMovedChangeNode, this)
-            //.on('dragstart', this.fire.bind(this, 'editingstart'))
+            // .on('dragstart', this.fire.bind(this, 'editingstart'))
             .on('dragend', this.onNodeMarkerDragEnd, this)
             .on('dblclick', this.onNodeMarkerDblClickedRemoveNode, this)
             .on('click', this.onNodeMarkerClickStartStopDrawing, this)

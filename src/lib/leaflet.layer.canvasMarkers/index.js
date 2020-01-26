@@ -317,7 +317,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             // draw labels
             for (let region of regionsInTile) {
                 if (region.isLabel) {
-                    //TODO: set font name ant size in options
+                    // TODO: set font name ant size in options
                     const markerId = L.stamp(region.marker);
                     const job = markerJobs[markerId];
                     const p = this._labelPositions[markerId];

@@ -162,7 +162,7 @@ async function parseTile(s, projectObj) {
     tile.coords = tileIdToCoords(tileId);
     tile.hasChildren = fields[1] === '1';
 
-    //FIXME: ignore some errors
+    // FIXME: ignore some errors
     let prevTime = Date.now();
     for (let line of lines.slice(2)) {
         let curTime = Date.now();

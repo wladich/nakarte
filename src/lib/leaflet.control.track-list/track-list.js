@@ -152,7 +152,7 @@ L.Control.TrackList = L.Control.extend({
             maxHeight =
                 mapHeight -
                 this._container.offsetTop - // controls above
-                //controls below
+                // controls below
                 (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) -
                 105; // margin
             this.trackListHeight(maxHeight + 'px');
@@ -735,8 +735,8 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
 
-            //polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
-            //polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
+            // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
+            // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
             track.feature.addLayer(polyline);
             return polyline;
         },
@@ -963,7 +963,7 @@ L.Control.TrackList = L.Control.extend({
                 track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
             }
 
-            //this.onTrackColorChanged(track);
+            // this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);

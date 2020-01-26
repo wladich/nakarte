@@ -58,7 +58,7 @@ function setUp() {
 
     const tracklist = new L.Control.TrackList();
 
-    /////////// controls top-left corner
+    /* controls top-left corner */
 
     new L.Control.Caption(config.caption, {
             position: 'topleft'
@@ -102,7 +102,8 @@ function setUp() {
     locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
         validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
     map.enableHashState('m');
-    /////////// controls top-right corner
+
+    /* controls top-right corner */
 
     const layersControl = L.control.layers(null, null, {collapsed: false})
         .addTo(map);
@@ -112,7 +113,7 @@ function setUp() {
     enableLayersConfig(layersControl, getLayers());
     layersControl.enableHashState('l');
 
-    /////////// controls bottom-left corner
+    /* controls bottom-left corner */
 
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
@@ -125,7 +126,7 @@ function setUp() {
         .addTo(map)
         .enableHashState('j');
 
-    /////////// controls bottom-right corner
+    /* controls bottom-right corner */
 
     function trackNames() {
         return tracklist.tracks().map((track) => track.name());
@@ -154,7 +155,7 @@ function setUp() {
         tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
     }
 
-    ////////// adaptive layout
+    /* adaptive layout */
 
     if (L.Browser.mobile) {
         layersControl.setMinimized();
@@ -169,7 +170,7 @@ function setUp() {
 
     raiseControlsOnFocus(map);
 
-    //////////// save state at unload
+    /* save state at unload */
 
     L.DomEvent.on(window, 'beforeunload', () => {
         logging.logEvent('saveTracksToStorage begin', {
@@ -191,7 +192,7 @@ function setUp() {
         });
     });
 
-    ////////// track list and azimuth measure interaction
+    /* track list and azimuth measure interaction */
 
     tracklist.on('startedit', () => azimuthControl.disableControl());
     tracklist.on('elevation-shown', () => azimuthControl.hideProfile());
