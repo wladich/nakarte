@@ -95,7 +95,7 @@ const hashState = {
         }
 
         for (let key of Object.keys(this._state)) {
-            if (! (key in newState)) {
+            if (!(key in newState)) {
                 changedKeys[key] = 1;
             }
         }

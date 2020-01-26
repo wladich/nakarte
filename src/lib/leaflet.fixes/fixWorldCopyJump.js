@@ -13,7 +13,7 @@ function shiftLongitudeToTarget(lng, targetLng) {
     if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
         shift = 360;
     } else if (Math.abs(lng - 360 - targetLng) < Math.abs(lng - targetLng)) {
-        shift = - 360;
+        shift = -360;
     }
     return shift;
 }
