@@ -95,11 +95,8 @@ function setUp() {
         }
     }).addTo(map);
 
-    const defaultLocation = L.latLng(55.75185, 37.61856);
-    const defaultZoom = 10;
-
     let {lat, lng, zoom, valid: validPositionInHash} = map.validateState(hashState.getState('m'));
-    locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
+    locateControl.moveMapToCurrentLocation(config.defaultZoom, L.latLng(config.defaultLocation),
         validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
     map.enableHashState('m');
 
