@@ -16,7 +16,7 @@ import '~/lib/controls-styles/controls-styles.css';
 import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
 import '~/lib/leaflet.control.commons';
 import {blobFromString} from '~/lib/binary-strings';
-import '~/lib/leaflet.polyline-edit';
+import {subclassLineWithEdit} from '~/lib/leaflet.polyline-edit';
 import '~/lib/leaflet.polyline-measure';
 import logging from '~/lib/logging';
 import {notify} from '~/lib/notifications';
@@ -27,17 +27,11 @@ import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
-const TrackSegment = L.MeasuredLine.extend({
-    includes: L.Polyline.EditMixin,
-
-    options: {
-        weight: 6,
-        lineCap: 'round',
-        opacity: 0.5,
-
-    }
+const TrackSegment = subclassLineWithEdit(L.MeasuredLine).mergeOptions({
+    weight: 6,
+    lineCap: 'round',
+    opacity: 0.5,
 });
-TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},

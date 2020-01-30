@@ -2,12 +2,12 @@ import L from 'leaflet';
 import './edit_line.css';
 import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
-L.Polyline.EditMixinOptions = {
-    className: 'leaflet-editable-line'
-};
-
-L.Polyline.EditMixin = {
-    _nodeMarkersZOffset: 10000,
+function subclassLineWithEdit(base) {
+return base.extend({
+    options: {
+        className: 'leaflet-editable-line',
+        nodeMarkersZOffset: 10000,
+    },
 
     startEdit: function() {
         if (this._map && !this._editing) {
@@ -204,7 +204,7 @@ L.Polyline.EditMixin = {
                         html: '<div class="line-editor-node-marker"></div>'
                     }),
                     draggable: true,
-                    zIndexOffset: this._nodeMarkersZOffset,
+                    zIndexOffset: this.options.nodeMarkersZOffset,
                     projectedShift: () => this.shiftProjectedFitMapView()
                 }
             );
@@ -421,5 +421,7 @@ L.Polyline.EditMixin = {
         }
         return this._latlngs.slice(start, end);
     }
+});
+}
 
-};
+export {subclassLineWithEdit};
