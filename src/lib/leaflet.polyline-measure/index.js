@@ -43,7 +43,7 @@ L.MeasuredLine = L.Polyline.extend({
         onRemove: function(map) {
             this._map.off('zoomend', this.updateTicks, this);
             this._map.off('moveend', this.updateTicks, this);
-            this.off('nodeschanged', this.updateTicks, this);
+            this.off('nodeschanged', this.updateTicksLater, this);
             this._clearTicks();
             L.Polyline.prototype.onRemove.call(this, map);
         },
