@@ -2,11 +2,17 @@ import L from 'leaflet';
 import './edit_line.css';
 import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
-function subclassLineWithEdit(base) {
+function subclassEditableLine(base) {
 return base.extend({
     options: {
         className: 'leaflet-editable-line',
         nodeMarkersZOffset: 10000,
+    },
+
+    initialize: function(...args) {
+        base.prototype.initialize.call(this, ...args);
+        this.startFixedNodeIndex = 0;
+        this.endFixedNodeIndex = this.getLatLngs().length - 1;
     },
 
     startEdit: function() {
@@ -68,7 +74,6 @@ return base.extend({
     onNodeMarkerMovedChangeNode: function(e) {
         var marker = e.target,
             latlng = marker.getLatLng(),
-        // nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
             node = marker._lineNode;
         node.lat = latlng.lat;
         node.lng = latlng.lng;
@@ -77,7 +82,7 @@ return base.extend({
     },
 
     onNodeMarkerDblClickedRemoveNode: function(e) {
-        if (this.getLatLngs().length < 2 || (this._drawingDirection && this.getLatLngs().length === 2)) {
+        if (this.fixedNodesLength() < 2) {
             return;
         }
         var marker = e.target,
@@ -92,13 +97,13 @@ return base.extend({
             let newNodeIndex,
                 refNodeIndex;
             if (this._drawingDirection === -1) {
-                newNodeIndex = 1;
+                newNodeIndex = this.startFixedNodeIndex;
                 refNodeIndex = 0;
             } else {
-                newNodeIndex = this._latlngs.length - 1;
+                newNodeIndex = this.endFixedNodeIndex + 1;
                 refNodeIndex = this._latlngs.length - 1;
             }
-            this.addNode(newNodeIndex, wrapLatLngToTarget(e.latlng, this._latlngs[refNodeIndex]));
+            this.addNode(newNodeIndex, wrapLatLngToTarget(e.latlng, this._latlngs[refNodeIndex]), true);
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit(true);
@@ -116,24 +121,16 @@ return base.extend({
         }
     },
 
-    startDrawingLine: function(direction, e) {
+    startDrawingLine: function(direction = 1) {
         if (!this._editing) {
             return;
-        }
-        if (direction === undefined) {
-            direction = 1;
         }
         if (this._drawingDirection === direction) {
             return;
         }
         this.stopDrawingLine();
         this._drawingDirection = direction;
-        if (e) {
-            var newNodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length;
-            this.spliceLatLngs(newNodeIndex, 0, e.latlng);
-            this._setupEndMarkers();
-            this.fire('nodeschanged');
-        }
+        this._setupEndMarkers();
 
         this._map.on('mousemove', this.onMouseMoveFollowEndNode, this);
         L.DomUtil.addClass(this._map._container, 'leaflet-line-drawing');
@@ -145,8 +142,16 @@ return base.extend({
             return;
         }
         this._map.off('mousemove', this.onMouseMoveFollowEndNode, this);
-        var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
-        this.spliceLatLngs(nodeIndex, 1);
+        if (this._drawingDirection === -1) {
+            const headLength = this.startFixedNodeIndex;
+            this.spliceLatLngs(0, headLength);
+            this.startFixedNodeIndex = 0;
+            this.endFixedNodeIndex -= headLength;
+        } else {
+            const tailLength = this.getLatLngs().length - this.endFixedNodeIndex - 1;
+            this.spliceLatLngs(this.endFixedNodeIndex + 1, tailLength);
+        }
+
         this.fire('nodeschanged');
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
@@ -174,8 +179,8 @@ return base.extend({
                 break;
             case 8:
             case 46:
-                if (this._drawingDirection && this.getLatLngs().length > 2) {
-                    const nodeIndex = this._drawingDirection === 1 ? this.getLatLngs().length - 2 : 1;
+                if (this._drawingDirection && this.fixedNodesLength() > 1) {
+                    const nodeIndex = this._drawingDirection === -1 ? this.startFixedNodeIndex : this.endFixedNodeIndex;
                     this.removeNode(nodeIndex);
                     this.fire('nodeschanged');
                     L.DomEvent.preventDefault(e);
@@ -187,12 +192,27 @@ return base.extend({
     },
 
     onMouseMoveFollowEndNode: function(e) {
-        var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
-        let latlng = e.latlng;
-        if (this._latlngs.length > 0) {
-            latlng = wrapLatLngToTarget(latlng, this._latlngs[nodeIndex]);
+        let cursorStart, cursorLength, refPointIndex, fixedNodeInc;
+        const latlngs = this.getLatLngs();
+        if (this._drawingDirection === -1) {
+            cursorStart = 0;
+            cursorLength = this.startFixedNodeIndex;
+            refPointIndex = this.startFixedNodeIndex;
+            fixedNodeInc = 1 - cursorLength;
+        } else {
+            cursorStart = this.endFixedNodeIndex + 1;
+            cursorLength = latlngs.length - this.endFixedNodeIndex - 1;
+            refPointIndex = this.endFixedNodeIndex;
+            fixedNodeInc = 0;
         }
-        this.spliceLatLngs(nodeIndex, 1, latlng);
+        const refPoint = latlngs[refPointIndex];
+        let newLatlng = e.latlng;
+        if (refPoint) {
+            newLatlng = wrapLatLngToTarget(newLatlng, refPoint);
+        }
+        this.spliceLatLngs(cursorStart, cursorLength, newLatlng);
+        this.startFixedNodeIndex += fixedNodeInc;
+        this.endFixedNodeIndex += fixedNodeInc;
         this.fire('nodeschanged');
     },
 
@@ -230,17 +250,17 @@ return base.extend({
     },
 
     onNodeMarkerClickStartStopDrawing: function(e) {
-        var marker = e.target,
-            latlngs = this.getLatLngs(),
-            latlngs_n = latlngs.length,
-            nodeIndex = latlngs.indexOf(marker._lineNode);
-        if ((this._drawingDirection === -1 && nodeIndex === 1) ||
-            ((this._drawingDirection === 1 && nodeIndex === latlngs_n - 2))) {
+        const marker = e.target;
+        const nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+        const isStartNodeClicked = nodeIndex === this.startFixedNodeIndex;
+        const isEndNodeClicked = nodeIndex === this.endFixedNodeIndex;
+        if ((this._drawingDirection === -1 && isStartNodeClicked) ||
+            ((this._drawingDirection === 1 && isEndNodeClicked))) {
             this.stopDrawingLine();
-        } else if (nodeIndex === this.getLatLngs().length - 1) {
-            this.startDrawingLine(1, e);
-        } else if (nodeIndex === 0) {
-            this.startDrawingLine(-1, e);
+        } else if (isEndNodeClicked) {
+            this.startDrawingLine(1);
+        } else if (isStartNodeClicked) {
+            this.startDrawingLine(-1);
         }
     },
 
@@ -288,12 +308,13 @@ return base.extend({
         this.fire('nodeschanged');
     },
 
-    addNode: function(index, latlng) {
-        var nodes = this.getLatLngs(),
-            isAddingLeft = (index === 1 && this._drawingDirection === -1),
-            isAddingRight = (index === nodes.length - 1 && this._drawingDirection === 1);
+    addNode: function(index, latlng, isAddingAtEnd = false) {
+        const nodes = this.getLatLngs(),
+            isAddingLeft = (isAddingAtEnd && this._drawingDirection === -1),
+            isAddingRight = (isAddingAtEnd && this._drawingDirection === 1);
         latlng = latlng.clone();
         this.spliceLatLngs(index, 0, latlng);
+        this.endFixedNodeIndex += 1;
         this.makeNodeMarker(index);
         if (!isAddingLeft && (index >= 1)) {
             if (!isAddingRight) {
@@ -319,6 +340,7 @@ return base.extend({
         delete node._nodeMarker;
         delete marker._lineNode;
         this.spliceLatLngs(index, 1);
+        this.endFixedNodeIndex -= 1;
         this._map.removeLayer(marker);
         if (node._segmentOverlay) {
             this._map.removeLayer(node._segmentOverlay);
@@ -330,7 +352,7 @@ return base.extend({
             this._map.removeLayer(prevNode._segmentOverlay);
             delete prevNode._segmentOverlay._lineNode;
             delete prevNode._segmentOverlay;
-            if ((index < nodes.length - 1) || (index < nodes.length && this._drawingDirection !== 1)) {
+            if (index < this.endFixedNodeIndex) {
                 this.makeSegmentOverlay(index - 1);
             }
         }
@@ -362,20 +384,17 @@ return base.extend({
     },
 
     _setupEndMarkers: function() {
-        const nodesCount = this._latlngs.length;
-        if (nodesCount === 0) {
+        if (this.fixedNodesLength() === 0) {
             return;
         }
-        const startIndex = this._drawingDirection === -1 ? 1 : 0;
-        const endIndex = this._drawingDirection === 1 ? nodesCount - 2 : nodesCount - 1;
-        const startIcon = this._latlngs[startIndex]._nodeMarker._icon;
+        const startIcon = this._latlngs[this.startFixedNodeIndex]._nodeMarker._icon;
         L.DomUtil[this._drawingDirection === -1 ? 'removeClass' : 'addClass'](
             startIcon, 'line-editor-node-marker-start'
         );
-        if (endIndex >= 0) {
-            const endIcon = this._latlngs[endIndex]._nodeMarker._icon;
+        if (this.endFixedNodeIndex >= 0) {
+            const endIcon = this._latlngs[this.endFixedNodeIndex]._nodeMarker._icon;
             let func;
-            if (this._drawingDirection !== 1 && endIndex > 0) {
+            if (this._drawingDirection !== 1 && this.endFixedNodeIndex > 0) {
                 func = L.DomUtil.addClass;
             } else {
                 func = L.DomUtil.removeClass;
@@ -386,18 +405,9 @@ return base.extend({
 
     setupMarkers: function() {
         this.removeMarkers();
-        var latlngs = this.getLatLngs(),
-            startNode = 0,
-            endNode = latlngs.length - 1;
-        if (this._drawingDirection === -1) {
-            startNode += 1;
-        }
-        if (this._drawingDirection === 1) {
-            endNode -= 1;
-        }
-        for (var i = startNode; i <= endNode; i++) {
+        for (let i = this.startFixedNodeIndex; i <= this.endFixedNodeIndex; i++) {
             this.makeNodeMarker(i);
-            if (i < endNode) {
+            if (i < this.endFixedNodeIndex) {
                 this.makeSegmentOverlay(i);
             }
         }
@@ -409,19 +419,16 @@ return base.extend({
         const res = latlngs.splice(...args);
         this.setLatLngs(latlngs);
         return res;
-        // this._latlngs.splice(...args);
-        // this.redraw();
+    },
+
+    fixedNodesLength: function() {
+        return this.endFixedNodeIndex - this.startFixedNodeIndex + 1;
     },
 
     getFixedLatLngs: function() {
-        const start = this._drawingDirection === -1 ? 1 : 0;
-        let end = this._latlngs.length;
-        if (this._drawingDirection === 1) {
-            end -= 1;
-        }
-        return this._latlngs.slice(start, end);
-    }
+        return this._latlngs.slice(this.startFixedNodeIndex, this.endFixedNodeIndex + 1);
+    },
 });
 }
 
-export {subclassLineWithEdit};
+export {subclassEditableLine};
