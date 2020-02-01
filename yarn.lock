@@ -9378,10 +9378,10 @@ stylelint-config-recommended@^3.0.0:
   resolved "https://registry.yarnpkg.com/stylelint-config-recommended/-/stylelint-config-recommended-3.0.0.tgz#e0e547434016c5539fe2650afd58049a2fd1d657"
   integrity sha512-F6yTRuc06xr1h5Qw/ykb2LuFynJ2IxkKfCMf+1xqPffkxh0S09Zc902XCffcsw/XMFq/OzQ1w54fLIDtmRNHnQ==
 
-stylelint-webpack-plugin@^1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/stylelint-webpack-plugin/-/stylelint-webpack-plugin-1.1.2.tgz#43cad5a03643d84650ba6c579717e52def3a1acc"
-  integrity sha512-PvxFM8z614xNZW+opA733X8NkROCkH1ZkZZ7EBWwm7J+7Rwk/bIHiAqUqlM4VueXECPsCjrzxqDZnCE+EOYZxQ==
+stylelint-webpack-plugin@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/stylelint-webpack-plugin/-/stylelint-webpack-plugin-1.2.1.tgz#ac90a50f3a1cdf1f96385b2357ca2e00b0d0cc70"
+  integrity sha512-J2CFUliPYxirP8l4HUOZmKNMW6HETFPX6wxlQIlfddfV74GFaK6wDk31306LdA5bc8MOOCSsDg4u3FYVlFtF3A==
   dependencies:
     arrify "^2.0.1"
     micromatch "^4.0.2"
