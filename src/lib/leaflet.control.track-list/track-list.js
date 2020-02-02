@@ -31,6 +31,7 @@ const TrackSegment = subclassEditableLine(L.MeasuredLine).mergeOptions({
     weight: 6,
     lineCap: 'round',
     opacity: 0.5,
+    routingServer: config.routingServer
 });
 
 L.Control.TrackList = L.Control.extend({

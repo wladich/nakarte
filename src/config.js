@@ -12,5 +12,6 @@ export default {
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',
     tracksStorageServer: 'https://tracks.nakarte.me',
-    ...secrets
+    routingServer: 'http://route.nakarte.me', // FIXME: switch to https
+    ...secrets,
 };

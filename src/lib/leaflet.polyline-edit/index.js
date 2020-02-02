@@ -1,18 +1,26 @@
 import L from 'leaflet';
 import './edit_line.css';
 import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
+import {Routing} from './routing';
 
 function subclassEditableLine(base) {
 return base.extend({
     options: {
         className: 'leaflet-editable-line',
         nodeMarkersZOffset: 10000,
+        autoDrawToggleKeyCode: 16, // Shift
     },
 
     initialize: function(...args) {
         base.prototype.initialize.call(this, ...args);
+        this._drawingDirection = 0;
         this.startFixedNodeIndex = 0;
         this.endFixedNodeIndex = this.getLatLngs().length - 1;
+        this.isAutoDrawSwitchPressed = false;
+        this.routing = new Routing(this.options.routingServer);
+        this.updateCursorAuto = L.Util.throttle(this._updateCursorAuto, 250, this);
+        this.nextRoutingRequestId = 1;
+        this.completeRoutingRequestId = 0;
     },
 
     startEdit: function() {
@@ -21,10 +29,9 @@ return base.extend({
             this._drawingDirection = 0;
             this.setupMarkers();
             this.on('remove', this.stopEdit.bind(this));
-            this._map
-                .on('click', this.onMapClick, this)
-                .on('dragend', this.onMapEndDrag, this);
-            L.DomEvent.on(document, 'keyup', this.onKeyPress, this);
+            this._map.on('click', this.onMapClick, this).on('dragend', this.onMapEndDrag, this);
+            L.DomEvent.on(document, 'keydown', this.onKeyDown, this);
+            L.DomEvent.on(document, 'keyup', this.onKeyUp, this);
             this._storedStyle = {weight: this.options.weight, opacity: this.options.opacity};
             this.setStyle({weight: 1.5, opacity: 1});
             L.DomUtil.addClass(this._map._container, 'leaflet-line-editing');
@@ -37,11 +44,10 @@ return base.extend({
             this.stopDrawingLine();
             this._editing = false;
             this.removeMarkers();
-            L.DomEvent.off(document, 'keyup', this.onKeyPress, this);
+            L.DomEvent.off(document, 'keydown', this.onKeyDown, this);
+            L.DomEvent.off(document, 'keyup', this.onKeyUp, this);
             this.off('remove', this.stopEdit.bind(this));
-            this._map
-                .off('click', this.onMapClick, this)
-                .off('dragend', this.onMapEndDrag, this);
+            this._map.off('click', this.onMapClick, this).off('dragend', this.onMapEndDrag, this);
             this.setStyle(this._storedStyle);
             L.DomUtil.removeClass(this._map._container, 'leaflet-line-editing');
             this.fire('editend', {target: this, userCancelled});
@@ -49,7 +55,8 @@ return base.extend({
     },
 
     removeMarkers: function() {
-        this.getLatLngs().forEach(function(node) {
+        this.getLatLngs().forEach(
+            function(node) {
                 if (node._nodeMarker) {
                     this._map.removeLayer(node._nodeMarker);
                     delete node._nodeMarker._lineNode;
@@ -93,17 +100,12 @@ return base.extend({
     },
 
     onMapClick: function(e) {
-        if (this._drawingDirection) {
-            let newNodeIndex,
-                refNodeIndex;
-            if (this._drawingDirection === -1) {
-                newNodeIndex = this.startFixedNodeIndex;
-                refNodeIndex = 0;
-            } else {
-                newNodeIndex = this.endFixedNodeIndex + 1;
-                refNodeIndex = this._latlngs.length - 1;
-            }
-            this.addNode(newNodeIndex, wrapLatLngToTarget(e.latlng, this._latlngs[refNodeIndex]), true);
+        if (this._drawingDirection === -1) {
+            this.startFixedNodeIndex = 0;
+            this.setupMarkers();
+        } else if (this._drawingDirection === 1) {
+            this.endFixedNodeIndex = this.getLatLngs().length - 1;
+            this.setupMarkers();
         } else {
             if (!this.preventStopEdit) {
                 this.stopEdit(true);
@@ -114,10 +116,11 @@ return base.extend({
     onMapEndDrag: function(e) {
         if (e.distance < 15) {
             // get mouse position from map drag handler
-            var handler = e.target.dragging._draggable;
-            var mousePos = handler._startPoint.add(handler._newPos).subtract(handler._startPos);
-            var latlng = e.target.mouseEventToLatLng({clientX: mousePos.x, clientY: mousePos.y});
-            this.onMapClick({latlng: latlng});
+            // var handler = e.target.dragging._draggable;
+            // var mousePos = handler._startPoint.add(handler._newPos).subtract(handler._startPos);
+            // var latlng = e.target.mouseEventToLatLng({clientX: mousePos.x, clientY: mousePos.y});
+            // this.onMapClick({latlng: latlng});
+            this.onMapClick();
         }
     },
 
@@ -132,16 +135,18 @@ return base.extend({
         this._drawingDirection = direction;
         this._setupEndMarkers();
 
-        this._map.on('mousemove', this.onMouseMoveFollowEndNode, this);
+        this._map.on('mousemove', this.updateCursor, this);
         L.DomUtil.addClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = true;
+        // prevent old requests from updating cursor
+        this.completeRoutingRequestId += 1;
     },
 
     stopDrawingLine: function() {
         if (!this._drawingDirection) {
             return;
         }
-        this._map.off('mousemove', this.onMouseMoveFollowEndNode, this);
+        this._map.off('mousemove', this.updateCursor, this);
         if (this._drawingDirection === -1) {
             const headLength = this.startFixedNodeIndex;
             this.spliceLatLngs(0, headLength);
@@ -160,7 +165,20 @@ return base.extend({
         this.fire('drawend');
     },
 
-    onKeyPress: function(e) {
+    onKeyDown: function(e) {
+        if (e.target.tagName.toLowerCase() === 'input') {
+            return;
+        }
+        const code = e.keyCode;
+        switch (code) {
+            case this.options.autoDrawToggleKeyCode:
+                this.autoDrawKeyPressed(true);
+                break;
+            default:
+        }
+    },
+
+    onKeyUp: function(e) {
         if (e.target.tagName.toLowerCase() === 'input') {
             return;
         }
@@ -186,19 +204,56 @@ return base.extend({
                     L.DomEvent.preventDefault(e);
                 }
                 break;
-
+            case this.options.autoDrawToggleKeyCode:
+                this.autoDrawKeyPressed(false);
+                break;
             default:
         }
     },
 
-    onMouseMoveFollowEndNode: function(e) {
+    updateCursorSimple: function(latlon) {
+        const newCursor = [latlon];
+        this.applyCursorUpdate(newCursor);
+    },
+
+    _updateCursorAuto: async function(mouseLatLng) {
+        const latLngs = this.getLatLngs();
+        let cursorStart, cursorEnd;
+        if (this._drawingDirection === -1) {
+            cursorStart = mouseLatLng;
+            cursorEnd = latLngs[this.startFixedNodeIndex];
+        } else {
+            cursorStart = latLngs[this.endFixedNodeIndex];
+            cursorEnd = mouseLatLng;
+        }
+        const requestId = this.nextRoutingRequestId;
+        this.nextRoutingRequestId += 1;
+        let cursorLatLngs = await this.routing.getRoute([cursorStart, cursorEnd]);
+        if (
+            !this.isAutoDrawSwitchPressed ||
+            requestId < this.completeRoutingRequestId ||
+            this._drawingDirection === 0
+        ) {
+            return;
+        }
+        if (!cursorLatLngs) {
+            console.log('Fallback to simple cursor');
+            cursorLatLngs = [mouseLatLng];
+        }
+        cursorLatLngs = L.LineUtil.simplifyLatlngs(cursorLatLngs, 360 / (1 << 24));
+        this.completeRoutingRequestId = requestId;
+        this.applyCursorUpdate(cursorLatLngs);
+    },
+
+    applyCursorUpdate: function(newCursorLatLngs) {
         let cursorStart, cursorLength, refPointIndex, fixedNodeInc;
         const latlngs = this.getLatLngs();
+
         if (this._drawingDirection === -1) {
             cursorStart = 0;
             cursorLength = this.startFixedNodeIndex;
             refPointIndex = this.startFixedNodeIndex;
-            fixedNodeInc = 1 - cursorLength;
+            fixedNodeInc = newCursorLatLngs.length - cursorLength;
         } else {
             cursorStart = this.endFixedNodeIndex + 1;
             cursorLength = latlngs.length - this.endFixedNodeIndex - 1;
@@ -206,43 +261,56 @@ return base.extend({
             fixedNodeInc = 0;
         }
         const refPoint = latlngs[refPointIndex];
-        let newLatlng = e.latlng;
         if (refPoint) {
-            newLatlng = wrapLatLngToTarget(newLatlng, refPoint);
+            newCursorLatLngs = newCursorLatLngs.map((latlng) => wrapLatLngToTarget(latlng, refPoint));
         }
-        this.spliceLatLngs(cursorStart, cursorLength, newLatlng);
+        this.spliceLatLngs(cursorStart, cursorLength, ...newCursorLatLngs);
         this.startFixedNodeIndex += fixedNodeInc;
         this.endFixedNodeIndex += fixedNodeInc;
         this.fire('nodeschanged');
     },
 
+    updateCursor: function(e = null) {
+        let latlng = e?.latlng;
+        if (!latlng) {
+            const latlngs = this.getLatLngs();
+            latlng = this._drawingDirection === -1 ? latlngs[0] : latlngs[latlngs.length - 1];
+        }
+        if (this.isAutoDrawSwitchPressed) {
+            this.updateCursorAuto(latlng);
+        } else {
+            this.updateCursorSimple(latlng);
+        }
+    },
+
     makeNodeMarker: function(nodeIndex) {
         var node = this.getLatLngs()[nodeIndex],
             marker = L.marker(node.clone(), {
-                    icon: L.divIcon({
-                        className: 'line-editor-node-marker-halo',
-                        html: '<div class="line-editor-node-marker"></div>'
-                    }),
-                    draggable: true,
-                    zIndexOffset: this.options.nodeMarkersZOffset,
-                    projectedShift: () => this.shiftProjectedFitMapView()
-                }
-            );
+                icon: L.divIcon({
+                    className: 'line-editor-node-marker-halo',
+                    html: '<div class="line-editor-node-marker"></div>',
+                }),
+                draggable: true,
+                zIndexOffset: this.options.nodeMarkersZOffset,
+                projectedShift: () => this.shiftProjectedFitMapView(),
+            });
         marker
             .on('drag', this.onNodeMarkerMovedChangeNode, this)
             // .on('dragstart', this.fire.bind(this, 'editingstart'))
             .on('dragend', this.onNodeMarkerDragEnd, this)
             .on('dblclick', this.onNodeMarkerDblClickedRemoveNode, this)
             .on('click', this.onNodeMarkerClickStartStopDrawing, this)
-            .on('contextmenu', function(e) {
+            .on(
+                'contextmenu',
+                function(e) {
                     this.stopDrawingLine();
                     this.fire('noderightclick', {
-                            nodeIndex: this.getLatLngs().indexOf(marker._lineNode),
-                            line: this,
-                            mouseEvent: e
-                        }
-                    );
-                }, this
+                        nodeIndex: this.getLatLngs().indexOf(marker._lineNode),
+                        line: this,
+                        mouseEvent: e,
+                    });
+                },
+                this
             );
         marker._lineNode = node;
         node._nodeMarker = marker;
@@ -254,8 +322,10 @@ return base.extend({
         const nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
         const isStartNodeClicked = nodeIndex === this.startFixedNodeIndex;
         const isEndNodeClicked = nodeIndex === this.endFixedNodeIndex;
-        if ((this._drawingDirection === -1 && isStartNodeClicked) ||
-            ((this._drawingDirection === 1 && isEndNodeClicked))) {
+        if (
+            (this._drawingDirection === -1 && isStartNodeClicked) ||
+            (this._drawingDirection === 1 && isEndNodeClicked)
+        ) {
             this.stopDrawingLine();
         } else if (isEndNodeClicked) {
             this.startDrawingLine(1);
@@ -274,18 +344,20 @@ return base.extend({
         const segmentOverlay = L.polyline([p1, p2], {
             weight: 10,
             opacity: 0.0,
-            projectedShift: () => this.shiftProjectedFitMapView()
+            projectedShift: () => this.shiftProjectedFitMapView(),
         });
         segmentOverlay.on('mousedown', this.onSegmentMouseDownAddNode, this);
-        segmentOverlay.on('contextmenu', function(e) {
+        segmentOverlay.on(
+            'contextmenu',
+            function(e) {
                 this.stopDrawingLine();
                 this.fire('segmentrightclick', {
-                        nodeIndex: this.getLatLngs().indexOf(segmentOverlay._lineNode),
-                        mouseEvent: e,
-                        line: this
-                    }
-                );
-            }, this
+                    nodeIndex: this.getLatLngs().indexOf(segmentOverlay._lineNode),
+                    mouseEvent: e,
+                    line: this,
+                });
+            },
+            this
         );
         segmentOverlay._lineNode = p1;
         p1._segmentOverlay = segmentOverlay;
@@ -310,13 +382,13 @@ return base.extend({
 
     addNode: function(index, latlng, isAddingAtEnd = false) {
         const nodes = this.getLatLngs(),
-            isAddingLeft = (isAddingAtEnd && this._drawingDirection === -1),
-            isAddingRight = (isAddingAtEnd && this._drawingDirection === 1);
+            isAddingLeft = isAddingAtEnd && this._drawingDirection === -1,
+            isAddingRight = isAddingAtEnd && this._drawingDirection === 1;
         latlng = latlng.clone();
         this.spliceLatLngs(index, 0, latlng);
         this.endFixedNodeIndex += 1;
         this.makeNodeMarker(index);
-        if (!isAddingLeft && (index >= 1)) {
+        if (!isAddingLeft && index >= 1) {
             if (!isAddingRight) {
                 var prevNode = nodes[index - 1];
                 this._map.removeLayer(prevNode._segmentOverlay);
@@ -389,7 +461,8 @@ return base.extend({
         }
         const startIcon = this._latlngs[this.startFixedNodeIndex]._nodeMarker._icon;
         L.DomUtil[this._drawingDirection === -1 ? 'removeClass' : 'addClass'](
-            startIcon, 'line-editor-node-marker-start'
+            startIcon,
+            'line-editor-node-marker-start'
         );
         if (this.endFixedNodeIndex >= 0) {
             const endIcon = this._latlngs[this.endFixedNodeIndex]._nodeMarker._icon;
@@ -427,6 +500,12 @@ return base.extend({
 
     getFixedLatLngs: function() {
         return this._latlngs.slice(this.startFixedNodeIndex, this.endFixedNodeIndex + 1);
+    },
+
+    autoDrawKeyPressed: function(pressed) {
+        this.isAutoDrawSwitchPressed = pressed;
+        this.updateCursor();
+        // TODO: hide/show auto draw control
     },
 });
 }
