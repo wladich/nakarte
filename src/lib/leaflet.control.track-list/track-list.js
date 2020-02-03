@@ -452,6 +452,7 @@ L.Control.TrackList = L.Control.extend({
                 {text: 'Delete', callback: this.removeTrack.bind(this, track)},
                 '-',
                 {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
+                {text: 'Save as GPX (with elevation)', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevation, '.gpx')},
                 {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
                 {text: 'Share link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
             ];
@@ -548,9 +549,20 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            var fileText = exporter(lines, name, points);
             var filename = name + extension;
-            saveAs(blobFromString(fileText), filename, true);
+            var exporterResult = exporter(lines, name, points);
+
+            function saveFile(str, filename) {
+                saveAs(blobFromString(str), filename, true);
+            }
+
+            if (exporterResult instanceof Promise) {
+                exporterResult.then((str) => {
+                    saveFile(str, filename);
+                });
+            } else {
+                saveFile(exporterResult, filename);
+            }
         },
 
         renameTrack: function(track) {
