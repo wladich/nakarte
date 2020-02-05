@@ -552,7 +552,7 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                     title: 'Mountains by Aleksey Tsvetkov',
                     description:
                         'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
-                    isDefault: false,
+                    isDefault: true,
                     layer: L.tileLayer("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png",
                         // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
                         {
@@ -983,6 +983,7 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 'Topo 10km',
                 'GGC 2 km',
                 'ArbaletMO',
+                'Mountains by Aleksey Tsvetkov',
                 'Slazav mountains',
                 'GGC 1km',
                 'Topo 1km',
@@ -1023,7 +1024,6 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
             title: 'Miscellaneous',
             layers: [
                 'Google Hybrid',
-                'Mountains by Aleksey Tsvetkov',
                 'Bing imagery acquisition dates',
                 'geocaching.su'
             ]
