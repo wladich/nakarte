@@ -197,7 +197,27 @@ function setUp() {
         tracklist.stopEditLine();
     });
     azimuthControl.on('elevation-shown', () => tracklist.hideElevationProfile());
+
+    function logUsedMaps() {
+        const layers = [];
+        map.eachLayer((layer) => {
+            if (layer.meta) {
+                layers.push({title: layer.meta.title});
+            } else if (layer.__customLayer) {
+                layers.push({custom: true, title: layer.__customLayer.title, url: layer._url});
+            }
+        });
+        const bounds = map.getBounds();
+        logging.logEvent('activeLayers', {
+            layers,
+            view: {west: bounds.getWest(), south: bounds.getSouth(), east: bounds.getEast(), north: bounds.getNorth()},
+        });
+    }
+
+    L.DomEvent.on(document, 'mousemove click touchend', L.Util.throttle(logUsedMaps, 10000));
+
     logging.logEvent('start', startInfo);
+    logUsedMaps();
 }
 
 export default {setUp};
