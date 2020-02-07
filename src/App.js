@@ -119,7 +119,7 @@ function setUp() {
         printControl.setMinimized();
     }
 
-    new L.Control.JNX(layersControl, {position: 'bottomleft'})
+    const jnxControl = new L.Control.JNX(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
 
@@ -218,6 +218,16 @@ function setUp() {
         };
     }
 
+    function getErrorLoggingInfo(error) {
+        return error
+            ? {
+                  name: error.name,
+                  message: error.message,
+                  stack: error.stack,
+              }
+            : null;
+    }
+
     function logUsedMaps() {
         const layers = [];
         map.eachLayer((layer) => {
@@ -239,13 +249,7 @@ function setUp() {
         logging.logEvent('mapRenderEnd', {
             eventId: e.eventId,
             success: e.success,
-            error: e.error
-                ? {
-                      name: e.error.name,
-                      message: e.error.message,
-                      stack: e.error.stack,
-                  }
-                : null,
+            error: getErrorLoggingInfo(e.error),
         });
     });
 
@@ -268,6 +272,23 @@ function setUp() {
             pages: e.pages.map((page) => getLatLngBoundsLoggingInfo(page.latLngBounds)),
             zooms: e.zooms,
             layers
+        });
+    });
+
+    jnxControl.on('tileExportStart', function(e) {
+        logging.logEvent('tileExportStart', {
+            eventId: e.eventId,
+            layer: getLayerLoggingInfo(e.layer),
+            zoom: e.zoom,
+            bounds: getLatLngBoundsLoggingInfo(e.bounds),
+        });
+    });
+
+    jnxControl.on('tileExportEnd', function(e) {
+        logging.logEvent('tileExportEnd', {
+            eventId: e.eventId,
+            success: e.success,
+            error: getErrorLoggingInfo(e.error),
         });
     });
 
