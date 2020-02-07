@@ -217,11 +217,19 @@ L.Control.PrintPages = L.Control.extend({
             const width = this.pageWidth();
             const height = this.pageHeight();
             const eventId = logging.randId();
-            logging.logEvent('print pdf start', {eventId});
+            const zooms = this.zoomForPrint();
+            this.fire('mapRenderStart', {
+                action: 'pdf',
+                eventId,
+                scale,
+                resolution,
+                pages,
+                zooms
+            });
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
+                    zooms,
                     resolution,
                     scale,
                     decorationLayers,
@@ -237,12 +245,12 @@ L.Control.PrintPages = L.Control.extend({
                             extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
-                        logging.logEvent('print pdf end', {eventId, success: true});
+                        this.fire('mapRenderEnd', {eventId, success: true});
                     }
                 }
             ).catch((e) => {
                     logging.captureException(e, 'raster creation failed');
-                    logging.logEvent('print pdf end', {eventId, success: false, error: e.stack});
+                    this.fire('mapRenderEnd', {eventId, success: false, error: e});
                     notify(`Failed to create PDF: ${e.message}`);
                 }
             ).then(() => this.makingPdf(false));
@@ -266,16 +274,25 @@ L.Control.PrintPages = L.Control.extend({
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
+            const resolution = this.resolution();
             const scale = this.scale();
             const width = this.pageWidth();
             const height = this.pageHeight();
             const eventId = logging.randId();
-            logging.logEvent('print jpg start', {eventId});
+            const zooms = this.zoomForPrint();
+            this.fire('mapRenderStart', {
+                action: 'jpg',
+                eventId,
+                scale,
+                resolution,
+                pages,
+                zooms
+            });
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
-                    resolution: this.resolution(),
+                    zooms,
+                    resolution,
                     scale,
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
@@ -290,11 +307,11 @@ L.Control.PrintPages = L.Control.extend({
                         extension: 'jpg'
                     });
                     savePageJpg(images[0], fileName);
-                    logging.logEvent('print jpg end', {eventId, success: true});
+                    this.fire('mapRenderEnd', {eventId, success: true});
                 })
                 .catch((e) => {
                         logging.captureException(e, 'raster creation failed');
-                        logging.logEvent('print jpg end', {eventId, success: false, error: e.stack});
+                        this.fire('mapRenderEnd', {eventId, success: false, error: e});
                         notify(`Failed to create JPEG from page: ${e.message}`);
                     }
                 ).then(() => this.makingPdf(false));

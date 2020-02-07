@@ -198,23 +198,78 @@ function setUp() {
     });
     azimuthControl.on('elevation-shown', () => tracklist.hideElevationProfile());
 
+    /* setup events logging */
+
+    function getLayerLoggingInfo(layer) {
+        if (layer.meta) {
+            return {title: layer.meta.title};
+        } else if (layer.__customLayer) {
+            return {custom: true, title: layer.__customLayer.title, url: layer._url};
+        }
+        return null;
+    }
+
+    function getLatLngBoundsLoggingInfo(latLngBounds) {
+        return {
+            west: latLngBounds.getWest(),
+            south: latLngBounds.getSouth(),
+            east: latLngBounds.getEast(),
+            north: latLngBounds.getNorth(),
+        };
+    }
+
     function logUsedMaps() {
         const layers = [];
         map.eachLayer((layer) => {
-            if (layer.meta) {
-                layers.push({title: layer.meta.title});
-            } else if (layer.__customLayer) {
-                layers.push({custom: true, title: layer.__customLayer.title, url: layer._url});
+            const layerInfo = getLayerLoggingInfo(layer);
+            if (layerInfo) {
+                layers.push(layerInfo);
             }
         });
         const bounds = map.getBounds();
         logging.logEvent('activeLayers', {
             layers,
-            view: {west: bounds.getWest(), south: bounds.getSouth(), east: bounds.getEast(), north: bounds.getNorth()},
+            view: getLatLngBoundsLoggingInfo(bounds),
         });
     }
 
     L.DomEvent.on(document, 'mousemove click touchend', L.Util.throttle(logUsedMaps, 10000));
+
+    printControl.on('mapRenderEnd', function(e) {
+        logging.logEvent('mapRenderEnd', {
+            eventId: e.eventId,
+            success: e.success,
+            error: e.error
+                ? {
+                      name: e.error.name,
+                      message: e.error.message,
+                      stack: e.error.stack,
+                  }
+                : null,
+        });
+    });
+
+    printControl.on('mapRenderStart', function(e) {
+        const layers = [];
+        map.eachLayer((layer) => {
+            const layerInfo = getLayerLoggingInfo(layer);
+            if (layer.options?.print && layerInfo) {
+                layers.push({
+                    ...getLayerLoggingInfo(layer),
+                    scaleDependent: layer.options.scaleDependent
+                });
+            }
+        });
+        logging.logEvent('mapRenderStart', {
+            eventId: e.eventId,
+            action: e.action,
+            scale: e.scale,
+            resolution: e.resolution,
+            pages: e.pages.map((page) => getLatLngBoundsLoggingInfo(page.latLngBounds)),
+            zooms: e.zooms,
+            layers
+        });
+    });
 
     logging.logEvent('start', startInfo);
     logUsedMaps();
