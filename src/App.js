@@ -243,7 +243,7 @@ function setUp() {
         });
     }
 
-    L.DomEvent.on(document, 'mousemove click touchend', L.Util.throttle(logUsedMaps, 10000));
+    L.DomEvent.on(document, 'mousemove click touchend', L.Util.throttle(logUsedMaps, 30000));
 
     printControl.on('mapRenderEnd', function(e) {
         logging.logEvent('mapRenderEnd', {
