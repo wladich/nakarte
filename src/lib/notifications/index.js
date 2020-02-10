@@ -1,8 +1,8 @@
 import alertify from 'alertify.js';
 import './style.css';
 
-function notify(message) {
-    alertify.alert(message);
+function notify(message, onOk) {
+    alertify.alert(message, onOk);
 }
 
 function prompt(message, value) {

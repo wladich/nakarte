@@ -22,7 +22,7 @@ class XMLHttpRequestPromise {
     constructor(
         url, {method = 'GET', data = null, responseType = '', timeout = 30000, maxTries = 3, retryTimeWait = 500,
             isResponseSuccess = successIfStatus200, responseNeedsRetry = retryIfNetworkErrorOrServerError,
-        headers = null} = {}) {
+            headers = null, withCredentials = false} = {}) {
         // console.log('promise constructor', url);
         const promise = new Promise((resolve, reject) => {
                 this._resolve = resolve;
@@ -54,6 +54,7 @@ class XMLHttpRequestPromise {
                 xhr.setRequestHeader(k, v);
             }
         }
+        xhr.withCredentials = withCredentials;
     }
 
     _open() {
