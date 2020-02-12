@@ -119,7 +119,7 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     if (searchRadiusMeters > 10000) {
         searchRadiusMeters = 10000;
     }
-    const url = L.Util.template(urlTemplate, {lat: latlng.lat, lng: latlng.lng, radius: searchRadiusMeters});
+    const url = L.Util.template(urlTemplate, {lat: latlng.lat, lng: latlng.lng, radius: Math.ceil(searchRadiusMeters)});
     const resp = await fetch(url, {responseType: 'json', timeout: 10000});
     if (resp.status === 200) {
         let photos = parseSearchResponse(resp.responseJSON);
