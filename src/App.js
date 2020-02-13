@@ -169,6 +169,19 @@ function setUp() {
 
     /* save state at unload */
 
+    function logTracksSize(extra = null) {
+        const start = Date.now();
+        let serialized = [];
+        const tracks = tracklist.tracks();
+        for (const track of tracks) {
+            serialized.push(tracklist.trackToString(track));
+        }
+        const sizes = serialized.map((s) => s.length);
+        const totalSize = sizes.reduce((a, b) => a + b, 0);
+        const time = Date.now() - start;
+        logging.logEvent('tracksSizes', {sizes, totalSize, num: sizes.length, time, ...extra});
+    }
+
     L.DomEvent.on(window, 'beforeunload', () => {
         logging.logEvent('saveTracksToStorage begin', {
             localStorageKeys: Object.keys(safeLocalStorage),
@@ -187,6 +200,7 @@ function setUp() {
             time: Date.now() - t,
             localStorageKeys
         });
+        logTracksSize({end: true});
     });
 
     /* track list and azimuth measure interaction */
@@ -292,8 +306,11 @@ function setUp() {
         });
     });
 
+    setInterval(logTracksSize, 30000);
+
     logging.logEvent('start', startInfo);
     logUsedMaps();
+    logTracksSize({start: true});
 }
 
 export default {setUp};
