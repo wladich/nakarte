@@ -8,7 +8,7 @@ import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
-import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 
     const layersDefs = [
                 {
@@ -613,8 +613,10 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (all)',
                     isDefault: false,
-                    layer: new StravaHeatmap(
-                        'https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
+                    layer: L.tileLayer(
+                        urlViaCorsProxy(
+                            'https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
+                        ),
                         {
                             code: 'Sa',
                             isOverlay: true,
@@ -630,8 +632,10 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (run)',
                     isDefault: false,
-                    layer: new StravaHeatmap(
-                        'https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
+                    layer: L.tileLayer(
+                        urlViaCorsProxy(
+                            'https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
+                        ),
                         {
                             code: 'Sr',
                             isOverlay: true,
@@ -647,8 +651,10 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (ride)',
                     isDefault: false,
-                    layer: new StravaHeatmap(
-                        'https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
+                    layer: L.tileLayer(
+                        urlViaCorsProxy(
+                            'https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
+                        ),
                         {
                             code: 'Sb',
                             isOverlay: true,
@@ -664,8 +670,10 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 {
                     title: 'Strava heatmap (winter)',
                     isDefault: false,
-                    layer: new StravaHeatmap(
-                        'https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
+                    layer: L.tileLayer(
+                        urlViaCorsProxy(
+                            'https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
+                        ),
                         {
                             code: 'Sw',
                             isOverlay: true,
@@ -674,71 +682,6 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                             jnx: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (all)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Sal',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (run)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Srl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (ride)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Sbl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (winter)',
-                    isDefault: false,
-                    layer: L.tileLayer(
-                        'https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Swl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
                             noCors: true
                         }
                     )
@@ -1038,10 +981,6 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
                 'Strava heatmap (run)',
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
-                'Strava heatmap lowres (all)',
-                'Strava heatmap lowres (run)',
-                'Strava heatmap lowres (ride)',
-                'Strava heatmap lowres (winter)'
             ],
 
         },
@@ -1124,10 +1063,6 @@ import {StravaHeatmap} from '~/lib/leaflet.layer.strava-heatmap';
         'Strava heatmap (run)',
         'Strava heatmap (ride)',
         'Strava heatmap (winter)',
-        'Strava heatmap lowres (all)',
-        'Strava heatmap lowres (run)',
-        'Strava heatmap lowres (ride)',
-        'Strava heatmap lowres (winter)',
         'Soviet topo maps grid',
         'Wikimapia',
 
