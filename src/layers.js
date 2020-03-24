@@ -160,7 +160,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     title: 'Topomapper 1km',
                     isDefault: true,
                     layer: L.tileLayer(
-                        'http://144.76.234.108/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
+                        'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
                         {
                             code: 'T',
                             isOverlay: false,
