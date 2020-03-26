@@ -33,7 +33,13 @@ class Tracedetrail extends BaseService {
                 tracks: [points]
             }];
         } catch (e) {
-            return [{name, error: 'UNSUPPORTED'}];
+            let error = 'UNSUPPORTED';
+
+            if (response.status === 200) {
+                error = `Track with id ${this.trackId} was deleted or did not exist`;
+            }
+
+            return [{name, error}];
         }
     }
 }
