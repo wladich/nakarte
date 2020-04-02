@@ -291,7 +291,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
 /* eslint-disable max-len */
                 const formHtml = `
-<p><a class="doc-link" href="http://leafletjs.com/reference-1.0.2.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
+<p><a class="doc-link" href="https://leafletjs.com/reference-1.0.3.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
 <label>Layer name<br/><input data-bind="value: name"/></label><br/>
 <label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: false">Base layer</label><br/>
