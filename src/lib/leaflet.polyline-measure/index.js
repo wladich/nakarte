@@ -153,10 +153,15 @@ L.MeasuredLine = L.Polyline.extend({
                 }
                 lastPointMeasure = nextPointMeasure;
             }
+            // remove last mark if it is close to track end
+            if (lastPointMeasure - lastTickMeasure < minTicksIntervalMeters / 2) {
+                ticks.pop();
+            }
+            // special case: if track is versy short, do not add starting mark
             if (lastPointMeasure > minTicksIntervalMeters / 2) {
                 addTick(points[0], [points[0], points[1]], 0);
-                addTick(points[points_n - 1], [points[points_n - 2], points[points_n - 1]], lastPointMeasure);
             }
+            addTick(points[points_n - 1], [points[points_n - 2], points[points_n - 1]], lastPointMeasure);
             return ticks;
         },
 
