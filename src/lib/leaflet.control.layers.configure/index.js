@@ -294,8 +294,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
 <p><a class="doc-link" href="https://leafletjs.com/reference-1.0.3.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
 <label>Layer name<br/>
 <span class="hint">Maximum 40 characters</span><br/>
-<input maxlength="40" style="width: 100%" data-bind="value: name"/></label><br/>
-<label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
+<input maxlength="40" class="layer-name" data-bind="value: name"/></label><br/>
+<label>Tile url template<br/><textarea data-bind="value: url" class="layer-url"></textarea></label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: false">Base layer</label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: true">Overlay</label><br/>
 <hr/>

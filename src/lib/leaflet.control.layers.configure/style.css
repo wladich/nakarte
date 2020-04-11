@@ -126,6 +126,11 @@
     box-sizing: border-box;
 }
 
+.custom-layers-window .layer-name,
+.custom-layers-window .layer-url {
+    width: 100%;
+}
+
 .custom-layers-window .button:hover {
     background-color: #f4f4f4;
 }
