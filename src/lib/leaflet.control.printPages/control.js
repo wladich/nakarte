@@ -44,7 +44,10 @@ function savePageJpg(page, fileName) {
 }
 
 L.Control.PrintPages = L.Control.extend({
-        options: {position: 'bottomleft'},
+        options: {
+            position: 'bottomleft',
+            defaultMargin: 7,
+        },
 
         includes: [L.Mixin.Events, L.Mixin.HashState],
 
@@ -70,10 +73,10 @@ L.Control.PrintPages = L.Control.extend({
             this.makingPdf = ko.observable(false);
             this.downloadProgressRange = ko.observable();
             this.downloadProgressDone = ko.observable();
-            this.marginLeft = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginRight = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginTop = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginBottom = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.marginLeft = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginRight = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginTop = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginBottom = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
             this.autoZoomLevels = ko.observable({});
             this.printSize = ko.pureComputed(this._printSize, this);
             this.printSize.subscribe(this.onPageSizeChanged, this);
