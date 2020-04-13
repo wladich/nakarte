@@ -120,8 +120,8 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.addListener(map.getContainer(), 'drop', this.onFileDragDrop, this);
             L.DomEvent.addListener(map.getContainer(), 'dragover', this.onFileDraging, this);
             this.menu = new Contextmenu([
-                    {text: 'Share link for all tracks', callback: this.copyAllTracksToClipboard.bind(this)},
-                    {text: 'Share link for visible tracks', callback: this.copyVisibleTracks.bind(this)},
+                    {text: 'Copy link for all tracks', callback: this.copyAllTracksToClipboard.bind(this)},
+                    {text: 'Copy link for visible tracks', callback: this.copyVisibleTracks.bind(this)},
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
@@ -452,7 +452,7 @@ L.Control.TrackList = L.Control.extend({
                 '-',
                 {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
                 {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
-                {text: 'Share link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
+                {text: 'Copy link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
             ];
             track._actionsMenu = new Contextmenu(items);
         },
