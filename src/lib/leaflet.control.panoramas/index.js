@@ -10,6 +10,7 @@ import wikimediaProvider from './lib/wikimedia';
 import {DragEvents} from '~/lib/leaflet.events.drag';
 import {onElementResize} from '~/lib/anyElementResizeEvent';
 import safeLocalStorage from '~/lib/safe-localstorage';
+import mapyczProvider from './lib/mapycz';
 
 const PanoMarker = L.Marker.extend({
     options: {
@@ -84,6 +85,15 @@ L.Control.Panoramas = L.Control.extend({
                     selected: ko.observable(false),
                     mapMarkerType: 'normal'
                 },
+                {
+                    name: 'mapycz',
+                    title: 'mapy.cz',
+                    provider: mapyczProvider,
+                    layerOptions: {opacity: 0.7, zIndex: 8},
+                    code: 'c',
+                    selected: ko.observable(false),
+                    mapMarkerType: 'normal'
+                }
             ];
         },
 
