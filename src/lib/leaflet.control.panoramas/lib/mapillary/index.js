@@ -3,7 +3,7 @@ import {MapillaryCoverage} from './mapillary-coverage-layer';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import './style.css';
-import '../common/style.css';
+import {CloseButtonMixin} from '../common';
 
 function getCoverageLayer(options) {
     return new MapillaryCoverage(options);
@@ -35,6 +35,8 @@ function formatDateTime(ts) {
 }
 
 const Viewer = L.Evented.extend({
+        includes: [CloseButtonMixin],
+
         initialize: function(mapillary, container) {
             const id = `container-${L.stamp(container)}`;
             container.id = id;
@@ -47,8 +49,7 @@ const Viewer = L.Evented.extend({
             viewer.on('nodechanged', this.onNodeChanged.bind(this));
             viewer.on('bearingchanged', this.onBearingChanged.bind(this));
             this.dateLabel = L.DomUtil.create('div', 'mapillary-viewer-date-overlay', container);
-            this.closeButton = L.DomUtil.create('div', 'photo-viewer-button-close', container);
-            L.DomEvent.on(this.closeButton, 'click', this.onCloseClick, this);
+            this.createCloseButton(container);
             this._bearing = 0;
             this._zoom = 0;
             this._center = [0, 0];
@@ -69,7 +70,7 @@ const Viewer = L.Evented.extend({
                 return;
             }
             this._node = node;
-            this.fireChangeEvenet();
+            this.fireChangeEvent();
             this.dateLabel.innerHTML = formatDateTime(node.capturedAt);
         },
 
@@ -86,14 +87,10 @@ const Viewer = L.Evented.extend({
                 return;
             }
             this._bearing = bearing;
-            this.fireChangeEvenet();
+            this.fireChangeEvent();
         },
 
-        onCloseClick: function() {
-            this.fire('closeclick');
-        },
-
-        fireChangeEvenet: function() {
+        fireChangeEvent: function() {
             if (this._node) {
                 const latlon = this._node.originalLatLon;
                 this.fire('change', {
