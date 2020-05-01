@@ -13,9 +13,10 @@ function getGoogle() {
                 loadScript(config.googleApiUrl, (error) => {
                         if (error) {
                             reject(error);
+                        } else {
+                            _google = window.google;
+                            resolve(_google);
                         }
-                        _google = window.google;
-                        resolve(_google);
                     }
                 );
             }
