@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import {getSMap} from './apiLoader';
-import {CloseButtonMixin} from '../common';
+import {CloseButtonMixin, DateLabelMixin} from '../common';
 
 function getCoverageLayer(options) {
     return L.tileLayer('https://mapserver.mapy.cz/panorama_hybrid-m/{z}-{x}-{y}', options);
@@ -20,10 +20,11 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
 }
 
 const Viewer = L.Evented.extend({
-    includes: [CloseButtonMixin],
+    includes: [CloseButtonMixin, DateLabelMixin],
 
     initialize: function(smap, container) {
         this.panorama = new smap.Pano.Scene(container);
+        this.createDateLabel(container);
         this.createCloseButton(container);
         window.addEventListener('resize', this.resize.bind(this));
     },
@@ -33,6 +34,7 @@ const Viewer = L.Evented.extend({
         this.panorama.show(data, {yaw});
         this.panorama.setCamera({fov: 1.256637061});
         this.updatePositionAndView();
+        this.updateDateLabel();
     },
 
     activate: function() {
@@ -78,6 +80,7 @@ const Viewer = L.Evented.extend({
                 if (found) {
                     this.panorama.show(data, {yaw, pitch, fov});
                     this.panorama.setCamera({yaw, pitch, fov});
+                    this.updateDateLabel();
                 }
             });
             return true;
@@ -99,13 +102,24 @@ const Viewer = L.Evented.extend({
         const oldHeading = this._heading;
         this._position = L.latLng(coords[1], coords[0]);
         this._heading = this.panorama.getCamera().yaw;
-        if (!oldPosition || !this._position.equals(oldPosition) || this._heading !== oldHeading) {
+        const positionChanged = !oldPosition || !this._position.equals(oldPosition);
+        const headingChanged = this._heading !== oldHeading;
+        if (positionChanged) {
+            this.updateDateLabel();
+        }
+        if (positionChanged || headingChanged) {
             this.fire('change', {
                 latlng: this._position,
                 heading: (this._heading * 180) / Math.PI,
             });
         }
     },
+
+    updateDateLabel: function() {
+        const place = this.panorama.getPlace();
+        const timestamp = Date.parse(place.getDate());
+        DateLabelMixin.updateDateLabel.call(this, timestamp);
+    }
 });
 
 async function getViewer(container) {
