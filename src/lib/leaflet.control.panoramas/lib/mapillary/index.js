@@ -3,7 +3,7 @@ import {MapillaryCoverage} from './mapillary-coverage-layer';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import './style.css';
-import {CloseButtonMixin} from '../common';
+import {CloseButtonMixin, DateLabelMixin} from '../common';
 
 function getCoverageLayer(options) {
     return new MapillaryCoverage(options);
@@ -28,14 +28,8 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     return {found: false};
 }
 
-function formatDateTime(ts) {
-    const d = new Date(ts);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-}
-
 const Viewer = L.Evented.extend({
-        includes: [CloseButtonMixin],
+        includes: [CloseButtonMixin, DateLabelMixin],
 
         initialize: function(mapillary, container) {
             const id = `container-${L.stamp(container)}`;
@@ -48,7 +42,7 @@ const Viewer = L.Evented.extend({
             );
             viewer.on('nodechanged', this.onNodeChanged.bind(this));
             viewer.on('bearingchanged', this.onBearingChanged.bind(this));
-            this.dateLabel = L.DomUtil.create('div', 'mapillary-viewer-date-overlay', container);
+            this.createDateLabel(container);
             this.createCloseButton(container);
             this._bearing = 0;
             this._zoom = 0;
@@ -71,7 +65,7 @@ const Viewer = L.Evented.extend({
             }
             this._node = node;
             this.fireChangeEvent();
-            this.dateLabel.innerHTML = formatDateTime(node.capturedAt);
+            this.updateDateLabel(node.capturedAt);
         },
 
         getBearingCorrection: function() {
