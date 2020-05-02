@@ -23,7 +23,15 @@ const Viewer = L.Evented.extend({
     includes: [CloseButtonMixin, DateLabelMixin],
 
     initialize: function(smap, container) {
+        // Disable keyboard events for panorama as they  conflict with other hotkeys.
+        const orig_windowAddEventListener = window.addEventListener;
+        window.addEventListener = (function(type, ...args) {
+            if (!/^key/u.test(type)) {
+                orig_windowAddEventListener(type, ...args);
+            }
+        });
         this.panorama = new smap.Pano.Scene(container);
+        window.addEventListener = orig_windowAddEventListener;
         this.createDateLabel(container);
         this.createCloseButton(container);
         window.addEventListener('resize', this.resize.bind(this));
