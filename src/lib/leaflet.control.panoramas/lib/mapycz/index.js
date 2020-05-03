@@ -105,19 +105,19 @@ const Viewer = L.Evented.extend({
         if (!place) {
             return;
         }
-        const coords = place.getCoords().toWGS84();
-        const oldPosition = this._position;
+        const oldPlaceId = this._placeId;
         const oldHeading = this._heading;
-        this._position = L.latLng(coords[1], coords[0]);
+        this._placeId = place.getId();
         this._heading = this.panorama.getCamera().yaw;
-        const positionChanged = !oldPosition || !this._position.equals(oldPosition);
+        const placeIdChanged = this._placeId !== oldPlaceId;
         const headingChanged = this._heading !== oldHeading;
-        if (positionChanged) {
+        if (placeIdChanged) {
             this.updateDateLabel();
         }
-        if (positionChanged || headingChanged) {
+        if (placeIdChanged || headingChanged) {
+            const coords = place.getCoords().toWGS84();
             this.fire('change', {
-                latlng: this._position,
+                latlng: L.latLng(coords[1], coords[0]),
                 heading: (this._heading * 180) / Math.PI,
             });
         }
