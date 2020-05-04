@@ -29,9 +29,10 @@ const DragEvents = L.Evented.extend({
 
         initialize: function(eventsSource, options) {
             L.setOptions(this, options);
-            this.dragStartPos = [];
-            this.prevEvent = [];
-            this.isDragging = [];
+            this.dragButton = null;
+            this.startEvent = null;
+            this.prevEvent = null;
+            this.isDragging = false;
 
             L.DomEvent.on(eventsSource, 'mousemove', this.onMouseMove, this);
             L.DomEvent.on(eventsSource, 'mouseup', this.onMouseUp, this);
@@ -40,10 +41,10 @@ const DragEvents = L.Evented.extend({
         },
 
         onMouseDown: function(e) {
-            if (this.options.dragButtons.includes(e.button)) {
+            if (this.dragButton === null && this.options.dragButtons.includes(e.button)) {
+                this.dragButton = e.button;
                 e._offset = offestFromEvent(e);
-                this.dragStartPos[e.button] = e;
-                this.prevEvent[e.button] = e;
+                this.startEvent = this.prevEvent = e;
                 L.DomUtil.disableImageDrag();
                 L.DomUtil.disableTextSelection();
             }
@@ -53,12 +54,11 @@ const DragEvents = L.Evented.extend({
             L.DomUtil.enableImageDrag();
             L.DomUtil.enableTextSelection();
 
-            if (this.options.dragButtons.includes(e.button)) {
-                this.dragStartPos[e.button] = null;
-                if (this.isDragging[e.button]) {
-                    this.isDragging[e.button] = false;
+            if (this.dragButton === e.button) {
+                if (this.isDragging) {
+                    this.isDragging = false;
                     this.fire('dragend', L.extend({dragButton: e.button, origEvent: e},
-                        offestFromEvent(e), movementFromEvents(this.prevEvent[e.button], e)
+                        offestFromEvent(e), movementFromEvents(this.prevEvent, e)
                         )
                     );
                 } else {
@@ -67,60 +67,51 @@ const DragEvents = L.Evented.extend({
                         )
                     );
                 }
+                this.dragButton = null;
             }
         },
 
         onMouseMove: function(e) {
-            var i, button,
-                that = this;
+            var that = this;
 
-            function exceedsTolerance(button) {
+            function exceedsTolerance() {
                 var tolerance = that.options.dragTolerance;
-                return Math.abs(e.clientX - that.dragStartPos[button].clientX) > tolerance ||
-                    Math.abs(e.clientY - that.dragStartPos[button].clientY) > tolerance;
+                return Math.abs(e.clientX - that.startEvent.clientX) > tolerance ||
+                    Math.abs(e.clientY - that.startEvent.clientY) > tolerance;
             }
 
-            var dragButtons = this.options.dragButtons;
-            for (i = 0; i < dragButtons.length; i++) {
-                button = dragButtons[i];
-                if (this.isDragging[button]) {
-                    this.fire('drag', L.extend({dragButton: button, origEvent: e},
-                        offestFromEvent(e), movementFromEvents(this.prevEvent[button], e)
-                        )
-                    );
-                } else if (this.dragStartPos[button] && exceedsTolerance(button)) {
-                    this.isDragging[button] = true;
-                    this.fire('dragstart', L.extend(
-                        {dragButton: button, origEvent: this.dragStartPos[button]},
-                        this.dragStartPos[button]._offset
-                        )
-                    );
-                    this.fire('drag', L.extend({
-                            dragButton: button,
-                            origEvent: e,
-                            startEvent: that.dragStartPos[button]
-                        }, offestFromEvent(e), movementFromEvents(this.prevEvent[button], e)
-                        )
-                    );
-                }
-                this.prevEvent[button] = e;
+            if (this.isDragging) {
+                this.fire('drag', L.extend({dragButton: this.dragButton, origEvent: e},
+                    offestFromEvent(e), movementFromEvents(this.prevEvent, e)
+                    )
+                );
+            } else if (this.dragButton !== null && exceedsTolerance()) {
+                this.isDragging = true;
+                this.fire('dragstart', L.extend(
+                    {dragButton: this.dragButton, origEvent: this.startEvent},
+                    this.startEvent._offset
+                    )
+                );
+                this.fire('drag', L.extend({
+                        dragButton: this.dragButton,
+                        origEvent: e,
+                        startEvent: that.startEvent
+                    }, offestFromEvent(e), movementFromEvents(this.prevEvent, e)
+                    )
+                );
             }
+            this.prevEvent = e;
         },
 
         onMouseLeave: function(e) {
-            var i, button;
-            var dragButtons = this.options.dragButtons;
-            for (i = 0; i < dragButtons.length; i++) {
-                button = dragButtons[i];
-                if (this.isDragging[button]) {
-                    this.isDragging[button] = false;
-                    this.fire('dragend', L.extend({dragButton: button, origEvent: e},
-                        offestFromEvent(e), movementFromEvents(this.prevEvent[button], e)
-                        )
-                    );
-                }
+            if (this.isDragging) {
+                this.isDragging = false;
+                this.fire('dragend', L.extend({dragButton: this.dragButton, origEvent: e},
+                    offestFromEvent(e), movementFromEvents(this.prevEvent, e)
+                    )
+                );
+                this.dragButton = null;
             }
-            this.dragStartPos = {};
         }
     }
 );
