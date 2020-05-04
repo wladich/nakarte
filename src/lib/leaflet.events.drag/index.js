@@ -24,20 +24,20 @@ function movementFromEvents(e1, e2) {
 const DragEvents = L.Evented.extend({
         options: {
             dragTolerance: 2,
-            dragButtons: [0]
+            dragButtons: [0],
+            stopOnLeave: false,
         },
 
-        initialize: function(eventsSource, options) {
+        initialize: function(element, options) {
             L.setOptions(this, options);
+            this.element = element;
+
             this.dragButton = null;
             this.startEvent = null;
             this.prevEvent = null;
             this.isDragging = false;
 
-            L.DomEvent.on(eventsSource, 'mousemove', this.onMouseMove, this);
-            L.DomEvent.on(eventsSource, 'mouseup', this.onMouseUp, this);
-            L.DomEvent.on(eventsSource, 'mousedown', this.onMouseDown, this);
-            L.DomEvent.on(eventsSource, 'mouseleave', this.onMouseLeave, this);
+            L.DomEvent.on(element, 'mousedown', this.onMouseDown, this);
         },
 
         onMouseDown: function(e) {
@@ -47,6 +47,12 @@ const DragEvents = L.Evented.extend({
                 this.startEvent = this.prevEvent = e;
                 L.DomUtil.disableImageDrag();
                 L.DomUtil.disableTextSelection();
+                this._moveHandler = this.onMouseMove.bind(this);
+                document.addEventListener('mousemove', this._moveHandler, true);
+                L.DomEvent.on(document, 'mouseup', this.onMouseUp, this);
+                if (this.options.stopOnLeave) {
+                    L.DomEvent.on(this.element, 'mouseleave', this.onMouseLeave, this);
+                }
             }
         },
 
@@ -68,12 +74,14 @@ const DragEvents = L.Evented.extend({
                     );
                 }
                 this.dragButton = null;
+                document.removeEventListener('mousemove', this._moveHandler, true);
+                L.DomEvent.off(document, 'mouseup', this.onMouseUp, this);
+                L.DomEvent.off(this.element, 'mouseleave', this.onMouseLeave, this);
             }
         },
 
         onMouseMove: function(e) {
             var that = this;
-
             function exceedsTolerance() {
                 var tolerance = that.options.dragTolerance;
                 return Math.abs(e.clientX - that.startEvent.clientX) > tolerance ||
