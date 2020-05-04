@@ -21,7 +21,7 @@ function movementFromEvents(e1, e2) {
     };
 }
 
-var DragEvents = L.Class.extend({
+const DragEvents = L.Class.extend({
         options: {
             dragTolerance: 2,
             dragButtons: [0]
@@ -29,13 +29,8 @@ var DragEvents = L.Class.extend({
 
         includes: L.Mixin.Events,
 
-        initialize: function(eventsSource, eventsTarget, options) {
+        initialize: function(eventsSource, options) {
             L.setOptions(this, options);
-            if (eventsTarget) {
-                this.eventsTarget = eventsTarget;
-            } else {
-                this.eventsTarget = this;
-            }
             this.dragStartPos = [];
             this.prevEvent = [];
             this.isDragging = [];
@@ -91,18 +86,18 @@ var DragEvents = L.Class.extend({
             for (i = 0; i < dragButtons.length; i++) {
                 button = dragButtons[i];
                 if (this.isDragging[button]) {
-                    this.eventsTarget.fire('drag', L.extend({dragButton: button, origEvent: e},
+                    this.fire('drag', L.extend({dragButton: button, origEvent: e},
                         offestFromEvent(e), movementFromEvents(this.prevEvent[button], e)
                         )
                     );
                 } else if (this.dragStartPos[button] && exceedsTolerance(button)) {
                     this.isDragging[button] = true;
-                    this.eventsTarget.fire('dragstart', L.extend(
+                    this.fire('dragstart', L.extend(
                         {dragButton: button, origEvent: this.dragStartPos[button]},
                         this.dragStartPos[button]._offset
                         )
                     );
-                    this.eventsTarget.fire('drag', L.extend({
+                    this.fire('drag', L.extend({
                             dragButton: button,
                             origEvent: e,
                             startEvent: that.dragStartPos[button]
