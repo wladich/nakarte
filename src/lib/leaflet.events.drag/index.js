@@ -21,13 +21,11 @@ function movementFromEvents(e1, e2) {
     };
 }
 
-const DragEvents = L.Class.extend({
+const DragEvents = L.Evented.extend({
         options: {
             dragTolerance: 2,
             dragButtons: [0]
         },
-
-        includes: L.Mixin.Events,
 
         initialize: function(eventsSource, options) {
             L.setOptions(this, options);
