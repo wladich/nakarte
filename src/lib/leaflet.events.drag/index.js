@@ -57,10 +57,9 @@ const DragEvents = L.Evented.extend({
         },
 
         onMouseUp: function(e) {
-            L.DomUtil.enableImageDrag();
-            L.DomUtil.enableTextSelection();
-
             if (this.dragButton === e.button) {
+                L.DomUtil.enableImageDrag();
+                L.DomUtil.enableTextSelection();
                 if (this.isDragging) {
                     this.isDragging = false;
                     this.fire('dragend', L.extend({dragButton: e.button, origEvent: e},
