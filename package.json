@@ -6,9 +6,7 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --open --config webpack/webpack.config.js --hot",
     "lint:code": "eslint --ext js .",
     "lint:style": "stylelint '**/*.css'",
-    "lint": "npm run lint:code && npm run lint:style",
-    "test": "cross-env NODE_ENV=testing  karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
-    "testdev": "cross-env NODE_ENV=testing karma start --browsers ChromeHeadless test/karma.conf.js"
+    "lint": "npm run lint:code && npm run lint:style"
   },
   "repository": {
     "type": "git",
@@ -26,7 +24,6 @@
     "@babel/preset-env": "^7.8.4",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.6",
-    "chai": "^4.2.0",
     "chalk": "^3.0.0",
     "child_process": "^1.0.2",
     "clean-webpack-plugin": "^3.0.0",
@@ -43,14 +40,7 @@
     "fs-extra": "^9.0.0",
     "gzip-size": "^5.1.1",
     "html-webpack-plugin": "^3.2.0",
-    "karma": "^5.0.4",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-mocha": "^1.3.0",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-webpack": "^4.0.2",
     "mini-css-extract-plugin": "^0.9.0",
-    "mocha": "^7.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
@@ -68,21 +58,12 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "@sentry/browser": "^5.15.5",
-    "alertify.js": "^1.0.12",
-    "blueimp-md5": "^2.13.0",
-    "browser-filesaver": "^1.1.1",
     "core-js": "^3.6.4",
-    "escape-html": "^1.0.3",
-    "image-promise": "^7.0.0",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
     "load-script": "^1.0.0",
     "mapillary-js": "2.20.0",
     "pbf": "^3.0.5",
-    "rbush": "^3.0.1",
-    "regenerator-runtime": "^0.13.5",
-    "tiny-inflate": "^1.0.2",
-    "utf8": "^3.0.0"
+    "regenerator-runtime": "^0.13.5"
   }
 }
