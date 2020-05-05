@@ -122,15 +122,21 @@ L.Control.Panoramas = L.Control.extend({
         onAdd: function(map) {
             this._map = map;
 
+            this._splitterDragging = false;
             const splitter = L.DomUtil.create('div', 'panorama-splitter', this._panoramasContainer);
-            L.DomUtil.create('div', 'button', splitter);
+            const splitterButton = L.DomUtil.create('div', 'button', splitter);
             new DragEvents(splitter, null, {trackOutsideElement: true}).on({
+                dragstart: this.onSplitterDragStart,
+                dragend: this.onSplitterDragEnd,
                 drag: this.onSplitterDrag,
+            }, this);
+            new DragEvents(splitterButton, null, {trackOutsideElement: true}).on({
                 click: this.onSplitterClick
             }, this);
             this.setupViewerLayout();
             const {container, link, barContainer} = makeButtonWithBar(
                 'leaflet-contol-panoramas', 'Show panoramas (Alt-P)', 'icon-panoramas');
+            map.on('resize', this.onMapResize, this);
             this._container = container;
             L.DomEvent.on(link, 'click', this.onButtonClick, this);
             L.DomEvent.on(document, 'keyup', this.onKeyUp, this);
@@ -406,7 +412,21 @@ L.Control.Panoramas = L.Control.extend({
             if (provider && provider.viewer) {
                 provider.viewer.invalidateSize();
             }
-        }
+        },
+
+        onMapResize: function() {
+            if (!this._splitterDragging) {
+                this.updateContainerSize();
+            }
+        },
+
+        onSplitterDragStart: function() {
+            this._splitterDragging = true;
+        },
+
+        onSplitterDragEnd: function() {
+            this._splitterDragging = false;
+        },
     },
 );
 
