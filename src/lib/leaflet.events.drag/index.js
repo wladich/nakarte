@@ -37,18 +37,12 @@ const DragEvents = L.Evented.extend({
 
         onMouseUp: function(e) {
             if (this.dragButton === e.button) {
-                L.DomUtil.enableImageDrag();
-                L.DomUtil.enableTextSelection();
                 if (this.isDragging) {
-                    this.isDragging = false;
                     this.fireDragEvent('dragend', e);
                 } else {
                     this.fire('click', {originalEvent: e, target: this.element});
                 }
-                this.dragButton = null;
-                document.removeEventListener('mousemove', this._moveHandler, true);
-                L.DomEvent.off(document, 'mouseup', this.onMouseUp, this);
-                L.DomEvent.off(this.element, 'mouseleave', this.onMouseLeave, this);
+                this.finishDrag();
             }
         },
 
@@ -73,9 +67,8 @@ const DragEvents = L.Evented.extend({
 
         onMouseLeave: function(e) {
             if (this.isDragging) {
-                this.isDragging = false;
                 this.fireDragEvent('dragend', e);
-                this.dragButton = null;
+                this.finishDrag();
             }
         },
 
@@ -88,6 +81,16 @@ const DragEvents = L.Evented.extend({
                 dragMovement: pos.subtract(prevPos) // e.movementX is not available in Safari
             };
             this.fire(type, data);
+        },
+
+        finishDrag: function() {
+            this.isDragging = false;
+            this.dragButton = null;
+            L.DomUtil.enableImageDrag();
+            L.DomUtil.enableTextSelection();
+            document.removeEventListener('mousemove', this._moveHandler, true);
+            L.DomEvent.off(document, 'mouseup', this.onMouseUp, this);
+            L.DomEvent.off(this.element, 'mouseleave', this.onMouseLeave, this);
         }
     }
 );
