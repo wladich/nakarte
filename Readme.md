@@ -8,6 +8,11 @@ cd nakarte
 yarn
 ```
 
+Create a dummy `secrets.js` file:
+```
+cp src/secrets.js.template src/secrets.js
+```
+
 Run dev server:
 ```bash
 yarn start
