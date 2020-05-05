@@ -1,26 +1,5 @@
 import L from "leaflet";
 
-function offestFromEvent(e) {
-    if (e.offsetX === undefined) {
-        var rect = e.target.getBoundingClientRect();
-        return {
-            offsetX: e.clientX - rect.left,
-            offestY: e.clientY - rect.top
-        };
-    }
-    return {
-        offsetX: e.offsetX,
-        offestY: e.offsetY
-    };
-}
-
-function movementFromEvents(e1, e2) {
-    return {
-        movementX: e2.clientX - e1.clientX,
-        movementY: e2.clientY - e1.clientY
-    };
-}
-
 const DragEvents = L.Evented.extend({
         options: {
             dragTolerance: 2,
@@ -43,8 +22,8 @@ const DragEvents = L.Evented.extend({
         onMouseDown: function(e) {
             if (this.dragButton === null && this.options.dragButtons.includes(e.button)) {
                 this.dragButton = e.button;
-                e._offset = offestFromEvent(e);
-                this.startEvent = this.prevEvent = e;
+                this.startEvent = e;
+                this.prevEvent = e;
                 L.DomUtil.disableImageDrag();
                 L.DomUtil.disableTextSelection();
                 this._moveHandler = this.onMouseMove.bind(this);
@@ -62,15 +41,9 @@ const DragEvents = L.Evented.extend({
                 L.DomUtil.enableTextSelection();
                 if (this.isDragging) {
                     this.isDragging = false;
-                    this.fire('dragend', L.extend({dragButton: e.button, origEvent: e},
-                        offestFromEvent(e), movementFromEvents(this.prevEvent, e)
-                        )
-                    );
+                    this.fireDragEvent('dragend', e);
                 } else {
-                    this.fire('click', L.extend({dragButton: e.button, origEvent: e},
-                        offestFromEvent(e)
-                        )
-                    );
+                    this.fire('click', {originalEvent: e, target: this.element});
                 }
                 this.dragButton = null;
                 document.removeEventListener('mousemove', this._moveHandler, true);
@@ -88,37 +61,33 @@ const DragEvents = L.Evented.extend({
             }
 
             if (this.isDragging) {
-                this.fire('drag', L.extend({dragButton: this.dragButton, origEvent: e},
-                    offestFromEvent(e), movementFromEvents(this.prevEvent, e)
-                    )
-                );
+                this.fireDragEvent('drag', e);
+                this.prevEvent = e;
             } else if (this.dragButton !== null && exceedsTolerance()) {
                 this.isDragging = true;
-                this.fire('dragstart', L.extend(
-                    {dragButton: this.dragButton, origEvent: this.startEvent},
-                    this.startEvent._offset
-                    )
-                );
-                this.fire('drag', L.extend({
-                        dragButton: this.dragButton,
-                        origEvent: e,
-                        startEvent: that.startEvent
-                    }, offestFromEvent(e), movementFromEvents(this.prevEvent, e)
-                    )
-                );
+                this.fireDragEvent('dragstart', this.startEvent);
+                this.fireDragEvent('drag', e);
+                this.prevEvent = e;
             }
-            this.prevEvent = e;
         },
 
         onMouseLeave: function(e) {
             if (this.isDragging) {
                 this.isDragging = false;
-                this.fire('dragend', L.extend({dragButton: this.dragButton, origEvent: e},
-                    offestFromEvent(e), movementFromEvents(this.prevEvent, e)
-                    )
-                );
+                this.fireDragEvent('dragend', e);
                 this.dragButton = null;
             }
+        },
+
+        fireDragEvent: function(type, originalEvent) {
+            const prevPos = L.point(this.prevEvent.clientX, this.prevEvent.clientY);
+            const pos = L.point(originalEvent.clientX, originalEvent.clientY);
+            const data = {
+                dragButton: this.dragButton,
+                originalEvent,
+                dragMovement: pos.subtract(prevPos) // e.movementX is not available in Safari
+            };
+            this.fire(type, data);
         }
     }
 );

@@ -82,20 +82,6 @@ function pathRegularSamples(latlngs, step) {
     return samples;
 }
 
-function offestFromEvent(e) {
-    if (e.offsetX === undefined) {
-        var rect = e.target.getBoundingClientRect();
-        return {
-            offsetX: e.clientX - rect.left,
-            offestY: e.clientY - rect.top
-        };
-    }
-    return {
-        offsetX: e.offsetX,
-        offestY: e.offsetY
-    };
-}
-
 const ElevationProfile = L.Class.extend({
         options: {
             elevationsServer: config.elevationsServer,
@@ -228,7 +214,7 @@ const ElevationProfile = L.Class.extend({
                 // FIXME: restore hiding when we make display of selection on map
                 // this.cursorHide();
                 this.polyLineSelection.addTo(this._map).bringToBack();
-                this.dragStart = e.offsetX;
+                this.selStartMousePos = e.originalEvent.offsetX;
             }
         },
 
@@ -250,15 +236,14 @@ const ElevationProfile = L.Class.extend({
             icon.getElementsByClassName('elevation-profile-marker-label')[0].innerHTML = label;
         },
 
-        updateGraphSelection: function(e) {
-            if (this.dragStart === null) {
+        updateGraphSelection: function(mousepos = null) {
+            if (this.selStartMousePos === null) {
                 return;
             }
             var selStart, selEnd;
-            if (e) {
-                var x = e.offsetX;
-                selStart = Math.min(x, this.dragStart);
-                selEnd = Math.max(x, this.dragStart);
+            if (mousepos !== null) {
+                selStart = Math.min(mousepos, this.selStartMousePos);
+                selEnd = Math.max(mousepos, this.selStartMousePos);
                 this.selStartInd = Math.round(this.xToIndex(selStart));
                 this.selEndInd = Math.round(this.xToIndex(selEnd));
 
@@ -280,28 +265,29 @@ const ElevationProfile = L.Class.extend({
         onSvgDragEnd: function(e) {
             if (e.dragButton === 0) {
                 this.cursorShow();
-                this.updateGraphSelection(e);
+                this.updateGraphSelection(e.originalEvent.offsetX);
                 var stats = this.calcProfileStats(this.values.slice(this.selStartInd, this.selEndInd + 1));
                 this.updatePropsDisplay(stats);
                 L.DomUtil.addClass(this.propsContainer, 'elevation-profile-properties-selected');
             }
             if (e.dragButton === 2) {
-                this.drawingContainer.scrollLeft -= e.movementX;
+                this.drawingContainer.scrollLeft -= e.dragMovement.x;
             }
         },
 
         onSvgDrag: function(e) {
             if (e.dragButton === 0) {
-                this.updateGraphSelection(e);
+                this.updateGraphSelection(e.originalEvent.offsetX);
                 this.polyLineSelection.setLatLngs(this.samples.slice(this.selStartInd, this.selEndInd + 1));
             }
             if (e.dragButton === 2) {
-                this.drawingContainer.scrollLeft -= e.movementX;
+                this.drawingContainer.scrollLeft -= e.dragMovement.x;
             }
         },
 
         onSvgClick: function(e) {
-            if (e.dragButton === 0) {
+            const button = e.originalEvent.button;
+            if (button === 0) {
                 this.dragStart = null;
                 L.DomUtil.addClass(this.graphSelection, 'elevation-profile-cursor-hidden');
                 L.DomUtil.removeClass(this.propsContainer, 'elevation-profile-properties-selected');
@@ -310,8 +296,8 @@ const ElevationProfile = L.Class.extend({
                     this.updatePropsDisplay(this.stats);
                 }
             }
-            if (e.dragButton === 2) {
-                this.setMapPositionAtIndex(Math.round(this.xToIndex(e.offsetX)));
+            if (button === 2) {
+                this.setMapPositionAtIndex(Math.round(this.xToIndex(e.originalEvent.offsetX)));
             }
         },
 
@@ -336,11 +322,11 @@ const ElevationProfile = L.Class.extend({
                 this.horizZoom = 10;
             }
 
-            var x = offestFromEvent(e).offsetX;
+            var x = e.offsetX;
             var ind = this.xToIndex(x);
 
             var newScrollLeft = this.drawingContainer.scrollLeft +
-                offestFromEvent(e).offsetX * (this.horizZoom / oldHorizZoom - 1);
+                e.offsetX * (this.horizZoom / oldHorizZoom - 1);
             if (newScrollLeft < 0) {
                 newScrollLeft = 0;
             }
@@ -660,7 +646,7 @@ const ElevationProfile = L.Class.extend({
             if (!this.values) {
                 return;
             }
-            var ind = this.xToIndex(offestFromEvent(e).offsetX);
+            var ind = this.xToIndex(e.offsetX);
             this.setCursorPosition(ind);
         },
 
