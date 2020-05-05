@@ -2,6 +2,7 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import {MapWithSidebars} from '~/lib/leaflet.map.sidebars';
 import '~/lib/leaflet.control.printPages/control';
 import '~/lib/leaflet.control.caption';
 import config from './config';
@@ -46,7 +47,7 @@ function setUp() {
     };
     fixAll();
 
-    const map = L.map('map', {
+    const map = new MapWithSidebars('map', {
             zoomControl: false,
             fadeAnimation: false,
             attributionControl: false,
@@ -75,7 +76,7 @@ function setUp() {
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
-    const panoramas = new L.Control.Panoramas(document.getElementById('street-view'))
+     const panoramas = new L.Control.Panoramas()
         .addTo(map)
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');

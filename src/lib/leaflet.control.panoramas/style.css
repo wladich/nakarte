@@ -1,3 +1,57 @@
+.panoramas-container {
+    display: none;
+}
+
+.panoramas-container.enabled {
+    display: flex;
+}
+
+.panoramas-container.split-horizontal {
+    flex-direction: column;
+}
+
+.panoramas-container.split-vertical {
+    flex-direction: row;
+}
+
+.panorama-splitter {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+}
+
+.split-vertical .panorama-splitter {
+    flex-direction: column;
+    width: 3px;
+    cursor: col-resize;
+}
+
+.split-horizontal .panorama-splitter {
+    flex-direction: row;
+    height: 3px;
+    cursor: row-resize;
+}
+
+.panorama-splitter .button {
+    width: 51px;
+    height: 21px;
+    position: absolute;
+    z-index: 20000;
+    background-image: url("slider-button.svg");
+    background-size: 51px 21px;
+    user-select: none;
+    cursor: pointer;
+}
+
+.split-vertical .panorama-splitter .button {
+    margin-left: 13px;
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+}
+.split-horizontal .panorama-splitter .button {
+    margin-top: -9px;
+}
+
 .icon-panoramas {
     background-image: url('panoramas-off.png');
     background-size: 17px 17px !important;

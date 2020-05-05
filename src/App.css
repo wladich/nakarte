@@ -2,17 +2,6 @@
   height: 100%;
 }
 
-#street-view {
-  width: 50%;
-  height: 100%;
-  float: left;
-  display: none;
-}
-
-#street-view.enabled {
-  display: block;
-}
-
 *:focus {
   outline: 0;
 }
