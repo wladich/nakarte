@@ -236,27 +236,27 @@ const ElevationProfile = L.Class.extend({
             icon.getElementsByClassName('elevation-profile-marker-label')[0].innerHTML = label;
         },
 
-        updateGraphSelection: function(mousepos = null) {
+        setGraphSelection: function(mousepos) {
             if (this.selStartMousePos === null) {
                 return;
             }
-            var selStart, selEnd;
-            if (mousepos !== null) {
-                selStart = Math.min(mousepos, this.selStartMousePos);
-                selEnd = Math.max(mousepos, this.selStartMousePos);
-                this.selStartInd = Math.round(this.xToIndex(selStart));
-                this.selEndInd = Math.round(this.xToIndex(selEnd));
+            const selStart = Math.min(mousepos, this.selStartMousePos);
+            const selEnd = Math.max(mousepos, this.selStartMousePos);
+            this.selStartInd = Math.round(this.xToIndex(selStart));
+            this.selEndInd = Math.round(this.xToIndex(selEnd));
 
-                if (this.selStartInd < 0) {
-                    this.selStartInd = 0;
-                }
-                if (this.selEndInd > this.values.length - 1) {
-                    this.selEndInd = this.values.length - 1;
-                }
-            } else {
-                selStart = this.selStartInd * (this.svgWidth - 1) / (this.values.length - 1);
-                selEnd = this.selEndInd * (this.svgWidth - 1) / (this.values.length - 1);
+            if (this.selStartInd < 0) {
+                this.selStartInd = 0;
             }
+            if (this.selEndInd > this.values.length - 1) {
+                this.selEndInd = this.values.length - 1;
+            }
+            this.updateGraphSelection();
+        },
+
+        updateGraphSelection: function() {
+            const selStart = this.selStartInd * (this.svgWidth - 1) / (this.values.length - 1);
+            const selEnd = this.selEndInd * (this.svgWidth - 1) / (this.values.length - 1);
             this.graphSelection.style.left = selStart + 'px';
             this.graphSelection.style.width = (selEnd - selStart) + 'px';
             L.DomUtil.removeClass(this.graphSelection, 'elevation-profile-cursor-hidden');
@@ -265,7 +265,7 @@ const ElevationProfile = L.Class.extend({
         onSvgDragEnd: function(e) {
             if (e.dragButton === 0) {
                 this.cursorShow();
-                this.updateGraphSelection(e.originalEvent.offsetX);
+                this.setGraphSelection(e.originalEvent.offsetX);
                 var stats = this.calcProfileStats(this.values.slice(this.selStartInd, this.selEndInd + 1));
                 this.updatePropsDisplay(stats);
                 L.DomUtil.addClass(this.propsContainer, 'elevation-profile-properties-selected');
@@ -277,7 +277,7 @@ const ElevationProfile = L.Class.extend({
 
         onSvgDrag: function(e) {
             if (e.dragButton === 0) {
-                this.updateGraphSelection(e.originalEvent.offsetX);
+                this.setGraphSelection(e.originalEvent.offsetX);
                 this.polyLineSelection.setLatLngs(this.samples.slice(this.selStartInd, this.selEndInd + 1));
             }
             if (e.dragButton === 2) {
