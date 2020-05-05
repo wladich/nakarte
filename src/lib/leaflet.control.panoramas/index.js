@@ -7,6 +7,9 @@ import '~/lib/controls-styles/controls-styles.css';
 import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import mapillaryProvider from './lib/mapillary';
 import wikimediaProvider from './lib/wikimedia';
+import {DragEvents} from '~/lib/leaflet.events.drag';
+import {onElementResize} from '~/lib/anyElementResizeEvent';
+import safeLocalStorage from '~/lib/safe-localstorage';
 
 function fireRefreshEventOnWindow() {
     const evt = document.createEvent("HTMLEvents");
@@ -52,7 +55,10 @@ L.Control.Panoramas = L.Control.extend({
         includes: L.Mixin.Events,
 
         options: {
-            position: 'topleft'
+            position: 'topleft',
+            splitVerically: true,
+            splitSizeFraction: 0.5,
+            minViewerSize: 30,
         },
 
         getProviders: function() {
@@ -87,19 +93,48 @@ L.Control.Panoramas = L.Control.extend({
             ];
         },
 
-        initialize: function(panoramaContainer, options) {
+        initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
-            this._panoramaContainer = panoramaContainer;
+            this.loadSettings();
+            this._panoramasContainer = L.DomUtil.create('div', 'panoramas-container');
+            onElementResize(this._panoramasContainer, fireRefreshEventOnWindow);
             this.providers = this.getProviders();
             for (let provider of this.providers) {
                 provider.selected.subscribe(this.updateCoverageVisibility, this);
-                provider.container = L.DomUtil.create('div', 'panorama-container', panoramaContainer);
+                provider.container = L.DomUtil.create('div', 'panorama-container', this._panoramasContainer);
             }
             this.nearbyPoints = [];
         },
 
+        loadSettings: function() {
+            let storedSettings;
+            try {
+                storedSettings = JSON.parse(safeLocalStorage.panoramaSettings);
+            } catch {
+                // ignore
+            }
+            this._splitVerically = storedSettings?.spitVertically ?? this.options.splitVerically;
+            const fraction = storedSettings?.splitSizeFraction;
+            this._splitSizeFraction = isNaN(fraction) ? this.options.splitSizeFraction : fraction;
+        },
+
+        saveSetting: function() {
+            safeLocalStorage.panoramaSettings = JSON.stringify({
+                spitVertically: this._splitVerically,
+                splitSizeFraction: this._splitSizeFraction
+            });
+        },
+
         onAdd: function(map) {
             this._map = map;
+
+            const splitter = L.DomUtil.create('div', 'panorama-splitter', this._panoramasContainer);
+            L.DomUtil.create('div', 'button', splitter);
+            new DragEvents(splitter, null, {trackOutsideElement: true}).on({
+                drag: this.onSplitterDrag,
+                click: this.onSplitterClick
+            }, this);
+            this.setupViewerLayout();
             const {container, link, barContainer} = makeButtonWithBar(
                 'leaflet-contol-panoramas', 'Show panoramas (Alt-P)', 'icon-panoramas');
             this._container = container;
@@ -118,6 +153,28 @@ L.Control.Panoramas = L.Control.extend({
             ko.applyBindings(this, container);
             map.createPane('rasterOverlay').style.zIndex = 300;
             return container;
+        },
+
+        onSplitterDrag: function(e) {
+            const minSize = this.options.minViewerSize;
+            const container = this._panoramasContainer;
+            const oldSize = container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
+            let newSize = oldSize + e.dragMovement[this._splitVerically ? 'x' : 'y'];
+            const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
+            if (newSize < minSize) {
+                newSize = this.options.minViewerSize;
+            }
+            const maxSize = oldSize + mapSize - minSize;
+            if (newSize > maxSize) {
+                newSize = maxSize;
+            }
+            this.setContainerSizePixels(newSize);
+        },
+
+        onSplitterClick: function() {
+            this._splitVerically = !this._splitVerically;
+            this.saveSetting();
+            this.setupViewerLayout();
         },
 
         onButtonClick: function() {
@@ -184,12 +241,12 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         showPanoramaContainer: function() {
-            L.DomUtil.addClass(this._panoramaContainer, 'enabled');
+            L.DomUtil.addClass(this._panoramasContainer, 'enabled');
             fireRefreshEventOnWindow();
         },
 
         panoramaVisible: function() {
-            if (L.DomUtil.hasClass(this._panoramaContainer, 'enabled')) {
+            if (L.DomUtil.hasClass(this._panoramasContainer, 'enabled')) {
                 for (let provider of this.providers) {
                     if (L.DomUtil.hasClass(provider.container, 'enabled')) {
                         return provider;
@@ -252,7 +309,7 @@ L.Control.Panoramas = L.Control.extend({
             for (let provider of this.providers) {
                 this.hidePano(provider);
             }
-            L.DomUtil.removeClass(this._panoramaContainer, 'enabled');
+            L.DomUtil.removeClass(this._panoramasContainer, 'enabled');
             this.hideMarker();
             fireRefreshEventOnWindow();
             this.notifyChanged();
@@ -315,6 +372,41 @@ L.Control.Panoramas = L.Control.extend({
                     return;
                 }
             }
+        },
+
+        setupViewerLayout: function() {
+            let sidebar;
+            if (this._splitVerically) {
+                L.DomUtil.addClass(this._panoramasContainer, 'split-vertical');
+                L.DomUtil.removeClass(this._panoramasContainer, 'split-horizontal');
+                sidebar = 'left';
+                this._panoramasContainer.style.height = '100%';
+            } else {
+                L.DomUtil.addClass(this._panoramasContainer, 'split-horizontal');
+                L.DomUtil.removeClass(this._panoramasContainer, 'split-vertical');
+                sidebar = 'top';
+                this._panoramasContainer.style.width = '100%';
+            }
+            this._map.addElementToSidebar(sidebar, this._panoramasContainer);
+            this.updateContainerSize();
+        },
+
+        setContainerSizePixels: function(size) {
+            this._panoramasContainer.style[this._splitVerically ? 'width' : 'height'] = `${size}px`;
+            setTimeout(() => { // map size has not updated yet
+                const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
+                this._splitSizeFraction = size / (mapSize + size);
+                this.saveSetting();
+            }, 0);
+        },
+
+        updateContainerSize: function() {
+            const fraction = this._splitSizeFraction;
+            const container = this._panoramasContainer;
+            const containerSize = container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
+            const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
+            const newSize = fraction * (mapSize + containerSize);
+            container.style[this._splitVerically ? 'width' : 'height'] = `${newSize}px`;
         }
     },
 );
