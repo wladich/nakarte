@@ -52,6 +52,24 @@
     margin-top: -9px;
 }
 
+.splitter-border {
+    position: absolute;
+    opacity: 0;
+    z-index: 20000;
+}
+
+.split-vertical .splitter-border {
+    width: 20px;
+    margin-left: -9px;
+    height: 100%;
+}
+
+.split-horizontal .splitter-border {
+    height: 20px;
+    margin-top: -9px;
+    width: 100%;
+}
+
 .icon-panoramas {
     background-image: url('panoramas-off.png');
     background-size: 17px 17px !important;
