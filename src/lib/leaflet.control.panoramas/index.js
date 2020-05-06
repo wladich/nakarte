@@ -124,6 +124,7 @@ L.Control.Panoramas = L.Control.extend({
 
             this._splitterDragging = false;
             const splitter = L.DomUtil.create('div', 'panorama-splitter', this._panoramasContainer);
+            L.DomUtil.create('div', 'splitter-border', splitter);
             const splitterButton = L.DomUtil.create('div', 'button', splitter);
             new DragEvents(splitter, null, {trackOutsideElement: true}).on({
                 dragstart: this.onSplitterDragStart,
