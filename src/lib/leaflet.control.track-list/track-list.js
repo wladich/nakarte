@@ -510,7 +510,11 @@ L.Control.TrackList = L.Control.extend({
             const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
             const url = window.location + '&nktl=' + key;
             copyToClipboard(url, mouseEvent);
-            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then(
+            fetch(`${config.tracksStorageServer}/track/${key}`, {
+                method: 'POST',
+                data: serialized,
+                withCredentials: true
+            }).then(
                 null, (e) => {
                     let message = e.message || e;
                     if (e.xhr.status === 413) {

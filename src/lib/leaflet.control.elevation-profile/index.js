@@ -975,7 +975,7 @@ const ElevationProfile = L.Class.extend({
                 req.push(latlngs[i].lat.toFixed(6) + ' ' + latlngs[i].lng.toFixed(6));
             }
             req = req.join('\n');
-            const xhrPromise = fetch(this.options.elevationsServer, {method: 'POST', data: req});
+            const xhrPromise = fetch(this.options.elevationsServer, {method: 'POST', data: req, withCredentials: true});
             this.abortLoading = xhrPromise.abort.bind(xhrPromise);
             return xhrPromise.then(
                     function(xhr) {
