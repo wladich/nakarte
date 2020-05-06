@@ -35,6 +35,7 @@ const Viewer = L.Evented.extend({
         this.createDateLabel(container);
         this.createCloseButton(container);
         window.addEventListener('resize', this.resize.bind(this));
+        this.invalidateSize = L.Util.throttle(this._invalidateSize, 100, this);
     },
 
     showPano: function(data) {
@@ -127,6 +128,10 @@ const Viewer = L.Evented.extend({
         const place = this.panorama.getPlace();
         const timestamp = Date.parse(place.getDate());
         DateLabelMixin.updateDateLabel.call(this, timestamp);
+    },
+
+    _invalidateSize: function() {
+        this.panorama.syncPort();
     }
 });
 
