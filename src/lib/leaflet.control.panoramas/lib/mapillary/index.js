@@ -52,6 +52,7 @@ const Viewer = L.Evented.extend({
             this._bearing = 0;
             this._zoom = 0;
             this._center = [0, 0];
+            this.invalidateSize = L.Util.throttle(this._invalidateSize, 100, this);
         },
 
         showPano: function(data) {
@@ -161,6 +162,10 @@ const Viewer = L.Evented.extend({
                 return true;
             }
             return false;
+        },
+
+        _invalidateSize: function() {
+            this.viewer.resize();
         }
     }
 );

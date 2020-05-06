@@ -11,12 +11,6 @@ import {DragEvents} from '~/lib/leaflet.events.drag';
 import {onElementResize} from '~/lib/anyElementResizeEvent';
 import safeLocalStorage from '~/lib/safe-localstorage';
 
-function fireRefreshEventOnWindow() {
-    const evt = document.createEvent("HTMLEvents");
-    evt.initEvent('resize', true, false);
-    window.dispatchEvent(evt);
-}
-
 const PanoMarker = L.Marker.extend({
     options: {
         zIndexOffset: 10000
@@ -97,7 +91,7 @@ L.Control.Panoramas = L.Control.extend({
             L.Control.prototype.initialize.call(this, options);
             this.loadSettings();
             this._panoramasContainer = L.DomUtil.create('div', 'panoramas-container');
-            onElementResize(this._panoramasContainer, fireRefreshEventOnWindow);
+            onElementResize(this._panoramasContainer, this.onContainerResize.bind(this));
             this.providers = this.getProviders();
             for (let provider of this.providers) {
                 provider.selected.subscribe(this.updateCoverageVisibility, this);
@@ -242,7 +236,6 @@ L.Control.Panoramas = L.Control.extend({
 
         showPanoramaContainer: function() {
             L.DomUtil.addClass(this._panoramasContainer, 'enabled');
-            fireRefreshEventOnWindow();
         },
 
         panoramaVisible: function() {
@@ -311,7 +304,6 @@ L.Control.Panoramas = L.Control.extend({
             }
             L.DomUtil.removeClass(this._panoramasContainer, 'enabled');
             this.hideMarker();
-            fireRefreshEventOnWindow();
             this.notifyChanged();
         },
 
@@ -407,6 +399,13 @@ L.Control.Panoramas = L.Control.extend({
             const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
             const newSize = fraction * (mapSize + containerSize);
             container.style[this._splitVerically ? 'width' : 'height'] = `${newSize}px`;
+        },
+
+        onContainerResize: function() {
+            const provider = this.panoramaVisible();
+            if (provider && provider.viewer) {
+                provider.viewer.invalidateSize();
+            }
         }
     },
 );
