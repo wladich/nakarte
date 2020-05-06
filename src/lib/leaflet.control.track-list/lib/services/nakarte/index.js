@@ -69,7 +69,7 @@ class NakarteUrlLoader {
         const requests = values.map((trackId) =>
             fetch(
                 `${config.tracksStorageServer}/track/${trackId}`,
-                {responseType: 'binarystring'}
+                {responseType: 'binarystring', withCredentials: true}
             )
         );
         let responses;
