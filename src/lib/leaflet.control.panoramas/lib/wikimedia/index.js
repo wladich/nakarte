@@ -333,6 +333,10 @@ const Viewer = L.Evented.extend({
             center.lng.toFixed(2),
             this.map.getZoom().toFixed(1)
         ];
+    },
+
+    invalidateSize: function() {
+        this.map.invalidateSize();
     }
 });
 

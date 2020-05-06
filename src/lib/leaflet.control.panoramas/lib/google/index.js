@@ -33,6 +33,7 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
 
 const Viewer = L.Evented.extend({
     initialize: function(google, container) {
+        this.google = google;
         const panorama = this.panorama = new google.maps.StreetViewPanorama(container, {
                 enableCloseButton: true,
                 imageDateControl: true
@@ -41,6 +42,8 @@ const Viewer = L.Evented.extend({
         panorama.addListener('position_changed', () => this.onPanoramaChangeView());
         panorama.addListener('pov_changed', () => this.onPanoramaChangeView());
         panorama.addListener('closeclick', () => this.onCloseClick());
+
+        this.invalidateSize = L.Util.throttle(this._invalidateSize, 50, this);
     },
 
     showPano: function(data) {
@@ -99,6 +102,10 @@ const Viewer = L.Evented.extend({
             return true;
         }
         return false;
+    },
+
+    _invalidateSize: function() {
+        this.google.maps.event.trigger(this.panorama, 'resize');
     }
 });
 
