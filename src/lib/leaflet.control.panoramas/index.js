@@ -401,6 +401,7 @@ L.Control.Panoramas = L.Control.extend({
         },
 
         setContainerSizePixels: function(size) {
+            size = Math.round(size);
             this._panoramasContainer.style[this._splitVerically ? 'width' : 'height'] = `${size}px`;
             setTimeout(() => { // map size has not updated yet
                 const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
@@ -414,7 +415,7 @@ L.Control.Panoramas = L.Control.extend({
             const container = this._panoramasContainer;
             const containerSize = container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
             const mapSize = this._map._container[this._splitVerically ? 'offsetWidth' : 'offsetHeight'];
-            const newSize = fraction * (mapSize + containerSize);
+            const newSize = Math.round(fraction * (mapSize + containerSize));
             container.style[this._splitVerically ? 'width' : 'height'] = `${newSize}px`;
         },
 
