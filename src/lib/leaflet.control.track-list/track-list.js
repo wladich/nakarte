@@ -24,6 +24,7 @@ import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
+import {splitLinesAt180Meridian} from "./lib/meridian180";
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -539,6 +540,7 @@ L.Control.TrackList = L.Control.extend({
                         return line.getLatLngs();
                     }
                 );
+            lines = splitLinesAt180Meridian(lines);
             var points = this.getTrackPoints(track);
             var name = track.name(),
                 i = name.lastIndexOf('.');
