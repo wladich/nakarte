@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import './elevation-profile.css';
-import {fetch} from '~/lib/xhr-promise';
-import config from '~/config';
+import {ElevationProvider} from '~/lib/elevations';
 import '~/lib/leaflet.control.commons';
 import {notify} from '~/lib/notifications';
 import logging from '~/lib/logging';
@@ -84,7 +83,6 @@ function pathRegularSamples(latlngs, step) {
 
 const ElevationProfile = L.Class.extend({
         options: {
-            elevationsServer: config.elevationsServer,
             samplingInterval: 50,
             sightLine: false
         },
@@ -103,7 +101,7 @@ const ElevationProfile = L.Class.extend({
             var that = this;
             this.horizZoom = 1;
             this.dragStart = null;
-            this._getElevation(samples)
+            new ElevationProvider().get(samples)
                 .then(function(values) {
                         that.values = values;
                         that._addTo(map);
@@ -821,37 +819,6 @@ const ElevationProfile = L.Class.extend({
             }
         },
 
-        _getElevation: function(latlngs) {
-            function parseResponse(s) {
-                var values = [],
-                    v;
-                s = s.split('\n');
-                for (var i = 0; i < s.length; i++) {
-                    if (s[i]) {
-                        if (s[i] === 'NULL') {
-                            v = null;
-                        } else {
-                            v = parseFloat(s[i]);
-                        }
-                        values.push(v);
-                    }
-                }
-                return values;
-            }
-
-            var req = [];
-            for (var i = 0; i < latlngs.length; i++) {
-                req.push(latlngs[i].lat.toFixed(6) + ' ' + latlngs[i].lng.toFixed(6));
-            }
-            req = req.join('\n');
-            const xhrPromise = fetch(this.options.elevationsServer, {method: 'POST', data: req, withCredentials: true});
-            this.abortLoading = xhrPromise.abort.bind(xhrPromise);
-            return xhrPromise.then(
-                    function(xhr) {
-                        return parseResponse(xhr.responseText);
-                    }
-                );
-        },
         onCloseButtonClick: function() {
             this.removeFrom(this._map);
         }
