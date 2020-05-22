@@ -25,6 +25,7 @@ import config from '~/config';
 import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
+import {ElevationProvider} from '~/lib/elevations';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -454,6 +455,11 @@ L.Control.TrackList = L.Control.extend({
                 {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
                 {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
                 {text: 'Copy link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
+                {text: 'Extra', separator: true},
+                {
+                    text: 'Save as GPX with added elevation (SRTM)',
+                    callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true),
+                },
             ];
             track._actionsMenu = new Contextmenu(items);
         },
@@ -533,7 +539,7 @@ L.Control.TrackList = L.Control.extend({
             this.copyTracksLinkToClipboard([track], mouseEvent);
         },
 
-        saveTrackAsFile: function(track, exporter, extension) {
+        saveTrackAsFile: async function(track, exporter, extension, addElevations = false) {
             this.stopActiveDraw();
             var lines = this.getTrackPolylines(track)
                 .map(function(line) {
@@ -551,6 +557,36 @@ L.Control.TrackList = L.Control.extend({
             if (lines.length === 0 && points.length === 0) {
                 notify('Track is empty, nothing to save');
                 return;
+            }
+
+            if (addElevations) {
+                const request = [
+                    ...points.map((p) => p.latlng),
+                    ...lines.reduce((acc, cur) => {
+                        acc.push(...cur);
+                        return acc;
+                    }, [])
+                ];
+                let elevations;
+                try {
+                    elevations = await new ElevationProvider().get(request);
+                } catch (e) {
+                    logging.captureException(e, 'error getting elevation for gpx');
+                    notify(`Failed to get elevation data: ${e.message}`);
+                }
+                let n = 0;
+                for (let p of points) {
+                    // we make copy of latlng as we are changing it
+                    p.latlng = L.latLng(p.latlng.lat, p.latlng.lng, elevations[n]);
+                    n += 1;
+                }
+                for (let line of lines) {
+                    for (let p of line) {
+                        // we do not need to create new LatLng since splitLinesAt180Meridian() have already done it
+                        p.alt = elevations[n];
+                        n += 1;
+                    }
+                }
             }
 
             var fileText = exporter(lines, name, points);

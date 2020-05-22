@@ -2,7 +2,7 @@ import utf8 from 'utf8';
 import escapeHtml from 'escape-html';
 import {saveNktk} from './parsers/nktk';
 
-function saveGpx(segments, name, points, withElevations=false) {
+function saveGpx(segments, name, points, withElevations = false) {
     const gpx = [];
     const fakeTime = '1970-01-01T00:00:01.000Z';
 
@@ -18,7 +18,7 @@ function saveGpx(segments, name, points, withElevations=false) {
             label = utf8.encode(label);
             gpx.push(`\t<wpt lat="${marker.latlng.lat.toFixed(6)}" lon="${marker.latlng.lng.toFixed(6)}">`);
             gpx.push(`\t\t<name>${label}</name>`);
-            if (withElevations) {
+            if (withElevations && marker.latlng.alt !== null) {
                 gpx.push(`\t\t<ele>${marker.latlng.alt.toFixed(1)}</ele>`);
             }
             gpx.push('\t</wpt>');
@@ -36,7 +36,8 @@ function saveGpx(segments, name, points, withElevations=false) {
             for (let point of segment) {
                 let x = point.lng.toFixed(6);
                 let y = point.lat.toFixed(6);
-                const elevation = withElevations ? `<ele>${point.alt.toFixed(1)}</ele>ele>` : '';
+                const elevation = (withElevations && point.alt !== null)
+                    ? `<ele>${point.alt.toFixed(1)}</ele>` : '';
                 // time element is not necessary, added for compatibility to Garmin Connect only
                 gpx.push(`\t\t\t<trkpt lat="${y}" lon="${x}"><time>${fakeTime}</time>${elevation}</trkpt>`);
             }
@@ -46,6 +47,10 @@ function saveGpx(segments, name, points, withElevations=false) {
     }
     gpx.push('</gpx>');
     return gpx.join('\n');
+}
+
+function saveGpxWithElevations(segments, name, points) {
+    return saveGpx(segments, name, points, true);
 }
 
 function saveKml(segments, name, points) {
@@ -99,5 +104,5 @@ function saveKml(segments, name, points) {
     return kml.join('\n');
 }
 
-export default {saveGpx, saveKml, saveToString: saveNktk};
+export default {saveGpx, saveGpxWithElevations, saveKml, saveToString: saveNktk};
 
