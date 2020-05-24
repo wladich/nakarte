@@ -252,6 +252,7 @@ const ElevationProfile = L.Class.extend({
                 this.selEndInd = this.values.length - 1;
             }
             this.updateGraphSelection();
+            L.DomUtil.removeClass(this.graphSelection, 'elevation-profile-cursor-hidden');
         },
 
         updateGraphSelection: function() {
@@ -259,7 +260,6 @@ const ElevationProfile = L.Class.extend({
             const selEnd = this.selEndInd * (this.svgWidth - 1) / (this.values.length - 1);
             this.graphSelection.style.left = selStart + 'px';
             this.graphSelection.style.width = (selEnd - selStart) + 'px';
-            L.DomUtil.removeClass(this.graphSelection, 'elevation-profile-cursor-hidden');
         },
 
         onSvgDragEnd: function(e) {
