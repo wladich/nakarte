@@ -185,7 +185,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         maxZoom: 18,
                         isOverlay: false,
                         scaleDependent: false,
-                        isTop: true
+                        isTop: true,
+                        epsg3395: false
                     }
                 );
             },
@@ -274,6 +275,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     maxZoom: ko.observable(fieldValues.maxZoom),
                     isOverlay: ko.observable(fieldValues.isOverlay),
                     isTop: ko.observable(fieldValues.isTop),
+                    epsg3395: ko.observable(fieldValues.epsg3395),
                     buttons: buttons,
                     buttonClicked: function buttonClicked(callbackN) {
                         const fieldValues = {
@@ -283,7 +285,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                             scaleDependent: dialogModel.scaleDependent(),
                             maxZoom: dialogModel.maxZoom(),
                             isOverlay: dialogModel.isOverlay(),
-                            isTop: dialogModel.isTop()
+                            isTop: dialogModel.isTop(),
+                            epsg3395: dialogModel.epsg3395()
                         };
                         buttons[callbackN].callback(fieldValues);
                     }
@@ -306,6 +309,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 <hr/>
 <label><input type="checkbox" data-bind="checked: scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
 <label><input type="checkbox" data-bind="checked: tms" />TMS rows order</label><br />
+<label><input type="checkbox" data-bind="checked: epsg3395" />EPSG:3395</label><br />
 
 <label>Max zoom<br>
 <select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label>
@@ -408,7 +412,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         jnx: true,
                         code: serialized,
                         noCors: true,
-                        isTop: fieldValues.isTop
+                        isTop: fieldValues.isTop,
+                        epsg3395: fieldValues.epsg3395
                     }
                 );
 
