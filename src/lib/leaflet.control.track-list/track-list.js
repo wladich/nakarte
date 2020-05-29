@@ -41,6 +41,21 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+function unwrapLatLngsCrossing180Meridian(latngs) {
+    if (latngs.length === 0) {
+        return [];
+    }
+    const unwrapped = [latngs[0]];
+    let lastUnwrapped;
+    let prevUnwrapped = latngs[0];
+    for (let i = 1; i < latngs.length; i++) {
+        lastUnwrapped = wrapLatLngToTarget(latngs[i], prevUnwrapped);
+        unwrapped.push(lastUnwrapped);
+        prevUnwrapped = lastUnwrapped;
+    }
+    return unwrapped;
+}
+
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
         includes: L.Mixin.Events,
@@ -288,6 +303,7 @@ L.Control.TrackList = L.Control.extend({
                     if (!data_empty) {
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
+                                    line = unwrapLatLngsCrossing180Meridian(line);
                                     line = L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
                                     if (line.length === 1) {
                                         line.push(line[0]);
