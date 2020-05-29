@@ -6,8 +6,8 @@ function shiftLongitudeToTarget(lng, targetLng) {
             return 0;
         }
         targetLng = targetLng.getCenter().lng;
-    } else if (targetLng instanceof L.LatLng) {
-        targetLng = targetLng.lng;
+    } else {
+        targetLng = targetLng.lng ?? targetLng;
     }
     let shift = 0;
     if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
