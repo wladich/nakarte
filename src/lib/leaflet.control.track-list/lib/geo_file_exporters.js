@@ -17,10 +17,10 @@ function saveGpx(segments, name, points, withElevations = false) {
             label = escapeHtml(label);
             label = utf8.encode(label);
             gpx.push(`\t<wpt lat="${marker.latlng.lat.toFixed(6)}" lon="${marker.latlng.lng.toFixed(6)}">`);
-            gpx.push(`\t\t<name>${label}</name>`);
             if (withElevations && marker.latlng.alt !== null) {
                 gpx.push(`\t\t<ele>${marker.latlng.alt.toFixed(1)}</ele>`);
             }
+            gpx.push(`\t\t<name>${label}</name>`);
             gpx.push('\t</wpt>');
         }
     );
@@ -39,7 +39,7 @@ function saveGpx(segments, name, points, withElevations = false) {
                 const elevation = (withElevations && point.alt !== null)
                     ? `<ele>${point.alt.toFixed(1)}</ele>` : '';
                 // time element is not necessary, added for compatibility to Garmin Connect only
-                gpx.push(`\t\t\t<trkpt lat="${y}" lon="${x}"><time>${fakeTime}</time>${elevation}</trkpt>`);
+                gpx.push(`\t\t\t<trkpt lat="${y}" lon="${x}">${elevation}<time>${fakeTime}</time></trkpt>`);
             }
             gpx.push('\t\t</trkseg>');
         }
