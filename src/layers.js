@@ -177,7 +177,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Topo 10km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo001m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo001m/{z}/{x}/{y}",
                         {
                             code: 'D',
                             isOverlay: true,
@@ -194,7 +194,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'GGC 2 km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
                         {
                             code: 'N',
                             isOverlay: true,
@@ -211,7 +211,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'ArbaletMO',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
                         {
                             code: 'A',
                             isOverlay: true,
@@ -228,7 +228,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Slazav mountains',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/map_hr/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/map_hr/{z}/{x}/{y}",
                         {
                             code: 'Q',
                             isOverlay: true,
@@ -245,7 +245,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'GGC 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
                         {
                             code: 'J',
                             isOverlay: true,
@@ -262,7 +262,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Topo 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo1000/{z}/{x}/{y}",
                         {
                             code: 'C',
                             isOverlay: true,
@@ -279,7 +279,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'GGC 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc500/{z}/{x}/{y}",
                         {
                             code: 'F',
                             isOverlay: true,
@@ -296,7 +296,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Topo 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo500/{z}/{x}/{y}",
                         {
                             code: 'B',
                             isOverlay: true,
@@ -313,7 +313,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'GGC 250m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc250/{z}/{x}/{y}",
                         {
                             code: 'K',
                             isOverlay: true,
@@ -330,7 +330,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Slazav map',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/map_podm/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/map_podm/{z}/{x}/{y}",
                         {
                             code: 'Z',
                             isOverlay: true,
@@ -347,7 +347,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Races',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/adraces/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/adraces/{z}/{x}/{y}",
                         {
                             code: 'U',
                             isOverlay: true,
@@ -364,7 +364,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'O-sport',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/osport/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/osport/{z}/{x}/{y}",
                         {
                             code: 'R',
                             isOverlay: true,
@@ -465,7 +465,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     title: 'Eurasia 25km',
                     description: '1975-80',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
                         {
                             code: 'E25m',
                             isOverlay: true,
@@ -482,7 +482,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Caucasus 1km',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
                         {
                             code: 'NT1',
                             isOverlay: true,
@@ -499,7 +499,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Caucasus 500m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
                         {
                             code: 'NT5',
                             isOverlay: true,
@@ -516,7 +516,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Topo 250m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo250/{z}/{x}/{y}",
                         {
                             code: 'T25',
                             isOverlay: true,
@@ -534,7 +534,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     title: 'Montenegro topo 250m',
                     description: '1970-72',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
                         {
                             code: 'MN25',
                             isOverlay: true,
