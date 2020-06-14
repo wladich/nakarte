@@ -1,4 +1,4 @@
-import alertify from 'alertify.js';
+import {notify} from '~/lib/notifications';
 
 function openPopupWindow(url, width, uniqName = null) {
     var left, top, height,
@@ -23,9 +23,11 @@ function openPopupWindow(url, width, uniqName = null) {
     features += ',resizable,scrollbars';
     var newWindow = window.open(url, uniqName, features);
     if (!newWindow || newWindow.closed) {
-        alertify.alert('Pop-up blocked by browser.\n\n' +
+        notify('Всплывающее окно заблокировано браузером.\n' +
+            'Для полноценной работы сайта необходимо разрешить всплывающие окна в настройках браузера для сайта.\n\n' +
+            'Pop-up window was blocked by the browser.\n' +
             'If you want to use the full functionality of this site, ' +
-            'turn off blocking pop-up in the browser settings for this site.');
+            'turn off blocking pop-ups in the browser settings for this site.');
     } else {
         newWindow.focus();
     }
