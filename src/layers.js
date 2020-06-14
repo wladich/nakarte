@@ -27,7 +27,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     )
                 },
                 {
-                    title: 'ESRI Sat',
+                    title: 'ESRI Satellite',
                     isDefault: true,
                     layer: L.tileLayer(
                         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -71,7 +71,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     )
                 },
                 {
-                    title: 'Google',
+                    title: 'Google Map',
                     isDefault: true,
                     layer: new L.Layer.GoogleMap(
                         {
@@ -127,7 +127,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     )
                 },
                 {
-                    title: 'Bing Sat',
+                    title: 'Bing Satellite',
                     isDefault: true,
                     layer: new BingLayer(config.bingKey,
                         {
@@ -922,13 +922,13 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
             title: 'Default layers',
             layers: [
                 'OpenStreetMap',
-                'ESRI Sat',
+                'ESRI Satellite',
                 'Yandex map',
                 'Yandex Satellite',
-                'Google',
+                'Google Map',
                 'Google Satellite',
                 'Google Terrain',
-                'Bing Sat',
+                'Bing Satellite',
                 'marshruty.ru',
                 'Topomapper 1km',
                 'Topo 10km',
@@ -1013,23 +1013,27 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 
     const titlesByOrder = [
         // common base layers
+        // OSM
         'OpenStreetMap',
         'OpenTopoMap',
         'OpenCycleMap',
         'OSM Outdoors',
-        'ESRI Sat',
-        'Yandex map',
+        'mapy.cz tourist',
+        // Satellite
+        'ESRI Satellite',
         'Yandex Satellite',
-        'Google',
         'Google Satellite',
+        'Bing Satellite',
+        // Commercial maps
+        'Yandex map',
+        'Google Map',
         'Google Terrain',
-        'Bing Sat',
+        // Topo maps
         'marshruty.ru',
         'Topomapper 1km',
 
         // local base layers
         'Czech base',
-        'mapy.cz tourist',
         'Czech winter',
         'Finland Topo',
 
