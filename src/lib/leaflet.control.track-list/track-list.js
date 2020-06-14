@@ -701,10 +701,15 @@ L.Control.TrackList = L.Control.extend({
             this.stopPlacingPoint();
         },
 
-        getNewPointName: function () {
-            const maxNumber = Math.max.apply(Math,
-                this._markerLayer.getMarkers().map((marker) => parseInt(marker.label, 10) || 0)) | 0;
-            return String(maxNumber + 1).padStart(3, '0');
+        getNewPointName: function(track) {
+            let maxNumber = 0;
+            for (let marker of track.markers) {
+                const label = marker.label;
+                if (label.match(/^\d{3}([^\d.]|$)/u)) {
+                    maxNumber = parseInt(label, 10);
+                }
+            }
+            return maxNumber === 999 ? '' : String(maxNumber + 1).padStart(3, '0');
         },
 
         createNewPoint: function(e) {
@@ -712,7 +717,7 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
             const parentTrack = this.trackAddingPoint();
-            const name = this.getNewPointName();
+            const name = this.getNewPointName(parentTrack);
             const newLatLng = e.latlng.wrap();
             const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
