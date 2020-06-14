@@ -620,12 +620,14 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         {
                             code: 'Sa',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_all',
                         }
                     )
                 },
@@ -639,12 +641,14 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         {
                             code: 'Sr',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_run',
                         }
                     )
                 },
@@ -658,12 +662,14 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         {
                             code: 'Sb',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_ride',
                         }
                     )
                 },
@@ -677,12 +683,14 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         {
                             code: 'Sw',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
                             maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_winter',
                         }
                     )
                 },
