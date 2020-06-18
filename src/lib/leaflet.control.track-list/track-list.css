@@ -28,7 +28,7 @@
     white-space: nowrap;
 }
 
-.leaflet-control-tracklist .button{
+.leaflet-control-tracklist .button {
     display: inline-block;
     height: 26px;
     border-radius: 4px 4px 4px 4px;
@@ -129,14 +129,13 @@
     line-height: 16px;
     color: #777;
     display: block;
-    border-radius: 4px;
-    border: 1px solid #aaa;
     margin: 0 4px;
     padding: 0 3px;
-    cursor: pointer;
     white-space: nowrap;
     width: 40px;
+    height: auto;
     text-align: right;
+    border-color: #aaa;
 }
 
 .leaflet-control-tracklist .button-add-track {
@@ -152,8 +151,7 @@
 .leaflet-control-tracklist .button-add-track,
 .leaflet-control-tracklist .button-add-point {
     display: block;
-    border-radius: 4px;
-    border: 1px solid #aaa;
+    border-color: #aaa;
     width: 16px;
     height: 16px;
     margin-right: 4px;
@@ -168,7 +166,7 @@
     background-color: #f4f4f4;
 }
 
-.leaflet-control-tracklist .ticks-enabled {
+.leaflet-control-tracklist .button__active {
     color: #333;
     border-color: #333;
 }
