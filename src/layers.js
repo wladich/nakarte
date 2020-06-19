@@ -615,7 +615,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     isDefault: false,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
+                            'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
                         ),
                         {
                             code: 'Sa',
@@ -636,7 +636,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     isDefault: false,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
+                            'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
                         ),
                         {
                             code: 'Sr',
@@ -657,7 +657,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     isDefault: false,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
+                            'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
                         ),
                         {
                             code: 'Sb',
@@ -678,7 +678,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     isDefault: false,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
+                            'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
                         ),
                         {
                             code: 'Sw',
