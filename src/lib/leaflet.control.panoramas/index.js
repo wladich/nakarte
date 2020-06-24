@@ -101,7 +101,10 @@ L.Control.Panoramas = L.Control.extend({
             L.Control.prototype.initialize.call(this, options);
             this.loadSettings();
             this._panoramasContainer = L.DomUtil.create('div', 'panoramas-container');
-            onElementResize(this._panoramasContainer, this.onContainerResize.bind(this));
+            onElementResize(
+                this._panoramasContainer,
+                L.Util.requestAnimFrame.bind(null, this.onContainerResize.bind(this))
+            );
             this.providers = this.getProviders();
             for (let provider of this.providers) {
                 provider.selected.subscribe(this.updateCoverageVisibility, this);

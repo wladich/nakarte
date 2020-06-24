@@ -7,7 +7,7 @@ const MapWithSidebars = L.Map.extend({
         this._sidebarsContainer = L.DomUtil.get(id);
         this.setupSidebarsLayout(this._sidebarsContainer);
         L.Map.prototype.initialize.call(this, this._mapContainer, options);
-        onElementResize(this._mapContainer, this.invalidateSize.bind(this));
+        onElementResize(this._mapContainer, L.Util.requestAnimFrame.bind(null, this.invalidateSize.bind(this)));
     },
 
     setupSidebarsLayout: function(container) {
