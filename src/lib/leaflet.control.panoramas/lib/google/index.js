@@ -36,7 +36,9 @@ const Viewer = L.Evented.extend({
         this.google = google;
         const panorama = this.panorama = new google.maps.StreetViewPanorama(container, {
                 enableCloseButton: true,
-                imageDateControl: true
+                imageDateControl: true,
+                motionTracking: false,
+                motionTrackingControl: false,
             }
         );
         panorama.addListener('position_changed', () => this.onPanoramaChangeView());
