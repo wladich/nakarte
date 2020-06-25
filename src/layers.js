@@ -804,9 +804,10 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
                     isDefault: false,
                     layer: L.tileLayer(
-                        "https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?" +
-                        "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&" +
-                        "TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
+                        "https://maps-mml.anderscloud.com/wmts/?" +
+                        "ngsw-bypass=1&layer=maastokartta&style=default&tilematrixset=WGS84_Pseudo-Mercator" +
+                        "&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng" +
+                        "&TileMatrix={z}&TileCol={x}&TileRow={y}",
                         {
                             code: 'Fmk',
                             isOverlay: false,
