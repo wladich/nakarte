@@ -32,6 +32,7 @@ import {notify} from '~/lib/notifications';
 import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
 import logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
+import {ExternalMaps} from '~/lib/leaflet.control.external-maps/index.js';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -73,6 +74,8 @@ function setUp() {
         position: 'topleft',
         stackHorizontally: true
     }).addTo(map);
+
+    new ExternalMaps({position: 'topleft'}).addTo(map);
 
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
