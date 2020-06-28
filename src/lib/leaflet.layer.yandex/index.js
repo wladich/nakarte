@@ -10,18 +10,6 @@ L.Layer.Yandex = L.TileLayer.extend({
             yandexScale: L.Browser.retina ? 2 : 1
         },
 
-        initialize: function(mapType, options) {
-            let url;
-            this._mapType = mapType;
-            if (mapType === 'sat') {
-                url = 'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}';
-            } else {
-                url = 'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}';
-            }
-
-            L.TileLayer.prototype.initialize.call(this, url, options);
-        },
-
         _getTilePos: function(coords) {
             const tilePosLatLng = yandexCrs.pointToLatLng(coords.scaleBy(this.getTileSize()), coords.z);
             return this._map.project(tilePosLatLng, coords.z).subtract(this._level.origin).round();
@@ -49,3 +37,34 @@ L.Layer.Yandex = L.TileLayer.extend({
         }
     }
 );
+
+L.Layer.Yandex.Map = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        L.Layer.Yandex.prototype.initialize.call(
+            this,
+            'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}',
+            options
+        );
+    },
+});
+
+L.Layer.Yandex.Sat = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        L.Layer.Yandex.prototype.initialize.call(
+            this,
+            'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}',
+            options
+        );
+    },
+});
+
+L.Layer.Yandex.Tracks = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        options = {minZoom: 10, maxNativeZoom: 16, ...options};
+        L.Layer.Yandex.prototype.initialize.call(
+            this,
+            'https://core-gpstiles.maps.yandex.net/tiles?style=point&x={x}&y={y}&z={z}',
+            options
+        );
+    },
+});
