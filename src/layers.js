@@ -45,7 +45,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Yandex map',
                     isDefault: true,
-                    layer: new L.Layer.Yandex('map',
+                    layer: new L.Layer.Yandex.Map(
                         {
                             scaleDependent: true,
                             code: 'Y',
@@ -59,7 +59,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Yandex Satellite',
                     isDefault: true,
-                    layer: new L.Layer.Yandex('sat',
+                    layer: new L.Layer.Yandex.Sat(
                         {
                             scaleDependent: false,
                             code: 'S',
@@ -915,7 +915,22 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             noCors: true,
                         })
                 },
-
+                {
+                    title: 'Yandex tracks',
+                    isDefault: false,
+                    layer: new L.Layer.Yandex.Tracks(
+                        {
+                            scaleDependent: true,
+                            code: 'Ytr',
+                            isOverlay: true,
+                            isOverlayTransparent: true,
+                            print: true,
+                            jnx: false,
+                            shortName: 'yandex_tracks',
+                            noCors: true,
+                        }
+                    )
+                },
     ];
 
     const groupsDefs = [
@@ -990,6 +1005,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 'Strava heatmap (run)',
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
+                'Yandex tracks',
             ],
 
         },
@@ -1076,6 +1092,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
         'Strava heatmap (run)',
         'Strava heatmap (ride)',
         'Strava heatmap (winter)',
+        'Yandex tracks',
         'Soviet topo maps grid',
         'Wikimapia',
 
