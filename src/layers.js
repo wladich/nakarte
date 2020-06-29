@@ -821,7 +821,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     )
                 },
                 {
-                    title: 'France Topo 250m',
+                    title: 'France Topo 250m (zoom ≥ 6)',
                     isDefault: false,
                     layer: L.tileLayer(
                         "https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?" +
@@ -844,7 +844,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     )
                 },
                 {
-                    title: 'Great Britain Topo',
+                    title: 'Great Britain Topo (zoom ≥ 12)',
                     isDefault: false,
                     layer: new BingLayer(config.bingKey,
                         {
@@ -896,7 +896,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         })
                 },
                 {
-                    title: 'Slovakia topo',
+                    title: 'Slovakia topo (zoom ≥ 10)',
                     description: '<a href="https://mapy.hiking.sk">https://mapy.hiking.sk/</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://static.mapy.hiking.sk/topo/{z}/{x}/{y}.png',
@@ -916,7 +916,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                         })
                 },
                 {
-                    title: 'Yandex tracks',
+                    title: 'Yandex tracks (zoom ≥ 10)',
                     isDefault: false,
                     layer: new L.Layer.Yandex.Tracks(
                         {
@@ -982,9 +982,9 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 'Topo 250m',
                 'Montenegro topo 250m',
                 'Finland Topo',
-                'France Topo 250m',
-                'Great Britain Topo',
-                'Slovakia topo',
+                'France Topo 250m (zoom ≥ 6)',
+                'Great Britain Topo (zoom ≥ 12)',
+                'Slovakia topo (zoom ≥ 10)',
             ],
         },
         {
@@ -1005,7 +1005,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 'Strava heatmap (run)',
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
-                'Yandex tracks',
+                'Yandex tracks (zoom ≥ 10)',
             ],
 
         },
@@ -1063,20 +1063,20 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
         'ArbaletMO',
         'Norway paper map',
         'Norway topo',
-        'Slovakia topo',
+        'Slovakia topo (zoom ≥ 10)',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
         'Topo 1km',
         'Caucasus 1km',
-        'Great Britain Topo',
+        'Great Britain Topo (zoom ≥ 12)',
         'GGC 500m',
         'Topo 500m',
         'Caucasus 500m',
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
-        'France Topo 250m',
+        'France Topo 250m (zoom ≥ 6)',
         'Slazav map',
         'Races',
         'O-sport',
@@ -1092,7 +1092,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
         'Strava heatmap (run)',
         'Strava heatmap (ride)',
         'Strava heatmap (winter)',
-        'Yandex tracks',
+        'Yandex tracks (zoom ≥ 10)',
         'Soviet topo maps grid',
         'Wikimapia',
 
