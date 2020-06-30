@@ -57,7 +57,7 @@ const ExternalMaps = L.Control.extend({
             {title: 'Google', externalMap: new ExternalMap('https://www.google.com/maps/@{lat},{lng},{zoom}z', 3, 21)},
             {
                 title: 'Yandex',
-                externalMap: new ExternalMap('https://yandex.ru/maps/10509/brno/?ll={lng}%2C{lat}&z={zoom}', 2, 21),
+                externalMap: new ExternalMap('https://yandex.ru/maps/?ll={lng}%2C{lat}&z={zoom}', 2, 21),
             },
             {
                 title: 'OpenStreetMap',
