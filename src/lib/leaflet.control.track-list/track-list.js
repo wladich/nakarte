@@ -645,9 +645,7 @@ L.Control.TrackList = L.Control.extend({
 
         stopEditLine: function() {
             if (this._editedLine) {
-                this.hideLineCursor();
                 this._editedLine.stopEdit();
-                this._editedLine = null;
             }
         },
 
@@ -874,9 +872,7 @@ L.Control.TrackList = L.Control.extend({
             this.map.on('click', this.hideLineCursor, this);
             L.DomEvent.on(document, 'keyup', this.onKeyUpForLineCursor, this);
             L.DomUtil.addClass(this.map.getContainer(), 'tracklist-line-cursor-shown');
-            setTimeout(() => {
-                this._editedLine.preventStopEdit = true;
-            }, 0);
+            this._editedLine.preventStopEdit = true;
         },
 
         hideLineCursor: function() {
@@ -888,9 +884,7 @@ L.Control.TrackList = L.Control.extend({
                 this.map.removeLayer(this._lineCursor);
                 this._lineCursor = null;
                 this.fire('linecursorhide');
-                setTimeout(() => {
-                    this._editedLine.preventStopEdit = false;
-                }, 0);
+                this._editedLine.preventStopEdit = false;
             }
         },
 
@@ -963,6 +957,8 @@ L.Control.TrackList = L.Control.extend({
 
         onTrackEditEnd: function(track) {
             track.isEdited(false);
+            this.hideLineCursor();
+            this._editedLine = null;
         },
 
         onTrackRowMouseEnter: function(track) {
