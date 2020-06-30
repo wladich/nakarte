@@ -56,6 +56,14 @@ function unwrapLatLngsCrossing180Meridian(latngs) {
     return unwrapped;
 }
 
+function closestPointToLineSegment(latlngs, segmentIndex, point) {
+    const crs = L.CRS.EPSG3857;
+    point = crs.latLngToPoint(point);
+    const segStart = crs.latLngToPoint(latlngs[segmentIndex]);
+    const segEnd = crs.latLngToPoint(latlngs[segmentIndex + 1]);
+    return crs.pointToLatLng(L.LineUtil.closestPointOnSegment(point, segStart, segEnd));
+}
+
 L.Control.TrackList = L.Control.extend({
         options: {position: 'bottomright'},
         includes: L.Mixin.Events,
@@ -952,24 +960,16 @@ L.Control.TrackList = L.Control.extend({
 
         splitTrackSegment: function(trackSegment, nodeIndex, latlng) {
             var latlngs = trackSegment.getLatLngs();
-            latlngs = latlngs.map(function(ll) {
-                    return [ll.lat, ll.lng];
-                }
-            );
+            latlngs = latlngs.map((latlng) => latlng.clone());
             var latlngs1 = latlngs.slice(0, nodeIndex + 1),
                 latlngs2 = latlngs.slice(nodeIndex + 1);
             if (latlng) {
-                var p = this.map.project(latlng),
-                    p1 = this.map.project(latlngs[nodeIndex]),
-                    p2 = this.map.project(latlngs[nodeIndex + 1]),
-                    pnew = L.LineUtil.closestPointOnSegment(p, p1, p2);
-                latlng = this.map.unproject(pnew);
-                latlngs1.push(latlng);
-                latlng = [latlng.lat, latlng.lng];
+                latlng = closestPointToLineSegment(latlngs, nodeIndex, latlng);
+                latlngs1.push(latlng.clone());
             } else {
                 latlng = latlngs[nodeIndex];
             }
-            latlngs2.unshift(latlng);
+            latlngs2.unshift(latlng.clone());
             this.deleteTrackSegment(trackSegment);
             var segment1 = this.addTrackSegment(trackSegment._parentTrack, latlngs1);
             this.addTrackSegment(trackSegment._parentTrack, latlngs2);
