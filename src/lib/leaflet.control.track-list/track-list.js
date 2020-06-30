@@ -64,8 +64,19 @@ function closestPointToLineSegment(latlngs, segmentIndex, point) {
     return crs.pointToLatLng(L.LineUtil.closestPointOnSegment(point, segStart, segEnd));
 }
 
+function isPointCloserToStart(latlngs, latlng) {
+    const distToStart = latlng.distanceTo(latlngs[0]);
+    const distToEnd = latlng.distanceTo(latlngs[latlngs.length - 1]);
+    return distToStart < distToEnd;
+}
+
 L.Control.TrackList = L.Control.extend({
-        options: {position: 'bottomright'},
+        options: {
+            position: 'bottomright',
+            lineCursorStyle: {interactive: false, weight: 1.5, opacity: 1, dashArray: '7,7'},
+            lineCursorValidStyle: {color: 'green'},
+            lineCursorInvalidStyle: {color: 'red'},
+        },
         includes: L.Mixin.Events,
 
         colors: TRACKLIST_TRACK_COLORS,
@@ -641,7 +652,7 @@ L.Control.TrackList = L.Control.extend({
 
         stopEditLine: function() {
             if (this._editedLine) {
-                this.stopLineJoinSelection();
+                this.hideLineCursor();
                 this._editedLine.stopEdit();
                 this._editedLine = null;
             }
@@ -651,9 +662,9 @@ L.Control.TrackList = L.Control.extend({
             if (this.isPlacingPoint) {
                 return;
             }
-            if (this._lineJoinCursor) {
+            if (this._lineJoinActive) {
                 L.DomEvent.stopPropagation(e);
-                this.joinTrackSegments(trackSegment);
+                this.joinTrackSegments(trackSegment, isPointCloserToStart(trackSegment.getLatLngs(), e.latlng));
             } else {
                 this.startEditTrackSegement(track, trackSegment);
                 L.DomEvent.stopPropagation(e);
@@ -753,12 +764,12 @@ L.Control.TrackList = L.Control.extend({
             this.map.off('click', this.movePoint, this);
         },
 
-        joinTrackSegments: function(newSegment) {
-            this.stopLineJoinSelection();
+        joinTrackSegments: function(newSegment, joinToStart) {
+            this.hideLineCursor();
             var originalSegment = this._editedLine;
             var latlngs = originalSegment.getLatLngs(),
                 latngs2 = newSegment.getLatLngs();
-            if (this._lineJoinToStart === this._lineJoinFromStart) {
+            if (joinToStart === this._lineJoinFromStart) {
                 latngs2.reverse();
             }
             if (this._lineJoinFromStart) {
@@ -802,7 +813,6 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('nodeschanged', this.onTrackLengthChanged.bind(this, track));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
-            polyline.on('mousemove', this.onMouseMoveOnSegmentUpdateLineJoinCursor, this);
             polyline.on('mouseover', () => this.onTrackMouseEnter(track));
             polyline.on('mouseout', () => this.onTrackMouseLeave(track));
             polyline.on('editstart', () => this.onTrackEditStart(track));
@@ -857,54 +867,90 @@ L.Control.TrackList = L.Control.extend({
             menu.show(e.mouseEvent);
         },
 
-        startLineJoinSelection: function(e) {
-            this.stopLineJoinSelection();
+        showLineCursor: function(start, mousepos) {
+            this.hideLineCursor();
             this._editedLine.stopDrawingLine();
-            this._lineJoinFromStart = (e.nodeIndex === 0);
-            var p = this._editedLine.getLatLngs()[e.nodeIndex];
-            p = [p.lat, p.lng];
-            this._lineJoinCursor = L.polyline([p, e.mouseEvent.latlng], {
-                    interactive: false,
-                    color: 'red',
-                    weight: 1.5,
-                    opacity: 1,
-                    dashArray: '7,7'
-                }
-            )
-                .addTo(this.map);
-            this.map.on('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
-            this.map.on('click', this.stopLineJoinSelection, this);
-            L.DomUtil.addClass(this.map.getContainer(), 'join-line-selecting');
-            L.DomEvent.on(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
-            var that = this;
-            setTimeout(function() {
-                    that._editedLine.preventStopEdit = true;
-                }, 0
+            this._lineCursor = L.polyline([start.clone(), mousepos], {
+                ...this.options.lineCursorStyle,
+                ...this.options.lineCursorInvalidStyle,
+            }).addTo(this._map);
+            this.map.on('mousemove', this.onMouseMoveOnMapForLineCursor, this);
+            this.map.on('click', this.hideLineCursor, this);
+            L.DomEvent.on(document, 'keyup', this.onKeyUpForLineCursor, this);
+            L.DomUtil.addClass(this.map.getContainer(), 'tracklist-line-cursor-shown');
+            setTimeout(() => {
+                this._editedLine.preventStopEdit = true;
+            }, 0);
+        },
+
+        hideLineCursor: function() {
+            if (this._lineCursor) {
+                this.map.off('mousemove', this.onMouseMoveOnMapForLineCursor, this);
+                this.map.off('click', this.hideLineCursor, this);
+                L.DomUtil.removeClass(this.map.getContainer(), 'tracklist-line-cursor-shown');
+                L.DomEvent.off(document, 'keyup', this.onKeyUpForLineCursor, this);
+                this.map.removeLayer(this._lineCursor);
+                this._lineCursor = null;
+                this.fire('linecursorhide');
+                setTimeout(() => {
+                    this._editedLine.preventStopEdit = false;
+                }, 0);
+            }
+        },
+
+        onMouseMoveOnMapForLineCursor: function(e) {
+            this.updateLineCursor(e.latlng, false);
+        },
+
+        updateLineCursor: function(latlng, isValid) {
+            if (!this._lineCursor) {
+                return;
+            }
+            this._lineCursor.getLatLngs().splice(1, 1, latlng);
+            this._lineCursor.redraw();
+            this._lineCursor.setStyle(
+                isValid ? this.options.lineCursorValidStyle : this.options.lineCursorInvalidStyle
             );
         },
 
-        onMouseMoveUpdateLineJoinCursor: function(e) {
-            if (this._lineJoinCursor) {
-                this._lineJoinCursor.getLatLngs().splice(1, 1, e.latlng);
-                this._lineJoinCursor.redraw();
-                this._lineJoinCursor.setStyle({color: 'red'});
+        onKeyUpForLineCursor: function(e) {
+            if (e.target.tagName.toLowerCase() === 'input') {
+                return;
+            }
+            switch (e.keyCode) {
+                case 27:
+                case 13:
+                    this.hideLineCursor();
+                    L.DomEvent.stop(e);
+                    break;
+                default:
             }
         },
 
-        onMouseMoveOnSegmentUpdateLineJoinCursor: function(e) {
-            if (!this._lineJoinCursor) {
-                return;
+        startLineJoinSelection: function(e) {
+            this._lineJoinFromStart = (e.nodeIndex === 0);
+            const cursorStart = this._editedLine.getLatLngs()[e.nodeIndex];
+            this.showLineCursor(cursorStart, e.mouseEvent.latlng);
+            this.on('linecursorhide', this.onLineCursorHideForJoin, this);
+            for (let track of this.tracks()) {
+                track.feature.on('mousemove', this.onMouseMoveOnLineForJoin, this);
             }
-            var trackSegment = e.target,
-                latlngs = trackSegment.getLatLngs(),
-                distToStart = e.latlng.distanceTo(latlngs[0]),
-                distToEnd = e.latlng.distanceTo(latlngs[latlngs.length - 1]);
-            this._lineJoinToStart = (distToStart < distToEnd);
-            var cursorEnd = this._lineJoinToStart ? latlngs[0] : latlngs[latlngs.length - 1];
-            this._lineJoinCursor.setStyle({color: 'green'});
-            this._lineJoinCursor.getLatLngs().splice(1, 1, cursorEnd);
-            this._lineJoinCursor.redraw();
+            this._lineJoinActive = true;
+        },
+
+        onMouseMoveOnLineForJoin: function(e) {
+            const latlngs = e.layer.getLatLngs();
+            const lineJoinToStart = isPointCloserToStart(latlngs, e.latlng);
+            const cursorEnd = lineJoinToStart ? latlngs[0] : latlngs[latlngs.length - 1];
             L.DomEvent.stopPropagation(e);
+            this.updateLineCursor(cursorEnd, true);
+        },
+
+        onLineCursorHideForJoin: function() {
+            for (let track of this.tracks()) {
+                track.feature.off('mousemove', this.onMouseMoveOnLineForJoin, this);
+            }
+            this._lineJoinActive = false;
         },
 
         onTrackMouseEnter: function(track) {
@@ -932,36 +978,6 @@ L.Control.TrackList = L.Control.extend({
             if (this._highlightedTrack === track) {
                 this._highlightedTrack = null;
                 this.updateTrackHighlight();
-            }
-        },
-
-        onEscPressedStopLineJoinSelection: function(e) {
-            if (e.target.tagName.toLowerCase() === 'input') {
-                return;
-            }
-            switch (e.keyCode) {
-                case 27:
-                case 13:
-                    this.stopLineJoinSelection();
-                    L.DomEvent.stop(e);
-                    break;
-                default:
-            }
-        },
-
-        stopLineJoinSelection: function() {
-            if (this._lineJoinCursor) {
-                this.map.off('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
-                this.map.off('click', this.stopLineJoinSelection, this);
-                L.DomUtil.removeClass(this.map.getContainer(), 'join-line-selecting');
-                L.DomEvent.off(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
-                this.map.removeLayer(this._lineJoinCursor);
-                this._lineJoinCursor = null;
-                var that = this;
-                setTimeout(function() {
-                        that._editedLine.preventStopEdit = false;
-                    }, 0
-                );
             }
         },
 
