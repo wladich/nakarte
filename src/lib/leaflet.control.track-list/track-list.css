@@ -255,7 +255,7 @@
     background-image: url("images/route.svg");
  }
 
-.join-line-selecting {
+.tracklist-line-cursor-shown {
     cursor: default;
 }
 
