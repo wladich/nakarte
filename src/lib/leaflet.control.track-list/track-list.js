@@ -249,7 +249,7 @@ L.Control.TrackList = L.Control.extend({
             this.stopPlacingPoint();
             var track = this.addTrack({name: name}),
                 line = this.addTrackSegment(track);
-            this.startEditTrackSegement(track, line);
+            this.startEditTrackSegement(line);
             line.startDrawingLine();
             return track;
         },
@@ -498,7 +498,7 @@ L.Control.TrackList = L.Control.extend({
             }
             this.stopPlacingPoint();
             var polyline = this.addTrackSegment(track, []);
-            this.startEditTrackSegement(track, polyline);
+            this.startEditTrackSegement(polyline);
             polyline.startDrawingLine(1);
         },
 
@@ -523,7 +523,7 @@ L.Control.TrackList = L.Control.extend({
             this.deleteTrackSegment(trackSegment);
             var newTrackSegment = this.addTrackSegment(trackSegment._parentTrack, latlngs);
             if (isEdited) {
-                this.startEditTrackSegement(trackSegment._parentTrack, newTrackSegment);
+                this.startEditTrackSegement(newTrackSegment);
             }
         },
 
@@ -651,27 +651,28 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
-        onTrackSegmentClick: function(track, trackSegment, e) {
+        onTrackSegmentClick: function(e) {
             if (this.isPlacingPoint) {
                 return;
             }
+            const trackSegment = e.target;
             if (this._lineJoinActive) {
                 L.DomEvent.stopPropagation(e);
-                this.joinTrackSegments(trackSegment, isPointCloserToStart(trackSegment.getLatLngs(), e.latlng));
+                this.joinTrackSegments(trackSegment, isPointCloserToStart(e.target.getLatLngs(), e.latlng));
             } else {
-                this.startEditTrackSegement(track, trackSegment);
+                this.startEditTrackSegement(trackSegment);
                 L.DomEvent.stopPropagation(e);
             }
         },
 
-        startEditTrackSegement: function(track, polyline) {
+        startEditTrackSegement: function(polyline) {
             if (this._editedLine && this._editedLine !== polyline) {
                 this.stopEditLine();
             }
             polyline.startEdit();
             this._editedLine = polyline;
             polyline.once('editend', function(e) {
-                    setTimeout(this.onLineEditEnd.bind(this, e, track, polyline), 0);
+                    setTimeout(this.onLineEditEnd.bind(this, e), 0);
                 }.bind(this)
             );
             this.fire('startedit');
@@ -781,7 +782,9 @@ L.Control.TrackList = L.Control.extend({
             this.addTrackSegment(originalSegment._parentTrack, latlngs);
         },
 
-        onLineEditEnd: function(e, track, polyline) {
+        onLineEditEnd: function(e) {
+            const polyline = e.target;
+            const track = polyline._parentTrack;
             if (polyline.getLatLngs().length < 2) {
                 track.feature.removeLayer(polyline);
             }
@@ -802,7 +805,7 @@ L.Control.TrackList = L.Control.extend({
             );
             polyline._parentTrack = track;
             polyline.setMeasureTicksVisible(track.measureTicksShown());
-            polyline.on('click', this.onTrackSegmentClick.bind(this, track, polyline));
+            polyline.on('click', this.onTrackSegmentClick, this);
             polyline.on('nodeschanged', this.onTrackLengthChanged.bind(this, track));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
@@ -989,7 +992,7 @@ L.Control.TrackList = L.Control.extend({
             this.deleteTrackSegment(trackSegment);
             var segment1 = this.addTrackSegment(trackSegment._parentTrack, latlngs1);
             this.addTrackSegment(trackSegment._parentTrack, latlngs2);
-            this.startEditTrackSegement(trackSegment._parentTrack, segment1);
+            this.startEditTrackSegement(segment1);
         },
 
         deleteTrackSegment: function(trackSegment) {
