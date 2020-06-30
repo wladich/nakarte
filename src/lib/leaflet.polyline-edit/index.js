@@ -45,12 +45,12 @@ L.Polyline.EditMixin = {
     removeMarkers: function() {
         this.getLatLngs().forEach(function(node) {
                 if (node._nodeMarker) {
-                    this._map.removeLayer(node._nodeMarker);
+                    this.nodeMarkers.removeLayer(node._nodeMarker);
                     delete node._nodeMarker._lineNode;
                     delete node._nodeMarker;
                 }
                 if (node._segmentOverlay) {
-                    this._map.removeLayer(node._segmentOverlay);
+                    this.segmentOverlays.removeLayer(node._segmentOverlay);
                     delete node._segmentOverlay._lineNode;
                     delete node._segmentOverlay;
                 }
@@ -226,7 +226,7 @@ L.Polyline.EditMixin = {
             );
         marker._lineNode = node;
         node._nodeMarker = marker;
-        marker.addTo(this._map);
+        marker.addTo(this.nodeMarkers);
     },
 
     onNodeMarkerClickStartStopDrawing: function(e) {
@@ -269,7 +269,7 @@ L.Polyline.EditMixin = {
         );
         segmentOverlay._lineNode = p1;
         p1._segmentOverlay = segmentOverlay;
-        segmentOverlay.addTo(this._map);
+        segmentOverlay.addTo(this.segmentOverlays);
     },
 
     onSegmentMouseDownAddNode: function(e) {
@@ -298,7 +298,7 @@ L.Polyline.EditMixin = {
         if (!isAddingLeft && (index >= 1)) {
             if (!isAddingRight) {
                 var prevNode = nodes[index - 1];
-                this._map.removeLayer(prevNode._segmentOverlay);
+                this.segmentOverlays.removeLayer(prevNode._segmentOverlay);
                 delete prevNode._segmentOverlay._lineNode;
                 delete prevNode._segmentOverlay;
             }
@@ -319,15 +319,15 @@ L.Polyline.EditMixin = {
         delete node._nodeMarker;
         delete marker._lineNode;
         this.spliceLatLngs(index, 1);
-        this._map.removeLayer(marker);
+        this.nodeMarkers.removeLayer(marker);
         if (node._segmentOverlay) {
-            this._map.removeLayer(node._segmentOverlay);
+            this.segmentOverlays.removeLayer(node._segmentOverlay);
             delete node._segmentOverlay._lineNode;
             delete node._segmentOverlay;
         }
         var prevNode = nodes[index - 1];
         if (prevNode && prevNode._segmentOverlay) {
-            this._map.removeLayer(prevNode._segmentOverlay);
+            this.segmentOverlays.removeLayer(prevNode._segmentOverlay);
             delete prevNode._segmentOverlay._lineNode;
             delete prevNode._segmentOverlay;
             if ((index < nodes.length - 1) || (index < nodes.length && this._drawingDirection !== 1)) {
@@ -340,21 +340,21 @@ L.Polyline.EditMixin = {
         var nodes = this.getLatLngs(),
             oldNode = nodes[index],
             oldMarker = oldNode._nodeMarker;
-        this._map.removeLayer(oldNode._nodeMarker);
+        this.nodeMarkers.removeLayer(oldNode._nodeMarker);
         delete oldNode._nodeMarker;
         delete oldMarker._lineNode;
         latlng = latlng.clone();
         this.spliceLatLngs(index, 1, latlng);
         this.makeNodeMarker(index);
         if (oldNode._segmentOverlay) {
-            this._map.removeLayer(oldNode._segmentOverlay);
+            this.segmentOverlays.removeLayer(oldNode._segmentOverlay);
             delete oldNode._segmentOverlay._lineNode;
             delete oldNode._segmentOverlay;
             this.makeSegmentOverlay(index);
         }
         var prevNode = nodes[index - 1];
         if (prevNode && prevNode._segmentOverlay) {
-            this._map.removeLayer(prevNode._segmentOverlay);
+            this.segmentOverlays.removeLayer(prevNode._segmentOverlay);
             delete prevNode._segmentOverlay._lineNode;
             delete prevNode._segmentOverlay;
             this.makeSegmentOverlay(index - 1);
@@ -385,6 +385,12 @@ L.Polyline.EditMixin = {
     },
 
     setupMarkers: function() {
+        if (!this.segmentOverlays) {
+            this.segmentOverlays = L.featureGroup().addTo(this._map);
+        }
+        if (!this.nodeMarkers) {
+            this.nodeMarkers = L.featureGroup().addTo(this._map);
+        }
         this.removeMarkers();
         var latlngs = this.getLatLngs(),
             startNode = 0,
