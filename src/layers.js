@@ -698,7 +698,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     title: 'Norway paper map',
                     isDefault: false,
                     layer: new L.TileLayer(
-                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}', // eslint-disable-line max-len
+                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster4&zoom={z}&x={x}&y={y}', // eslint-disable-line max-len
                         {
                             code: 'Np',
                             isOverlay: true,
