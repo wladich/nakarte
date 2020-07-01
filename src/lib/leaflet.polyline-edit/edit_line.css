@@ -41,3 +41,7 @@
     background-color: rgb(90%, 20%, 20%);
     z-index: 1000000 !important;
 }
+
+.highlight-delete .line-editor-node-marker {
+    border-color: red;
+}

@@ -669,10 +669,7 @@ L.Control.TrackList = L.Control.extend({
             }
             polyline.startEdit();
             this._editedLine = polyline;
-            polyline.once('editend', function(e) {
-                    setTimeout(this.onLineEditEnd.bind(this, e), 0);
-                }.bind(this)
-            );
+            polyline.once('editend', this.onLineEditEnd, this);
             this.fire('startedit');
         },
 
@@ -831,6 +828,7 @@ L.Control.TrackList = L.Control.extend({
                 items.push({text: 'Join', callback: this.startLineJoinSelection.bind(this, e)});
             }
             items.push({text: 'Reverse', callback: this.reverseTrackSegment.bind(this, e.line)});
+            items.push({text: 'Shortcut', callback: this.startShortCutSelection.bind(this, e, true)});
             items.push({text: 'Delete segment', callback: this.deleteTrackSegment.bind(this, e.line)});
             items.push({text: 'New track from segment', callback: this.newTrackFromSegment.bind(this, e.line)});
             items.push({
@@ -850,6 +848,7 @@ L.Control.TrackList = L.Control.extend({
                         callback: this.splitTrackSegment.bind(this, e.line, e.nodeIndex, e.mouseEvent.latlng)
                     },
                     {text: 'Reverse', callback: this.reverseTrackSegment.bind(this, e.line)},
+                    {text: 'Shortcut', callback: this.startShortCutSelection.bind(this, e, false)},
                     {text: 'Delete segment', callback: this.deleteTrackSegment.bind(this, e.line)},
                     {text: 'New track from segment', callback: this.newTrackFromSegment.bind(this, e.line)},
                     {
@@ -926,6 +925,7 @@ L.Control.TrackList = L.Control.extend({
                 track.feature.on('mousemove', this.onMouseMoveOnLineForJoin, this);
             }
             this._lineJoinActive = true;
+            this._editedLine.disableEditOnLeftClick(true);
         },
 
         onMouseMoveOnLineForJoin: function(e) {
@@ -940,7 +940,116 @@ L.Control.TrackList = L.Control.extend({
             for (let track of this.tracks()) {
                 track.feature.off('mousemove', this.onMouseMoveOnLineForJoin, this);
             }
+            this.off('linecursorhide', this.onLineCursorHideForJoin, this);
+            this._editedLine.disableEditOnLeftClick(false);
             this._lineJoinActive = false;
+        },
+
+        startShortCutSelection: function(e, startFromNode) {
+            const line = this._editedLine;
+            this._shortCut = {startNodeIndex: e.nodeIndex, startFromNode};
+            let cursorStart;
+            if (startFromNode) {
+                cursorStart = line.getLatLngs()[e.nodeIndex];
+            } else {
+                cursorStart = closestPointToLineSegment(line.getLatLngs(), e.nodeIndex, e.mouseEvent.latlng);
+                this._shortCut.startLatLng = cursorStart;
+            }
+            this.showLineCursor(cursorStart, e.mouseEvent.latlng);
+            line.nodeMarkers.on('mousemove', this.onMouseMoveOnNodeMarkerForShortCut, this);
+            line.segmentOverlays.on('mousemove', this.onMouseMoveOnLineSegmentForShortCut, this);
+            this.map.on('mousemove', this.onMouseMoveOnMapForShortCut, this);
+            line.nodeMarkers.on('click', this.onClickNodeMarkerForShortCut, this);
+            line.segmentOverlays.on('click', this.onClickLineSegmentForShortCut, this);
+            this.on('linecursorhide', this.onLineCursorHideForShortCut, this);
+            line.disableEditOnLeftClick(true);
+        },
+
+        onMouseMoveOnLineSegmentForShortCut: function(e) {
+            this.updateShortCutSelection(e, false);
+        },
+
+        onMouseMoveOnNodeMarkerForShortCut: function(e) {
+            this.updateShortCutSelection(e, true);
+        },
+
+        onMouseMoveOnMapForShortCut: function() {
+            this._editedLine.highlighNodesForDeletion();
+        },
+
+        updateShortCutSelection: function(e, endAtNode) {
+            L.DomEvent.stopPropagation(e);
+            const line = this._editedLine;
+            const {firstNodeToDelete, lastNodeToDelete, rangeValid} = this.getShortCutNodes(e, endAtNode);
+            this.updateLineCursor(e.latlng, rangeValid);
+            if (rangeValid) {
+                line.highlighNodesForDeletion(firstNodeToDelete, lastNodeToDelete);
+            } else {
+                line.highlighNodesForDeletion();
+            }
+        },
+
+        onLineCursorHideForShortCut: function() {
+            const line = this._editedLine;
+            line.highlighNodesForDeletion();
+            line.nodeMarkers.off('mousemove', this.onMouseMoveOnNodeMarkerForShortCut, this);
+            line.segmentOverlays.off('mousemove', this.onMouseMoveOnLineSegmentForShortCut, this);
+            this.map.off('mousemove', this.onMouseMoveOnMapForShortCut, this);
+            line.nodeMarkers.off('click', this.onClickNodeMarkerForShortCut, this);
+            line.segmentOverlays.off('click', this.onClickLineSegmentForShortCut, this);
+            this.off('linecursorhide', this.onLineCursorHideForShortCut, this);
+            line.disableEditOnLeftClick(false);
+            this._shortCut = null;
+        },
+
+        onClickLineSegmentForShortCut: function(e) {
+            this.shortCutSegment(e, false);
+        },
+
+        onClickNodeMarkerForShortCut: function(e) {
+            this.shortCutSegment(e, true);
+        },
+
+        getShortCutNodes: function(e, endAtNode) {
+            const line = this._editedLine;
+            let startFromNode = this._shortCut.startFromNode;
+            let startNodeIndex = this._shortCut.startNodeIndex;
+            let endNodeIndex = line[endAtNode ? 'getMarkerIndex' : 'getSegmentOverlayIndex'](e.layer);
+            const newNodes = [];
+            if (!startFromNode) {
+                newNodes.push(this._shortCut.startLatLng);
+            }
+            if (!endAtNode) {
+                newNodes.push(closestPointToLineSegment(line.getLatLngs(), endNodeIndex, e.latlng));
+            }
+            let firstNodeToDelete, lastNodeToDelete;
+            if (endNodeIndex > startNodeIndex) {
+                firstNodeToDelete = startNodeIndex + 1;
+                lastNodeToDelete = endNodeIndex - 1;
+                if (!endAtNode) {
+                    lastNodeToDelete += 1;
+                }
+            } else {
+                newNodes.reverse();
+                firstNodeToDelete = endNodeIndex + 1;
+                lastNodeToDelete = startNodeIndex - 1;
+                if (!startFromNode) {
+                    lastNodeToDelete += 1;
+                }
+            }
+            return {firstNodeToDelete, lastNodeToDelete, newNodes, rangeValid: lastNodeToDelete >= firstNodeToDelete};
+        },
+
+        shortCutSegment: function(e, endAtNode) {
+            L.DomEvent.stopPropagation(e);
+            const line = this._editedLine;
+            const {firstNodeToDelete, lastNodeToDelete, newNodes, rangeValid} = this.getShortCutNodes(e, endAtNode);
+            if (!rangeValid) {
+                return;
+            }
+            this.stopEditLine();
+            line.spliceLatLngs(firstNodeToDelete, lastNodeToDelete - firstNodeToDelete + 1, ...newNodes);
+            this.startEditTrackSegement(line);
         },
 
         onTrackMouseEnter: function(track) {

@@ -58,9 +58,17 @@ L.Polyline.EditMixin = {
         );
     },
 
+    getMarkerIndex: function(marker) {
+        return this.getLatLngs().indexOf(marker._lineNode);
+    },
+
+    getSegmentOverlayIndex: function(segmentOverlay) {
+        return this.getLatLngs().indexOf(segmentOverlay._lineNode);
+    },
+
     onNodeMarkerDragEnd: function(e) {
         var marker = e.target,
-            nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+            nodeIndex = this.getMarkerIndex(marker);
         this.replaceNode(nodeIndex, marker.getLatLng());
         this._setupEndMarkers();
     },
@@ -77,11 +85,14 @@ L.Polyline.EditMixin = {
     },
 
     onNodeMarkerDblClickedRemoveNode: function(e) {
+        if (this._disableEditOnLeftClick) {
+            return;
+        }
         if (this.getLatLngs().length < 2 || (this._drawingDirection && this.getLatLngs().length === 2)) {
             return;
         }
         var marker = e.target,
-            nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
+            nodeIndex = this.getMarkerIndex(marker);
         this.removeNode(nodeIndex);
         this._setupEndMarkers();
         this.fire('nodeschanged');
@@ -217,7 +228,7 @@ L.Polyline.EditMixin = {
             .on('contextmenu', function(e) {
                     this.stopDrawingLine();
                     this.fire('noderightclick', {
-                            nodeIndex: this.getLatLngs().indexOf(marker._lineNode),
+                            nodeIndex: this.getMarkerIndex(marker),
                             line: this,
                             mouseEvent: e
                         }
@@ -230,10 +241,13 @@ L.Polyline.EditMixin = {
     },
 
     onNodeMarkerClickStartStopDrawing: function(e) {
+        if (this._disableEditOnLeftClick) {
+            return;
+        }
         var marker = e.target,
             latlngs = this.getLatLngs(),
             latlngs_n = latlngs.length,
-            nodeIndex = latlngs.indexOf(marker._lineNode);
+            nodeIndex = this.getMarkerIndex(marker);
         if ((this._drawingDirection === -1 && nodeIndex === 1) ||
             ((this._drawingDirection === 1 && nodeIndex === latlngs_n - 2))) {
             this.stopDrawingLine();
@@ -260,7 +274,7 @@ L.Polyline.EditMixin = {
         segmentOverlay.on('contextmenu', function(e) {
                 this.stopDrawingLine();
                 this.fire('segmentrightclick', {
-                        nodeIndex: this.getLatLngs().indexOf(segmentOverlay._lineNode),
+                        nodeIndex: this.getSegmentOverlayIndex(segmentOverlay),
                         mouseEvent: e,
                         line: this
                     }
@@ -273,12 +287,12 @@ L.Polyline.EditMixin = {
     },
 
     onSegmentMouseDownAddNode: function(e) {
-        if (e.originalEvent.button !== 0) {
+        if (e.originalEvent.button !== 0 || this._disableEditOnLeftClick) {
             return;
         }
         var segmentOverlay = e.target,
             latlngs = this.getLatLngs(),
-            nodeIndex = latlngs.indexOf(segmentOverlay._lineNode) + 1;
+            nodeIndex = this.getSegmentOverlayIndex(segmentOverlay) + 1;
         const midPoint = L.latLngBounds(latlngs[nodeIndex], latlngs[nodeIndex - 1]).getCenter();
         this.addNode(nodeIndex, wrapLatLngToTarget(e.latlng, midPoint));
         if (L.Draggable._dragging) {
@@ -426,6 +440,21 @@ L.Polyline.EditMixin = {
             end -= 1;
         }
         return this._latlngs.slice(start, end);
-    }
+    },
 
+    disableEditOnLeftClick: function(disable) {
+        this._disableEditOnLeftClick = disable;
+    },
+
+    highlighNodesForDeletion: function(startNodeIndex, endNodeIndex) {
+        if (!this._editing) {
+            return;
+        }
+        const nodes = this.getLatLngs();
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            const icon = node._nodeMarker._icon;
+            L.DomUtil[i >= startNodeIndex && i <= endNodeIndex ? 'addClass' : 'removeClass'](icon, 'highlight-delete');
+        }
+    }
 };
