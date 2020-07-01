@@ -71,7 +71,7 @@ const DevToolPlugin = isProduction ? Webpack.SourceMapDevToolPlugin : Webpack.Ev
 
 const plugins = [
     ...(isProduction ? [new CleanWebpackPlugin()] : []),
-    ...(isProduction ? [new CopyWebpackPlugin([{from: paths.appPublic, to: ''}])] : []),
+    ...(isProduction ? [new CopyWebpackPlugin({patterns: [{from: paths.appPublic, to: ''}]})] : []),
     new HtmlWebpackPlugin({
         template: paths.appIndexHtml,
         minify: false,
