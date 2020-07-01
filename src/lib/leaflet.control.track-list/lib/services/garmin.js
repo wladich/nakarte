@@ -37,7 +37,7 @@ class GarminRoute extends GarminBase {
         }
         let points = [];
         let track = data.geoPoints.map((obj) => ({lat: obj.latitude, lng: obj.longitude}));
-        name = data.courseName ? data.courseName : name;
+        name = data.courseName ?? name;
         return [{
             name,
             points,
@@ -51,7 +51,7 @@ class GarminActivity extends GarminBase {
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
-        const trackId = m[1];
+        const trackId = this.trackId = m[1];
         return [
             {
                 url: urlViaCorsProxy(
