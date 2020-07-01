@@ -163,12 +163,12 @@ function parseNktkOld(s, version) {
         name = s.readString(n);
         name = utf8.decode(name);
         segmentsCount = s.readNumber();
-        for (; segmentsCount--;) {
+        for (let i = 0; i < segmentsCount; i++) {
             segment = [];
             pointsCount = s.readNumber();
             x = 0;
             y = 0;
-            for (; pointsCount--;) {
+            for (let j = 0; j < pointsCount; j++) {
                 x += s.readNumber();
                 y += s.readNumber();
                 segment.push({lng: x / arcUnit, lat: y / arcUnit});
@@ -218,7 +218,7 @@ function parseNktkOld(s, version) {
                 midX = s.readNumber();
                 midY = s.readNumber();
             }
-            for (; pointsCount--;) {
+            for (let i = 0; i < pointsCount; i++) {
                 n = s.readNumber();
                 waypointName = s.readString(n);
                 waypointName = utf8.decode(waypointName);
