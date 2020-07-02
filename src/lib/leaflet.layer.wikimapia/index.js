@@ -103,12 +103,13 @@ L.Wikimapia = L.GridLayer.extend({
             canvas.height = this.options.tileSize;
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
             dataPromise.then((data) => {
+                if (!data.error) {
                     canvas._tileData = data.tileData;
                     canvas._adjustment = data.adjustment;
                     this.drawTile(canvas);
                     this._tileOnLoad(done, canvas);
                 }
-            );
+            });
 
             canvas._abortLoading = abortLoading;
             return canvas;
