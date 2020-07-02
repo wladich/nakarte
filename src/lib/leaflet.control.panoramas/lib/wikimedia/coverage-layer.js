@@ -161,6 +161,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
             canvas.height = this.options.tileSize;
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
             dataPromise.then((data) => {
+                if (!data.error) {
                     canvas._tileData = data.tileData;
                     canvas._adjustment = data.adjustment || {multiplier: 1, offsetX: 0, offsetY: 0};
                     setTimeout(() => {
@@ -168,7 +169,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
                         done(null, canvas);
                     }, 1);
                 }
-            );
+            });
 
             canvas._abortLoading = abortLoading;
             return canvas;

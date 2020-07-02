@@ -78,18 +78,19 @@ class TiledDataLoader {
         if (!(dataTileKey in this._pendingRequests)) {
             const {url, options} = this.makeRequestData(dataTileCoords);
             const fetchPromise = this._xhrQueue.put(url, options);
-            // TODO: handle errors
-            const dataPromise = fetchPromise
-                .then((xhr) => this.processResponse(xhr, dataTileCoords))
-                .then(({tileData, coords}) => {
-                        this._cache.put(this.makeTileKey(coords), tileData);
-                        delete this._pendingRequests[dataTileKey];
-                        return {
-                            tileData,
-                            coords
-                        };
-                    }
-                );
+            const dataPromise = (async() => {
+                let xhr;
+                try {
+                    xhr = await fetchPromise;
+                } catch (e) {
+                    return {error: e};
+                } finally {
+                    delete this._pendingRequests[dataTileKey];
+                }
+                const {tileData, coords} = await this.processResponse(xhr, dataTileCoords);
+                this._cache.put(this.makeTileKey(coords), tileData);
+                return {tileData, coords};
+            })();
             const pendingRequest = this._pendingRequests[dataTileKey] = {
                 dataPromise,
                 refCount: 0
@@ -107,11 +108,16 @@ class TiledDataLoader {
         pendingRequest.refCount += 1;
 
         return {
-            dataPromise: pendingRequest.dataPromise.then((data) => ({
+            dataPromise: pendingRequest.dataPromise.then((data) => {
+                    if (data.error) {
+                        return data;
+                    }
+                    return {
                         coords: data.coords,
                         tileData: data.tileData,
                         adjustment: this.calcAdjustment(layerTileCoords, data.coords)
-            })),
+                    };
+            }),
             abortLoading: () => pendingRequest.abortLoading()
         };
     }
