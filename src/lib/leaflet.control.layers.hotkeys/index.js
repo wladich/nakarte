@@ -74,8 +74,11 @@ function enableHotKeys(control) {
                 const pressedKey = this._keyDown;
                 this._keyDown = null;
                 const targetTag = e.target.tagName.toLowerCase();
-                if ((targetTag === 'input' && e.target.type === 'text') || targetTag === 'textarea' ||
-                    pressedKey !== e.keyCode) {
+                if (
+                    (targetTag === 'input' && ['text', 'search'].includes(e.target.type)) ||
+                    targetTag === 'textarea' ||
+                    pressedKey !== e.keyCode
+                ) {
                     return;
                 }
                 const key = String.fromCharCode(e.keyCode);
