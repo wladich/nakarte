@@ -12,7 +12,7 @@ L.Control.TrackList.include({
             }
             this.readingFiles(this.readingFiles() + 1);
             const geodata = await new NakarteUrlLoader().geoData(paramName, values);
-            const notEmpty = this.addTracksFromGeodataArray(geodata, {paramName, values});
+            const notEmpty = this.addTracksFromGeodataArray(geodata);
             this.readingFiles(this.readingFiles() - 1);
             if (notEmpty) {
                 this.setExpanded();

@@ -83,7 +83,7 @@ L.Control.TrackList.include({
                     logging.captureBreadcrumb('load track from localStorage');
                     s = s.slice(6); // remove "#nktk=" prefix
                     geodata = parseNktkSequence(s);
-                    this.addTracksFromGeodataArray(geodata, {localStorage: {key, value: s}});
+                    this.addTracksFromGeodataArray(geodata);
                 }
             }
         }

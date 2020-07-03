@@ -240,18 +240,12 @@ L.Control.TrackList = L.Control.extend({
 
             readFiles(files).then(function(fileDataArray) {
                 const geodataArray = [];
-                const debugFileData = [];
                 for (let fileData of fileDataArray) {
                         geodataArray.push(...parseGeoFile(fileData.filename, fileData.data));
-                        debugFileData.push({
-                            fileName: fileData.filename,
-                            size: fileData.data.length,
-                            content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
-                        });
                 }
                 this.readingFiles(this.readingFiles() - 1);
 
-                this.addTracksFromGeodataArray(geodataArray, debugFileData);
+                this.addTracksFromGeodataArray(geodataArray);
             }.bind(this));
         },
 
@@ -290,7 +284,7 @@ L.Control.TrackList = L.Control.extend({
             });
         },
 
-        addTracksFromGeodataArray: function(geodata_array, debugData) {
+        addTracksFromGeodataArray: function(geodata_array) {
             let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
@@ -336,7 +330,6 @@ L.Control.TrackList = L.Control.extend({
                 }.bind(this)
             );
             if (messages.length) {
-                logging.captureMessage('errors in loaded tracks', {message: messages.join('\n'), debugData});
                 notify(messages.join('\n'));
             }
             return hasData;
