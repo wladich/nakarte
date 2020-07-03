@@ -63,7 +63,7 @@ class MovescountMove extends MovescountBase {
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
-        const trackId = m[2];
+        const trackId = this.trackId = m[2];
         return [
             {
                 url: urlViaCorsProxy(`http://www.movescount.com/Move/Track2/${trackId}`),
