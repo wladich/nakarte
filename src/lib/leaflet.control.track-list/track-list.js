@@ -781,9 +781,8 @@ L.Control.TrackList = L.Control.extend({
             const polyline = e.target;
             const track = polyline._parentTrack;
             if (polyline.getLatLngs().length < 2) {
-                track.feature.removeLayer(polyline);
+                this.deleteTrackSegment(polyline);
             }
-            this.onTrackLengthChanged(track);
             if (this._editedLine === polyline) {
                 this._editedLine = null;
             }
@@ -812,6 +811,7 @@ L.Control.TrackList = L.Control.extend({
             // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
             track.feature.addLayer(polyline);
+            this.onTrackLengthChanged(track);
             return polyline;
         },
 
@@ -1101,7 +1101,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         deleteTrackSegment: function(trackSegment) {
-            trackSegment._parentTrack.feature.removeLayer(trackSegment);
+            const track = trackSegment._parentTrack;
+            track.feature.removeLayer(trackSegment);
+            this.onTrackLengthChanged(track);
         },
 
         newTrackFromSegment: function(trackSegment) {
@@ -1148,7 +1150,6 @@ L.Control.TrackList = L.Control.extend({
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
-            this.onTrackLengthChanged(track);
             return track;
         },
 

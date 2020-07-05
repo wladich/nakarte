@@ -76,7 +76,6 @@ L.Polyline.EditMixin = {
     onNodeMarkerMovedChangeNode: function(e) {
         var marker = e.target,
             latlng = marker.getLatLng(),
-        // nodeIndex = this.getLatLngs().indexOf(marker._lineNode);
             node = marker._lineNode;
         node.lat = latlng.lat;
         node.lng = latlng.lng;
@@ -95,7 +94,6 @@ L.Polyline.EditMixin = {
             nodeIndex = this.getMarkerIndex(marker);
         this.removeNode(nodeIndex);
         this._setupEndMarkers();
-        this.fire('nodeschanged');
     },
 
     onMapClick: function(e) {
@@ -143,7 +141,6 @@ L.Polyline.EditMixin = {
             var newNodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length;
             this.spliceLatLngs(newNodeIndex, 0, e.latlng);
             this._setupEndMarkers();
-            this.fire('nodeschanged');
         }
 
         this._map.on('mousemove', this.onMouseMoveFollowEndNode, this);
@@ -158,7 +155,6 @@ L.Polyline.EditMixin = {
         this._map.off('mousemove', this.onMouseMoveFollowEndNode, this);
         var nodeIndex = this._drawingDirection === -1 ? 0 : this.getLatLngs().length - 1;
         this.spliceLatLngs(nodeIndex, 1);
-        this.fire('nodeschanged');
         this._drawingDirection = 0;
         L.DomUtil.removeClass(this._map._container, 'leaflet-line-drawing');
         this._map.clickLocked = false;
@@ -188,7 +184,6 @@ L.Polyline.EditMixin = {
                 if (this._drawingDirection && this.getLatLngs().length > 2) {
                     const nodeIndex = this._drawingDirection === 1 ? this.getLatLngs().length - 2 : 1;
                     this.removeNode(nodeIndex);
-                    this.fire('nodeschanged');
                     L.DomEvent.preventDefault(e);
                 }
                 break;
@@ -204,7 +199,6 @@ L.Polyline.EditMixin = {
             latlng = wrapLatLngToTarget(latlng, this._latlngs[nodeIndex]);
         }
         this.spliceLatLngs(nodeIndex, 1, latlng);
-        this.fire('nodeschanged');
     },
 
     makeNodeMarker: function(nodeIndex) {
@@ -299,7 +293,6 @@ L.Polyline.EditMixin = {
             L.Draggable._dragging.finishDrag();
         }
         latlngs[nodeIndex]._nodeMarker.dragging._draggable._onDown(e.originalEvent);
-        this.fire('nodeschanged');
     },
 
     addNode: function(index, latlng) {
@@ -428,6 +421,7 @@ L.Polyline.EditMixin = {
         const latlngs = this.getLatLngs();
         const res = latlngs.splice(...args);
         this.setLatLngs(latlngs);
+        this.fire('nodeschanged');
         return res;
         // this._latlngs.splice(...args);
         // this.redraw();
