@@ -70,7 +70,7 @@
   "dependencies": {
     "@sentry/browser": "^5.15.5",
     "alertify.js": "^1.0.12",
-    "blueimp-md5": "^2.13.0",
+    "blueimp-md5": "^2.16.0",
     "browser-filesaver": "^1.1.1",
     "core-js": "^3.6.5",
     "escape-html": "^1.0.3",
