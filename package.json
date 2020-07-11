@@ -74,7 +74,7 @@
     "browser-filesaver": "^1.1.1",
     "core-js": "^3.6.5",
     "escape-html": "^1.0.3",
-    "image-promise": "^7.0.0",
+    "image-promise": "^7.0.1",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
     "load-script": "^1.0.0",
