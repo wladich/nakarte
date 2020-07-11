@@ -68,7 +68,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "@sentry/browser": "^5.15.5",
+    "@sentry/browser": "^5.19.1",
     "alertify.js": "^1.0.12",
     "blueimp-md5": "^2.16.0",
     "browser-filesaver": "^1.1.1",
