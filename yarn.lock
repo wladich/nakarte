@@ -4876,10 +4876,10 @@ ignore@^5.1.4, ignore@^5.1.8:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==
 
-image-promise@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-7.0.0.tgz#a15ab40e59b9cdc7e3974d93949faa4f06cad4da"
-  integrity sha512-jDye/LXbcgBZxdu6okhxlwGMbnjLorop98hxgWgcsGsJ5ARp+r7etOIeqvw/biSCgbycqRtgpCDUd/BMaTz5zQ==
+image-promise@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-7.0.1.tgz#97134ff205de927af01c57b7daba2f6f7f6b2501"
+  integrity sha512-399HJHce1d3aEz4EYXLU4MUgUjX0gO0Bewu8mY4iLYItpNpBWLSQkevbYRPDViyISsL6K2bJiLadhxGCctRIOg==
 
 immediate@~3.0.5:
   version "3.0.6"
