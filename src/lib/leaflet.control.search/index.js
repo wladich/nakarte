@@ -38,7 +38,7 @@ class SearchViewModel {
 
     onShowResults(show) {
         if (show) {
-            this.highlightedIndex(null);
+            this.highlightedIndex(this.items().length > 0 ? 0 : null);
         }
     }
 
