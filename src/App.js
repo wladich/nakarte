@@ -33,6 +33,8 @@ import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
 import logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps/index.js';
+import {SearchControl} from '~/lib/leaflet.control.search';
+import '~/lib/leaflet.placemark';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -68,6 +70,11 @@ function setUp() {
     ).addTo(map);
 
     new ZoomDisplay().addTo(map);
+
+    const searchControl = new SearchControl({position: 'topleft', stackHorizontally: true, maxMapWidthToMinimize: 620})
+        .addTo(map)
+        .enableHashState('q');
+    map.getPlacemarkHashStateInterface().enableHashState('r');
 
     new L.Control.Scale({
         imperial: false,
@@ -294,6 +301,25 @@ function setUp() {
             success: e.success,
             error: getErrorLoggingInfo(e.error),
         });
+    });
+
+    searchControl.on('resultreceived', function(e) {
+        logging.logEvent('SearchProviderSelected', {
+            provider: e.provider,
+            query: e.query,
+        });
+        if (e.provider === 'Links' && e.result.error) {
+            logging.logEvent('SearchLinkError', {
+                query: e.query,
+                result: e.result,
+            });
+        }
+        if (e.provider === 'Coordinates') {
+            logging.logEvent('SearchCoordinates', {
+                query: e.query,
+                result: e.result,
+            });
+        }
     });
 
     logging.logEvent('start', startInfo);

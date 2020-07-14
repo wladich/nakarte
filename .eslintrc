@@ -131,6 +131,9 @@
       },
       "globals": {
         "assert": true
+      },
+      "rules": {
+        "max-nested-callbacks": ["error", 5]
       }
     },
     {

@@ -1,0 +1,149 @@
+id,en,ru
+3,Island,Остров
+4,Mountain range,Горная область
+6,Protected area,Охраняемная территория
+7,Water body,Водоём
+9,Local name,Местное название
+10,National park,Национальный парк
+12,Name of the forest or field,Урочище
+13,Historic Territory,Историческая территория
+15,City district,Район города
+21,Road,Дорога
+105,Glacier,Ледник
+106,Swamp,Болото
+107,Peninsula,Полуостров
+108,Desert,Пустыня
+111,Low land,Низменность
+114,River,Река
+116,Stream,Ручей
+117,Military area,Военный полигон
+118,Administrative structure,Регион
+119,Inhabited area,Населенный пункт
+120,Industrial zone,Промзона
+122,District,Пригород
+201,Capital city,Столица
+202,Town,Город
+203,Municipality,Город
+204,Village,Деревня
+205,City,Город
+206,Village,Деревня
+210,Country,Страна
+220,Attraction,Достопримечательность
+230,Аddress,Адрес
+250,City district,Район города
+1012,Border crossing,Погранпереход
+1015,Cableway,Канатная дорога
+1016,International airport,Международный аэропорт
+1017,Airport,Аэропорт
+1018,Airport,Аэропорт
+1019,Airport Terminal,Терминал аэропорта
+1022,Subway station,Станция метро
+1023,Helipad,Вертолетная площадка
+1030,Port,Порт
+1042,Subway line,Линия метро
+1045,Subway line,Линия метро
+1114,Tourist signpost,Указатель троп
+1115,Bunker,Бункер
+1117,Tourist signpost,Указатель троп
+1119,Mine,Шахта
+1122,High building,Высокое здание
+1127,Transmission tower,Радио башня
+1131,Attraction,Достопримечательность
+1136,Tunnel,Тонель
+1210,Archeological site,Археологические раскопки
+1212,Castle,Замок
+1216,Monastery,Монастырь
+1217,Church,Церковь
+1224,Memorial,Памятник
+1234,Park,Парк
+1236,Cemetery,Кладбище
+1246,Castle,Замок
+1249,Temple,Храм/Синагога/Мечеть
+1250,Attraction,Достопримечательность
+1261,Amusement park,Парк развлечений
+1310,UNESCO site,объект ЮНЕСКО
+1411,Mountain,Вершина
+1412,Information board,Информационный стенд
+1413,Protected area,Охраняемная территория
+1415,Water body,Водоём
+1416,"Mountain, volcano","Вершина, вулкан"
+1417,Natural swimming pool,Место купания
+1418,Water reservoir,Водохранилише или водонапорная башня
+1427,Mountain pass,Перевал
+1428,Rocks,Скалы
+1429,"Well, spring",Источник
+1430,Waterfall,Водопад
+1433,Beach,Пляж
+1443,Scenic viewpoint,Обзорная точка
+1642,Cycling route,Велосипедный маршрут
+4100,Part of building,Корпус здания
+5018,Power plant,Электростанция
+5115,School,Школа
+5118,Administrative office,Администрация
+5124,Fire station,Пожарное депо
+5215,Library,Библиотека
+5216,Museum,Музей
+5217,Zoo,Зоопарк
+5306,Money exchange,Обмен валют
+5309,LPG station,Газовая заправка
+5310,Auto service,Автосервис
+5313,Petrol station,Заправка
+5315,Shopping mall,Торговый центр
+5319,Bike shop,Веломагазин
+5322,Restaurant,Ресторан
+5324,Fastfood,Фастфуд
+5326,Cafe,Кафе
+5328,Bar,Бар
+5403,Sauna,Сауна
+5417,Gym,Тренажерный зал
+5511,Hotel,Гостиница
+5514,Motel,Мотель
+5516,Guest house,Гостевой дом
+5521,Apartments,Апартаменты
+5522,Holiday house,Гостевой дом
+5611,Pharmacy,Аптека
+5613,Hospital,Больница
+5619,Wine shop,Вино
+5623,Electrical supplies,Электротовары
+5624,Hobby shop,Товары для дома
+5627,Sports equipment,Спортивный магазин
+5628,Grocery store,Продуктовый магазин
+5630,Auto service,Автосервис
+5631,Travel service,Туристические услуги
+5632,Accounting and tax records,Бухгалтерия и налоги
+5633,Shop,Магазин
+5634,Advertising and marketing services,Рекламные услуги
+5635,Sales of heat pumps,Продажа тепловых насосов
+5636,Factory,Фабрика
+5638,Real estate agents,Агент по недвижимости
+5639,Application service providers,Application service providers
+5641,Construction works,Строительные работы
+5642,Sale of pharmaceuticals,Продажа лекарств
+5653,Waste disposal,Утилизация отходов
+5656,Alergologist,Алерголог
+5668,Cosmetics,Косметика
+5669,Sales of paints,Продажа красок
+5673,Engineering services,Инженерные работы
+5676,Construction company,Строительная компания
+5679,Joinery and carpentry,Столярные работы
+5683,Jewelry,Ювелирный магазин
+5684,Sale of cosmetics,Продажа косметики
+5685,Clothes shop,Магазин одежды
+5686,Bakery,Пекарня
+5691,Bookshop,Книжный магазин
+5694,"Fruits, vegetables",Офощи-фрукты
+5699,Printing house,Типография
+5701,Shoe shop,Обувбной магазин
+5753,Building,Здание
+5759,Water treatment facility,Станция подготовки воды
+5760,Scientific workplace,Научная лаборатория
+6001,Bus stop,Остановка автобуса
+6506,Tram stop,Остановка трамвая
+6507,Bus stop,Остановка автобуса
+6508,Trolleybus stop,Остановка тролейбуса
+6511,Train station,Ж/д станция
+6512,Train station,Ж/д станция
+6513,Bus terminal,Автовокзал
+6519,Ski lift station,Станция канатной дороги
+11425,Mountain ridge,Хребет
+15118,Administrative office,Администрация

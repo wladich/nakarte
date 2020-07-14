@@ -1,0 +1,20 @@
+.leaflet-placemark {
+    background-image: url('marker.svg');
+    background-size: 30px 30px;
+    width: 30px !important;
+    height: 30px !important;
+    margin-left: -15px !important;
+    margin-top: -15px !important;
+}
+
+.lealfet-placemark-title {
+    position: relative;
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.4);
+    padding: 0 2px;
+    left: 22px;
+    top: -8px;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
