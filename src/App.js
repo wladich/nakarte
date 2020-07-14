@@ -33,6 +33,7 @@ import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
 import logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps/index.js';
+import {SearchControl} from "~/lib/leaflet.control.search";
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -66,6 +67,8 @@ function setUp() {
             position: 'topleft'
         }
     ).addTo(map);
+
+    new SearchControl({position: 'topleft'}).addTo(map);
 
     new ZoomDisplay().addTo(map);
 

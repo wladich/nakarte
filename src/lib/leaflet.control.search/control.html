@@ -1,0 +1,23 @@
+<div data-bind="css: {hasresults: showResults() || showError()}">
+    <input type="search"
+        class="leaflet-search-input"
+        placeholder="Search places, coordinates, links"
+        data-bind="
+            textInput: query,
+            event: {keydown: onInputKeyDown},
+            hasFocus: inputHasFocus
+        ">
+    <ul tabindex="-1" class="leaflet-search-results" data-bind="
+        foreach: {data: items},
+        visible: showResults,
+        hasFocus: resultsHaveFocus">
+        <li data-bind="
+            event: {mouseover: $root.onItemMouseOver},
+            click: $root.onItemClick,
+            css: {highlighted: $index() === $root.highlightedIndex()}">
+            <p><span class="title" data-bind="text: title"></span>&nbsp;&nbsp;<span class="category" data-bind="text: category"></span></p>
+            <p class="address" data-bind="text: address"></p>
+        </li>
+    </ul>
+    <div class="leaflet-search-error" data-bind="visible: showError, text: error"></div>
+</div>
