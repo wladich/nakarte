@@ -134,7 +134,7 @@ class SearchViewModel {
 const SearchControl = L.Control.extend({
     options: {
         provider: 'mapycz',
-        delay: 300,
+        delay: 500,
         minQueryLength: 3,
         maxResponses: 5,
     },
