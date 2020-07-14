@@ -48,6 +48,11 @@ class SearchViewModel {
         }
     }
 
+    defaultEventHandle(_, e) {
+        L.DomEvent.stopPropagation(e);
+        return true;
+    }
+
     onInputKeyDown = (_, e) => {
         let n;
         switch (e.which) {

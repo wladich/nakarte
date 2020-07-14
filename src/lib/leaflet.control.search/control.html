@@ -4,7 +4,7 @@
         placeholder="Search places, coordinates, links"
         data-bind="
             textInput: query,
-            event: {keydown: onInputKeyDown},
+            event: {keydown: onInputKeyDown, contextmenu: defaultEventHandle, mousemove: defaultEventHandle},
             hasFocus: inputHasFocus
         ">
     <ul tabindex="-1" class="leaflet-search-results" data-bind="
