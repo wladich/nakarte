@@ -153,7 +153,7 @@ const SearchControl = L.Control.extend({
 
     onAdd: function(map) {
         this._map = map;
-        const container = L.DomUtil.create('div', 'leaflet-search');
+        const container = L.DomUtil.create('div', 'leaflet-search-container');
         container.innerHTML = controlTemplate;
         ko.applyBindings(this.viewModel, container);
         this.searchPromise = null;
