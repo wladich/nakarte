@@ -134,6 +134,15 @@ const loaders = [
         test: /\.(html)(\?.*)?$/u,
         loader: 'raw-loader',
     },
+    {
+        test: /\.csv$/u,
+        loader: 'csv-loader',
+        options: {
+            dynamicTyping: true,
+            header: true,
+            skipEmptyLines: true,
+        },
+    },
 
     ...(isProduction || isDevelopment
         ? [

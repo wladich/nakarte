@@ -725,7 +725,7 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
             const parentTrack = this.trackAddingPoint();
-            const name = this.getNewPointName(parentTrack);
+            const name = e.suggested && this._map.suggestedPoint?.title || this.getNewPointName(parentTrack);
             const newLatLng = e.latlng.wrap();
             const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
