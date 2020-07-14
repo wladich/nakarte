@@ -99,6 +99,7 @@ class SearchViewModel {
         query = query.trim();
         if (query.length >= this.minSearchQueryLength) {
             this.items.removeAll();
+            this.error(null);
             this.searchRequested(null);
         }
     }
