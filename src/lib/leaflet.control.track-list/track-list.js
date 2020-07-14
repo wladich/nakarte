@@ -117,7 +117,7 @@ L.Control.TrackList = L.Control.extend({
                     <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
                     ><a class="button open-file" title="Open file" data-bind="click: loadFilesFromDisk"></a
                     ><input type="text" class="input-url" placeholder="Track URL"
-                        data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: onFileInputRightClick}"
+                        data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: defaultEventHandle, mousemove: defaultEventHandle}"
                     ><a class="button download-url" title="Download URL" data-bind="click: loadFilesFromUrl"></a
                     ><a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}" title="Menu"></a>
                 </div>
@@ -177,7 +177,7 @@ L.Control.TrackList = L.Control.extend({
             return container;
         },
 
-        onFileInputRightClick: function(_, e) {
+        defaultEventHandle: function(_, e) {
             L.DomEvent.stopPropagation(e);
             return true;
         },
