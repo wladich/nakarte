@@ -135,14 +135,16 @@ class SearchViewModel {
 const SearchControl = L.Control.extend({
     options: {
         provider: 'mapycz',
+        providerOptions: {
+            maxResponses: 5,
+        },
         delay: 500,
         minQueryLength: 3,
-        maxResponses: 5,
     },
 
     initialize: function(options) {
         L.Control.prototype.initialize.call(this, options);
-        this.provider = new providers[this.options.provider]({maxResponses: this.options.maxResponses});
+        this.provider = new providers[this.options.provider](this.options.providerOptions);
         this.searchPromise = null;
         this.viewModel = new SearchViewModel(this.options.minQueryLength, this.options.delay);
         this.viewModel.searchRequested.subscribe(this.onSearchRequested.bind(this));
@@ -179,7 +181,11 @@ const SearchControl = L.Control.extend({
     },
 
     onResultItemClicked: function(item) {
-        this._map.fitBounds(item.bbox);
+        if (item.bbox) {
+            this._map.fitBounds(item.bbox);
+        } else {
+            this._map.setView(item.latlng, item.zoom);
+        }
     },
 });
 

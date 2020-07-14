@@ -4,14 +4,13 @@ import {fetch} from '~/lib/xhr-promise';
 class MapyCzProvider {
     API_URL = 'https://api.mapy.cz/suggest/';
 
-    constructor(options) {
-        this.maxResponses = options.maxResponses;
+    constructor({maxResponses}) {
+        this.maxResponses = maxResponses;
     }
 
     async search(query, {latlng, zoom}) {
         const url = new URL(this.API_URL);
         url.searchParams.append('phrase', query);
-
         url.searchParams.append('lat', latlng.lat);
         url.searchParams.append('lon', latlng.lng);
         url.searchParams.append('zoom', zoom);
