@@ -1127,7 +1127,7 @@ L.Control.TrackList = L.Control.extend({
                 name: ko.observable(geodata.name),
                 color: ko.observable(color),
                 visible: ko.observable(!geodata.trackHidden),
-                length: ko.observable('empty'),
+                length: ko.observable(0),
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
                 markers: [],
