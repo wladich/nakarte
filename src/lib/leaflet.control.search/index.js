@@ -3,7 +3,7 @@ import ko from 'knockout';
 
 import {stopContainerEvents} from '~/lib/leaflet.control.commons';
 
-import {providers} from './providers/index';
+import {providers, magicProviders} from './providers/index';
 import './style.css';
 import controlTemplate from './control.html';
 
@@ -145,6 +145,7 @@ const SearchControl = L.Control.extend({
     initialize: function(options) {
         L.Control.prototype.initialize.call(this, options);
         this.provider = new providers[this.options.provider](this.options.providerOptions);
+        this.magicProviders = magicProviders.map((Cls) => new Cls());
         this.searchPromise = null;
         this.viewModel = new SearchViewModel(this.options.minQueryLength, this.options.delay);
         this.viewModel.searchRequested.subscribe(this.onSearchRequested.bind(this));
@@ -169,7 +170,13 @@ const SearchControl = L.Control.extend({
             latlng: this._map.getCenter(),
             zoom: this._map.getZoom(),
         };
-        const searchPromise = (this.searchPromise = this.provider.search(query, searchOptions));
+        let provider = this.provider;
+        for (let magicProvider of this.magicProviders) {
+            if (magicProvider.isOurQuery(query)) {
+                provider = magicProvider;
+            }
+        }
+        const searchPromise = (this.searchPromise = provider.search(query, searchOptions));
         const result = await searchPromise;
         if (this.searchPromise === searchPromise) {
             if (result.error) {

@@ -1,9 +1,12 @@
-import {MapyCzProvider} from "./mapycz";
-import {PhotonProvider} from "./photon";
+import {MapyCzProvider} from './mapycz';
+import {PhotonProvider} from './photon';
+import {LinksProvider} from './links';
 
 const providers = {
     mapycz: MapyCzProvider,
     photon: PhotonProvider,
 };
 
-export {providers};
+const magicProviders = [LinksProvider];
+
+export {providers, magicProviders};
