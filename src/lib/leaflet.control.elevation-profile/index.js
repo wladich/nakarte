@@ -110,7 +110,6 @@ const ElevationProfile = L.Class.extend({
                 .catch((e) => {
                     logging.captureException(e, 'error getting elevation');
                     notify(`Failed to get elevation data: ${e.message}`);
-                    that._addTo(map);
                 });
             this.values = null;
         },
