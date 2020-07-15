@@ -1,5 +1,5 @@
-import {MapyCzProvider} from "./provider-mapycz";
-import {PhotonProvider} from "./provider-photon";
+import {MapyCzProvider} from "./mapycz";
+import {PhotonProvider} from "./photon";
 
 const providers = {
     mapycz: MapyCzProvider,

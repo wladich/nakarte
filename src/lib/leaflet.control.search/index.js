@@ -3,7 +3,7 @@ import ko from 'knockout';
 
 import {stopContainerEvents} from '~/lib/leaflet.control.commons';
 
-import {providers} from './providers';
+import {providers} from './providers/index';
 import './style.css';
 import controlTemplate from './control.html';
 
