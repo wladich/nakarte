@@ -61,6 +61,8 @@ L.Control.PrintPages = L.Control.extend({
             {name: 'A5', width: 148, height: 210}
         ],
 
+        zoomLevels: ['auto', 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
             this.pages = [];
