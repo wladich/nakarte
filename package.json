@@ -76,7 +76,7 @@
     "escape-html": "^1.0.3",
     "image-promise": "^7.0.1",
     "knockout": "^3.4.0",
-    "leaflet": "1.0.3",
+    "leaflet": "1.6.0",
     "load-script": "^1.0.0",
     "mapillary-js": "2.20.0",
     "pbf": "^3.0.5",
