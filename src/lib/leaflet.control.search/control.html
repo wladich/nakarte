@@ -16,7 +16,7 @@
             event: {mouseover: $root.onItemMouseOver},
             click: $root.onItemClick,
             css: {highlighted: $index() === $root.highlightedIndex()}">
-            <p><span class="title" data-bind="text: title"></span>&nbsp;&nbsp;<span class="category" data-bind="text: category"></span></p>
+            <p><span class="title" data-bind="html: title"></span>&nbsp;&nbsp;<span class="category" data-bind="text: category"></span></p>
             <p class="address" data-bind="text: address"></p>
         </li>
     </ul>
