@@ -25,5 +25,5 @@
     <div class="leaflet-search-error" data-bind="visible: showError, text: error"></div>
     <div
             class="leaflet-search-error"
-            data-bind="visible: query().length > 0 && query().trim().length < minSearchQueryLength">Query too short</div>
+            data-bind="visible: showWarningTooShort">Query too short</div>
 </div>

@@ -28,6 +28,11 @@ class SearchViewModel {
         return this.error() !== null && this.inputHasFocus() && this.query().trim().length >= this.minSearchQueryLength;
     }, this);
 
+    showWarningTooShort = ko.pureComputed(function() {
+        const queryLength = this.query().trim().length;
+        return this.inputHasFocus() && queryLength > 0 && queryLength < this.minSearchQueryLength;
+    }, this);
+
     onItemMouseOver = (item) => {
         this.highlightedIndex(this.items.indexOf(item));
     };
