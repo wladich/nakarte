@@ -10,6 +10,7 @@ import controlTemplate from './control.html';
 
 class SearchViewModel {
     query = ko.observable('');
+    inputPlaceholder = ko.observable(null);
     items = ko.observableArray([]);
     error = ko.observable(null);
     inputHasFocus = ko.observable(true).extend({rateLimit: {timeout: 10, method: 'notifyWhenChangesStop'}});
@@ -129,6 +130,10 @@ class SearchViewModel {
         this.inputHasFocus(true);
     }
 
+    setInputPlaceholder(s) {
+        this.inputPlaceholder(s);
+    }
+
     constructor(minSearchQueryLength, inputDelay) {
         this.minSearchQueryLength = minSearchQueryLength;
         this.query.extend({rateLimit: {timeout: inputDelay, method: 'notifyWhenChangesStop'}});
@@ -148,6 +153,7 @@ const SearchControl = L.Control.extend({
         },
         delay: 500,
         minQueryLength: 3,
+        hotkey: 'L',
     },
 
     initialize: function(options) {
@@ -169,6 +175,8 @@ const SearchControl = L.Control.extend({
         this.searchPromise = null;
         setTimeout(() => this.viewModel.setFocus(), 0);
         stopContainerEvents(container);
+        L.DomEvent.on(document, 'keyup', this.onDocumentKeyUp, this);
+        this.viewModel.setInputPlaceholder(`Search places, coordinates, links (Alt-${this.options.hotkey})`);
         return container;
     },
 
@@ -205,6 +213,12 @@ const SearchControl = L.Control.extend({
             this._map.setView(item.latlng, item.zoom);
         }
     },
+
+    onDocumentKeyUp: function(e) {
+        if (e.keyCode === this.options.hotkey.codePointAt(0) && e.altKey) {
+            this.viewModel.setFocus();
+        }
+    }
 });
 
 SearchControl.include(L.Mixin.HashState);

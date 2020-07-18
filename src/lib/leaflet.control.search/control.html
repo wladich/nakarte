@@ -4,11 +4,11 @@
         type="search"
         maxlength="100"
         class="leaflet-search-input"
-        placeholder="Search places, coordinates, links"
         data-bind="
             textInput: query,
             event: {keydown: onInputKeyDown, contextmenu: defaultEventHandle, mousemove: defaultEventHandle},
-            hasFocus: inputHasFocus
+            hasFocus: inputHasFocus,
+            attr: {placeholder: inputPlaceholder}
         ">
     <ul tabindex="-1" class="leaflet-search-results" data-bind="
         foreach: {data: items},
