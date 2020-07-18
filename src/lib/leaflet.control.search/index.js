@@ -222,6 +222,7 @@ SearchControl.include({
     unserializeState: function(state) {
         if (state?.length === 1) {
             this.viewModel.query(decodeURIComponent(state[0]));
+            return true;
         }
         return false;
     }
