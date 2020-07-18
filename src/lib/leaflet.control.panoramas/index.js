@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import ko from 'knockout';
 import googleProvider from './lib/google';
+import '~/lib/leaflet.hashState/leaflet.hashState';
 
 import './style.css';
 import '~/lib/controls-styles/controls-styles.css';
