@@ -181,6 +181,8 @@ const SearchControl = L.Control.extend({
         if (this.searchPromise === searchPromise) {
             if (result.error) {
                 this.viewModel.setResultError(result.error);
+            } else if (result.results.length === 0) {
+                this.viewModel.setResultError('Nothing found');
             } else {
                 this.viewModel.setResult(result.results);
             }
