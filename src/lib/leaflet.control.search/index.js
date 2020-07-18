@@ -2,6 +2,7 @@ import L from 'leaflet';
 import ko from 'knockout';
 
 import {stopContainerEvents} from '~/lib/leaflet.control.commons';
+import '~/lib/leaflet.hashState/leaflet.hashState';
 
 import {providers, magicProviders} from './providers/index';
 import './style.css';
@@ -133,6 +134,8 @@ class SearchViewModel {
 }
 
 const SearchControl = L.Control.extend({
+    includes: L.Mixin.Events,
+
     options: {
         provider: 'mapycz',
         providerOptions: {
@@ -150,6 +153,7 @@ const SearchControl = L.Control.extend({
         this.viewModel = new SearchViewModel(this.options.minQueryLength, this.options.delay);
         this.viewModel.searchRequested.subscribe(this.onSearchRequested.bind(this));
         this.viewModel.itemSelected.subscribe(this.onResultItemClicked.bind(this));
+        this.viewModel.query.subscribe(() => this.fire('querychange'));
     },
 
     onAdd: function(map) {
@@ -196,6 +200,27 @@ const SearchControl = L.Control.extend({
             this._map.setView(item.latlng, item.zoom);
         }
     },
+});
+
+SearchControl.include(L.Mixin.HashState);
+SearchControl.include({
+    stateChangeEvents: ['querychange'],
+
+    serializeState: function() {
+        const query = this.viewModel.query();
+        if (query) {
+            return [encodeURIComponent(query)];
+        }
+        return null;
+    },
+
+    unserializeState: function(state) {
+        if (state?.length === 1) {
+            this.viewModel.query(decodeURIComponent(state[0]));
+        }
+        return false;
+    }
+
 });
 
 export {SearchControl};

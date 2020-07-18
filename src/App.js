@@ -68,7 +68,9 @@ function setUp() {
         }
     ).addTo(map);
 
-    new SearchControl({position: 'topleft'}).addTo(map);
+    new SearchControl({position: 'topleft'})
+        .addTo(map)
+        .enableHashState('q');
 
     new ZoomDisplay().addTo(map);
 
