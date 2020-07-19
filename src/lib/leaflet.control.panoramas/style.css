@@ -114,7 +114,7 @@
 .leaflet-panorama-marker-circle {
     background-image: url("circle.svg");
     background-size: 32px 32px;
-     width: 33px;
+    width: 33px;
     height: 33px;
     margin-left: -17px;
     margin-top: -17px;
