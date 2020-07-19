@@ -16,7 +16,7 @@
 
 .leaflet-search-input {
     box-sizing: border-box;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
     font-size: 14px;
     height: 24px;
     width: 300px;
@@ -84,5 +84,25 @@
     border-top: 0;
     padding: 8px 6px;
     font-size: 14px;
-    line-height: 1.5
+    line-height: 1.5;
+}
+
+.leaflet-search-result-marker {
+    background-image: url('marker.svg');
+    background-size: 30px 30px;
+    width: 30px !important;
+    height: 30px !important;
+    margin-left: -15px !important;
+    margin-top: -15px !important;
+}
+
+.leaflet-search-result-marker .marker-title {
+    position: relative;
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.4);
+    padding: 0 2px;
+    left: 22px;
+    top: -8px;
+    white-space: nowrap;
+    font-weight: bold;
 }

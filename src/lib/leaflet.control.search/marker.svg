@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg"  width="30" height="30">
+    <g stroke-width="4" stroke="#fff">
+        <path d="M0.5,15 l12,0" />
+        <path d="M29.5,15 l-12,0" />
+        <path d="M15,0.5 l0,12" />
+        <path d="M15,29.5 l0,-12" />
+    </g>
+    <g stroke-width="2" stroke="#000">
+        <path d="M1.5,15 l10,0" />
+        <path d="M28.5,15 l-10,0" />
+        <path d="M15,1.5 l0,10" />
+        <path d="M15,28.5 l0,-10" />
+    </g>
+</svg>

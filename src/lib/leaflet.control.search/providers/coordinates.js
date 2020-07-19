@@ -346,7 +346,7 @@ class CoordinatesProvider {
                 const resultItems = result.coordinates.map((it) => {
                     const coordStrings = it.format();
                     return {
-                        title: `${coordStrings.latitude}&nbsp;&nbsp;${coordStrings.longitude}`,
+                        title: `${coordStrings.latitude} ${coordStrings.longitude}`,
                         latlng: it.getLatLng(),
                         zoom: 17,
                         category: 'Coordinates',

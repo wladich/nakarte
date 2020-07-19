@@ -143,6 +143,43 @@ class SearchViewModel {
     }
 }
 
+const ResultMarker = L.Marker.extend({
+    initialize: function(map) {
+        const icon = L.divIcon({
+            html: '<div class="marker-title"></div>',
+            className: 'leaflet-search-result-marker',
+        });
+        L.Marker.prototype.initialize.call(this, null, {icon});
+        this.__map = map;
+        this.on('click', this.onClick, this);
+    },
+
+    setResult: function(latlng, title) {
+        this.setLatLng(latlng);
+        this.addTo(this.__map);
+        this._icon.querySelector('.marker-title').innerHTML = title;
+        this.__map.on('move', this.onMapMove, this);
+        this.__map.suggestedPoint = {latlng, title};
+    },
+
+    hide: function() {
+        this.__map.removeLayer(this);
+        this.__map.suggestedPoint = null;
+    },
+
+    onMapMove: function() {
+        if (!this.__map.getBounds().contains(this.getLatLng())) {
+            this.__map.off('move', this.onMapMove, this);
+            this.hide();
+        }
+    },
+
+    onClick: function() {
+        this.__map.fire('click', {latlng: this.getLatLng(), suggested: true});
+        this.hide();
+    },
+});
+
 const SearchControl = L.Control.extend({
     includes: L.Mixin.Events,
 
@@ -177,6 +214,7 @@ const SearchControl = L.Control.extend({
         stopContainerEvents(container);
         L.DomEvent.on(document, 'keyup', this.onDocumentKeyUp, this);
         this.viewModel.setInputPlaceholder(`Search places, coordinates, links (Alt-${this.options.hotkey})`);
+        this.marker = new ResultMarker(map);
         return container;
     },
 
@@ -212,13 +250,14 @@ const SearchControl = L.Control.extend({
         } else {
             this._map.setView(item.latlng, item.zoom);
         }
+        this.marker.setResult(item.latlng, item.title);
     },
 
     onDocumentKeyUp: function(e) {
         if (e.keyCode === this.options.hotkey.codePointAt(0) && e.altKey) {
             this.viewModel.setFocus();
         }
-    }
+    },
 });
 
 SearchControl.include(L.Mixin.HashState);
@@ -239,8 +278,7 @@ SearchControl.include({
             return true;
         }
         return false;
-    }
-
+    },
 });
 
 export {SearchControl};
