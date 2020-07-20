@@ -159,6 +159,7 @@ const ResultMarker = L.Marker.extend({
         this.addTo(this.__map);
         this._icon.querySelector('.marker-title').innerHTML = title;
         this.__map.on('move', this.onMapMove, this);
+        this.__map.once('click', this.onMapClick, this);
         this.__map.suggestedPoint = {latlng, title};
     },
 
@@ -172,6 +173,11 @@ const ResultMarker = L.Marker.extend({
             this.__map.off('move', this.onMapMove, this);
             this.hide();
         }
+    },
+
+    onMapClick: function() {
+        // delay hiding after click on the marker
+        setTimeout(this.hide.bind(this), 0);
     },
 
     onClick: function() {
