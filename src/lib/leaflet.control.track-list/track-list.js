@@ -19,7 +19,7 @@ import {blobFromString} from '~/lib/binary-strings';
 import '~/lib/leaflet.polyline-edit';
 import '~/lib/leaflet.polyline-measure';
 import logging from '~/lib/logging';
-import {notify} from '~/lib/notifications';
+import {notify, query} from '~/lib/notifications';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import md5 from 'blueimp-md5';
@@ -623,7 +623,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         renameTrack: function(track) {
-            var newName = prompt('Enter new name', track.name());
+            var newName = query('Enter new name', track.name());
             if (newName && newName.length) {
                 track.name(newName);
             }
@@ -1229,7 +1229,7 @@ L.Control.TrackList = L.Control.extend({
 
         renamePoint: function(marker) {
             this.stopPlacingPoint();
-            var newLabel = prompt('New point name', marker.label);
+            var newLabel = query('New point name', marker.label);
             if (newLabel !== null) {
                 this.setMarkerLabel(marker, newLabel);
                 this._markerLayer.updateMarker(marker);

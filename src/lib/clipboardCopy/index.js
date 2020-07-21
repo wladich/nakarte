@@ -1,5 +1,6 @@
 import './style.css';
 import logging from '~/lib/logging';
+import {query} from '~/lib/notifications';
 
 function showNotification(message, mouseEvent) {
     var el = document.createElement('div');
@@ -41,7 +42,7 @@ function copyToClipboard(s, mouseEvent) {
         document.body.removeChild(ta);
     }
     if (!success) {
-        prompt("Copy to clipboard: Ctrl+C, Enter", s);
+        query("Copy to clipboard: Ctrl+C, Enter", s);
     }
 }
 
