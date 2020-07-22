@@ -87,11 +87,11 @@ L.Polyline.EditMixin = {
         if (this._disableEditOnLeftClick) {
             return;
         }
+        var marker = e.target;
         if (this.getLatLngs().length < 2 || (this._drawingDirection && this.getLatLngs().length === 2)) {
             return;
         }
-        var marker = e.target,
-            nodeIndex = this.getMarkerIndex(marker);
+        var nodeIndex = this.getMarkerIndex(marker);
         this.removeNode(nodeIndex);
         this._setupEndMarkers();
     },
@@ -217,7 +217,6 @@ L.Polyline.EditMixin = {
             .on('drag', this.onNodeMarkerMovedChangeNode, this)
             // .on('dragstart', this.fire.bind(this, 'editingstart'))
             .on('dragend', this.onNodeMarkerDragEnd, this)
-            .on('dblclick', this.onNodeMarkerDblClickedRemoveNode, this)
             .on('click', this.onNodeMarkerClickStartStopDrawing, this)
             .on('contextmenu', function(e) {
                     this.stopDrawingLine();
@@ -242,9 +241,17 @@ L.Polyline.EditMixin = {
             latlngs = this.getLatLngs(),
             latlngs_n = latlngs.length,
             nodeIndex = this.getMarkerIndex(marker);
+        /* eslint-disable-next-line no-plusplus */
+        marker._clickCount = ++marker._clickCount || 1;
+        if (marker._clickCount === 2) {
+            marker.on('dblclick', this.onNodeMarkerDblClickedRemoveNode, this);
+        }
         if ((this._drawingDirection === -1 && nodeIndex === 1) ||
             ((this._drawingDirection === 1 && nodeIndex === latlngs_n - 2))) {
             this.stopDrawingLine();
+            if (marker._clickCount === 1) {
+                this.stopEdit(true);
+            }
         } else if (nodeIndex === this.getLatLngs().length - 1) {
             this.startDrawingLine(1, e);
         } else if (nodeIndex === 0) {
