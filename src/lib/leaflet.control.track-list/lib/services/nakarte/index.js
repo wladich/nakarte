@@ -86,11 +86,11 @@ class NakarteUrlLoader {
     }
 
     async loadFromUrlencodedUrls(values) {
-        return flattenArray(await Promise.all(values.map(loadFromUrl)));
+        return flattenArray(await Promise.all(values.map(decodeURIComponent).map(loadFromUrl)));
     }
 
     async loadPoint(values) {
-        return parsePointFromHashValues(values);
+        return parsePointFromHashValues(values.map(decodeURIComponent));
     }
 }
 
