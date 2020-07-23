@@ -22,7 +22,6 @@ function parseHashParams(s) {
                 [, key, value] = m;
                 if (value) {
                     value = value.split('/');
-                    value = value.map(decodeURIComponent);
                 } else {
                     value = [];
                 }
