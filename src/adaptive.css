@@ -1,11 +1,11 @@
 @media (max-width: 200mm) {
-    .leaflet-right .leaflet-control {
+    .leaflet-right .leaflet-control:not(.leaflet-control-horizontal-stack) {
         margin-right: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
 
-    .leaflet-left .leaflet-control {
+    .leaflet-left .leaflet-control:not(.leaflet-control-horizontal-stack) {
         margin-left: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
