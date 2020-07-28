@@ -1,4 +1,5 @@
-@media (max-width: 200mm) {
+/*200 mm*/
+@media (max-width: 756px) {
     .leaflet-right .leaflet-control:not(.leaflet-control-horizontal-stack) {
         margin-right: 0;
         border-top-right-radius: 0;
@@ -12,7 +13,8 @@
     }
 }
 
-@media (max-height: 150mm) {
+/*150 mm*/
+@media (max-height: 567px) {
     .leaflet-bottom .leaflet-control:last-child {
         margin-bottom: 0;
         border-bottom-left-radius: 0;
