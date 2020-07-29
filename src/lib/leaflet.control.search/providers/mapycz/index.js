@@ -56,19 +56,21 @@ const MapyCzProvider = BaseProvider.extend({
             }
             throw e;
         }
-        const places = xhr.responseJSON.result.map((it) => {
-            const data = it.userData;
-            const iconId = icons[data.poiTypeId];
-            const icon = iconId ? `https://api.mapy.cz/poiimg/icon/${iconId}?scale=1` : null;
-            return {
-                bbox: L.latLngBounds([data.bbox[0], data.bbox[1]], [data.bbox[2], data.bbox[3]]),
-                latlng: L.latLng(data.latitude, data.longitude),
-                title: data.suggestFirstRow,
-                address: data.suggestSecondRow,
-                category: categories[data.poiTypeId]?.[this.categoriesLanguage] || data.suggestThirdRow || null,
-                icon,
-            };
-        });
+        const places = xhr.responseJSON.result
+            .filter((it) => it.userData.suggestSecondRow !== 'Poloha')
+            .map((it) => {
+                const data = it.userData;
+                const iconId = icons[data.poiTypeId];
+                const icon = iconId ? `https://api.mapy.cz/poiimg/icon/${iconId}?scale=1` : null;
+                return {
+                    bbox: L.latLngBounds([data.bbox[0], data.bbox[1]], [data.bbox[2], data.bbox[3]]),
+                    latlng: L.latLng(data.latitude, data.longitude),
+                    title: data.suggestFirstRow,
+                    address: data.suggestSecondRow,
+                    category: categories[data.poiTypeId]?.[this.categoriesLanguage] || data.suggestThirdRow || null,
+                    icon,
+                };
+            });
         const poiIds = xhr.responseJSON.result
             .filter((it) => Boolean(it.userData.poiTypeId))
             .map((it) => ({
