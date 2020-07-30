@@ -53,8 +53,8 @@ const YandexMapsUrl = {
     },
 };
 
-const GoogleMapsSimpleUrl = {
-    viewRe: /\/@([-\d.]+),([-\d.]+),([\d.]+)z(?:\/|$)/u,
+const GoogleMapsSimpleMapUrl = {
+    viewRe: /\/@([-\d.]+),([-\d.]+),([\d.]+)([mz])(?:\/|$)/u,
 
     isOurUrl: function url(url) {
         return Boolean(url.pathname.match(this.viewRe));
@@ -73,7 +73,12 @@ const GoogleMapsSimpleUrl = {
         try {
             const lat = parseFloat(viewMatch[1]);
             const lon = parseFloat(viewMatch[2]);
-            const zoom = Math.round(parseFloat(viewMatch[3]));
+            let zoom = parseFloat(viewMatch[3]);
+            // zoom for satellite images is expressed in meters
+            if (viewMatch[4] === 'm') {
+                zoom = Math.log2(149175296 / zoom * Math.cos(lat / 180 * Math.PI));
+            }
+            zoom = Math.round(zoom);
             return makeSearchResults(lat, lon, zoom, title);
         } catch (_) {
             return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Google'})};
@@ -103,7 +108,7 @@ const GoogleMapsQueryUrl = {
 };
 
 const GoogleMapsUrl = {
-    subprocessors: [GoogleMapsSimpleUrl, GoogleMapsQueryUrl],
+    subprocessors: [GoogleMapsSimpleMapUrl, GoogleMapsQueryUrl],
 
     isOurUrl: function(url) {
         return Boolean(url.hostname.match(/\bgoogle\..+$/u) && url.pathname.match(/^\/maps(\/|$)/u));

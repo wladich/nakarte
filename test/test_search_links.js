@@ -11,6 +11,12 @@ suite('LinksProvider - parsing valid links');
         14,
     ],
     [
+        'https://www.google.com.ua/maps/@49.1809973,61.6591562,5952m/data=!3m1!1e3?hl=ru',
+        'Google map view',
+        {lat: 49.1809973, lng: 61.6591562},
+        14,
+    ],
+    [
         'https://yandex.ru/maps/10509/brno/?ll=16.548629%2C49.219896&z=14',
         'Yandex map view',
         {lat: 49.219896, lng: 16.548629},
