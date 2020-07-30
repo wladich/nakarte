@@ -1,4 +1,5 @@
 id,en,ru
+2,Area,Территория
 3,Island,Остров
 4,Mountain range,Горная область
 6,Protected area,Охраняемная территория
@@ -9,12 +10,21 @@ id,en,ru
 13,Historic Territory,Историческая территория
 15,City district,Район города
 21,Road,Дорога
+40,Postal code,Почтовый индекс
+102,Sea,Море
+103,Ocean,Океан
+104,Bay,Залив
 105,Glacier,Ледник
 106,Swamp,Болото
 107,Peninsula,Полуостров
 108,Desert,Пустыня
+109,"Strait, channel",Пролив
+110,Underwater formation,Подводное образование
 111,Low land,Низменность
+112,Valley,Долина
+113,Fjord,Фьорд
 114,River,Река
+115,Canal,Канал
 116,Stream,Ручей
 117,Military area,Военный полигон
 118,Administrative structure,Регион
@@ -32,6 +42,7 @@ id,en,ru
 230,Аddress,Адрес
 250,City district,Район города
 1012,Border crossing,Погранпереход
+1014,Border crossing,Погранпереход
 1015,Cableway,Канатная дорога
 1016,International airport,Международный аэропорт
 1017,Airport,Аэропорт
@@ -39,28 +50,44 @@ id,en,ru
 1019,Airport Terminal,Терминал аэропорта
 1022,Subway station,Станция метро
 1023,Helipad,Вертолетная площадка
+1024,Ski lift,Горнолыжный подъемник
 1030,Port,Порт
 1042,Subway line,Линия метро
+1043,Ski piste,Горнолыжная трасса
 1045,Subway line,Линия метро
+1065,Parking meter,Паркомат
+1113,Rest area,Место для отдыха
 1114,Tourist signpost,Указатель троп
 1115,Bunker,Бункер
 1117,Tourist signpost,Указатель троп
+1118,Observation tower,Обзорная башня
 1119,Mine,Шахта
 1122,High building,Высокое здание
 1127,Transmission tower,Радио башня
+1130,"Drift, shaft","Штольня, шахта"
 1131,Attraction,Достопримечательность
+1133,Bridge,Мост
+1134,Playground,Игровая площадка
 1136,Tunnel,Тонель
+1138,Dam,Плотина
 1210,Archeological site,Археологические раскопки
 1212,Castle,Замок
 1216,Monastery,Монастырь
 1217,Church,Церковь
+1218,Cross,Крест
 1224,Memorial,Памятник
+1229,Chateau,"Замок, дворец"
+1231,Ruin,Развалины
+1233,Cabin,Хижина
 1234,Park,Парк
 1236,Cemetery,Кладбище
+1242,Mosque,Мечеть
 1246,Castle,Замок
 1249,Temple,Храм/Синагога/Мечеть
 1250,Attraction,Достопримечательность
+1256,Battlefield,Историческое поле сражения
 1261,Amusement park,Парк развлечений
+1271,Garden,Сад
 1310,UNESCO site,объект ЮНЕСКО
 1411,Mountain,Вершина
 1412,Information board,Информационный стенд
@@ -74,19 +101,32 @@ id,en,ru
 1429,"Well, spring",Источник
 1430,Waterfall,Водопад
 1433,Beach,Пляж
+1441,Geyser,Гейзер
 1443,Scenic viewpoint,Обзорная точка
+1445,Significant tree,Примечательное дерево
+1447,Cave,Пещера
 1642,Cycling route,Велосипедный маршрут
 4100,Part of building,Корпус здания
 5018,Power plant,Электростанция
+5114,Post office,Почта
 5115,School,Школа
+5116,University,Университет
 5118,Administrative office,Администрация
+5123,Kindergarten,Детский сад
 5124,Fire station,Пожарное депо
+5210,Botanical garden,Ботанический сад
+5211,Theatre,Театр
+5213,Information center,Инфоцентр
+5214,Cimena,Кинотеатр
 5215,Library,Библиотека
 5216,Museum,Музей
 5217,Zoo,Зоопарк
+5223,Social service,Социальная служба
 5306,Money exchange,Обмен валют
+5307,Car wash,Мойка машин
 5309,LPG station,Газовая заправка
 5310,Auto service,Автосервис
+5312,Bank,Банк
 5313,Petrol station,Заправка
 5315,Shopping mall,Торговый центр
 5319,Bike shop,Веломагазин
@@ -94,18 +134,26 @@ id,en,ru
 5324,Fastfood,Фастфуд
 5326,Cafe,Кафе
 5328,Bar,Бар
+5329,Pub,Пивная
 5403,Sauna,Сауна
 5417,Gym,Тренажерный зал
+5418,Sports ground,Спортивная площадка
 5511,Hotel,Гостиница
+5512,Camp or camp site,Лагерь или место ночевки
 5514,Motel,Мотель
+5515,Accommodation,Место размещения
 5516,Guest house,Гостевой дом
+5520,Shelter,Укрытие
 5521,Apartments,Апартаменты
 5522,Holiday house,Гостевой дом
 5611,Pharmacy,Аптека
 5613,Hospital,Больница
+5616,Vet's office,Ветеринар
 5619,Wine shop,Вино
+5622,Electric cars charging station,Станция заряда электроавтомобилей
 5623,Electrical supplies,Электротовары
 5624,Hobby shop,Товары для дома
+5626,Furniture store,Мебельный магазин
 5627,Sports equipment,Спортивный магазин
 5628,Grocery store,Продуктовый магазин
 5630,Auto service,Автосервис
@@ -121,6 +169,7 @@ id,en,ru
 5642,Sale of pharmaceuticals,Продажа лекарств
 5653,Waste disposal,Утилизация отходов
 5656,Alergologist,Алерголог
+5666,Barbershop,Парикмахерская
 5668,Cosmetics,Косметика
 5669,Sales of paints,Продажа красок
 5673,Engineering services,Инженерные работы
@@ -130,6 +179,9 @@ id,en,ru
 5684,Sale of cosmetics,Продажа косметики
 5685,Clothes shop,Магазин одежды
 5686,Bakery,Пекарня
+5687,Tobacco shop,Табачный магазин
+5688,Butcher shop,Мясной магазин
+5690,Beverage & liquor,Алкогольный магазин
 5691,Bookshop,Книжный магазин
 5694,"Fruits, vegetables",Офощи-фрукты
 5699,Printing house,Типография
@@ -137,6 +189,7 @@ id,en,ru
 5753,Building,Здание
 5759,Water treatment facility,Станция подготовки воды
 5760,Scientific workplace,Научная лаборатория
+6000,Tram stop,Остановка трамвая
 6001,Bus stop,Остановка автобуса
 6506,Tram stop,Остановка трамвая
 6507,Bus stop,Остановка автобуса
