@@ -106,7 +106,7 @@ const GoogleMapsUrl = {
     subprocessors: [GoogleMapsSimpleUrl, GoogleMapsQueryUrl],
 
     isOurUrl: function(url) {
-        return Boolean(url.hostname.match(/\bgoogle\.[^.]+$/u) && url.pathname.match(/^\/maps(\/|$)/u));
+        return Boolean(url.hostname.match(/\bgoogle\..+$/u) && url.pathname.match(/^\/maps(\/|$)/u));
     },
 
     getResults: function(url) {
