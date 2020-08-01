@@ -76,6 +76,8 @@ L.Control.TrackList = L.Control.extend({
             lineCursorStyle: {interactive: false, weight: 1.5, opacity: 1, dashArray: '7,7'},
             lineCursorValidStyle: {color: 'green'},
             lineCursorInvalidStyle: {color: 'red'},
+            splitExtensions: ['gpx', 'kml', 'kmz', 'wpt', 'rte', 'plt', 'fit', 'tmp', 'jpg', 'crdownload'],
+            splitExtensionsFirstStage: ['xml', 'txt', 'html', 'php', 'tmp', 'gz'],
         },
         includes: L.Mixin.Events,
 
@@ -574,12 +576,15 @@ L.Control.TrackList = L.Control.extend({
                 );
             lines = splitLinesAt180Meridian(lines);
             var points = this.getTrackPoints(track);
-            var name = track.name(),
-                i = name.lastIndexOf('.');
-            if (i > -1 && i >= name.length - 5) {
-                name = name.slice(0, i);
+            let name = track.name();
+            // Browser (Chrome) removes leading dots.
+            name = name.replace(/^\./u, '_');
+            for (let extensions of [this.options.splitExtensionsFirstStage, this.options.splitExtensions]) {
+                let i = name.lastIndexOf('.');
+                if (i > -1 && extensions.includes(name.slice(i + 1).toLowerCase())) {
+                    name = name.slice(0, i);
+                }
             }
-
             if (lines.length === 0 && points.length === 0) {
                 notify('Track is empty, nothing to save');
                 return;
