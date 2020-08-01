@@ -563,15 +563,13 @@ L.Control.TrackList = L.Control.extend({
         },
 
         copyTrackLinkToClipboard: function(track, mouseEvent) {
-            this.stopActiveDraw();
             this.copyTracksLinkToClipboard([track], mouseEvent);
         },
 
         saveTrackAsFile: async function(track, exporter, extension, addElevations = false) {
-            this.stopActiveDraw();
             var lines = this.getTrackPolylines(track)
                 .map(function(line) {
-                        return line.getLatLngs();
+                        return line.getFixedLatLngs();
                     }
                 );
             lines = splitLinesAt180Meridian(lines);
@@ -635,12 +633,6 @@ L.Control.TrackList = L.Control.extend({
 
         showMenu: function(e) {
             this.menu.show(e);
-        },
-
-        stopActiveDraw: function() {
-            if (this._editedLine) {
-                this._editedLine.stopDrawingLine();
-            }
         },
 
         stopEditLine: function() {
@@ -1273,12 +1265,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         copyAllTracksToClipboard: function(mouseEvent) {
-            this.stopActiveDraw();
             this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
         },
 
         copyVisibleTracks: function(mouseEvent) {
-            this.stopActiveDraw();
             const tracks = this.tracks().filter((track) => track.visible());
             this.copyTracksLinkToClipboard(tracks, mouseEvent);
         },
