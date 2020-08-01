@@ -1262,7 +1262,7 @@ L.Control.TrackList = L.Control.extend({
 
         trackToString: function(track, forceVisible) {
             var lines = this.getTrackPolylines(track).map(function(line) {
-                    var points = line.getLatLngs();
+                    var points = line.getFixedLatLngs();
                     points = L.LineUtil.simplifyLatlngs(points, 360 / (1 << 24));
                     return points;
                 }
