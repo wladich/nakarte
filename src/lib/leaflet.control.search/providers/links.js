@@ -7,7 +7,7 @@ const MAX_ZOOM = 18;
 const MESSAGE_LINK_MALFORMED = 'Invalid coordinates in {name} link';
 const MESSAGE_SHORT_LINK_MALFORMED = 'Broken {name} short link';
 
-function makeSearchResults(lat, lon, zoom, title) {
+function makeSearchResult(lat, lon, zoom, title) {
     if (
         isNaN(zoom) ||
         isNaN(lat) ||
@@ -26,17 +26,17 @@ function makeSearchResults(lat, lon, zoom, title) {
     }
 
     return {
-        results: [
-            {
-                latlng: L.latLng(lat, lon),
-                zoom,
-                title,
-                category: null,
-                address: null,
-                icon: null,
-            },
-        ],
+        latlng: L.latLng(lat, lon),
+        zoom,
+        title,
+        category: null,
+        address: null,
+        icon: null,
     };
+}
+
+function makeSearchResults(lat, lon, zoom, title) {
+    return {results: [makeSearchResult(lat, lon, zoom, title)]};
 }
 
 const YandexMapsUrl = {
@@ -73,30 +73,46 @@ const YandexMapsUrl = {
 
 const GoogleMapsSimpleMapUrl = {
     viewRe: /\/@([-\d.]+),([-\d.]+),([\d.]+)([mz])(?:\/|$)/u,
+    placeRe: /\/place\/([^/]+)/u,
+    placeZoom: 14,
 
     isOurUrl: function url(url) {
-        return Boolean(url.pathname.match(this.viewRe));
+        return Boolean(url.pathname.match(this.viewRe)) || Boolean(url.pathname.match(this.placeRe));
     },
 
     getResults: function(url) {
+        const results = [];
         const path = url.pathname;
-        const viewMatch = path.match(this.viewRe);
-        const titleMatch = path.match(/\/place\/([^/]+)/u);
-        let title = titleMatch?.[1];
-        if (title) {
-            title = 'Google map - ' + decodeURIComponent(title).replace(/\+/gu, ' ');
-        } else {
-            title = 'Google map view';
+
+        try {
+            const placeTitleMatch = path.match(this.placeRe);
+            const placeCoordinatesMatch = path.match(/\/data=[^/]*!8m2!3d([-\d.]+)!4d([-\d.]+)/u);
+            const title = 'Google map - ' + decodeURIComponent(placeTitleMatch[1]).replace(/\+/gu, ' ');
+            const lat = parseFloat(placeCoordinatesMatch[1]);
+            const lon = parseFloat(placeCoordinatesMatch[2]);
+            results.push(makeSearchResult(lat, lon, this.placeZoom, title));
+        } catch (e) {
+            // pass
         }
-        const lat = parseFloat(viewMatch[1]);
-        const lon = parseFloat(viewMatch[2]);
-        let zoom = parseFloat(viewMatch[3]);
-        // zoom for satellite images is expressed in meters
-        if (viewMatch[4] === 'm') {
-            zoom = Math.log2((149175296 / zoom) * Math.cos((lat / 180) * Math.PI));
+
+        try {
+            const viewMatch = path.match(this.viewRe);
+            const lat = parseFloat(viewMatch[1]);
+            const lon = parseFloat(viewMatch[2]);
+            let zoom = parseFloat(viewMatch[3]);
+            // zoom for satellite images is expressed in meters
+            if (viewMatch[4] === 'm') {
+                zoom = Math.log2((149175296 / zoom) * Math.cos((lat / 180) * Math.PI));
+            }
+            zoom = Math.round(zoom);
+            results.push(makeSearchResult(lat, lon, zoom, 'Google map view'));
+        } catch (e) {
+            // pass
         }
-        zoom = Math.round(zoom);
-        return makeSearchResults(lat, lon, zoom, title);
+        if (results.length === 0) {
+            throw new Error('No results extracted from Google link');
+        }
+        return {results};
     },
 };
 

@@ -58,15 +58,24 @@ suite('LinksProvider - parsing valid links');
     ],
     [
         'https://www.google.com/maps/place/Nerskoye+Ozero/@56.0836099,37.3849634,16z/data=!3m1!4b1!4m5!3m4!1s0x46b5178a0be6c5b1:0xb13c53547e1d966d!8m2!3d56.0826073!4d37.388256', // eslint-disable-line max-len
-        [{title: 'Google map - Nerskoye Ozero', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16}],
+        [
+            {title: 'Google map - Nerskoye Ozero', latlng: {lat: 56.0826073, lng: 37.388256}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16},
+        ],
     ],
     [
         'https://www.google.ru/maps/place/%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0,+%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D1%8F/@55.5807481,36.8251331,9z/data=!3m1!4b1!4m5!3m4!1s0x46b54afc73d4b0c9:0x3d44d6cc5757cf4c!8m2!3d55.755826!4d37.6173', // eslint-disable-line max-len
-        [{title: 'Google map - Москва, Россия', latlng: {lat: 55.5807481, lng: 36.8251331}, zoom: 9}],
+        [
+            {title: 'Google map - Москва, Россия', latlng: {lat: 55.755826, lng: 37.6173}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 55.5807481, lng: 36.8251331}, zoom: 9},
+        ],
     ],
     [
         'https://www.google.com/maps/place/Vav%C5%99ineck%C3%A1,+514+01+Jilemnice/@50.6092632,15.5023689,17z/data=!3m1!4b1!4m5!3m4!1s0x470ebf1b56d0fca9:0xddb7e19a6b1f5828!8m2!3d50.6092632!4d15.5045576', // eslint-disable-line max-len
-        [{title: 'Google map - Vavřinecká, 514 01 Jilemnice', latlng: {lat: 50.6092632, lng: 15.5023689}, zoom: 17}],
+        [
+            {title: 'Google map - Vavřinecká, 514 01 Jilemnice', latlng: {lat: 50.6092632, lng: 15.5045576}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 50.6092632, lng: 15.5023689}, zoom: 17},
+        ],
     ],
     [
         'https://www.google.com/maps?q=loc:49.1817864,16.5771214',
@@ -90,7 +99,22 @@ suite('LinksProvider - parsing valid links');
     ],
     [
         'https://www.google.com/maps/place/Nerskoye+Ozero/@56.0836099,37.3849634,16z/data=!3m1!4b1!4m5!3m4!1s0x46b5178a0be6c5b1:0xb13c53547e1d966d!8m2!3d56.0826073!4d37.388256?q=loc:-49.1817864,-16.5771214', // eslint-disable-line max-len
-        [{title: 'Google map - Nerskoye Ozero', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16}],
+        [
+            {title: 'Google map - Nerskoye Ozero', latlng: {lat: 56.0826073, lng: 37.388256}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16},
+        ],
+    ],
+    [
+        'https://www.google.com/maps/place/Nerskoye+Ozero/data=!3m1!4b1!4m5!3m4!1s0x46b5178a0be6c5b1:0xb13c53547e1d966d!8m2!3d56.0826073!4d37.388256', // eslint-disable-line max-len
+        [{title: 'Google map - Nerskoye Ozero', latlng: {lat: 56.0826073, lng: 37.388256}, zoom: 14}],
+    ],
+    [
+        'https://www.google.com/maps/place/Nerskoye+Ozero/@56.0836099,37.3849634,16z/', // eslint-disable-line max-len
+        [{title: 'Google map view', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16}],
+    ],
+    [
+        'https://www.google.com/maps/@56.0836099,37.3849634,16z/data=!3m1!4b1!4m5!3m4!1s0x46b5178a0be6c5b1:0xb13c53547e1d966d!8m2!3d56.0826073!4d37.388256', // eslint-disable-line max-len
+        [{title: 'Google map view', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16}],
     ],
     [
         'https://nakarte.me/#m=11/49.44893/16.59897&l=O',
@@ -122,11 +146,17 @@ suite('LinksProvider - parsing valid links');
     ],
     [
         'https://goo.gl/maps/ZvjVBY78HUP8HjQi6',
-        [{title: 'Google map - 561 69 Dolní Morava', latlng: {lat: 50.1568257, lng: 16.754047}, zoom: 12}],
+        [
+            {title: 'Google map - 561 69 Dolní Morava', latlng: {lat: 50.1223171, lng: 16.7995866}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 50.1568257, lng: 16.754047}, zoom: 12},
+        ],
     ],
     [
         'https://goo.gl/maps/iMv4esLL1nwF9yns7',
-        [{title: 'Google map - 561 69 Dolní Morava', latlng: {lat: 50.1568257, lng: 16.754047}, zoom: 12}],
+        [
+            {title: 'Google map - 561 69 Dolní Morava', latlng: {lat: 50.1223171, lng: 16.7995866}, zoom: 14},
+            {title: 'Google map view', latlng: {lat: 50.1568257, lng: 16.754047}, zoom: 12},
+        ],
     ],
 ].forEach(function([query, expectedResults]) {
     test(`Parse link ${query}`, async function() {
