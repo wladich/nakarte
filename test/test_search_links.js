@@ -23,6 +23,28 @@ suite('LinksProvider - parsing valid links');
         14,
     ],
     ['https://yandex.ru/maps/?ll=16.548629%2C49.219896&z=14', 'Yandex map view', {lat: 49.219896, lng: 16.548629}, 14],
+    [
+        'https://yandex.ru/maps/?l=sat&ll=16.843527%2C49.363860&z=13',
+        'Yandex map view',
+        {lat: 49.36386, lng: 16.843527},
+        13,
+    ],
+    [
+        'https://yandex.ru/maps/?l=sat%2Cskl&ll=16.843527%2C49.363860&z=13',
+        'Yandex map view',
+        {lat: 49.36386, lng: 16.843527},
+        13,
+    ],
+    [
+        'https://static-maps.yandex.ru/1.x/?lang=ru_RU&size=520%2C440&l=sat%2Cskl&z=14&ll=16.548629%2C49.219896',
+        'Yandex map view',
+        {lat: 49.219896, lng: 16.548629},
+        14,
+    ],
+    ['https://yandex.ru/maps/-/CCQpqZXJCB', 'Yandex map view', {lat: 49.219896, lng: 16.548629}, 14],
+    ['https://yandex.ru/maps/-/CCQpqZdgpA', 'Yandex map view', {lat: 49.219896, lng: 16.548629}, 14],
+    ['https://yandex.ru/maps/-/CCQpqZhrsB', 'Yandex map view', {lat: 49.219896, lng: 16.548629}, 14],
+
     ['https://www.openstreetmap.org/#map=14/49.2199/16.5486', 'OpenStreetMap view', {lat: 49.2199, lng: 16.5486}, 14],
     [
         'https://en.mapy.cz/turisticka?x=16.5651083&y=49.2222502&z=14',
@@ -94,6 +116,22 @@ suite('LinksProvider - parsing valid links');
     ['https://nakarte.me/#m=11/49.44893/16.59897&l=O', 'Nakarte view', {lat: 49.44893, lng: 16.59897}, 11],
     ['https://nakarte.me/#l=O&m=11/49.44893/16.59897', 'Nakarte view', {lat: 49.44893, lng: 16.59897}, 11],
     ['https://example.com/#l=O&m=11/49.44893/16.59897', 'Nakarte view', {lat: 49.44893, lng: 16.59897}, 11],
+    ['https://en.mapy.cz/s/favepemeko', 'Mapy.cz view', {lat: 49.4113109, lng: 16.8975623}, 11],
+    ['https://en.mapy.cz/s/lucacunomo', 'Mapy.cz view', {lat: 49.4113109, lng: 16.8975623}, 11],
+    ['https://en.mapy.cz/s/mepevemazo', 'Mapy.cz view', {lat: 50.1592323, lng: 16.8245081}, 12],
+    ['https://goo.gl/maps/cJ8wwQi9oMYM9yiy6', 'Google map view', {lat: 49.0030846, lng: 15.2993434}, 14],
+    [
+        'https://goo.gl/maps/ZvjVBY78HUP8HjQi6',
+        'Google map - 561 69 Dolní Morava',
+        {lat: 50.1568257, lng: 16.754047},
+        12,
+    ],
+    [
+        'https://goo.gl/maps/iMv4esLL1nwF9yns7',
+        'Google map - 561 69 Dolní Morava',
+        {lat: 50.1568257, lng: 16.754047},
+        12,
+    ],
 ].forEach(function([query, expectedTitle, expectedCoordinates, expectedZoom]) {
     test(`Parse link ${query}`, async function() {
         assert.isTrue(links.isOurQuery(query));
@@ -117,13 +155,14 @@ suite('LinksProvider - parse invalid links');
     ['https://', 'Invalid link'],
     ['http://', 'Invalid link'],
     ['https://example.com', 'Unsupported link'],
-    ['https://yandex.ru/maps/-/CCQlZLeFHA', 'Invalid coordinates in Yandex link'],
     ['https://yandex.ru/maps/', 'Invalid coordinates in Yandex link'],
     ['https://yandex.ru/maps/10509/brno/?ll=16.548629%2C149.219896&z=14', 'Invalid coordinates in Yandex link'],
-    ['https://en.mapy.cz/s/kofosuhuda', 'Invalid coordinates in Mapy.cz link'],
+    [
+        'https://static-maps.yandex.ru/1.x/?lang=ru_RU&size=520%2C440&l=sat%2Cskl&ll=16.548629%2C49.219896',
+        'Invalid coordinates in Yandex link',
+    ],
     ['https://en.mapy.cz/turisticka?x=16.5651083&y=49.2222502&z=', 'Invalid coordinates in Mapy.cz link'],
     ['https://www.google.com/maps', 'Invalid coordinates in Google link'],
-    ['https://goo.gl/maps/igLWhY3jFpifZhTk6', 'Unsupported link'],
     ['https://www.google.com/maps/@99.1906435,16.5429962,14z', 'Invalid coordinates in Google link'],
     ['https://www.google.com/maps/@49.1906435,190.5429962,14z', 'Invalid coordinates in Google link'],
     ['https://www.google.com/maps/@49.1906435,19.5429962,45z', 'Invalid coordinates in Google link'],
@@ -140,6 +179,9 @@ suite('LinksProvider - parse invalid links');
     ['https://nakarte.me/#l=O', 'Invalid coordinates in Nakarte link'],
     ['https://example.com/#l=O&m=11/49.44893/', 'Unsupported link'],
     ['https://example.com/#l=O&m=99/49.44893/52.5547', 'Unsupported link'],
+    ['https://en.mapy.cz/s/lucacunom', 'Broken Mapy.cz short link'],
+    ['https://goo.gl/maps/ZvjVBY78HUP8HjQi', 'Broken Google short link'],
+    // ['https://yandex.ru/maps/-/CCQpqZXJ', 'Broken Yandex short link'], // Yandex returns good result for broken link
 ].forEach(function([query, expectedError]) {
     test(`Invalid link ${query}`, async function() {
         assert.isTrue(links.isOurQuery(query));

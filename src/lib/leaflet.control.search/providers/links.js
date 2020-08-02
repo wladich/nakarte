@@ -1,7 +1,11 @@
 import L from 'leaflet';
 
+import {fetch} from '~/lib/xhr-promise';
+import urlViaCorsProxy from '~/lib/CORSProxy';
+
 const MAX_ZOOM = 18;
 const MESSAGE_LINK_MALFORMED = 'Invalid coordinates in {name} link';
+const MESSAGE_SHORT_LINK_MALFORMED = 'Broken {name} short link';
 
 function makeSearchResults(lat, lon, zoom, title) {
     if (
@@ -37,18 +41,32 @@ function makeSearchResults(lat, lon, zoom, title) {
 
 const YandexMapsUrl = {
     isOurUrl: function(url) {
-        return Boolean(url.hostname.match(/\byandex\.[^.]+$/u) && url.pathname.match(/^\/maps\//u));
+        return (
+            (url.hostname.match(/\byandex\./u) && url.pathname.match(/^\/maps\//u)) ||
+            url.hostname.match(/static-maps\.yandex\./u)
+        );
     },
 
-    getResults: function(url) {
-        const paramLl = url.searchParams.get('ll');
-        const paramZ = url.searchParams.get('z');
+    getResults: async function(url) {
+        let isShort = false;
         try {
+            if (url.pathname.match(/^\/maps\/-\//u)) {
+                isShort = true;
+                const xhr = await fetch(urlViaCorsProxy(url.toString()));
+                const dom = new DOMParser().parseFromString(xhr.response, 'text/html');
+                url = new URL(dom.querySelector('meta[property="og:image:secure_url"]').content);
+            }
+            const paramLl = url.searchParams.get('ll');
+            const paramZ = url.searchParams.get('z');
             const [lon, lat] = paramLl.split(',').map(parseFloat);
             const zoom = Math.round(parseFloat(paramZ));
             return makeSearchResults(lat, lon, zoom, 'Yandex map view');
         } catch (_) {
-            return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Yandex'})};
+            return {
+                error: L.Util.template(isShort ? MESSAGE_SHORT_LINK_MALFORMED : MESSAGE_LINK_MALFORMED, {
+                    name: 'Yandex',
+                }),
+            };
         }
     },
 };
@@ -70,19 +88,15 @@ const GoogleMapsSimpleMapUrl = {
         } else {
             title = 'Google map view';
         }
-        try {
-            const lat = parseFloat(viewMatch[1]);
-            const lon = parseFloat(viewMatch[2]);
-            let zoom = parseFloat(viewMatch[3]);
-            // zoom for satellite images is expressed in meters
-            if (viewMatch[4] === 'm') {
-                zoom = Math.log2(149175296 / zoom * Math.cos(lat / 180 * Math.PI));
-            }
-            zoom = Math.round(zoom);
-            return makeSearchResults(lat, lon, zoom, title);
-        } catch (_) {
-            return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Google'})};
+        const lat = parseFloat(viewMatch[1]);
+        const lon = parseFloat(viewMatch[2]);
+        let zoom = parseFloat(viewMatch[3]);
+        // zoom for satellite images is expressed in meters
+        if (viewMatch[4] === 'm') {
+            zoom = Math.log2((149175296 / zoom) * Math.cos((lat / 180) * Math.PI));
         }
+        zoom = Math.round(zoom);
+        return makeSearchResults(lat, lon, zoom, title);
     },
 };
 
@@ -97,30 +111,42 @@ const GoogleMapsQueryUrl = {
     getResults: function(url) {
         const data = url.searchParams.get('q');
         const m = data.match(/^(?:loc:)?([-\d.]+),([-\d.]+)$/u);
-        try {
-            const lat = parseFloat(m[1]);
-            const lon = parseFloat(m[2]);
-            return makeSearchResults(lat, lon, this.zoom, this.title);
-        } catch (_) {
-            return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Google'})};
-        }
-    }
+        const lat = parseFloat(m[1]);
+        const lon = parseFloat(m[2]);
+        return makeSearchResults(lat, lon, this.zoom, this.title);
+    },
 };
 
 const GoogleMapsUrl = {
     subprocessors: [GoogleMapsSimpleMapUrl, GoogleMapsQueryUrl],
 
     isOurUrl: function(url) {
-        return Boolean(url.hostname.match(/\bgoogle\..+$/u) && url.pathname.match(/^\/maps(\/|$)/u));
+        return (url.hostname.match(/\bgoogle\./u) || url.hostname === 'goo.gl') && url.pathname.match(/^\/maps(\/|$)/u);
     },
 
-    getResults: function(url) {
+    getResults: async function(url) {
+        let isShort = false;
+        try {
+            if (url.hostname === 'goo.gl') {
+                isShort = true;
+                const xhr = await fetch(urlViaCorsProxy(url.toString()), {method: 'HEAD'});
+                url = new URL(xhr.responseURL);
+            }
+        } catch (e) {
+            // pass
+        }
         for (let subprocessor of this.subprocessors) {
-            if (subprocessor.isOurUrl(url)) {
-                return subprocessor.getResults(url);
+            try {
+                if (subprocessor.isOurUrl(url)) {
+                    return subprocessor.getResults(url);
+                }
+            } catch (e) {
+                // pass
             }
         }
-        return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Google'})};
+        return {
+            error: L.Util.template(isShort ? MESSAGE_SHORT_LINK_MALFORMED : MESSAGE_LINK_MALFORMED, {name: 'Google'}),
+        };
     },
 };
 
@@ -129,14 +155,24 @@ const MapyCzUrl = {
         return Boolean(url.hostname.match(/\bmapy\.cz$/u));
     },
 
-    getResults: function(url) {
+    getResults: async function(url) {
+        let isShort = false;
         try {
+            if (url.pathname.match(/^\/s\//u)) {
+                isShort = true;
+                const xhr = await fetch(urlViaCorsProxy(url.toString()), {method: 'HEAD'});
+                url = new URL(xhr.responseURL);
+            }
             const lon = parseFloat(url.searchParams.get('x'));
             const lat = parseFloat(url.searchParams.get('y'));
             const zoom = Math.round(parseFloat(url.searchParams.get('z')));
             return makeSearchResults(lat, lon, zoom, 'Mapy.cz view');
         } catch (_) {
-            return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Mapy.cz'})};
+            return {
+                error: L.Util.template(isShort ? MESSAGE_SHORT_LINK_MALFORMED : MESSAGE_LINK_MALFORMED, {
+                    name: 'Mapy.cz',
+                }),
+            };
         }
     },
 };
