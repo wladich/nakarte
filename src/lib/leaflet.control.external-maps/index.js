@@ -68,6 +68,10 @@ const ExternalMaps = L.Control.extend({
                 title: 'Mapy.cz',
                 externalMap: new ExternalMap('https://en.mapy.cz/turisticka?x={lng}&y={lat}&z={zoom}', 2, 19),
             },
+            {
+                title: 'Wikimapia',
+                externalMap: new ExternalMap('https://wikimapia.org/#lat={lat}&lon={lng}&z={zoom}', 3, 22),
+            }
         ],
     },
 
