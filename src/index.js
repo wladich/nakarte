@@ -20,6 +20,22 @@ function getUid() {
     return uid;
 }
 
+function preconnect(url) {
+    const preconnectLink = document.createElement('link');
+    preconnectLink.rel = 'preconnect';
+    preconnectLink.href = url;
+    document.head.appendChild(preconnectLink);
+
+    const dnsPrefetchLink = document.createElement('link');
+    dnsPrefetchLink.rel = 'dns-prefetch';
+    dnsPrefetchLink.href = url;
+    document.head.appendChild(dnsPrefetchLink);
+}
+
+preconnect(config.elevationsServer);
+preconnect(config.CORSProxyUrl);
+preconnect(config.tracksStorageServer);
+
 if (NODE_ENV === 'production') {
     Sentry.init({
         dsn: config.sentryDSN,
