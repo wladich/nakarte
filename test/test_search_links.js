@@ -160,6 +160,7 @@ suite('LinksProvider - parsing valid links');
     ],
 ].forEach(function([query, expectedResults]) {
     test(`Parse link ${query}`, async function() {
+        this.timeout(10000);
         assert.isTrue(links.isOurQuery(query));
         const result = await links.search(query);
         assert.notProperty(result, 'error');

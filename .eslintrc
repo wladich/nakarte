@@ -133,7 +133,8 @@
         "assert": true
       },
       "rules": {
-        "max-nested-callbacks": ["error", 5]
+        "max-nested-callbacks": ["error", 5],
+        "no-invalid-this": "off"
       }
     },
     {
