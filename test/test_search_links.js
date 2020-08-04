@@ -158,6 +158,10 @@ suite('LinksProvider - parsing valid links');
             {title: 'Google map view', latlng: {lat: 50.1568257, lng: 16.754047}, zoom: 12},
         ],
     ],
+    [
+        'http://openstreetmap.ru/?mapid=497235296#map=12/60.9426/29.849&layer=C',
+        [{title: 'OpenStreetMap view', latlng: {lat: 60.9426, lng: 29.849}, zoom: 12}],
+    ],
 ].forEach(function([query, expectedResults]) {
     test(`Parse link ${query}`, async function() {
         this.timeout(10000);

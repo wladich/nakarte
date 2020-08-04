@@ -195,7 +195,7 @@ const MapyCzUrl = {
 
 const OpenStreetMapUrl = {
     isOurUrl: function(url) {
-        return Boolean(url.hostname.match(/\bopenstreetmap\.org$/u));
+        return Boolean(url.hostname.match(/\bopenstreetmap\./u));
     },
 
     getResults: function(url) {
