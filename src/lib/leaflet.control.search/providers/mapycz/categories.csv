@@ -11,6 +11,7 @@ id,en,ru
 15,City district,Район города
 21,Road,Дорога
 40,Postal code,Почтовый индекс
+101,Continent,Континент
 102,Sea,Море
 103,Ocean,Океан
 104,Bay,Залив
@@ -31,6 +32,8 @@ id,en,ru
 119,Inhabited area,Населенный пункт
 120,Industrial zone,Промзона
 122,District,Пригород
+127,Cape,Мыс
+128,Archipelago,Архипелаг
 201,Capital city,Столица
 202,Town,Город
 203,Municipality,Город
@@ -41,6 +44,7 @@ id,en,ru
 220,Attraction,Достопримечательность
 230,Аddress,Адрес
 250,City district,Район города
+251,Quarter,Квартал
 1012,Border crossing,Погранпереход
 1014,Border crossing,Погранпереход
 1015,Cableway,Канатная дорога
@@ -56,9 +60,11 @@ id,en,ru
 1043,Ski piste,Горнолыжная трасса
 1045,Subway line,Линия метро
 1065,Parking meter,Паркомат
+1071,Tollhouse,Касса
 1113,Rest area,Место для отдыха
 1114,Tourist signpost,Указатель троп
 1115,Bunker,Бункер
+1116,Shelter,Укрытие
 1117,Tourist signpost,Указатель троп
 1118,Observation tower,Обзорная башня
 1119,Mine,Шахта
@@ -85,13 +91,16 @@ id,en,ru
 1246,Castle,Замок
 1249,Temple,Храм/Синагога/Мечеть
 1250,Attraction,Достопримечательность
+1255,Planetarium,Планетарий
 1256,Battlefield,Историческое поле сражения
+1258,Memorial plaque,Мемориальная доска
 1261,Amusement park,Парк развлечений
 1271,Garden,Сад
 1310,UNESCO site,объект ЮНЕСКО
 1411,Mountain,Вершина
 1412,Information board,Информационный стенд
 1413,Protected area,Охраняемная территория
+1414,Cave,Пещера
 1415,Water body,Водоём
 1416,"Mountain, volcano","Вершина, вулкан"
 1417,Natural swimming pool,Место купания
@@ -106,8 +115,10 @@ id,en,ru
 1445,Significant tree,Примечательное дерево
 1447,Cave,Пещера
 1642,Cycling route,Велосипедный маршрут
+1643,Hiking trail,Пешеходный маршрут
 4100,Part of building,Корпус здания
 5018,Power plant,Электростанция
+5112,Police station,Отделение полиции
 5114,Post office,Почта
 5115,School,Школа
 5116,University,Университет
@@ -121,11 +132,13 @@ id,en,ru
 5215,Library,Библиотека
 5216,Museum,Музей
 5217,Zoo,Зоопарк
+5222,Community or social centre,Дом культуры
 5223,Social service,Социальная служба
 5306,Money exchange,Обмен валют
 5307,Car wash,Мойка машин
 5309,LPG station,Газовая заправка
 5310,Auto service,Автосервис
+5311,ATM,Банкомат
 5312,Bank,Банк
 5313,Petrol station,Заправка
 5315,Shopping mall,Торговый центр
@@ -135,14 +148,22 @@ id,en,ru
 5326,Cafe,Кафе
 5328,Bar,Бар
 5329,Pub,Пивная
+5401,Indoor pool,Крытый бассейн
 5403,Sauna,Сауна
+5410,Stadium,Стадион
+5415,Pool,Бассейн
 5417,Gym,Тренажерный зал
 5418,Sports ground,Спортивная площадка
+5448,Volleyball field,Волейбольное поле
+5455,Rugby clubs,Клуб регби
+5464,BMX ground,Площадка для BMX
 5511,Hotel,Гостиница
 5512,Camp or camp site,Лагерь или место ночевки
+5513,Camp or Campsite,Лагерь или место ночевки
 5514,Motel,Мотель
 5515,Accommodation,Место размещения
 5516,Guest house,Гостевой дом
+5518,Hostel,Хостел
 5520,Shelter,Укрытие
 5521,Apartments,Апартаменты
 5522,Holiday house,Гостевой дом
@@ -183,14 +204,18 @@ id,en,ru
 5688,Butcher shop,Мясной магазин
 5690,Beverage & liquor,Алкогольный магазин
 5691,Bookshop,Книжный магазин
+5692,Gift shop,Магазин сувениров
 5694,"Fruits, vegetables",Офощи-фрукты
+5697,Pet supplies,Зоомагазин
 5699,Printing house,Типография
 5701,Shoe shop,Обувбной магазин
 5753,Building,Здание
+5755,Driving school,Автошкола
 5759,Water treatment facility,Станция подготовки воды
 5760,Scientific workplace,Научная лаборатория
 6000,Tram stop,Остановка трамвая
 6001,Bus stop,Остановка автобуса
+6002,Trolleybus stop,Остановка тролейбуса
 6506,Tram stop,Остановка трамвая
 6507,Bus stop,Остановка автобуса
 6508,Trolleybus stop,Остановка тролейбуса
