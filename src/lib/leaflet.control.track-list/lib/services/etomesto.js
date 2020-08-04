@@ -3,7 +3,7 @@ import BaseService from './baseService';
 import parseGpx from '../parsers/gpx';
 
 class Etomesto extends BaseService {
-    urlRe = /^https?:\/\/www\.etomesto\.ru\/track([a-z0-9]+)/u;
+    urlRe = /^https?:\/\/(?:www\.)?etomesto\.ru\/track([a-z0-9]+)/u;
 
     getTrackId() {
         const m = this.urlRe.exec(this.origUrl);

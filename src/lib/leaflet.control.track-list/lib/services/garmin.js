@@ -8,7 +8,7 @@ class GarminBase extends BaseService {
 }
 
 class GarminRoute extends GarminBase {
-    urlRe = /^https?:\/\/connect.garmin.com\/modern\/course\/(\d+)/u;
+    urlRe = /^https?:\/\/connect\.garmin\.com\/modern\/course\/(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
@@ -47,7 +47,7 @@ class GarminRoute extends GarminBase {
 }
 
 class GarminActivity extends GarminBase {
-    urlRe = /^https?:\/\/connect.garmin.com\/modern\/activity\/(\d+)/u;
+    urlRe = /^https?:\/\/connect\.garmin\.com\/modern\/activity\/(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
