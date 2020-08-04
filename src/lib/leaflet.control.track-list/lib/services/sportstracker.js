@@ -9,7 +9,7 @@ class SportsTrackerBase extends BaseService {
 }
 
 class SportsTrackerActivity extends SportsTrackerBase {
-    urlRe = /^https?:\/\/(www.)?sports-tracker.com\/workout\/([^/]+)\/([a-z0-9]+)/u;
+    urlRe = /^https?:\/\/(www\.)?sports-tracker\.com\/workout\/([^/]+)\/([a-z0-9]+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);

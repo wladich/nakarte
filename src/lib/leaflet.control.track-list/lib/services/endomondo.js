@@ -3,8 +3,8 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class Endomondo extends BaseService {
     urlRegexps = [
-        /^https:\/\/www\.endomondo\.com\/users\/(\d+)\/workouts\/(\d+)/u,
-        /^https:\/\/www\.endomondo\.com\/workouts\/(\d+)\/(\d+)/u
+        /^https?:\/\/(?:www\.)?endomondo\.com\/users\/(\d+)\/workouts\/(\d+)/u,
+        /^https?:\/\/(?:www\.)?endomondo\.com\/workouts\/(\d+)\/(\d+)/u
     ];
 
     isOurUrl() {
