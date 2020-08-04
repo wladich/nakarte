@@ -77,12 +77,12 @@ const ExternalMaps = L.Control.extend({
 
     onAdd: function(map) {
         this._map = map;
-        const {container, link} = makeButton(null, 'Open external map', 'icon-external-links');
+        const {container, link} = makeButton(null, 'View this place on another map', 'icon-external-links');
         this._container = container;
         L.DomEvent.on(link, 'click contextmenu', this.onClick, this);
 
         const menuItems = [
-            {text: 'Open this place on external map', header: true},
+            {text: 'View this place on another map', header: true},
             ...this.options.externalMaps.map((it) => ({
                 text: it.title,
                 callback: this.openExternalMap.bind(this, it.externalMap),
