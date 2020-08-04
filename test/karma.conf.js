@@ -3,10 +3,11 @@
 const webpackConfig = require('../webpack/webpack.config');
 
 module.exports = function(config) {
+    config.glob = config.glob ? config.glob : './test/**/*.js';
     config.set({
         basePath: '../',
         frameworks: ['mocha', 'chai'],
-        files: [{pattern: './test/**/*.js'}],
+        files: [config.glob],
         preprocessors: {
             './test/**/*.js': ['webpack'],
         },
