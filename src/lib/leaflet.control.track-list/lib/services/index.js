@@ -11,6 +11,7 @@ import {NakarteTrack, NakarteUrl} from './nakarte';
 import {MovescountMove, MovescountRoute} from './movescount';
 import {GarminActivity, GarminRoute} from './garmin';
 import {SportsTrackerActivity} from './sportstracker';
+import OpenStreetMapRu from './openstreetmapRu';
 
 export default [
     YandexRuler,
@@ -28,5 +29,6 @@ export default [
     GarminActivity,
     GarminRoute,
     SportsTrackerActivity,
+    OpenStreetMapRu,
     SimpleService
 ];
