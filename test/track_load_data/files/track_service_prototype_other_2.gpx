@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackStatsExtension/v1 http://www8.garmin.com/xmlschemas/TrackStatsExtension.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2017-04-09T13:26:26Z</time>
+    </metadata>
+    <trk>
+        <name>2017-03-11 09:52:03 Auto</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Cyan</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="56.2832119502" lon="38.0782664381">
+                <ele>223.16</ele>
+                <time>2017-03-11T06:56:03Z</time>
+            </trkpt>
+            <trkpt lat="56.2832989544" lon="38.0786525086">
+                <ele>223.16</ele>
+                <time>2017-03-11T06:56:17Z</time>
+            </trkpt>
+            <trkpt lat="56.2833434623" lon="38.0790856853">
+                <ele>225.57</ele>
+                <time>2017-03-11T06:56:32Z</time>
+            </trkpt>
+            <trkpt lat="56.2833803426" lon="38.0794232246">
+                <ele>226.05</ele>
+                <time>2017-03-11T06:56:43Z</time>
+            </trkpt>
+            <trkpt lat="56.2833888084" lon="38.0795044452">
+                <ele>226.05</ele>
+                <time>2017-03-11T06:56:45Z</time>
+            </trkpt>
+            <trkpt lat="56.2833709549" lon="38.0796331912">
+                <ele>226.53</ele>
+                <time>2017-03-11T06:56:55Z</time>
+            </trkpt>
+            <trkpt lat="56.2833215017" lon="38.0796427466">
+                <ele>228.45</ele>
+                <time>2017-03-11T06:57:02Z</time>
+            </trkpt>
+            <trkpt lat="56.2831981201" lon="38.0797013361">
+                <ele>227.97</ele>
+                <time>2017-03-11T06:57:15Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

@@ -1,0 +1,32 @@
+{
+    "query": [
+        "https://www.gpslib.net/tracks/info/30199.html",
+        "http://www.gpslib.net/tracks/info/30199.html",
+        "https://gpslib.net/tracks/info/30199.html",
+        "https://www.gpslib.net/tracks/info/30199.html?a=1",
+
+        "https://www.gpslib.net/tracks/info/30199",
+        "https://www.gpslib.ru/tracks/info/30199.html",
+        "https://fi.gpslib.net/tracks/info/30199.html"
+    ],
+    "geodata": [
+        {
+            "name": "лагерь харабали",
+            "tracks": [
+                [
+                    {"lat": 47.367863, "lng": 47.212959},
+                    {"lat": 47.367859, "lng": 47.212955},
+                    {"lat": 47.367855, "lng": 47.212952},
+                    {"lat": 47.367855, "lng": 47.212948},
+                    {"lat": 47.367851, "lng": 47.212944},
+                    {"lat": 47.367847, "lng": 47.21294},
+                    {"lat": 47.367847, "lng": 47.212936},
+                    {"lat": 47.367847, "lng": 47.212933},
+                    {"lat": 47.367844, "lng": 47.212933},
+                    {"lat": 47.367844, "lng": 47.212929}
+                ]
+            ],
+            "points": []
+        }
+    ]
+}

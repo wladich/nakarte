@@ -1,0 +1,17 @@
+{
+    "query": ["https://www.gpslib.net/tracks/info/66114.html"],
+    "geodata": [
+        {
+            "name": "GPSLib 66114",
+            "tracks": [
+                [
+                    {"lat": 60.0200792, "lng": 30.2662249},
+                    {"lat": 60.0200857, "lng": 30.2662141},
+                    {"lat": 60.0200857, "lng": 30.2662141},
+                    {"lat": 60.0200737, "lng": 30.2662621}
+                ]
+            ],
+            "points": []
+        }
+    ]
+}

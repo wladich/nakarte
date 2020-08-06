@@ -130,6 +130,7 @@
         "sourceType": "module"
       },
       "globals": {
+        "require": true,
         "assert": true
       },
       "rules": {

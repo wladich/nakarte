@@ -1,0 +1,24 @@
+{
+    "query": [
+      "https://connect.garmin.com/modern/activity/5346900838",
+      "https://connect.garmin.com/modern/activity/5346900838?a=1",
+      "http://connect.garmin.com/modern/activity/5346900838",
+      "https://connect.garmin.com/modern/activity/5346900838/"
+    ],
+    "geodata": [
+        {
+            "name": "Garmin Connect activity 5346900838",
+            "tracks": [
+                [
+                    {"lat": 56.52694562450051, "lng": 28.96248271688819},
+                    {"lat": 56.52696020901203, "lng": 28.96247743628919},
+                    {"lat": 56.52701058425009, "lng": 28.96245044656098},
+                    {"lat": 56.52702081017196, "lng": 28.9624959602952},
+                    {"lat": 56.52701301500201, "lng": 28.962502162903547},
+                    {"lat": 56.52700153179467, "lng": 28.962493697181344},
+                    {"lat": 56.52701930142939, "lng": 28.962525883689523}
+                ]
+            ]
+        }
+    ]
+}
