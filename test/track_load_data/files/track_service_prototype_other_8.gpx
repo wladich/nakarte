@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStats
+Extension/v1" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http
+://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xs
+d http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackStatsExtension/v1 http:/
+/www8.garmin.com/xmlschemas/TrackStatsExtension.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http
+://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2017-12-30T22:31:25Z</time>
+    </metadata>
+    <trk>
+        <name>2017-12-26 13:48:50 Week</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Red</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="55.6617341470" lon="37.3896675278">
+                <ele>184.71</ele>
+                <time>2017-12-26T12:02:08Z</time>
+            </trkpt>
+            <trkpt lat="55.6617038045" lon="37.3896441422">
+                <ele>182.31</ele>
+                <time>2017-12-26T12:02:17Z</time>
+            </trkpt>
+            <trkpt lat="55.6617235020" lon="37.3896169011">
+                <ele>181.35</ele>
+                <time>2017-12-26T12:02:25Z</time>
+            </trkpt>
+            <trkpt lat="55.6617786549" lon="37.3896156438">
+                <ele>181.35</ele>
+                <time>2017-12-26T12:02:36Z</time>
+            </trkpt>
+            <trkpt lat="55.6618645694" lon="37.3897073418">
+                <ele>180.87</ele>
+                <time>2017-12-26T12:02:44Z</time>
+            </trkpt>
+            <trkpt lat="55.6618353166" lon="37.3899095971">
+                <ele>180.87</ele>
+                <time>2017-12-26T12:02:53Z</time>
+            </trkpt>
+            <trkpt lat="55.6618267670" lon="37.3900176398">
+                <ele>180.87</ele>
+                <time>2017-12-26T12:02:58Z</time>
+            </trkpt>
+            <trkpt lat="55.6617886294" lon="37.3900877126">
+                <ele>180.87</ele>
+                <time>2017-12-26T12:03:02Z</time>
+            </trkpt>
+            <trkpt lat="55.6616474781" lon="37.3903743736">
+                <ele>181.35</ele>
+                <time>2017-12-26T12:03:17Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

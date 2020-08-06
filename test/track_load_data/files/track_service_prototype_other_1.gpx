@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackStatsExtension/v1 http://www8.garmin.com/xmlschemas/TrackStatsExtension.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2016-02-28T07:11:22Z</time>
+    </metadata>
+    <trk>
+        <name>2016-02-22 15:18:34 Week</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Red</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="50.7726191450" lon="15.4262345564">
+                <ele>639.41</ele>
+                <time>2016-02-22T13:56:13Z</time>
+            </trkpt>
+            <trkpt lat="50.7725747209" lon="15.4262163676">
+                <ele>641.82</ele>
+                <time>2016-02-22T13:56:37Z</time>
+            </trkpt>
+            <trkpt lat="50.7725455519" lon="15.4262564331">
+                <ele>642.30</ele>
+                <time>2016-02-22T13:57:08Z</time>
+            </trkpt>
+            <trkpt lat="50.7725722063" lon="15.4264826607">
+                <ele>656.24</ele>
+                <time>2016-02-22T13:57:21Z</time>
+            </trkpt>
+            <trkpt lat="50.7726215757" lon="15.4266166873">
+                <ele>659.60</ele>
+                <time>2016-02-22T13:57:38Z</time>
+            </trkpt>
+            <trkpt lat="50.7727048080" lon="15.4266813956">
+                <ele>659.60</ele>
+                <time>2016-02-22T13:57:49Z</time>
+            </trkpt>
+            <trkpt lat="50.7726607192" lon="15.4269123171">
+                <ele>662.49</ele>
+                <time>2016-02-22T13:58:03Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

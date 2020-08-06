@@ -1,0 +1,7 @@
+{
+    "query": [
+        "https://www.endomondo.com/users/35458559/workouts/1587839579",
+        "https://www.endomondo.com/users/35458559/workouts/1587839623"
+    ],
+    "geodata": [{"error": "Endomondo user disabled viewing this workout track"}]
+}

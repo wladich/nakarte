@@ -1,0 +1,28 @@
+{
+    "query": [
+        "https://tracedetrail.fr/en/trace/trace/125395",
+        "http://tracedetrail.fr/en/trace/trace/125395",
+        "https://www.tracedetrail.fr/en/trace/trace/125395",
+        "https://tracedetrail.fr/en/trace/trace/125395/",
+        "https://tracedetrail.fr/en/trace/trace/125395?a=1",
+        "https://tracedetrail.com/en/trace/trace/125395",
+        "https://tracedetrail.com/trace/trace/125395",
+        "https://tracedetrail.fr/trace/trace/125395",
+        "https://tracedetrail.com/index.php/en/trace/trace/125395"
+    ],
+    "geodata": [
+        {
+            "name": "Test - Тест - Zkouška",
+            "tracks": [
+                [
+                    {"lat": 56.52694535369247, "lng": 28.96248246398567},
+                    {"lat": 56.52701025903939, "lng": 28.962450124635442},
+                    {"lat": 56.52702066370298, "lng": 28.96249593871493},
+                    {"lat": 56.52701273634051, "lng": 28.96250222692192},
+                    {"lat": 56.52700134075404, "lng": 28.96249324376908},
+                    {"lat": 56.52701917732263, "lng": 28.96252558311931}
+                ]
+            ]
+        }
+    ]
+}

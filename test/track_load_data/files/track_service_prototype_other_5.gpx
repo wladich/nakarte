@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2014-09-11T07:07:49Z</time>
+    </metadata>
+    <trk>
+        <name>2014-09-03 07:46:53 Auto</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Red</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="49.9142099172" lon="87.9098727833">
+                <ele>2902.84</ele>
+                <time>2014-09-03T00:49:16Z</time>
+            </trkpt>
+            <trkpt lat="49.9142210651" lon="87.9097697698">
+                <ele>2904.76</ele>
+                <time>2014-09-03T00:49:24Z</time>
+            </trkpt>
+            <trkpt lat="49.9142288603" lon="87.9097237531">
+                <ele>2904.76</ele>
+                <time>2014-09-03T00:49:28Z</time>
+            </trkpt>
+            <trkpt lat="49.9142377451" lon="87.9096039757">
+                <ele>2904.76</ele>
+                <time>2014-09-03T00:49:41Z</time>
+            </trkpt>
+            <trkpt lat="49.9142404273" lon="87.9094810970">
+                <ele>2905.24</ele>
+                <time>2014-09-03T00:49:51Z</time>
+            </trkpt>
+            <trkpt lat="49.9142309558" lon="87.9094139580">
+                <ele>2903.80</ele>
+                <time>2014-09-03T00:49:59Z</time>
+            </trkpt>
+            <trkpt lat="49.9142688420" lon="87.9092490021">
+                <ele>2899.95</ele>
+                <time>2014-09-03T00:50:11Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

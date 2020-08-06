@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackStatsExtension/v1 http://www8.garmin.com/xmlschemas/TrackStatsExtension.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2015-04-26T10:37:06Z</time>
+    </metadata>
+    <trk>
+        <name>2015-03-02 10:23:26 Auto</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Red</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="52.3282465618" lon="104.3064226024">
+                <ele>438.98</ele>
+                <time>2015-03-02T07:26:13Z</time>
+            </trkpt>
+            <trkpt lat="52.3280727211" lon="104.3064645119">
+                <ele>439.94</ele>
+                <time>2015-03-02T07:26:14Z</time>
+            </trkpt>
+            <trkpt lat="52.3276830465" lon="104.3064949382">
+                <ele>439.94</ele>
+                <time>2015-03-02T07:26:16Z</time>
+            </trkpt>
+            <trkpt lat="52.3267635517" lon="104.3065893184">
+                <ele>441.38</ele>
+                <time>2015-03-02T07:26:21Z</time>
+            </trkpt>
+            <trkpt lat="52.3265812453" lon="104.3065607361">
+                <ele>441.86</ele>
+                <time>2015-03-02T07:26:22Z</time>
+            </trkpt>
+            <trkpt lat="52.3263816722" lon="104.3065048289">
+                <ele>441.86</ele>
+                <time>2015-03-02T07:26:23Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

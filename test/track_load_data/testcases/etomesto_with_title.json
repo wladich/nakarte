@@ -1,0 +1,26 @@
+{
+    "query": [
+        "http://www.etomesto.ru/track79ca234380/",
+        "https://www.etomesto.ru/track79ca234380/",
+        "http://etomesto.ru/track79ca234380/",
+        "http://www.etomesto.ru/track79ca234380",
+        "http://www.etomesto.ru/track79ca234380/?a=1"
+    ],
+    "geodata": [
+        {
+            "name": "Test - Тест - Zkouška",
+            "tracks": [
+                [
+                    {"lat": 56.526946, "lng": 28.962483},
+                    {"lat": 56.52696, "lng": 28.962478},
+                    {"lat": 56.527011, "lng": 28.96245},
+                    {"lat": 56.527021, "lng": 28.962496},
+                    {"lat": 56.527013, "lng": 28.962502},
+                    {"lat": 56.527002, "lng": 28.962494},
+                    {"lat": 56.527019, "lng": 28.962526}
+                ]
+            ],
+            "points": []
+        }
+    ]
+}
