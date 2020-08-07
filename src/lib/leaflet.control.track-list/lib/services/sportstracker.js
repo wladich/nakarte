@@ -17,7 +17,7 @@ class SportsTrackerActivity extends SportsTrackerBase {
         return [
             {
                 url: urlViaCorsProxy(
-                    `https://www.sports-tracker.com/apiserver/v1/workouts/${activityId}/data?samples=100000`
+                    `https://api.sports-tracker.com/apiserver/v1/workouts/${activityId}/data?samples=100000`
                 ),
                 options: {
                     responseType: 'binarystring',
@@ -25,7 +25,7 @@ class SportsTrackerActivity extends SportsTrackerBase {
                 }
             },
             {
-                url: urlViaCorsProxy(`https://www.sports-tracker.com/apiserver/v1/workouts/${activityId}/combined`),
+                url: urlViaCorsProxy(`https://api.sports-tracker.com/apiserver/v1/workouts/${activityId}/combined`),
                 options: {
                     responseType: 'binarystring',
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
