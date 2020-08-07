@@ -3,7 +3,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 import L from 'leaflet';
 
 class Tracedetrail extends BaseService {
-    urlRe = /^https?:\/\/(www\.)?tracedetrail\.[a-z]{2,}(\/index\.php)?\/[a-z]{2}\/trace\/trace\/([0-9]+)/u;
+    urlRe = /^https?:\/\/(?:www\.)?tracedetrail\.[a-z]{2,}.*\/trace\/trace\/([0-9]+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
@@ -11,7 +11,7 @@ class Tracedetrail extends BaseService {
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
-        const trackId = this.trackId = m[3];
+        const trackId = this.trackId = m[1];
 
         return [{
             url: urlViaCorsProxy(`https://tracedetrail.com/en/trace/geomSections/${trackId}`),
