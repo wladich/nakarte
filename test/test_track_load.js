@@ -72,6 +72,11 @@ suite('Load tracks from services');
     'tracedetrail_with_title',
     'tracedetrail_private',
     'tracedetrail_not_exists',
+    'sportstracker_with_title',
+    'sportstracker_without_title',
+    'sportstracker_private',
+    'sportstracker_not_exists_1',
+    'sportstracker_not_exists_2',
 ].forEach(function(testcase) {
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
     for (const track of testData.geodata) {

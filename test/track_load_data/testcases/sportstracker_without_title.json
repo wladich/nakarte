@@ -1,0 +1,16 @@
+{
+    "query": ["https://www.sports-tracker.com/workout/yyryyy/5f2d7abe8fec9d7f9ce27b62"],
+    "geodata": [
+        {
+            "name": "Миша Васин on Sat Jul 05 2014",
+            "tracks": [
+                [
+                    {"lat": 39.14895, "lng": 68.29879},
+                    {"lat": 39.14895, "lng": 68.29882},
+                    {"lat": 39.14943, "lng": 68.29872},
+                    {"lat": 39.14969, "lng": 68.29851}
+                ]
+            ]
+        }
+    ]
+}

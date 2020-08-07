@@ -1,0 +1,26 @@
+{
+    "query": [
+        "https://www.sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c",
+        "http://www.sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c",
+        "https://sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c",
+        "https://www.sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c/",
+        "https://www.sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c?a=1",
+        "https://www.sports-tracker.com/workout/yyryyy/5f2d4cb86643bb7d5bdc599c"
+    ],
+    "geodata": [
+        {
+            "name": "Тестовое описание",
+            "tracks": [
+                [
+                    {"lat": 56.52695, "lng": 28.96248},
+                    {"lat": 56.52696, "lng": 28.96248},
+                    {"lat": 56.52701, "lng": 28.96245},
+                    {"lat": 56.52702, "lng": 28.9625},
+                    {"lat": 56.52701, "lng": 28.9625},
+                    {"lat": 56.527, "lng": 28.96249},
+                    {"lat": 56.52702, "lng": 28.96253}
+                ]
+            ]
+        }
+    ]
+}
