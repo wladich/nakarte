@@ -7,10 +7,11 @@ import loadTracksFromJson from './loadTracksFromJson';
 import {fetch} from '~/lib/xhr-promise';
 
 function flattenArray(ar) {
-    return ar.reduce((cur, acc) => {
-        acc.push(...cur);
-        return acc;
-    }, []);
+    const res = [];
+    for (const it of ar) {
+        res.push(...it);
+    }
+    return res;
 }
 
 function parsePointFromHashValues(values) {
