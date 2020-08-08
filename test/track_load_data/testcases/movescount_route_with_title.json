@@ -5,7 +5,8 @@
         "http://www.movescount.com/map?route=5614507",
         "http://movescount.com/ru/map?route=5614507",
         "https://www.movescount.com/ru/map?route=5614507",
-        "http://www.movescount.com/ru/map?route=5614507&lat=55.26588383711808&lon=38.863759835918586&zoom=11.649307666194886&activity=991&style=suunto-offroad"
+        "http://www.movescount.com/ru/map?route=5614507&lat=55.26588383711808&lon=38.863759835918586&zoom=11.649307666194886&activity=991&style=suunto-offroad",
+        "http://www.movescount.com/ru/map?lat=55.26588383711808&lon=38.863759835918586&zoom=11.649307666194886&activity=991&style=suunto-offroad&route=5614507"
     ],
     "geodata": [
         {
