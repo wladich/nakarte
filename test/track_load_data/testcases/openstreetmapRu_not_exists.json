@@ -1,0 +1,4 @@
+{
+    "query": ["http://openstreetmap.ru/?mapid=891539501"],
+    "geodata": [{"error": "Personal map is empty or does not exist"}]
+}
