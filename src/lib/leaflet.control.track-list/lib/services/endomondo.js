@@ -23,7 +23,7 @@ class Endomondo extends BaseService {
         return [{
             url: urlViaCorsProxy(`https://www.endomondo.com/rest/v1/users/${userId}/workouts/${trackId}`),
             options: {
-                responseType: 'binarystring',
+                responseType: 'json',
                 isResponseSuccess: (xhr) => (xhr.status === 200 || xhr.status === 404)
             },
 
@@ -36,10 +36,8 @@ class Endomondo extends BaseService {
             return [{error: 'Invalid link or user disabled viewing this workout track'}];
         }
 
-        let data;
-        try {
-            data = JSON.parse(response.responseBinaryText);
-        } catch (e) {
+        const data = response.responseJSON;
+        if (!data) {
             return [{name: 'Endomondo activity', error: 'UNSUPPORTED'}];
         }
         if (!data.points || !data.points.points) {
