@@ -77,6 +77,9 @@ suite('Load tracks from services');
     'sportstracker_private',
     'sportstracker_not_exists_1',
     'sportstracker_not_exists_2',
+    'openstreetmapRu',
+    'openstreetmapRuGpx',
+    'openstreetmapRu_not_exists',
 ].forEach(function(testcase) {
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
     for (const track of testData.geodata) {
