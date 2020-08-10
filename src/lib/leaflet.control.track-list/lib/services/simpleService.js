@@ -4,7 +4,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class SimpleService extends BaseService {
     isOurUrl() {
-        return true;
+        return Boolean(this.origUrl.match(/^https?:\/\/.+/u));
     }
 
     requestOptions() {

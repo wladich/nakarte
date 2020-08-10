@@ -333,7 +333,8 @@ L.Control.TrackList = L.Control.extend({
                     var error_messages = {
                         CORRUPT: 'File "{name}" is corrupt',
                         UNSUPPORTED: 'File "{name}" has unsupported format or is badly corrupt',
-                        NETWORK: 'Could not download file from url "{name}"'
+                        NETWORK: 'Could not download file from url "{name}"',
+                        INVALID_URL: '"{name}"  is not of supported URL type',
                     };
                     var message;
                     if (geodata.error) {

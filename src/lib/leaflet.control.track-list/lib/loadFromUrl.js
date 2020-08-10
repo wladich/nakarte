@@ -7,7 +7,7 @@ async function loadFromUrl(url) {
             return service.geoData();
         }
     }
-    return null;
+    return [{name: url, error: 'INVALID_URL'}];
 }
 
 export default loadFromUrl;
