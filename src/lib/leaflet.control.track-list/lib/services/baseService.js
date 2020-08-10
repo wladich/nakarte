@@ -18,7 +18,7 @@ class BaseService {
     }
 
     async geoData() {
-        if (!this.isOurUrl) {
+        if (!this.isOurUrl()) {
             throw new Error('Unsupported url');
         }
         const requests = this.requestOptions().map((it) => fetch(it.url, it.options));
