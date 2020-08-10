@@ -40,7 +40,8 @@
     vertical-align: middle;
 }
 
-.leaflet-control-tracklist .button-add-point.active {
+.leaflet-control-tracklist .button-add-point.active,
+.leaflet-control-tracklist .button-add-track.active {
     background-color: #bbb;
     border-color: #333;
 }
@@ -170,7 +171,7 @@
 
 .leaflet-control-tracklist .button:hover,
 .leaflet-control-tracklist .button-length:hover,
-.leaflet-control-tracklist .button-add-track:hover,
+.leaflet-control-tracklist .button-add-track:hover:not(.active),
 .leaflet-control-tracklist .button-add-point:hover:not(.active) {
     background-color: #ddd;
 }
