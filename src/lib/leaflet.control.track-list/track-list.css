@@ -41,7 +41,8 @@
 }
 
 .leaflet-control-tracklist .button-add-point.active {
-    background-color: #ccc;
+    background-color: #bbb;
+    border-color: #333;
 }
 
 .leaflet-control-tracklist .input-url {
@@ -171,7 +172,7 @@
 .leaflet-control-tracklist .button-length:hover,
 .leaflet-control-tracklist .button-add-track:hover,
 .leaflet-control-tracklist .button-add-point:hover:not(.active) {
-    background-color: #f4f4f4;
+    background-color: #ddd;
 }
 
 .leaflet-control-tracklist .ticks-enabled {
