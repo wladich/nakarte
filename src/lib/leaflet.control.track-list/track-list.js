@@ -142,7 +142,12 @@ L.Control.TrackList = L.Control.extend({
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
-                        <td><div class="button-length" data-bind="text: $parent.formatLength(track.length()), css: {'ticks-enabled': track.measureTicksShown}, click: $parent.switchMeasureTicksVisibility.bind($parent)"></div></td>
+                        <td>
+                            <div class="button-length" title="Show distance marks" data-bind="
+                                text: $parent.formatLength(track.length()),
+                                css: {'ticks-enabled': track.measureTicksShown},
+                                click: $parent.switchMeasureTicksVisibility.bind($parent)"></div>
+                        </td>
                         <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
                         <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
