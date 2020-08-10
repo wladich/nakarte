@@ -161,6 +161,12 @@
 
 }
 
+.leaflet-control-tracklist .button-length,
+.leaflet-control-tracklist .button-add-track,
+.leaflet-control-tracklist .button-add-point {
+    background-color: #fff;
+}
+
 .leaflet-control-tracklist .button:hover,
 .leaflet-control-tracklist .button-length:hover,
 .leaflet-control-tracklist .button-add-track:hover,
