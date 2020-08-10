@@ -94,6 +94,7 @@ L.Control.TrackList = L.Control.extend({
             this.trackListHeight = ko.observable(0);
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
+            this.trackAddingSegment = ko.observable(null);
         },
 
         onAdd: function(map) {
@@ -116,7 +117,7 @@ L.Control.TrackList = L.Control.extend({
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
-                    <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
+                    <a class="button add-track" title="New track" data-bind="click: onButtonNewTrackClicked"></a
                     ><a class="button open-file" title="Open file" data-bind="click: loadFilesFromDisk"></a
                     ><input type="text" class="input-url" placeholder="Track URL"
                         data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: defaultEventHandle, mousemove: defaultEventHandle}"
@@ -148,7 +149,7 @@ L.Control.TrackList = L.Control.extend({
                                 css: {'ticks-enabled': track.measureTicksShown},
                                 click: $parent.switchMeasureTicksVisibility.bind($parent)"></div>
                         </td>
-                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
+                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.onButtonAddSegmentClicked.bind($parent, track), css: {active: $parent.trackAddingSegment() === track}"></div></td>
                         <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
@@ -244,20 +245,27 @@ L.Control.TrackList = L.Control.extend({
             return track.markers;
         },
 
-        addNewTrack: function(name) {
-            if (!name) {
-                name = this.url().slice(0, 50);
-                if (name.length) {
-                    this.url('');
-                } else {
-                    name = 'New track';
-                }
+        onButtonNewTrackClicked: function() {
+            let name = this.url().trim();
+            if (name.length > 0) {
+                this.url('');
+            } else {
+                name = 'New track';
             }
+            this.addTrackAndEdit(name);
+        },
+
+        addSegmentAndEdit: function(track) {
             this.stopPlacingPoint();
-            var track = this.addTrack({name: name}),
-                line = this.addTrackSegment(track);
-            this.startEditTrackSegement(line);
-            line.startDrawingLine();
+            const segment = this.addTrackSegment(track);
+            this.startEditTrackSegement(segment);
+            segment.startDrawingLine();
+            this.trackAddingSegment(track);
+        },
+
+        addTrackAndEdit: function(name) {
+            const track = this.addTrack({name: name});
+            this.addSegmentAndEdit(track);
             return track;
         },
 
@@ -388,7 +396,14 @@ L.Control.TrackList = L.Control.extend({
             this.updateTrackHighlight();
         },
 
-        onTrackLengthChanged: function(track) {
+        onTrackSegmentNodesChanged: function(track, segment) {
+            if (segment.getFixedLatLngs().length > 0) {
+                this.trackAddingSegment(null);
+            }
+            this.recalculateTrackLength(track);
+        },
+
+        recalculateTrackLength: function(track) {
             const lines = this.getTrackPolylines(track);
             let length = 0;
             for (let line of lines) {
@@ -500,14 +515,16 @@ L.Control.TrackList = L.Control.extend({
             track._actionsMenu = new Contextmenu(items);
         },
 
-        addSegmentAndEdit: function(track) {
+        onButtonAddSegmentClicked: function(track) {
             if (!track.visible()) {
                 return;
             }
-            this.stopPlacingPoint();
-            var polyline = this.addTrackSegment(track, []);
-            this.startEditTrackSegement(polyline);
-            polyline.startDrawingLine(1);
+            if (this.trackAddingSegment() === track) {
+                this.trackAddingSegment(null);
+                this.stopEditLine();
+            } else {
+                this.addSegmentAndEdit(track);
+            }
         },
 
         duplicateTrack: function(track) {
@@ -803,18 +820,19 @@ L.Control.TrackList = L.Control.extend({
             polyline._parentTrack = track;
             polyline.setMeasureTicksVisible(track.measureTicksShown());
             polyline.on('click', this.onTrackSegmentClick, this);
-            polyline.on('nodeschanged', this.onTrackLengthChanged.bind(this, track));
+            polyline.on('nodeschanged', this.onTrackSegmentNodesChanged.bind(this, track, polyline));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
             polyline.on('mouseover', () => this.onTrackMouseEnter(track));
             polyline.on('mouseout', () => this.onTrackMouseLeave(track));
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
+            polyline.on('drawend', this.onTrackSegmentDrawEnd, this);
 
             // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
             track.feature.addLayer(polyline);
-            this.onTrackLengthChanged(track);
+            this.recalculateTrackLength(track);
             return polyline;
         },
 
@@ -1085,6 +1103,10 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
+        onTrackSegmentDrawEnd: function() {
+            this.trackAddingSegment(null);
+        },
+
         splitTrackSegment: function(trackSegment, nodeIndex, latlng) {
             var latlngs = trackSegment.getLatLngs();
             latlngs = latlngs.map((latlng) => latlng.clone());
@@ -1106,7 +1128,7 @@ L.Control.TrackList = L.Control.extend({
         deleteTrackSegment: function(trackSegment) {
             const track = trackSegment._parentTrack;
             track.feature.removeLayer(trackSegment);
-            this.onTrackLengthChanged(track);
+            this.recalculateTrackLength(track);
         },
 
         newTrackFromSegment: function(trackSegment) {
