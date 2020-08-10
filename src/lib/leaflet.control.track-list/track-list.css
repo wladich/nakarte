@@ -164,7 +164,7 @@
 .leaflet-control-tracklist .button:hover,
 .leaflet-control-tracklist .button-length:hover,
 .leaflet-control-tracklist .button-add-track:hover,
-.leaflet-control-tracklist .button-add-point:hover {
+.leaflet-control-tracklist .button-add-point:hover:not(.active) {
     background-color: #f4f4f4;
 }
 
