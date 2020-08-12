@@ -35,7 +35,7 @@ class GarminRoute extends GarminBase {
         if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        let points = [];
+        let points = data.coursePoints.map((pt) => ({name: pt.name, lat: pt.lat, lng: pt.lon}));
         let track = data.geoPoints.map((obj) => ({lat: obj.latitude, lng: obj.longitude}));
         name = data.courseName ? data.courseName : name;
         return [{
