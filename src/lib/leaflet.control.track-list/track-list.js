@@ -150,7 +150,7 @@ L.Control.TrackList = L.Control.extend({
                                 click: $parent.switchMeasureTicksVisibility.bind($parent)"></div>
                         </td>
                         <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.onButtonAddSegmentClicked.bind($parent, track), css: {active: $parent.trackAddingSegment() === track}"></div></td>
-                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
+                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onButtonAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
                 </tbody></table>
@@ -693,7 +693,10 @@ L.Control.TrackList = L.Control.extend({
             this.fire('startedit');
         },
 
-        onAddPointClicked: function(track) {
+        onButtonAddPointClicked: function(track) {
+            if (!track.visible()) {
+                return;
+            }
             if (this.trackAddingPoint() === track) {
                 this.stopPlacingPoint();
             } else {
