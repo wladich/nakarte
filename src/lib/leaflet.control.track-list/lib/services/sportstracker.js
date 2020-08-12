@@ -28,7 +28,7 @@ class SportsTrackerActivity extends SportsTrackerBase {
                 url: urlViaCorsProxy(`https://api.sports-tracker.com/apiserver/v1/workouts/${activityId}/combined`),
                 options: {
                     responseType: 'binarystring',
-                    isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403
+                    isResponseSuccess: (xhr) => [200, 403, 404].includes(xhr.status)
                 }
             }
         ];
@@ -36,6 +36,9 @@ class SportsTrackerActivity extends SportsTrackerBase {
 
     parseResponse(responses) {
         const [dataResponse, metadataResponse] = responses;
+        if (metadataResponse.status === 404) {
+            return [{error: 'Sports Tracker activity not found'}];
+        }
         if (dataResponse.status === 403) {
             return [{error: 'Sports Tracker user disabled viewing this activity'}];
         }
