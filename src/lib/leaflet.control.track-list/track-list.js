@@ -1078,10 +1078,12 @@ L.Control.TrackList = L.Control.extend({
 
         onTrackMouseEnter: function(track) {
             track.hover(true);
+            this.highlightTrack(track);
         },
 
         onTrackMouseLeave: function(track) {
             track.hover(false);
+            this.unHighlightTrack(track);
         },
 
         onTrackEditStart: function(track) {
@@ -1095,11 +1097,19 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackRowMouseEnter: function(track) {
+            this.highlightTrack(track);
+        },
+
+        onTrackRowMouseLeave: function(track) {
+            this.unHighlightTrack(track);
+        },
+
+        highlightTrack: function(track) {
             this._highlightedTrack = track;
             this.updateTrackHighlight();
         },
 
-        onTrackRowMouseLeave: function(track) {
+        unHighlightTrack: function(track) {
             if (this._highlightedTrack === track) {
                 this._highlightedTrack = null;
                 this.updateTrackHighlight();
@@ -1240,11 +1250,15 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerEnter: function(e) {
-            e.marker._parentTrack.hover(true);
+            const track = e.marker._parentTrack;
+            track.hover(true);
+            this.highlightTrack(track);
         },
 
         onMarkerLeave: function(e) {
-            e.marker._parentTrack.hover(false);
+            const track = e.marker._parentTrack;
+            track.hover(false);
+            this.unHighlightTrack(track);
         },
 
         removePoint: function(marker) {
