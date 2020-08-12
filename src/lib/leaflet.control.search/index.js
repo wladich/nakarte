@@ -89,11 +89,15 @@ class SearchViewModel {
     }
 
     onControlHasFocusChange(active) {
-        if (active) {
-            this.maybeRequestSearch(this.query());
-        } else {
+        if (!active) {
             this.items.removeAll();
             this.error(null);
+        }
+    }
+
+    onInputHasFocusChange(active) {
+        if (active) {
+            this.maybeRequestSearch(this.query());
         }
     }
 
@@ -200,6 +204,7 @@ class SearchViewModel {
         this.query.subscribe(this.onQueryChange.bind(this));
         this.showResults.subscribe(this.onShowResults.bind(this));
         this.controlHasFocus.subscribe(this.onControlHasFocusChange.bind(this));
+        this.inputHasFocus.subscribe(this.onInputHasFocusChange.bind(this));
     }
 }
 
