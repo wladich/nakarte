@@ -1242,6 +1242,8 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerClick: function(e) {
             new Contextmenu([
+                    {text: e.marker.label, header: true},
+                    '-',
                     {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
                     {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
