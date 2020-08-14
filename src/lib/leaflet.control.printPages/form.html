@@ -9,7 +9,7 @@
            data-bind="click: addPortraitPage"></a>
         <a title="Add page in landscape orientation" class="button-add-page-horiz image-button"
            data-bind="click: addLandscapePage"></a>
-        <span class="pages-num" data-bind="text: pagesNumLabel"></span>
+        <span class="pages-num" data-bind="text: pagesNumLabel, click: onPagesNumLabelClick, css: {'pages-not-null': pagesNum() > 0}"></span>
         <a title="Remove all pages" class="button-remove-pages image-button"
            data-bind="click: removePages"></a>
     </td></tr>
