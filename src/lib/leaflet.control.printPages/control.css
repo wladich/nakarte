@@ -11,6 +11,11 @@
     margin-left: 1.5em;
 }
 
+.control-print-pages .pages-num.pages-not-null {
+    cursor: pointer;
+    border-bottom: 1px dotted #999;
+}
+
 .control-print-pages .page-size {
     width: 2.1em;
 }

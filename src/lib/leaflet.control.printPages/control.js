@@ -335,6 +335,16 @@ L.Control.PrintPages = L.Control.extend({
             this.updateFormZooms();
         },
 
+        onPagesNumLabelClick: function() {
+            if (this.pages.length > 0) {
+                const bounds = L.latLngBounds([]);
+                for (let page of this.pages) {
+                    bounds.extend(page.latLngBounds);
+                }
+                this._map.fitBounds(bounds.pad(0.2));
+            }
+        },
+
         makePageContexmenuItems: function(page) {
             const items = [
                 {text: 'Rotate', callback: this.rotatePage.bind(this, page)},
