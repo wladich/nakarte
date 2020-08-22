@@ -79,6 +79,14 @@ suite('Load tracks from services');
     'openstreetmapRu',
     'openstreetmapRuGpx',
     'openstreetmapRu_not_exists',
+    'google_drive_gpx_with_name',
+    'google_drive_gpx_without_name',
+    'google_drive_kml_deleted',
+    'google_drive_kml_limited',
+    'google_drive_kml_unshared',
+    'google_drive_kml_with_name',
+    'google_drive_kml_without_name',
+    'google_drive_not_exists',
     'direct_link_with_content_disposition',
 ].forEach(function(testcase) {
     const testData = require('./track_load_data/testcases/' + testcase + '.json');

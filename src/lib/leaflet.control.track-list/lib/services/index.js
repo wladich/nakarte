@@ -12,6 +12,7 @@ import {MovescountMove, MovescountRoute} from './movescount';
 import {GarminActivity, GarminRoute} from './garmin';
 import {SportsTrackerActivity} from './sportstracker';
 import OpenStreetMapRu from './openstreetmapRu';
+import GoogleDrive from './google_drive';
 
 export default [
     YandexRuler,
@@ -30,5 +31,6 @@ export default [
     GarminRoute,
     SportsTrackerActivity,
     OpenStreetMapRu,
+    GoogleDrive,
     SimpleService
 ];

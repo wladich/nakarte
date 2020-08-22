@@ -1,0 +1,15 @@
+{
+    "query": ["https://drive.google.com/file/d/1xW5VUGh0nr9sYcKNzrPueuUBNHoI-Kis/view?usp=sharing"],
+    "geodata": [
+        {
+            "name": "Test - Тест - Zkouška with name.gpx",
+            "points": [],
+            "tracks": [
+                [
+                    {"lat": 48.598409, "lng": 17.144165},
+                    {"lat": 48.996438, "lng": 17.567139}
+                ]
+            ]
+        }
+    ]
+}

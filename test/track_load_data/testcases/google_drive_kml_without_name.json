@@ -1,0 +1,15 @@
+{
+    "query": ["https://drive.google.com/file/d/1Zs68L97ZFHATPkGbsjVFC_-PKkQjN0z4/view?usp=sharing"],
+    "geodata": [
+        {
+            "name": "Test - Тест - Zkouška without name.kml",
+            "points": [],
+            "tracks": [
+                [
+                    {"lat": 48.598409, "lng": 17.144165},
+                    {"lat": 48.996438, "lng": 17.567139}
+                ]
+            ]
+        }
+    ]
+}
