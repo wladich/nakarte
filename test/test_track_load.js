@@ -79,6 +79,7 @@ suite('Load tracks from services');
     'openstreetmapRu',
     'openstreetmapRuGpx',
     'openstreetmapRu_not_exists',
+    'direct_link_with_content_disposition',
 ].forEach(function(testcase) {
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
     for (const track of testData.geodata) {

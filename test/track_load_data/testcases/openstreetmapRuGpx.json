@@ -2,7 +2,7 @@
     "query": ["http://openstreetmap.ru/mymap.php?id=89153950&format=gpx"],
     "geodata": [
         {
-            "name": "mymap.php",
+            "name": "89153950.gpx",
             "tracks": [
                 [
                     {
