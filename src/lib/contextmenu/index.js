@@ -88,9 +88,15 @@ class Contextmenu {
             menu_height = this._container.offsetHeight;
         if (x + menu_width >= window_width) {
             x -= menu_width;
+            if (x < 0) {
+               x = 0;
+            }
         }
         if (y + menu_height >= window_height) {
             y -= menu_height;
+            if (y < 0) {
+                y = 0;
+            }
         }
         this._container.style.left = `${x}px`;
         this._container.style.top = `${y}px`;
