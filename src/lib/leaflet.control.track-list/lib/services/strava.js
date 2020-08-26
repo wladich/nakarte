@@ -24,7 +24,7 @@ class Strava extends BaseService {
             {
                 url: urlViaCorsProxy(`https://www.strava.com/stream/${trackId}?streams%5B%5D=latlng`),
                 options: {
-                    responseType: 'binarystring',
+                    responseType: 'json',
                     isResponseSuccess
                 }
             }
@@ -40,17 +40,12 @@ class Strava extends BaseService {
         if (trackResponse.status !== 200) {
             return [{error: statusMessages[trackResponse.status]}];
         }
-        let data;
         let name = `Strava ${this.trackId}`;
-        try {
-            data = JSON.parse(trackResponse.responseBinaryText);
-        } catch (e) {
+        const latlngs = trackResponse.responseJSON?.latlng;
+        if (!latlngs || !Array.isArray(latlngs)) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        if (!data.latlng) {
-            return [{name, error: 'UNSUPPORTED'}];
-        }
-        const tracks = [data.latlng.map((p) => ({lat: p[0], lng: p[1]}))];
+        const tracks = [latlngs.map((p) => ({lat: p[0], lng: p[1]}))];
         let dom;
         try {
             dom = (new DOMParser()).parseFromString(pageResponse.response, 'text/html');
