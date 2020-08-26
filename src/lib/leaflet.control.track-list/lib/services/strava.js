@@ -1,6 +1,5 @@
 import BaseService from './baseService';
 import urlViaCorsProxy from '~/lib/CORSProxy';
-import {decode as utf8_decode} from 'utf8';
 
 class Strava extends BaseService {
     urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/u;
@@ -19,7 +18,6 @@ class Strava extends BaseService {
             {
                 url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}?hl=en-GB`),
                 options: {
-                    responseType: 'binarystring',
                     isResponseSuccess
                 }
             },
@@ -53,25 +51,21 @@ class Strava extends BaseService {
             return [{name, error: 'UNSUPPORTED'}];
         }
         const tracks = [data.latlng.map((p) => ({lat: p[0], lng: p[1]}))];
+        let dom;
         try {
-            let altName;
-            const dom = (new DOMParser()).parseFromString(pageResponse.responseBinaryText, 'text/html');
-            let title = dom.querySelector('meta[property=og\\:title]').content;
-            title = utf8_decode(title);
-            // name and description
-            const m = title.match(/^(.+) - ([^-]+)/u);
-            if (m) {
-                // reverse name and description
-                altName = `${m[2]} ${m[1]}`;
-                title = dom.querySelector('title').text;
-                let date = title.match(/ (on \d{1,2} \w+ \d{4}) /u)[1];
-                if (date) {
-                    altName += ' ' + date;
-                }
-            }
-            name = altName;
+            dom = (new DOMParser()).parseFromString(pageResponse.response, 'text/html');
         } catch (e) {
-            // use previously constructed name
+            // will use default name
+        }
+        if (dom) {
+            const userName = (dom.querySelector('span.athlete-name')?.textContent ?? '').trim();
+            const activityTitle = (dom.querySelector('h1.activity-name')?.textContent ?? '').trim();
+            let date = dom.querySelector('time')?.textContent ?? '';
+            date = date.split(',')[1] ?? '';
+            date = date.trim();
+            if (userName && activityTitle && date) {
+                name = `${userName} - ${activityTitle} ${date}`;
+            }
         }
         return [{
             name,
