@@ -53,7 +53,7 @@ class Strava extends BaseService {
             // will use default name
         }
         if (dom) {
-            const userName = (dom.querySelector('span.athlete-name')?.textContent ?? '').trim();
+            const userName = (dom.querySelector('a.minimal[href*="/athletes/"]')?.textContent ?? '').trim();
             const activityTitle = (dom.querySelector('h1.activity-name')?.textContent ?? '').trim();
             let date = dom.querySelector('time')?.textContent ?? '';
             date = date.split(',')[1] ?? '';
