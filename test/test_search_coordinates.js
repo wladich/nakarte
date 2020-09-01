@@ -84,8 +84,8 @@ suite('CoordinatesProvider - parse good coordinates');
     ['1 2 3.8 4 5 6.9', ['N 1°2′3.8″ E 4°5′6.9″', 'N 4°5′6.9″ E 1°2′3.8″']],
     ['1 2 1 2', ['N 1°2′ E 1°2′']],
     ['1 2 3 1 2 3', ['N 1°2′3″ E 1°2′3″']],
-].forEach(function([query, expectedResult]) {
-    test(`Parse ${query}`, async function() {
+].forEach(function ([query, expectedResult]) {
+    test(`Parse ${query}`, async function () {
         assert.isTrue(coords.isOurQuery(query));
         const result = await coords.search(query);
         assert.notProperty(result, 'error');
@@ -112,8 +112,8 @@ suite('CoordinatesProvider - not coordinates');
     'a55 37',
     '8 мая 122/43',
     'wee',
-].forEach(function(query) {
-    test(`Not a coordinates string ${query}`, async function() {
+].forEach(function (query) {
+    test(`Not a coordinates string ${query}`, async function () {
         assert.isFalse(coords.isOurQuery(query));
     });
 });
@@ -166,8 +166,8 @@ suite('CoordinatesProvider - invalid coordinates');
     'N 1 2 3 4 5 6',
     '1 2 3 E 4 5 6',
     '1 2 3 4 5 6 E',
-].forEach(function(query) {
-    test(`Invalid coordinates ${query}`, async function() {
+].forEach(function (query) {
+    test(`Invalid coordinates ${query}`, async function () {
         assert.isTrue(coords.isOurQuery(query));
         const result = await coords.search(query);
         assert.notProperty(result, 'results');

@@ -2,7 +2,7 @@
 
 const webpackConfig = require('../webpack/webpack.config');
 
-module.exports = function(config) {
+module.exports = function (config) {
     config.glob = config.glob ? config.glob : './test/**/*.js';
     config.set({
         basePath: '../',

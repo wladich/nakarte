@@ -2,8 +2,8 @@ import {layersDefs, groupsDefs, titlesByOrder} from '~/layers';
 
 suite('layers definitions');
 
-layersDefs.forEach(function(layerDef) {
-    test(`layer properties ${layerDef.title}`, function() {
+layersDefs.forEach(function (layerDef) {
+    test(`layer properties ${layerDef.title}`, function () {
         assert.isString(layerDef.title, 'title defined');
         assert.isNotEmpty(layerDef.title, 'title not empty');
         assert.oneOf(typeof layerDef.description, ['undefined', 'string'], 'description undefined or string');
@@ -32,7 +32,7 @@ layersDefs.forEach(function(layerDef) {
     });
 });
 
-test('Layers titles unique', function() {
+test('Layers titles unique', function () {
     const seen = new Set();
     const duplicates = new Set();
     for (const layerDef of layersDefs) {
@@ -45,7 +45,7 @@ test('Layers titles unique', function() {
     assert.isEmpty(Array.from(duplicates), 'duplicate layers');
 });
 
-test('Layers codes unique', function() {
+test('Layers codes unique', function () {
     const seen = new Set();
     const duplicates = new Set();
     for (const layerDef of layersDefs) {
@@ -58,7 +58,7 @@ test('Layers codes unique', function() {
     assert.isEmpty(Array.from(duplicates), 'duplicate codes');
 });
 
-test('Layers short names unique', function() {
+test('Layers short names unique', function () {
     const seen = new Set();
     const duplicates = new Set();
     for (const layerDef of layersDefs) {
@@ -76,7 +76,7 @@ test('Layers short names unique', function() {
 
 suite('Layers groups definitions');
 
-test('Groups valid', function() {
+test('Groups valid', function () {
     for (const groupDef of groupsDefs) {
         assert.isString(groupDef.title);
         assert.isNotEmpty(groupDef.title);
@@ -84,7 +84,7 @@ test('Groups valid', function() {
     }
 });
 
-test('groupsDefs contains same layers as layersDefs', function() {
+test('groupsDefs contains same layers as layersDefs', function () {
     const layersInLayersDefs = layersDefs.map((layerDef) => layerDef.title);
     const layersInGroupsDefs = groupsDefs.map((groupDef) => groupDef.layers).flat();
     assert.deepEqual(layersInGroupsDefs.sort(), layersInLayersDefs.sort());
@@ -92,13 +92,13 @@ test('groupsDefs contains same layers as layersDefs', function() {
 
 suite('Layers order definitions');
 
-test('titlesByOrder has same layers as layersDef', function() {
+test('titlesByOrder has same layers as layersDef', function () {
     const layersInLayersDefs = layersDefs.map((layerDef) => layerDef.title);
     const layersInTitlesByOrder = titlesByOrder.filter((layerName) => layerName[0] !== '#');
     assert.deepEqual(layersInLayersDefs.sort(), layersInTitlesByOrder.sort());
 });
 
-test('All baselayers ordered before overlays', function() {
+test('All baselayers ordered before overlays', function () {
     let seenOverlay = false;
     const outOfOrder = [];
     for (const layerName of titlesByOrder) {
@@ -115,7 +115,7 @@ test('All baselayers ordered before overlays', function() {
     assert.isEmpty(outOfOrder);
 });
 
-test('Order contains markers for custom layers in right order', function() {
+test('Order contains markers for custom layers in right order', function () {
     assert.include(titlesByOrder, '#custom-top');
     assert.include(titlesByOrder, '#custom-bottom');
     const customTopOrder = titlesByOrder.indexOf('#custom-top');

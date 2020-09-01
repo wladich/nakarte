@@ -162,8 +162,8 @@ suite('LinksProvider - parsing valid links');
         'http://openstreetmap.ru/?mapid=497235296#map=12/60.9426/29.849&layer=C',
         [{title: 'OpenStreetMap view', latlng: {lat: 60.9426, lng: 29.849}, zoom: 12}],
     ],
-].forEach(function([query, expectedResults]) {
-    test(`Parse link ${query}`, async function() {
+].forEach(function ([query, expectedResults]) {
+    test(`Parse link ${query}`, async function () {
         this.timeout(10000);
         assert.isTrue(links.isOurQuery(query));
         const result = await links.search(query);
@@ -210,8 +210,8 @@ suite('LinksProvider - parse invalid links');
     ['https://en.mapy.cz/s/lucacunom', 'Broken Mapy.cz short link'],
     ['https://goo.gl/maps/ZvjVBY78HUP8HjQi', 'Broken Google short link'],
     // ['https://yandex.ru/maps/-/CCQpqZXJ', 'Broken Yandex short link'], // Yandex returns good result for broken link
-].forEach(function([query, expectedError]) {
-    test(`Invalid link ${query}`, async function() {
+].forEach(function ([query, expectedError]) {
+    test(`Invalid link ${query}`, async function () {
         assert.isTrue(links.isOurQuery(query));
         const result = await links.search(query);
         assert.notProperty(result, 'results');
@@ -220,8 +220,8 @@ suite('LinksProvider - parse invalid links');
 });
 
 suite('LinksProvider - not links');
-['abc', 'http:/', 'https:/', 'https:/'].forEach(function(query) {
-    test(`Not a link ${query}`, function() {
+['abc', 'http:/', 'https:/', 'https:/'].forEach(function (query) {
+    test(`Not a link ${query}`, function () {
         assert.isFalse(links.isOurQuery(query));
     });
 });
