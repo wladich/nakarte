@@ -79,7 +79,7 @@ suite('Load tracks from services');
     'openstreetmapRu',
     'openstreetmapRuGpx',
     'openstreetmapRu_not_exists',
-].forEach(function(testcase) {
+].forEach(function (testcase) {
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
     for (const track of testData.geodata) {
         if (track.tracks) {
@@ -91,7 +91,7 @@ suite('Load tracks from services');
         if (testData.query.length > 1) {
             testcaseName += `_#${i + 1}`;
         }
-        test(testcaseName, async function() {
+        test(testcaseName, async function () {
             this.timeout(10000);
             const result = await loadFromUrl(testData.query[i]);
             if (result) {
