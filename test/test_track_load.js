@@ -93,6 +93,7 @@ suite('Load tracks from services');
         }
         test(testcaseName, async function () {
             this.timeout(10000);
+            this.retries(5);
             const result = await loadFromUrl(testData.query[i]);
             if (result) {
                 for (const track of result) {
