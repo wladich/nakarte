@@ -92,7 +92,7 @@ suite('Load tracks from services');
             testcaseName += `_#${i + 1}`;
         }
         test(testcaseName, async function () {
-            this.timeout(10000);
+            this.timeout(5000);
             this.retries(5);
             const result = await loadFromUrl(testData.query[i]);
             if (result) {
