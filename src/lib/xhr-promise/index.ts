@@ -1,177 +1,241 @@
 import {arrayBufferToString} from '~/lib/binary-strings';
 
-function successIfStatus200(xhr) {
-    return xhr.status >= 200 && xhr.status <= 299;
-}
+import {CustomPromise} from './custom-promise';
+import {Semaphore, SemaphoreToken} from './semaphore';
 
-function retryIfNetworkErrorOrServerError(xhr) {
-    return (xhr.status === 0 || xhr.status >= 500);
-}
+const semaphore = new Semaphore(6);
 
-class XMLHttpRequestPromiseError extends Error {
-    constructor(xhr) {
-        super();
-        this.xhr = xhr;
-        this.name = 'XMLHttpRequestPromiseError';
+type HttpResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'binarystring';
+type RequestError = null | 'TIMEOUT' | 'CORS' | 'ABORTED';
 
-        this.message = xhr.status === 0 ? 'network error' : `server response is ${xhr.status}`;
+class HttpResult {
+    public readonly status: number;
+    public readonly statusText: string;
+    public readonly responseText: string | null = null;
+    public readonly responseBinaryText: string | null = null;
+    public readonly responseJSON: unknown = null;
+    public readonly responseXML: Document | null = null;
+    public readonly responseArrayBuffer: ArrayBuffer | null = null;
+    public readonly responseBlob: Blob | null = null;
+    public readonly error: RequestError;
+    public readonly getResponseHeader: (headerName: string) => string | null;
+
+    constructor(xhr: XMLHttpRequest, requestedResponseType: HttpResponseType, error: RequestError) {
+        this.status = xhr.status;
+        this.statusText = xhr.statusText;
+        this.error = error;
+        this.getResponseHeader = xhr.getResponseHeader.bind(xhr);
+
+        const response: unknown = xhr.response;
+        switch (requestedResponseType) {
+            case 'text':
+                this.responseText = xhr.responseText;
+                break;
+            case 'json':
+                // IE doesnot support responseType=json
+                if (typeof xhr.response === 'string') {
+                    try {
+                        this.responseJSON = JSON.parse(response as string);
+                    } catch (e: unknown) {
+                        // return null for error
+                    }
+                } else {
+                    this.responseJSON = xhr.response;
+                }
+                break;
+            case 'arraybuffer':
+                this.responseArrayBuffer = response as ArrayBuffer | null;
+                break;
+            case 'blob':
+                this.responseBlob = response as Blob | null;
+                break;
+            case 'document':
+                this.responseXML = response as Document | null;
+                break;
+            case 'binarystring':
+                {
+                    const arbuf = response as ArrayBuffer | null;
+                    if (arbuf && arbuf.byteLength > 0) {
+                        this.responseBinaryText = arrayBufferToString(arbuf);
+                    }
+                }
+                break;
+            // no default, checked by typescript-eslint
+        }
+    }
+
+    public formatError(): string | null {
+        switch (this.error) {
+            case null:
+                return null;
+            case 'ABORTED':
+                return 'HTTP request aborted';
+            case 'TIMEOUT':
+                return 'HTTP request timeout';
+            case 'CORS':
+                return 'CORS violation';
+            // no default, checked by typescript-eslint
+        }
+    }
+
+    public formatStatus(): string {
+        const message = this.formatError();
+        if (message !== null) {
+            return message;
+        }
+        let prefix: string;
+        if (this.status < 400) {
+            prefix = 'Request successful';
+        } else if (this.status < 500) {
+            prefix = 'Request error';
+        } else {
+            prefix = 'Server error';
+        }
+        return `${prefix}: ${this.status} ${this.statusText}`;
+    }
+
+    public isOk(): boolean {
+        return this.error === null && this.status >= 200 && this.status < 300;
     }
 }
 
-class XMLHttpRequestPromise {
-    constructor(
-        url, {method = 'GET', data = null, responseType = '', timeout = 30000, maxTries = 3, retryTimeWait = 500,
-            isResponseSuccess = successIfStatus200, responseNeedsRetry = retryIfNetworkErrorOrServerError,
-            headers = null, withCredentials = false} = {}) {
-        // console.log('promise constructor', url);
-        const promise = new Promise((resolve, reject) => {
-                this._resolve = resolve;
-                this._reject = reject;
-            }
-        );
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-        this.method = method;
-        this.url = url;
-        this.responseType = responseType;
-        this.postData = data;
-        this._isResponseSuccess = isResponseSuccess;
-        this._responseNeedsRetry = responseNeedsRetry;
-        this._retryTimeWait = retryTimeWait;
-        this.triesLeft = maxTries;
+type HttpResultFilter = (result: HttpResult) => boolean;
 
-        const xhr = this.xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = () => this._onreadystatechange();
-        this._open();
-        xhr.timeout = timeout;
-        if (responseType === 'binarystring') {
-            xhr.responseType = 'arraybuffer';
-        } else {
-            xhr.responseType = responseType;
-        }
-        if (headers) {
-            for (let [k, v] of headers) {
+function retryIfNetworkErrorOrServerError(result: HttpResult): boolean {
+    return result.error === 'TIMEOUT' || result.error === 'CORS' || result.status >= 500;
+}
+
+type HttpMethod = 'GET' | 'POST';
+type HttpBody = Document | BodyInit | null;
+
+type HttpRequestOptions = {
+    url: string;
+    method?: HttpMethod;
+    responseType?: HttpResponseType;
+    timeout?: number;
+    withCredentials?: boolean;
+    headers?: Array<[string, string]>;
+    body?: Document | BodyInit | null;
+    maxTries?: number;
+    retryDelay?: number;
+    responseNeedsRetry?: HttpResultFilter;
+};
+
+class HttpRequest extends CustomPromise<HttpResult> {
+    private aborted = false;
+    private retryTimerId = -1;
+    private triesLeft: number;
+    private abortedOnTimeout = false;
+    private readonly url: string;
+    private readonly responseType: HttpResponseType;
+    private readonly retryDelay: number;
+    private readonly responseNeedsRetry: HttpResultFilter;
+    private readonly xhr: XMLHttpRequest;
+    private readonly method: HttpMethod;
+    private readonly body: HttpBody;
+    private readonly enqueue: boolean;
+    private token?: SemaphoreToken;
+
+    constructor(
+        {
+            url,
+            method = 'GET',
+            responseType = 'text',
+            timeout = 30000,
+            withCredentials = false,
+            headers,
+            body = null,
+            maxTries = 3,
+            retryDelay = 500,
+            responseNeedsRetry = retryIfNetworkErrorOrServerError,
+        }: HttpRequestOptions,
+        enqueue = false
+    ) {
+        super();
+        this.method = method;
+        this.body = body;
+        this.url = url;
+        this.enqueue = enqueue;
+
+        const xhr = new XMLHttpRequest();
+        this.xhr = xhr;
+        this.open();
+        if (typeof headers !== 'undefined') {
+            for (const [k, v] of headers) {
                 xhr.setRequestHeader(k, v);
             }
         }
+        if (typeof responseType !== 'undefined') {
+            xhr.responseType = responseType === 'binarystring' ? 'arraybuffer' : responseType;
+        }
+        xhr.timeout = timeout;
         xhr.withCredentials = withCredentials;
+        xhr.onreadystatechange = this.onReadyStateChange.bind(this);
+        xhr.ontimeout = this.onTimeout.bind(this);
+        this.triesLeft = maxTries;
+        this.responseType = responseType;
+        this.retryDelay = retryDelay;
+        this.responseNeedsRetry = responseNeedsRetry;
+        this.start(); // eslint-disable-line @typescript-eslint/no-floating-promises
     }
 
-    _open() {
-        // console.log('open', this.url);
+    public abort(): void {
+        if (this.aborted) {
+            throw new Error('HttpRequest already aborted');
+        }
+        this.aborted = true;
+        clearTimeout(this.retryTimerId);
+        this.xhr.abort();
+        this.processResponse();
+    }
+
+    private async start(): Promise<void> {
+        if (this.enqueue) {
+            this.token = await semaphore.acquire();
+        }
+        this.send();
+    }
+
+    private open(): void {
         this.xhr.open(this.method, this.url);
     }
 
-    _onreadystatechange() {
-        const xhr = this.xhr;
-        if (xhr.readyState === 4 && !this._aborted) {
-            // console.log('ready state 4', this.url);
-            xhr.responseBinaryText = '';
-            if (this.responseType === 'binarystring' && xhr.response && xhr.response.byteLength) {
-                xhr.responseBinaryText = arrayBufferToString(xhr.response);
-            }
-            // IE doesnot support responseType=json
-            if (this.responseType === 'json' && (typeof xhr.response) === 'string') {
-                try {
-                    // xhr.response is readonly
-                    xhr.responseJSON = JSON.parse(xhr.response);
-                } catch (e) {
-                    xhr.responseJSON = null;
-                }
-            } else {
-                xhr.responseJSON = xhr.response;
-            }
-            if (this._isResponseSuccess(xhr)) {
-                // console.log('success', this.url);
-                this._resolve(xhr);
-            } else {
-                if (this.triesLeft > 0 && this._responseNeedsRetry(xhr)) {
-                    // console.log('retry', this.url);
-                    this._open();
-                    this._timerId = setTimeout(() => this.send(), this._retryTimeWait);
-                } else {
-                    // console.log('failed', this.url);
-                    this._reject(new XMLHttpRequestPromiseError(xhr));
-                }
-            }
-        }
-    }
-
-    abort() {
-        // console.log('abort', this.url);
-        this._aborted = true;
-        clearTimeout(this._timerId);
-        this.xhr.abort();
-    }
-
-    send() {
-        // console.log('send', this.url);
+    private send(): void {
         this.triesLeft -= 1;
-        this.xhr.send(this.postData);
-    }
-}
-
-class XHRQueue {
-    constructor(maxSimultaneousRequests = 6) {
-        this._maxConnections = maxSimultaneousRequests;
-        this._queue = [];
-        this._activeCount = 0;
+        this.xhr.send(this.body);
     }
 
-    put(url, options) {
-        const promise = new XMLHttpRequestPromise(url, options);
-        promise._originalAbort = promise.abort;
-        promise.abort = () => this._abortPromise(promise);
-        this._queue.push(promise);
-        this._processQueue();
-        return promise;
+    private onTimeout(): void {
+        this.abortedOnTimeout = true;
     }
 
-    _abortPromise(promise) {
-        const i = this._queue.indexOf(promise);
-        if (i > -1) {
-            // console.log('ABORT IN QUEUE');
-            this._queue.splice(i, 1);
+    private onReadyStateChange(): void {
+        if (this.xhr.readyState === 4) {
+            setTimeout(() => this.processResponse(), 0); // run after processing other events
+        }
+    }
+
+    private processResponse(): void {
+        let error: RequestError;
+        if (this.aborted) {
+            error = 'ABORTED';
+        } else if (this.abortedOnTimeout) {
+            error = 'TIMEOUT';
+        } else if (this.xhr.response === 0) {
+            error = 'CORS';
         } else {
-            if (promise.xhr.readyState === 4) {
-                // console.log('ABORT COMPLETED');
-            } else {
-                // console.log('ABORT ACTIVE');
-                promise._originalAbort();
-                this._activeCount -= 1;
-                setTimeout(() => this._processQueue(), 0);
-            }
+            error = null;
         }
-    }
-
-    _processQueue() {
-        if (this._activeCount >= this._maxConnections || this._queue.length === 0) {
-            return;
+        const result = new HttpResult(this.xhr, this.responseType, error);
+        if (this.triesLeft > 0 && this.responseNeedsRetry(result)) {
+            this.retryTimerId = window.setTimeout(() => {
+                this.open();
+                this.send();
+            }, this.retryDelay);
+        } else {
+            this.resolvePromise(result);
         }
-        const promise = this._queue.shift();
-        promise
-            .catch(() => {
-                // do not throw if XHR request fails
-            })
-            .then(() => this._onRequestReady(promise));
-        this._activeCount += 1;
-        promise.send();
-    }
-
-    _onRequestReady(promise) {
-        if (!promise._aborted) {
-            this._activeCount -= 1;
-        }
-        setTimeout(() => this._processQueue(), 0);
     }
 }
 
-function fetch(url, options) {
-    // console.log('fetch', url);
-    const promise = new XMLHttpRequestPromise(url, options);
-    promise.send();
-    return promise;
-}
-
-export {fetch, XHRQueue};
-
+export {HttpRequest};
