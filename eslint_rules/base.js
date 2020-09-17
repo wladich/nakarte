@@ -85,7 +85,7 @@ module.exports = {
         // 'no-compare-neg-zero': 'error', // in eslint-recommended
         // 'no-cond-assign': 'error', // in eslint-recommended
         'no-confusing-arrow': 'error',
-        // 'no-console': 'error', // checked, declined
+        'no-console': 'error',
         // 'no-const-assign': 'error', // in eslint-recommended
         // 'no-constant-condition': 'error', // in eslint-recommended
         'no-constructor-return': 'error',
