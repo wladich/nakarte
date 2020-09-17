@@ -16,6 +16,7 @@ module.exports = {
         },
         {
             files: './src/**/*.js', // web application
+            extends: ['./eslint_rules/relax_webapp_js.js'],
             env: {
                 browser: true,
                 es2020: true,
