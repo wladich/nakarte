@@ -222,7 +222,7 @@ module.exports = {
         'object-curly-spacing': 'error',
         'object-property-newline': ['error', {allowAllPropertiesOnSameLine: true}],
         // 'object-shorthand': 'error', // checked, declined
-        'one-var': ['error', 'never'],
+        'one-var': ['error', {initialized: 'never'}],
         'one-var-declaration-per-line': 'error',
         'operator-assignment': 'error',
         'operator-linebreak': 'error',
