@@ -24,7 +24,7 @@ const MapyCzProvider = BaseProvider.extend({
         defaultLanguage: 'en',
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
         BaseProvider.prototype.initialize.call(this, options);
         this.langStr = this.getRequestLanguages(this.options.languages).join(',');
         this.categoriesLanguage = this.getRequestLanguages(
@@ -33,7 +33,7 @@ const MapyCzProvider = BaseProvider.extend({
         )[0];
     },
 
-    search: async function(query, {latlng, zoom}) {
+    search: async function (query, {latlng, zoom}) {
         if (!(await this.waitNoNewRequestsSent())) {
             return {error: 'Request cancelled'};
         }

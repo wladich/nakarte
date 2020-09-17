@@ -18,13 +18,13 @@ const PhotonProvider = BaseProvider.extend({
         defaultLanguage: 'en',
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
         BaseProvider.prototype.initialize.call(this, options);
         this.lang = this.getRequestLanguages(this.options.languages, this.options.defaultLanguage)[0];
     },
 
-    search: async function(query, {latlng}) {
-        if (!await this.waitNoNewRequestsSent()) {
+    search: async function (query, {latlng}) {
+        if (!(await this.waitNoNewRequestsSent())) {
             return {error: 'Request cancelled'};
         }
         const url = new URL(this.options.apiUrl);
@@ -87,7 +87,7 @@ const PhotonProvider = BaseProvider.extend({
             };
         });
         return {results: places};
-    }
+    },
 });
 
 export {PhotonProvider};

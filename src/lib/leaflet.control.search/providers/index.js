@@ -1,7 +1,7 @@
 import {MapyCzProvider} from './mapycz';
 import {PhotonProvider} from './photon';
 import {LinksProvider} from './links';
-import {CoordinatesProvider} from "./coordinates";
+import {CoordinatesProvider} from './coordinates';
 
 const providers = {
     mapycz: MapyCzProvider,

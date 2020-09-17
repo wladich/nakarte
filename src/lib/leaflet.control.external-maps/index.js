@@ -71,11 +71,11 @@ const ExternalMaps = L.Control.extend({
             {
                 title: 'Wikimapia',
                 externalMap: new ExternalMap('https://wikimapia.org/#lat={lat}&lon={lng}&z={zoom}', 3, 22),
-            }
+            },
         ],
     },
 
-    onAdd: function(map) {
+    onAdd: function (map) {
         this._map = map;
         const {container, link} = makeButton(null, 'View this place on another map', 'icon-external-links');
         this._container = container;
@@ -92,7 +92,7 @@ const ExternalMaps = L.Control.extend({
         return container;
     },
 
-    onClick: function(e) {
+    onClick: function (e) {
         this.menu.show(e);
     },
 

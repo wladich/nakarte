@@ -5,7 +5,7 @@ function onElementResize(element, cb) {
     } else {
         let width = element.offsetWidth;
         let height = element.offsetHeight;
-        setInterval(function() {
+        setInterval(function () {
             const newWidth = element.offsetWidth;
             const newHeight = element.offsetHeight;
             if (newWidth !== width || newHeight !== height) {

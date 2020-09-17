@@ -10,8 +10,8 @@ import './style.css';
 import controlTemplate from './control.html';
 
 ko.bindingHandlers.hasFocusNested = {
-    init: function(element, valueAccessor) {
-        function hasFocusNested(element) {
+    init: function (element, valueAccessor) {
+        function hasFocusNested() {
             let active = document.activeElement;
             while (active) {
                 if (element === active) {
@@ -25,7 +25,7 @@ ko.bindingHandlers.hasFocusNested = {
         function handleFocusChange() {
             // wait for all related focus/blur events to fire
             setTimeout(() => {
-                valueAccessor()(hasFocusNested(element));
+                valueAccessor()(hasFocusNested());
             }, 0);
         }
         element.addEventListener('focus', handleFocusChange, true);
@@ -43,29 +43,31 @@ class SearchViewModel {
     controlOrChildHasFocus = ko.observable(false);
     highlightedIndex = ko.observable(null);
     attribution = ko.observable(null);
+
     allowMinimize = ko.observable(true);
 
-    controlHasFocus = ko.pureComputed(function() {
+    /* eslint-disable no-invalid-this */
+    controlHasFocus = ko.pureComputed(function () {
         return this.inputHasFocus() || this.controlOrChildHasFocus();
     }, this);
 
-    showResults = ko.pureComputed(function() {
+    showResults = ko.pureComputed(function () {
         return this.items().length > 0 && this.controlHasFocus();
     }, this);
 
-    showError = ko.pureComputed(function() {
+    showError = ko.pureComputed(function () {
         return this.error() !== null && this.controlHasFocus();
     }, this);
 
-    isQueryLengthOk = ko.computed(function() {
+    isQueryLengthOk = ko.computed(function () {
         return this.query().trim().length >= this.minSearchQueryLength;
     }, this);
 
-    showWarningTooShort = ko.pureComputed(function() {
+    showWarningTooShort = ko.pureComputed(function () {
         return this.controlHasFocus() && this.query() && !this.isQueryLengthOk();
     }, this);
 
-    minimizeToButton = ko.pureComputed(function() {
+    minimizeToButton = ko.pureComputed(function () {
         return this.allowMinimize() && !this.controlHasFocus();
     }, this);
 
@@ -158,6 +160,7 @@ class SearchViewModel {
         }
         return false;
     };
+    /* eslint-enable no-invalid-this */
 
     maybeRequestSearch() {
         if (this.isQueryLengthOk() && this.controlHasFocus()) {
@@ -224,7 +227,7 @@ const SearchControl = L.Control.extend({
         help: 'Coordinates in any format. Links to maps: Yandex, Google, OSM, Mapy.cz, Nakarte',
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
         L.Control.prototype.initialize.call(this, options);
         this.provider = new providers[this.options.provider](this.options.providerOptions);
         this.magicProviders = magicProviders.map((Cls) => new Cls());
@@ -239,7 +242,7 @@ const SearchControl = L.Control.extend({
         this.viewModel.escapePressed.subscribe(this.setFocusToMap.bind(this));
     },
 
-    onAdd: function(map) {
+    onAdd: function (map) {
         this._map = map;
         const container = L.DomUtil.create('div', 'leaflet-search-container');
         container.innerHTML = controlTemplate;
@@ -260,11 +263,11 @@ const SearchControl = L.Control.extend({
         return container;
     },
 
-    setFocusToMap: function() {
+    setFocusToMap: function () {
         this._map.getContainer().focus();
     },
 
-    onSearchRequested: async function() {
+    onSearchRequested: async function () {
         const query = this.viewModel.query();
         const searchOptions = {
             bbox: this._map.getBounds(),
@@ -272,12 +275,13 @@ const SearchControl = L.Control.extend({
             zoom: this._map.getZoom(),
         };
         let provider = this.provider;
-        for (let magicProvider of this.magicProviders) {
+        for (const magicProvider of this.magicProviders) {
             if (magicProvider.isOurQuery(query)) {
                 provider = magicProvider;
             }
         }
-        const searchPromise = (this.searchPromise = provider.search(query, searchOptions));
+        this.searchPromise = provider.search(query, searchOptions);
+        const searchPromise = this.searchPromise;
         const result = await searchPromise;
         this.fire('resultreceived', {provider: provider.name, query, result});
         if (this.searchPromise === searchPromise) {
@@ -291,11 +295,11 @@ const SearchControl = L.Control.extend({
         }
     },
 
-    onSearchAborted: function() {
+    onSearchAborted: function () {
         this.searchPromise = null;
     },
 
-    onResultItemClicked: function(item) {
+    onResultItemClicked: function (item) {
         if (item.bbox) {
             this._map.fitBounds(item.bbox);
         } else {
@@ -305,13 +309,13 @@ const SearchControl = L.Control.extend({
         this.setFocusToMap();
     },
 
-    onDocumentKeyUp: function(e) {
+    onDocumentKeyUp: function (e) {
         if (e.keyCode === this.options.hotkey.codePointAt(0) && e.altKey) {
             this.viewModel.setFocus();
         }
     },
 
-    updateMinimizeAllowed: function() {
+    updateMinimizeAllowed: function () {
         const mapSize = this._map.getSize();
         this.viewModel.setMinimizeAllowed(
             mapSize.y < this.options.maxMapHeightToMinimize || mapSize.x < this.options.maxMapWidthToMinimize
@@ -323,7 +327,7 @@ SearchControl.include(L.Mixin.HashState);
 SearchControl.include({
     stateChangeEvents: ['querychange'],
 
-    serializeState: function() {
+    serializeState: function () {
         const query = this.viewModel.query();
         if (query) {
             return [encodeURIComponent(query)];
@@ -331,7 +335,7 @@ SearchControl.include({
         return null;
     },
 
-    unserializeState: function(state) {
+    unserializeState: function (state) {
         if (state?.length === 1) {
             this.viewModel.query(decodeURIComponent(state[0]));
             return true;

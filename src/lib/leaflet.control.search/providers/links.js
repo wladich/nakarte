@@ -21,13 +21,10 @@ function makeSearchResult(lat, lon, zoom, title) {
     ) {
         throw new Error('Invalid view state value');
     }
-    if (zoom > MAX_ZOOM) {
-        zoom = MAX_ZOOM;
-    }
 
     return {
         latlng: L.latLng(lat, lon),
-        zoom,
+        zoom: zoom > MAX_ZOOM ? MAX_ZOOM : zoom,
         title,
         category: null,
         address: null,
@@ -40,24 +37,27 @@ function makeSearchResults(lat, lon, zoom, title) {
 }
 
 const YandexMapsUrl = {
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return (
             (url.hostname.match(/\byandex\./u) && url.pathname.match(/^\/maps\//u)) ||
             url.hostname.match(/static-maps\.yandex\./u)
         );
     },
 
-    getResults: async function(url) {
+    getResults: async function (url) {
         let isShort = false;
+        let actualUrl;
         try {
             if (url.pathname.match(/^\/maps\/-\//u)) {
                 isShort = true;
                 const xhr = await fetch(urlViaCorsProxy(url.toString()));
                 const dom = new DOMParser().parseFromString(xhr.response, 'text/html');
-                url = new URL(dom.querySelector('meta[property="og:image:secure_url"]').content);
+                actualUrl = new URL(dom.querySelector('meta[property="og:image:secure_url"]').content);
+            } else {
+                actualUrl = url;
             }
-            const paramLl = url.searchParams.get('ll');
-            const paramZ = url.searchParams.get('z');
+            const paramLl = actualUrl.searchParams.get('ll');
+            const paramZ = actualUrl.searchParams.get('z');
             const [lon, lat] = paramLl.split(',').map(parseFloat);
             const zoom = Math.round(parseFloat(paramZ));
             return makeSearchResults(lat, lon, zoom, 'Yandex map view');
@@ -76,11 +76,11 @@ const GoogleMapsSimpleMapUrl = {
     placeRe: /\/place\/([^/]+)/u,
     placeZoom: 14,
 
-    isOurUrl: function url(url) {
+    isOurUrl: function (url) {
         return Boolean(url.pathname.match(this.viewRe)) || Boolean(url.pathname.match(this.placeRe));
     },
 
-    getResults: function(url) {
+    getResults: function (url) {
         const results = [];
         const path = url.pathname;
 
@@ -120,11 +120,11 @@ const GoogleMapsQueryUrl = {
     zoom: 17,
     title: 'Google map view',
 
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return url.searchParams.has('q');
     },
 
-    getResults: function(url) {
+    getResults: function (url) {
         const data = url.searchParams.get('q');
         const m = data.match(/^(?:loc:)?([-\d.]+),([-\d.]+)$/u);
         const lat = parseFloat(m[1]);
@@ -136,25 +136,28 @@ const GoogleMapsQueryUrl = {
 const GoogleMapsUrl = {
     subprocessors: [GoogleMapsSimpleMapUrl, GoogleMapsQueryUrl],
 
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return (url.hostname.match(/\bgoogle\./u) || url.hostname === 'goo.gl') && url.pathname.match(/^\/maps(\/|$)/u);
     },
 
-    getResults: async function(url) {
+    getResults: async function (url) {
         let isShort = false;
+        let actualUrl;
         try {
             if (url.hostname === 'goo.gl') {
                 isShort = true;
                 const xhr = await fetch(urlViaCorsProxy(url.toString()), {method: 'HEAD'});
-                url = new URL(xhr.responseURL);
+                actualUrl = new URL(xhr.responseURL);
+            } else {
+                actualUrl = url;
             }
         } catch (e) {
             // pass
         }
-        for (let subprocessor of this.subprocessors) {
+        for (const subprocessor of this.subprocessors) {
             try {
-                if (subprocessor.isOurUrl(url)) {
-                    return subprocessor.getResults(url);
+                if (subprocessor.isOurUrl(actualUrl)) {
+                    return subprocessor.getResults(actualUrl);
                 }
             } catch (e) {
                 // pass
@@ -167,21 +170,24 @@ const GoogleMapsUrl = {
 };
 
 const MapyCzUrl = {
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return Boolean(url.hostname.match(/\bmapy\.cz$/u));
     },
 
-    getResults: async function(url) {
+    getResults: async function (url) {
         let isShort = false;
+        let actualUrl;
         try {
             if (url.pathname.match(/^\/s\//u)) {
                 isShort = true;
                 const xhr = await fetch(urlViaCorsProxy(url.toString()), {method: 'HEAD'});
-                url = new URL(xhr.responseURL);
+                actualUrl = new URL(xhr.responseURL);
+            } else {
+                actualUrl = url;
             }
-            const lon = parseFloat(url.searchParams.get('x'));
-            const lat = parseFloat(url.searchParams.get('y'));
-            const zoom = Math.round(parseFloat(url.searchParams.get('z')));
+            const lon = parseFloat(actualUrl.searchParams.get('x'));
+            const lat = parseFloat(actualUrl.searchParams.get('y'));
+            const zoom = Math.round(parseFloat(actualUrl.searchParams.get('z')));
             return makeSearchResults(lat, lon, zoom, 'Mapy.cz view');
         } catch (_) {
             return {
@@ -194,11 +200,11 @@ const MapyCzUrl = {
 };
 
 const OpenStreetMapUrl = {
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return Boolean(url.hostname.match(/\bopenstreetmap\./u));
     },
 
-    getResults: function(url) {
+    getResults: function (url) {
         const m = url.hash.match(/map=([\d.]+)\/([\d.-]+)\/([\d.-]+)/u);
         try {
             const zoom = Math.round(parseFloat(m[1]));
@@ -212,11 +218,11 @@ const OpenStreetMapUrl = {
 };
 
 const NakarteUrl = {
-    isOurUrl: function(url) {
+    isOurUrl: function (url) {
         return url.hostname.match(/\bnakarte\b/u) || !this.getResults(url).error;
     },
 
-    getResults: function(url) {
+    getResults: function (url) {
         const m = url.hash.match(/\bm=([\d]+)\/([\d.-]+)\/([\d.-]+)/u);
         try {
             const zoom = Math.round(parseFloat(m[1]));
@@ -245,7 +251,7 @@ class LinksProvider {
         } catch (e) {
             return {error: 'Invalid link'};
         }
-        for (let processor of urlProcessors) {
+        for (const processor of urlProcessors) {
             if (processor.isOurUrl(url)) {
                 return processor.getResults(url);
             }

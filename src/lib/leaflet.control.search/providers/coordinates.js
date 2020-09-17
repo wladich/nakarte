@@ -1,10 +1,9 @@
 import L from 'leaflet';
 
-const
-    reInteger = '\\d+',
-    reFractional = '\\d+(?:\\.\\d+)?',
-    reSignedFractional = '-?\\d+(?:\\.\\d+)?',
-    reHemisphere = '[NWSE]';
+const reInteger = '\\d+';
+const reFractional = '\\d+(?:\\.\\d+)?';
+const reSignedFractional = '-?\\d+(?:\\.\\d+)?';
+const reHemisphere = '[NWSE]';
 
 class Coordinates {
     getLatitudeLetter() {
@@ -116,12 +115,12 @@ class CoordinatesDMS extends Coordinates {
         if (!m) {
             return {error: true};
         }
-        let [h1, d1, m1, s1, h2, d2, m2, s2, h3] = m.slice(1);
+        const [h1, d1Str, m1Str, s1Str, h2, d2Str, m2Str, s2Str, h3] = m.slice(1);
         const hemispheres = CoordinatesDMS.parseHemispheres(h1, h2, h3, true);
         if (hemispheres.error) {
             return {error: true};
         }
-        [d1, m1, s1, d2, m2, s2] = [d1, m1, s1, d2, m2, s2].map(parseFloat);
+        let [d1, m1, s1, d2, m2, s2] = [d1Str, m1Str, s1Str, d2Str, m2Str, s2Str].map(parseFloat);
         const coords = [];
         if (hemispheres.empty) {
             const coord1 = new CoordinatesDMS(d1, m1, s1, false, d2, m2, s2, false);
@@ -209,12 +208,12 @@ class CoordinatesDM extends Coordinates {
         if (!m) {
             return {error: true};
         }
-        let [h1, d1, m1, h2, d2, m2, h3] = m.slice(1);
+        const [h1, d1Str, m1Str, h2, d2Str, m2Str, h3] = m.slice(1);
         const hemispheres = CoordinatesDM.parseHemispheres(h1, h2, h3, true);
         if (hemispheres.error) {
             return {error: true};
         }
-        [d1, m1, d2, m2] = [d1, m1, d2, m2].map(parseFloat);
+        let [d1, m1, d2, m2] = [d1Str, m1Str, d2Str, m2Str].map(parseFloat);
         const coords = [];
         if (hemispheres.empty) {
             const coord1 = new CoordinatesDM(d1, m1, false, d2, m2, false);
@@ -289,15 +288,15 @@ class CoordinatesD extends Coordinates {
         if (!m) {
             return {error: true};
         }
-        let [h1, d1, h2, d2, h3] = m.slice(1);
+        const [h1, d1Str, h2, d2Str, h3] = m.slice(1);
         const hemispheres = CoordinatesD.parseHemispheres(h1, h2, h3);
         if (hemispheres.error) {
             return {error: true};
         }
+        let [d1, d2] = [d1Str, d2Str].map(parseFloat);
         if (hemispheres.swapLatLon) {
             [d1, d2] = [d2, d1];
         }
-        [d1, d2] = [d1, d2].map(parseFloat);
         const coord = new CoordinatesD(d1, hemispheres.latIsSouth, d2, hemispheres.lonIsWest);
         if (coord.isValid()) {
             return {
@@ -343,7 +342,7 @@ class CoordinatesDSigned extends Coordinates {
             return {error: true};
         }
         const coords = [];
-        let [d1, d2] = m.slice(1).map(parseFloat);
+        const [d1, d2] = m.slice(1).map(parseFloat);
         const coord1 = new CoordinatesDSigned(d1, d2);
         if (coord1.isValid()) {
             coords.push(coord1);
@@ -382,8 +381,8 @@ class CoordinatesProvider {
 
     static parsers = [CoordinatesDMS, CoordinatesDM, CoordinatesD, CoordinatesDSigned];
 
-    normalizeInput(s) {
-        s = s.normalize('NFKC'); // convert subscripts and superscripts to normal chars
+    normalizeInput(inp) {
+        let s = inp.normalize('NFKC'); // convert subscripts and superscripts to normal chars
         s = ' ' + s + ' ';
         // replace everything that is not letter, number, minus, dot or comma to space
         s = s.replace(CoordinatesProvider.regexps.symbols, ' ');
@@ -423,7 +422,7 @@ class CoordinatesProvider {
 
     async search(query) {
         const s = this.normalizeInput(query);
-        for (let parser of CoordinatesProvider.parsers) {
+        for (const parser of CoordinatesProvider.parsers) {
             const result = parser.fromString(s);
             if (!result.error) {
                 const resultItems = result.coordinates.map((it) => {
