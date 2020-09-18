@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import {fetch} from '~/lib/xhr-promise';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 import {BaseProvider} from './remoteBase';
 

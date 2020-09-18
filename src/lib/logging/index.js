@@ -54,4 +54,4 @@ function logEvent(eventName, extra) {
     }
 }
 
-export default {captureMessage, captureException, captureBreadcrumb, logEvent, randId};
+export {captureMessage, captureException, captureBreadcrumb, logEvent, randId};

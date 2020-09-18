@@ -13,7 +13,7 @@ import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import {blobFromString} from '~/lib/binary-strings';
 import '~/lib/leaflet.hashState/leaflet.hashState';
 import '~/lib/leaflet.control.commons';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';

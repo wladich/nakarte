@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import './index.css';
-import App from './App';
+import * as App from './App';
 import config from './config';
 
 function getUid() {

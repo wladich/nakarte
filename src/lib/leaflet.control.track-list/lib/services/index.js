@@ -13,7 +13,7 @@ import {GarminActivity, GarminRoute} from './garmin';
 import {SportsTrackerActivity} from './sportstracker';
 import OpenStreetMapRu from './openstreetmapRu';
 
-export default [
+const services = [
     YandexRuler,
     NakarteTrack,
     NakarteUrl,
@@ -32,3 +32,5 @@ export default [
     OpenStreetMapRu,
     SimpleService
 ];
+
+export default services;

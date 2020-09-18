@@ -116,4 +116,5 @@ async function getViewer(container) {
     return new Viewer(google, container);
 }
 
-export default {getCoverageLayer, getPanoramaAtPos, getViewer};
+const googleProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
+export default googleProvider;

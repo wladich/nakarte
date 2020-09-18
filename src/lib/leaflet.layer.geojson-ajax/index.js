@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {fetch} from '~/lib/xhr-promise';
 import {notify} from '~/lib/notifications';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 L.Layer.GeoJSONAjax = L.GeoJSON.extend({
         options: {

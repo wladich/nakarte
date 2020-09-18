@@ -30,9 +30,9 @@ import {hashState, bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashStat
 import {LocateControl} from '~/lib/leaflet.control.locate';
 import {notify} from '~/lib/notifications';
 import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
-import {ExternalMaps} from '~/lib/leaflet.control.external-maps/index.js';
+import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
 
@@ -326,4 +326,4 @@ function setUp() {
     logUsedMaps();
 }
 
-export default {setUp};
+export {setUp};

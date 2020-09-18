@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import '../leaflet.control.layers.hotkeys/index';
 import '~/lib/leaflet.hashState/leaflet.hashState';
 
 L.Control.JNX.include(L.Mixin.HashState);

@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {tile2quad} from './index';
+import {tile2quad} from '.';
 
 const BingDates = L.TileLayer.extend({
         _url: 'https://mvexel.dev.openstreetmap.org/bingimageanalyzer/tile.php?t={quad}&nodepth=1',

@@ -1,11 +1,11 @@
 import L from 'leaflet';
 import ko from 'knockout';
 
-import '~/lib/leaflet.placemark';
+import '~/lib/leaflet.placemark'; // eslint-disable-line import/no-unassigned-import
 import {stopContainerEvents} from '~/lib/leaflet.control.commons';
-import '~/lib/leaflet.hashState/leaflet.hashState';
+import '~/lib/leaflet.hashState/leaflet.hashState'; // eslint-disable-line import/no-unassigned-import
 
-import {providers, magicProviders} from './providers/index';
+import {providers, magicProviders} from './providers';
 import './style.css';
 import controlTemplate from './control.html';
 

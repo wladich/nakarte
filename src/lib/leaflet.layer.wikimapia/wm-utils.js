@@ -262,4 +262,4 @@ async function parseTile(s, projectObj) {
 //     }
 // },
 
-export default {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl};
+export {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl};

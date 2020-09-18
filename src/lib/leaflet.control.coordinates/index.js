@@ -6,7 +6,7 @@ import Contextmenu from '~/lib/contextmenu';
 import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import '~/lib/controls-styles/controls-styles.css';
-import formats from './formats';
+import * as formats from './formats';
 
 const DEFAULT_FORMAT = formats.DEGREES;
 const UNKNOWN_COORDINATES = {

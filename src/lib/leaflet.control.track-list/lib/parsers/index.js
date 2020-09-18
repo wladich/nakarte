@@ -3,7 +3,7 @@ import parseZip from './zip';
 import {parseKmz, parseKml} from './kml';
 import {parseOziPlt, parseOziRte, parseOziWpt} from './ozi';
 
-export default [
+const parsers = [
     parseKmz,
     parseZip,
     parseGpx,
@@ -12,3 +12,5 @@ export default [
     parseOziWpt,
     parseKml,
 ];
+
+export default parsers;

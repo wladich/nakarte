@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import {hashState} from './hashState';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 L.Mixin.HashState = {
     enableHashState: function(key, defaultInitialState = null) {

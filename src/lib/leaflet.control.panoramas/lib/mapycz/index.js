@@ -140,4 +140,5 @@ async function getViewer(container) {
     return new Viewer(smap, container);
 }
 
-export default {getCoverageLayer, getPanoramaAtPos, getViewer};
+const mapyczProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
+export default mapyczProvider;

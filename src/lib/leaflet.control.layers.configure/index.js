@@ -3,7 +3,7 @@ import './style.css';
 import enableTopRow from '~/lib/leaflet.control.layers.top-row';
 import ko from 'knockout';
 import {notify} from '~/lib/notifications';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 

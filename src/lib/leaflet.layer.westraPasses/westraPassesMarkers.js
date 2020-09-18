@@ -6,7 +6,7 @@ import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
 import {fetch} from '~/lib/xhr-promise';
 import {notify} from '~/lib/notifications';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {

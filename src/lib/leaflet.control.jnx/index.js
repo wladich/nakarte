@@ -7,7 +7,7 @@ import Contextmenu from '~/lib/contextmenu';
 import {makeJnxFromLayer, minZoom} from './jnx-maker';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import {notify} from '~/lib/notifications';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 L.Control.JNX = L.Control.extend({
         includes: L.Mixin.Events,

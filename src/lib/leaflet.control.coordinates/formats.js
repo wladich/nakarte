@@ -70,7 +70,7 @@ const DEGREES_AND_MINUTES_AND_SECONDS = {
     formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`
 };
 
-export default {
+export {
     SIGNED_DEGREES,
     DEGREES,
     DEGREES_AND_MINUTES,

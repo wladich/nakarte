@@ -2,7 +2,7 @@ import L from 'leaflet';
 import {makeButton} from '~/lib/leaflet.control.commons';
 import Contextmenu from '~/lib/contextmenu';
 import {ElevationProvider} from '~/lib/elevations';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 import './style.css';
 

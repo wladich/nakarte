@@ -166,4 +166,5 @@ async function getViewer(container) {
     return new Viewer(mapillary, container);
 }
 
-export default {getCoverageLayer, getPanoramaAtPos, getViewer};
+const mapillaryProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
+export default mapillaryProvider;

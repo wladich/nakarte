@@ -104,5 +104,5 @@ function saveKml(segments, name, points) {
     return kml.join('\n');
 }
 
-export default {saveGpx, saveGpxWithElevations, saveKml, saveToString: saveNktk};
+export {saveGpx, saveGpxWithElevations, saveKml, saveNktk as saveToString};
 

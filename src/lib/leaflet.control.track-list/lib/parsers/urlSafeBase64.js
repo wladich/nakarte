@@ -23,4 +23,4 @@ function decode(s) {
     return null;
 }
 
-export default {encode, decode};
+export {encode, decode};

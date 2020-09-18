@@ -2,7 +2,7 @@ import './track-list';
 import L from 'leaflet';
 import {parseNktkSequence} from './lib/parsers/nktk';
 import safeLocalStorage from '~/lib/safe-localstorage';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 
 L.Control.TrackList.include({
         maxLocalStorageSessions: 5,

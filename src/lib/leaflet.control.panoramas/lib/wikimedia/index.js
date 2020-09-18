@@ -344,8 +344,5 @@ function getViewer(container) {
     return new Viewer(container);
 }
 
-export default {
-    getCoverageLayer,
-    getPanoramaAtPos,
-    getViewer
-};
+const wikimediaProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
+export default wikimediaProvider;

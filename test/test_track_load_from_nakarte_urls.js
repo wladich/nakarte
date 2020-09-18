@@ -1,4 +1,5 @@
-import serviceNakarte from '~/lib/leaflet.control.track-list/lib/services/nakarte/index.js';
+// eslint-disable-next-line import/default
+import serviceNakarte from '~/lib/leaflet.control.track-list/lib/services/nakarte';
 
 suite('flattenArray');
 

@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-import loadFromUrl from '~/lib/leaflet.control.track-list/lib/loadFromUrl.js';
+import loadFromUrl from '~/lib/leaflet.control.track-list/lib/loadFromUrl';
 
 function calcLineLength(points) {
     let lineLength = 0;
@@ -80,6 +80,7 @@ suite('Load tracks from services');
     'openstreetmapRuGpx',
     'openstreetmapRu_not_exists',
 ].forEach(function (testcase) {
+    // eslint-disable-next-line import/no-dynamic-require
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
     for (const track of testData.geodata) {
         if (track.tracks) {

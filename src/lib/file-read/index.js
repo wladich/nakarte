@@ -44,4 +44,4 @@ function readFiles(files) {
     return Promise.all(files.map(readFile));
 }
 
-export {selectFiles, readFile, readFiles};
+export {selectFiles, readFiles};

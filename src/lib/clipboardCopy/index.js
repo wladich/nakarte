@@ -1,5 +1,5 @@
 import './style.css';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import {query} from '~/lib/notifications';
 
 function showNotification(message, mouseEvent) {

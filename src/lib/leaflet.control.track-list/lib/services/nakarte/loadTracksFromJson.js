@@ -1,4 +1,4 @@
-import urlSafeBase64 from '../../parsers/urlSafeBase64';
+import * as urlSafeBase64 from '../../parsers/urlSafeBase64';
 import {TRACKLIST_TRACK_COLORS} from '../../../track-list';
 import loadFromUrl from '../../loadFromUrl';
 

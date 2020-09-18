@@ -3,7 +3,7 @@ import './elevation-profile.css';
 import {ElevationProvider} from '~/lib/elevations';
 import '~/lib/leaflet.control.commons';
 import {notify} from '~/lib/notifications';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import {DragEvents} from '~/lib/leaflet.events.drag';
 
 function calcSamplingInterval(length) {

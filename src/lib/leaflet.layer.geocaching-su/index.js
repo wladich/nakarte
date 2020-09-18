@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {fetch} from '~/lib/xhr-promise';
 import '~/lib/leaflet.layer.canvasMarkers';
-import logging from '~/lib/logging';
+import * as logging from '~/lib/logging';
 import {notify} from '~/lib/notifications';
 import './style.css';
 import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
