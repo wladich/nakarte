@@ -1,7 +1,7 @@
 import L from 'leaflet';
 
-import {fetch} from '~/lib/xhr-promise';
 import urlViaCorsProxy from '~/lib/CORSProxy';
+import {fetch} from '~/lib/xhr-promise';
 
 const MAX_ZOOM = 18;
 const MESSAGE_LINK_MALFORMED = 'Invalid coordinates in {name} link';

@@ -1,4 +1,5 @@
 import L from 'leaflet';
+
 import './style.css';
 import {onElementResize} from '~/lib/anyElementResizeEvent';
 

@@ -57,5 +57,6 @@ module.exports = {
             {missingExports: true, unusedExports: true, ignoreExports: [...topLevelFiles, ...filesMissingExport]},
         ],
         'import/no-unassigned-import': ['error', {allow: ['**/*.css', ...filesMissingExportForUnassigned]}],
+        'import/order': 'off',
     },
 };

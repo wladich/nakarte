@@ -1,13 +1,13 @@
-import L from 'leaflet';
 import ko from 'knockout';
+import L from 'leaflet';
 
 import '~/lib/leaflet.placemark'; // eslint-disable-line import/no-unassigned-import
 import {stopContainerEvents} from '~/lib/leaflet.control.commons';
 import '~/lib/leaflet.hashState/leaflet.hashState'; // eslint-disable-line import/no-unassigned-import
 
+import controlTemplate from './control.html';
 import {providers, magicProviders} from './providers';
 import './style.css';
-import controlTemplate from './control.html';
 
 ko.bindingHandlers.hasFocusNested = {
     init: function (element, valueAccessor) {

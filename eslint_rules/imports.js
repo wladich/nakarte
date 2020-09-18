@@ -39,7 +39,15 @@ module.exports = {
         'import/no-duplicates': 'error',
         // 'import/no-namespace': 'error', // checked, declined
         'import/extensions': ['error', 'always', {js: 'never'}],
-        // 'import/order': 'error' // to be done
+        'import/order': [
+            'error',
+            {
+                'groups': [['builtin', 'external'], 'internal', ['parent', 'sibling', 'index'], 'object', 'unknown'],
+                'pathGroups': [{pattern: '~/**', group: 'internal'}],
+                'newlines-between': 'always',
+                'alphabetize': {order: 'asc', caseInsensitive: true},
+            },
+        ],
         'import/newline-after-import': 'error',
         // 'import/prefer-default-export': 'error', // checked, declined
         // 'import/max-dependencies': 'error', // checked, declined

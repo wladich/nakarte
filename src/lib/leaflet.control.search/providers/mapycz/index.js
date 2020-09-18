@@ -1,9 +1,9 @@
 import L from 'leaflet';
-import {fetch} from '~/lib/xhr-promise';
+
 import * as logging from '~/lib/logging';
+import {fetch} from '~/lib/xhr-promise';
 
 import {BaseProvider} from '../remoteBase';
-
 import _categories from './categories.csv';
 import icons from './icons.json';
 

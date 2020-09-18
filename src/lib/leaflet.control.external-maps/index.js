@@ -1,7 +1,8 @@
 import L from 'leaflet';
-import {makeButton} from '~/lib/leaflet.control.commons';
+
 import Contextmenu from '~/lib/contextmenu';
 import {ElevationProvider} from '~/lib/elevations';
+import {makeButton} from '~/lib/leaflet.control.commons';
 import * as logging from '~/lib/logging';
 
 import './style.css';

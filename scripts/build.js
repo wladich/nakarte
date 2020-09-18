@@ -1,16 +1,16 @@
 'use strict';
 
-const recursive = require('recursive-readdir');
-const fs = require('fs-extra');
-const gzipSize = require('gzip-size').sync;
+const chalk = require('chalk');
 const execSync = require('child_process').execSync;
 const filesize = require('filesize');
-const chalk = require('chalk');
+const fs = require('fs-extra');
+const gzipSize = require('gzip-size').sync;
 const path = require('path');
-
-const errorExitStatus = 1;
+const recursive = require('recursive-readdir');
 
 const paths = require('../webpack/paths');
+
+const errorExitStatus = 1;
 
 function getVersionFromGit() {
     const verCmd =
