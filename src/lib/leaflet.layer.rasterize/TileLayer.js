@@ -77,29 +77,6 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
     }
 );
 
-const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
-    getCanvasFromTile: function(tile) {
-        return tile;
-    },
-
-    tileImagePromiseFromCoords: function(coords) {
-        let tilePromise;
-        if (this.createTile.length < 2) {
-            let tile = this.createTile(coords);
-            tilePromise = Promise.resolve(tile);
-        } else {
-            tilePromise = new Promise((resolve) => {
-                this.createTile(coords, (_, canvas) => resolve(canvas));
-            });
-        }
-
-        return {
-            tilePromise: tilePromise.then(this.getCanvasFromTile),
-            abortLoading: noop
-        };
-    }
-});
+// CanvasLayerGrabMixin has been deleted
 
 L.TileLayer.include(TileLayerGrabMixin);
-
-export {TileLayerGrabMixin, GridLayerGrabMixin, CanvasLayerGrabMixin};
