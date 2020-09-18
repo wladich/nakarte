@@ -5,7 +5,7 @@ import layout from './control.html';
 import '~/lib/controls-styles/controls-styles.css';
 import './style.css';
 import {getDeclination} from '~/lib/magnetic-declination';
-import '~/vendored/github.com/bbecquet/Leaflet.RotatedMarker/leaflet.rotatedMarker';
+import 'leaflet-rotatedmarker';
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
