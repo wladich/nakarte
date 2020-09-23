@@ -18,6 +18,7 @@ function getUid() {
     l2.push(...l.slice(12).reverse());
     const uid = l2.map((c) => ("0" + c.toString(16)).slice(-2)).join('').toUpperCase();
     return uid;
+    const a = 1;
 }
 
 function preconnect(url) {
