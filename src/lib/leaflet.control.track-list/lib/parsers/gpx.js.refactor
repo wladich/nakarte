@@ -1,0 +1,131 @@
+import stripBom from 'lib/stripBom';
+import {getNodeText} from './xmlUtils';
+import {decode as utf8_decode} from 'utf8';
+
+function getSegmentPoints(segEl) {
+    let corrupt = false;
+    const points = [];
+    for (let pointEl of [...segEl.getElementsByTagName('trkpt')]) {
+        let lat = parseFloat(pointEl.getAttribute('lat'));
+        let lng = parseFloat(pointEl.getAttribute('lon'));
+        if (isNaN(lat) || isNaN(lng)) {
+            corrupt = true;
+        } else {
+            points.push({lat, lng})
+        }
+    }
+    return {points, corrupt};
+}
+
+function getTrackSegments(trackEl) {
+    let corrupt = false;
+    const segments = [];
+    for (let segEl of [...trackEl.getElementsByTagName('trkseg')]) {
+        let {corrupt: pointsCorrupt, points} = getSegmentPoints(segEl);
+        corrupt |= pointsCorrupt;
+        if (points.length > 1) {
+            segments.push(points);
+        }
+    }
+    return {corrupt, segments}
+}
+
+function getRoutePoints(rtEl) {
+    var points_elements = rtEl.getElementsByTagName('rtept');
+    var points = [];
+    for (var i = 0; i < points_elements.length; i++) {
+        var point_element = points_elements[i];
+        var lat = parseFloat(point_element.getAttribute('lat'));
+        var lng = parseFloat(point_element.getAttribute('lon'));
+        if (isNaN(lat) || isNaN(lng)) {
+            error = 'CORRUPT';
+            break;
+        }
+        points.push({lat: lat, lng: lng});
+    }
+    return points;
+}
+
+function getRoutes(xml) {
+    var routes = [];
+    var rte_elements = xml.getElementsByTagName('rte');
+    for (var i = 0; i < rte_elements.length; i++) {
+        var rte_points = getRoutePoints(rte_elements[i]);
+        if (rte_points.length) {
+            routes.push(rte_points);
+        }
+    }
+    return routes;
+}
+
+function getWaypoints(xml) {
+    var waypoint_elements = xml.getElementsByTagName('wpt');
+    var waypoints = [];
+    for (var i = 0; i < waypoint_elements.length; i++) {
+        var waypoint_element = waypoint_elements[i];
+        var waypoint = {};
+        waypoint.lat = parseFloat(waypoint_element.getAttribute('lat'));
+        waypoint.lng = parseFloat(waypoint_element.getAttribute('lon'));
+        if (isNaN(waypoint.lat) || isNaN(waypoint.lng)) {
+            error = 'CORRUPT';
+            continue;
+        }
+        let wptName = getNodeText(waypoint_element.getElementsByTagName('name')[0]) || '';
+        try {
+            wptName = utf8_decode((wptName));
+        } catch (e) {
+            error = 'CORRUPT';
+            wptName = '__invalid point name__';
+        }
+        waypoint.name = wptName;
+        waypoint.symbol_name = getNodeText(waypoint_element.getElementsByTagName('sym')[0]);
+        waypoints.push(waypoint);
+    }
+    return waypoints;
+}
+
+function parseGpx(txt) {
+    let corrupt = false;
+    txt = stripBom(txt);
+    // remove namespaces
+    txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    let dom;
+    try {
+        dom = (new DOMParser()).parseFromString(txt, "text/xml");
+    } catch (e) {
+        return {supported: false};
+    }
+    if (dom.documentElement.nodeName === 'parsererror' || !dom.querySelector('gpx')) {
+        return {supported: false};
+    }
+    let name;
+    for (let trkName of [...dom.getElementsByTagName('trk > name')]) {
+        if (trkName) {
+            trkName = getNodeText(trkName).trim();
+            try {
+                trkName = utf8_decode(trkName);
+            } catch (e) {
+                corrupt = true;
+            }
+            // use name even if utf-8 decode failed
+            if (trkName.length) {
+                name = trkName;
+                break;
+            }
+        }
+    }
+
+    const segments = getTrackSegments(dom);
+    return {
+        supported: true,
+        corrupt,
+        geoData: [{
+            name: name,
+            tracks: x.concat(getRoutes(dom)),
+            points: getWaypoints(dom),
+            error: error
+        }]
+    }
+}
+
+export default parseGpx;

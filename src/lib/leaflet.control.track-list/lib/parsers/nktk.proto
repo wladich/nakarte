@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+message Segment {
+    repeated sint32 lats = 1;
+    repeated sint32 lons = 2;
+}
+
+message Waypoint {
+    sint32 lat = 1;
+    sint32 lon = 2;
+    string name = 3;
+}
+
+message Waypoints {
+    sint32 midLat = 1;
+    sint32 midLon = 2;
+    repeated Waypoint waypoints = 3;
+}
+
+message Track {
+    string name = 1;
+    repeated Segment segments = 2;
+    Waypoints waypoints = 3;
+}
+
+message View {
+    int32 color = 1;
+    bool shown = 2;
+    bool ticksShown = 3;
+}
+
+message TrackView {
+    View view = 1;
+    Track track = 2;
+}
+
+

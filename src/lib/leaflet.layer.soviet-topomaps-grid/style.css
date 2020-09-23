@@ -1,0 +1,33 @@
+.leaflet-sovietgrid-quadtitle-1, .leaflet-sovietgrid-quadtitle-2 {
+	width: 100px;
+	height: 50px;
+	margin-left: -50px;
+	margin-top: -25px;
+	text-align: center;
+	line-height: 50px;
+	font-family: Times, serif;
+	font-weight: bold;
+	outline: none;
+
+	text-shadow: 1px  0    0.5px   #eee,
+                 1px  1px  0.5px   #eee,
+                 0    1px  0.5px   #eee,
+                 -1px 1px  0.5px   #eee,
+                 -1px 0    0.5px   #eee,
+                 -1px -1px 0.5px   #eee,
+                 0    -1px 0.5px   #eee,
+                 1px  -1px 0.5px   #eee;
+    white-space: nowrap;
+}
+.leaflet-sovietgrid-quadtitle-1 {
+    font-size: 14px;
+}
+
+.leaflet-sovietgrid-quadtitle-2 {
+	font-size: 32px;
+}
+
+.leaflet-sovietgrid-lang {
+	color: #aaa;
+	margin-left: 0.5em;
+}

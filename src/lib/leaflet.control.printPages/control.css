@@ -1,0 +1,126 @@
+.control-print-pages {
+    line-height: 1.4;
+}
+
+.control-print-pages .scale {
+    width: 3.2em;
+}
+
+.control-print-pages .pages-num {
+    vertical-align: middle;
+    margin-left: 1.5em;
+}
+
+.control-print-pages .pages-num.pages-not-null {
+    cursor: pointer;
+    border-bottom: 1px dotted #999;
+}
+
+.control-print-pages .page-size {
+    width: 2.1em;
+}
+
+.control-print-pages .margins input {
+    width: 1.1em;
+}
+
+.control-print-pages .resolution {
+    width: 2.1em;
+}
+
+.button-add-page-horiz {
+    background-image: url("images/add-page-horiz.png");
+    margin-left: 2mm;
+    vertical-align: middle;
+}
+
+.button-add-page-vert {
+    background-image: url("images/add-page-vert.png");
+    vertical-align: middle;
+}
+
+.button-remove-pages {
+    background-image: url("images/remove-pages.png");
+    float: right;
+}
+
+.button-settings {
+    background-image: url("images/settings.png");
+}
+
+.control-print-pages table {
+    border-collapse: collapse;
+}
+
+.control-print-pages tr,
+.control-print-pages td,
+.control-print-pages tbody {
+    margin: 0;
+    padding: 0;
+}
+
+.control-print-pages .layout > tbody > tr > td {
+    border-top: 1px solid #eee;
+    padding-top: 1.5mm;
+    padding-bottom: 1mm;
+}
+
+.control-print-pages .layout > tbody > tr > td:nth-child(2) {
+    padding-left: 2mm;
+}
+
+.control-print-pages .layout >  tbody > tr:first-child td {
+    border: 0;
+}
+
+.control-print-pages .settings-summary {
+    display: inline-block;
+    margin-left: 3mm;
+}
+
+.control-print-pages .layout > tbody > tr:last-child > td {
+    text-align: center;
+}
+
+.preset-values {
+    margin-bottom: 1.5mm;
+}
+
+.preset-values a {
+    color: #999;
+    border-bottom: 1px dotted #999;
+    cursor: pointer;
+    margin-right: 2.5mm;
+}
+
+.preset-values a:last-child {
+    margin-right: 0;
+}
+
+.control-print-pages .label {
+    vertical-align: bottom;
+}
+
+.control-print-pages .label-high {
+    vertical-align: middle;
+}
+
+.preset-values .selected {
+    /*background-color: #ddd;*/
+    border-bottom: 1px solid #333;
+    color: #333;
+}
+
+.control-print-pages .button-minimize {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.control-print-pages .download-button-row {
+    position: relative;
+}
+
+.icon-printer {
+    background-image: url("images/printer.svg");
+}

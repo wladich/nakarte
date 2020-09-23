@@ -1,0 +1,26 @@
+.measure-tick-icon {
+    line-height: 0;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+.measure-tick-icon-text {
+    padding-left: 0.7em;
+    color: black;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    transform-origin: 0 0;
+    text-shadow:
+            1px 0 2px #fff,
+            1px 1px 1px #fff,
+            0 1px 1px #fff,
+            -1px 1px 1px #fff,
+            -1px 0 1px #fff,
+            -1px -1px 1px #fff,
+            0 -1px 1px #fff,
+            1px -1px 1px #fff;
+}

@@ -1,0 +1,3 @@
+.leaflet-controls-corner-raised {
+    z-index: 2000 !important;
+}

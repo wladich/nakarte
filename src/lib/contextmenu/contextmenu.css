@@ -1,0 +1,54 @@
+.contextmenu {
+    position: fixed;
+    background-color: white;
+    font: 12px/1.5 "Helvetica Neue",Arial,Helvetica,sans-serif;
+    box-shadow: 0 1px 7px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    padding: 4px 0;
+    cursor: default;
+    user-select: none;
+}
+
+.contextmenu .item {
+    display: block;
+    color: hsl(0, 0%, 15%);
+    font-size: 12px;
+    line-height: 16px;
+    height: 16px;
+    text-decoration: none;
+    padding: 0 12px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    cursor: default;
+}
+
+.contextmenu .item.action {
+    cursor: pointer;
+}
+
+.contextmenu .item.action:hover {
+    background-color: hsl(0, 0%, 95%);
+}
+
+.contextmenu .separator span {
+    background-color: white;
+    padding: 0 0.2em;
+    color: hsl(0, 0%, 50%);
+    margin: 0 1em;
+}
+.contextmenu .separator {
+    border-bottom: 1px solid hsl(0, 0%, 80%);
+    text-align: center;
+    width: 100%;
+    line-height: 0;
+    margin: 8px 0;
+}
+
+.contextmenu .disabled {
+    color: hsl(0, 0%, 66%);
+}
+
+.contextmenu .header {
+    color: hsl(0, 0%, 20%);
+    font-weight: bold;
+}

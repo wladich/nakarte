@@ -1,0 +1,116 @@
+.leaflet-control.control-form, .leaflet-control .control-form{
+    background-color: white;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    padding: 5px 10px 5px 12px;
+    color: #333;
+}
+
+.leaflet-control.control-form input[type="text"] {
+    padding: 0 5px;
+    margin: 0;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    text-align: right;
+}
+
+.leaflet-control .image-button {
+    width: 26px;
+    height: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: inline-block;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.leaflet-control .text-button {
+    display: inline-block;
+    height: 26px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+.leaflet-control .image-button:hover,
+.leaflet-control .text-button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-button {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.leaflet-control-button:hover {
+    background-color: #f4f4f4;
+}
+
+.button-minimize {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+.button-minimize:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-bottom.leaflet-left .button-minimize {
+    background-image: url("images/arrow_bl.png");
+}
+
+.leaflet-bottom.leaflet-right .button-minimize {
+    background-image: url("images/arrow_br.png");
+}
+
+.leaflet-top.leaflet-left .button-minimize {
+    background-image: url("images/arrow_ul.png");
+}
+
+.leaflet-top.leaflet-right .button-minimize {
+    background-image: url("images/arrow_ur.png");
+}
+
+.leaflet-control-button-toggle {
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    margin: 5px;
+    display: none;
+}
+
+.leaflet-control.minimized {
+    padding: 0;
+}
+
+.leaflet-control.minimized .leaflet-control-content {
+    display: none;
+}
+
+.leaflet-control.minimized .leaflet-control-button-toggle {
+    display: block;
+}
+
+.icon-spinner-nuclear {
+    background-image: url('images/spinner.gif');
+}

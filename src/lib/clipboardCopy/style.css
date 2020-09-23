@@ -1,0 +1,10 @@
+.copy-clipboard-notification {
+    color: white;
+    background-color: #333;
+    border-radius: 4px;
+    padding: 0.5em 0.7em;
+    position: absolute;
+    z-index: 100000;
+    font-family: Hevetica, arial, sans-serif;
+    font-size: 11px;
+}

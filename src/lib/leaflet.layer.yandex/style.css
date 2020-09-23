@@ -1,0 +1,4 @@
+.yandex-tile-layer img {
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
+}

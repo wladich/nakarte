@@ -1,0 +1,53 @@
+.icon-coordinates {
+    background-image: url('coords.svg');
+}
+
+.leaflet-touch .icon-coordinates {
+    background-size: 62% 62% !important;
+}
+
+.coordinates-control-active {
+    cursor: crosshair;
+}
+
+.leaflet-coordinates-menu-fmt {
+    color: hsl(0, 0%, 66%);
+    margin-left: 0.5em;
+    float: right;
+}
+
+.leaflet-coordinates-wrapper-signed-degrees {
+    min-width: 11em;
+}
+
+.leaflet-coordinates-wrapper-degrees {
+    min-width: 14em;
+}
+
+.leaflet-coordinates-wrapper-degrees-and-minutes {
+    min-width: 14.5em;
+}
+
+.leaflet-coordinates-wrapper-degrees-and-minutes-and-seconds {
+    min-width: 16em;
+}
+
+.leaflet-coordinates-container {
+    padding: 0 5px;
+}
+
+.leaflet-coordinates-longitude {
+    float: right;
+}
+
+.leaflet-coordinates-format-radio {
+    margin-top: -1px;
+    vertical-align: middle;
+}
+
+.leaflet-coordinates-divider {
+    border: none;
+    border-top: 1px solid hsl(0, 0%, 92%);
+    margin-top: 0px;
+    margin-bottom: 3px;
+}

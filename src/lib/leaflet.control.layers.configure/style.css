@@ -1,0 +1,169 @@
+.leaflet-control-layers-top-row .button {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+
+    float: left;
+
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    margin-right: 4px;
+}
+
+.icon-settings {
+    background-image: url("settings.svg");
+}
+
+.icon-edit {
+    background-image: url("pencil.svg");
+}
+
+.leaflet-control-layers .button-config:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-layers-dialog-wrapper {
+    position: absolute;
+    top: 25px;
+    bottom: 25px;
+    max-width: 100%;
+    padding-bottom: 50px;
+    left: 50%;
+}
+
+.leaflet-layers-select-window {
+    position: relative;
+    left: -50%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    z-index: 3000;
+    max-width: 100%;
+    overflow: hidden;
+    height: 100%;
+    padding: 6px 0 40px 6px;
+    min-width: 290px;
+}
+
+.leaflet-layers-select-window form {
+    overflow: auto;
+    overflow: overlay;
+    padding-right: 18px;
+    max-height: 100%;
+    margin-bottom: 50px;
+    /*width: auto ;*/
+}
+
+.leaflet-layers-select-window .buttons-row {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+.leaflet-layers-select-window label {
+    display: block;
+}
+
+.leaflet-layers-select-window .button,
+.custom-layers-window .button {
+    display: inline-block;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 6px;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+.leaflet-layers-select-window .button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-layers-select-window .section-header{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.leaflet-layers-select-window a {
+    color: #000;
+}
+
+.leaflet-layers-select-window .section-header a {
+    color: #666;
+}
+
+.custom-layers-window {
+    position: relative;
+    left: -50%;
+    min-width: 290px;
+    /*margin-left: -150px;*/
+    margin-top: 15px;
+    background-color: white;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    padding: 3mm 3mm;
+    color: #333;
+    z-index: 3001;
+}
+
+.custom-layers-window textarea,
+.custom-layers-window input,
+.custom-layers-window select {
+    padding: 0.5mm 5px;
+    margin: 1mm 1mm 1mm 0;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.custom-layers-window .layer-name,
+.custom-layers-window .layer-url {
+    width: 100%;
+}
+
+.custom-layers-window .button:hover {
+    background-color: #f4f4f4;
+}
+
+.custom-layer-edit-button {
+    width: 16px;
+    height: 16px;
+    background-size: 16px 16px;
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    cursor: pointer;
+}
+
+.custom-layers-window .doc-link {
+    color: #777;
+}
+
+.leaflet-layers-configure-just-added-1 {
+    background-color: #ff8d4d;
+}
+
+.leaflet-layers-configure-just-added-2 {
+    transition: background-color 7s ease-in;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.custom-layers-window hr {
+    border: none;
+    border-top: 1px solid hsl(0, 0%, 85%);
+}
+
+.custom-layers-window .hint {
+    font-size: 10px;
+    color: #777;
+}

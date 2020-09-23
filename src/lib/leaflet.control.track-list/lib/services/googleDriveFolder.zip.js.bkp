@@ -1,0 +1,103 @@
+import urlViaCorsProxy from '~/lib/CORSProxy';
+import {fetch} from '~/lib/xhr-promise';
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+class GoogleDriveFolder {
+    urlRe = /^https:\/\/drive.google.com\/drive\/folders\/([^/?]+)/u;
+
+    constructor(url) {
+        this.url = url;
+    }
+
+    isOurUrl() {
+        return Boolean(this.url.match(this.urlRe));
+    }
+
+    async geoData() {
+        // request page and find params for zip request
+        let res;
+        // try {
+        //     res = await fetch(urlViaCorsProxy(this.url));
+        // } catch (e) {
+        //     return [{error: `Error downloading folder with URL "${this.url}": ${e}`}];
+        // }
+        // const m = res.response.match(/__initData ?= ?([^;]+);/u);
+        // if (!m) {
+        //     return [{error: 'Unexpected server response'}];
+        // }
+        // let data;
+        // try {
+        //     data = JSON.parse(m[1]);
+        // } catch (e) {
+        //     return [{error: 'Unexpected server response'}];
+        // }
+        // const key = data?.[0]?.[9]?.[32]?.[35];
+        // if (!key) {
+        //     return [{error: 'Unexpected server response'}];
+        // }
+        const key = 'AIzaSyAtRd8wSayRP9VwHfRVF0cBMp6MuEZG3fY';
+        // request zip
+        try {
+            res = await fetch(urlViaCorsProxy(`https://takeout-pa.clients6.google.com/v1/exports?key=${key}`), {
+                method: 'POST',
+                responseType: 'json',
+                data: JSON.stringify({
+                    archiveFormat: null,
+                    archivePrefix: 'abc',
+                    conversions: null,
+                    items: [{id: this.url.match(this.urlRe)[1]}],
+                    locale: null,
+                }),
+            });
+        } catch (e) {
+            return [{error: `Error downloading folder with URL "${this.url}": ${e}`}];
+        }
+        const exportJobId = res.responseJSON?.exportJob?.id;
+        if (!exportJobId) {
+            return [{error: 'Unexpected server response'}];
+        }
+        // poll zip file status
+        let zipUrl;
+        for (let _ = 0; _ < 10; _++) {
+            await sleep(1000);
+            try {
+                res = await fetch(`https://takeout-pa.clients6.google.com/v1/exports/${exportJobId}?key=${key}`, {
+                    responseType: 'json'
+                });
+            } catch (e) {
+                return [{error: `Error downloading folder with URL "${this.url}": ${e}`}];
+            }
+            const status = res.responseJSON?.exportJob?.status;
+            if (!status) {
+                return [{error: 'Unexpected server response'}];
+            }
+            if (status === 'SUCCEEDED') {
+                const archives = res.responseJSON?.exportJob?.archives;
+                if (!archives || !Array.isArray(archives) || archives.length === 0) {
+                    return [{error: 'Unexpected server response'}];
+                }
+                if (archives.length > 1) {
+                    return [{error: 'Folder is too big'}];
+                }
+                const sizeOfContents = parseInt(archives[0].sizeOfContents, 10);
+                if (isNaN(sizeOfContents)) {
+                    return [{error: 'Unexpected server response'}];
+                }
+                if (sizeOfContents > 10000000) {
+                    return [{error: 'Folder is too big'}];
+                }
+                zipUrl = archives[0].storagePath;
+                if (!zipUrl) {
+                    return [{error: 'Unexpected server response'}];
+                }
+                break;
+            }
+        }
+        console.log(zipUrl);
+    }
+}
+
+export default GoogleDriveFolder;

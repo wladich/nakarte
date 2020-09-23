@@ -1,0 +1,164 @@
+.elevation-profile-container {
+    background-color: white;
+    width: 100%;
+    height: 220px;
+    position: absolute;
+    bottom: 0;
+    z-index: 2000;
+    cursor: default;
+    border-top: 1px solid #ddd;
+}
+
+.elevation-profile-properties {
+    padding-left: 4px;
+    height: 100%;
+    float: left;
+    width: 240px;
+    border-right: 1px solid #ddd;
+}
+
+.elevation-profile-properties table {
+    border-collapse: collapse;
+}
+
+.elevation-profile-properties td {
+    white-space: nowrap;
+}
+
+.elevation-profile-properties .start-group td{
+    border-top: 1px solid #c3c3c3;
+}
+
+.elevation-profile-properties-selected {
+    background-color: #dfeef4;
+}
+
+.elevation-profile-properties td:last-child {
+    padding-left: 4px;
+}
+
+.elevation-profile-left-axis {
+    position: relative;
+    height: 100%;
+    float: left;
+    width: 35px;
+}
+
+.elevation-profile-drawingContainer {
+    height: 100%;
+    width: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    position: relative;
+ }
+
+.elevation-profile-grid-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 12px;
+    margin-top: -6px;
+    position: absolute;
+    text-align: right;
+    right: 4px;
+}
+
+.elevation-profile-container svg {
+    /*cursor: default;*/
+}
+
+.elevation-profile-cursor {
+    border-right: 1px solid blue;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 8px;
+    bottom: 24px;
+    pointer-events: none;
+}
+
+.elevation-profile-cursor-label {
+    position: absolute;
+    pointer-events: none;
+    top: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    padding-left: 8px;
+    user-select: none;
+
+    -webkit-touch-callout: none;
+    white-space: nowrap;
+
+
+    text-shadow: 1px 0 0 #fff,
+    1px 1px 0 #fff,
+    0 1px 0 #fff,
+    -1px 1px 0 #fff,
+    -1px 0 0 #fff,
+    -1px -1px 0 #fff,
+    0 -1px 0 #fff,
+    1px -1px 0 #fff;
+}
+
+.elevation-profile-cursor-label-left {
+    width: 100px;
+    margin-left: -116px;
+    text-align: right;
+}
+
+.elevation-profile-cursor-hidden {
+    visibility: hidden;
+}
+
+.elevation-profile-selection {
+    background-color: #0078A8;
+    opacity: .3;
+    position: absolute;
+    top: 8px;
+    bottom: 24px;
+    pointer-events: none;
+}
+
+.elevation-profile-marker {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    white-space: nowrap;
+}
+
+.elevation-profile-marker-icon {
+    display: inline-block;
+    width: 8px !important;
+    height: 8px !important;
+    margin-left: -4px;
+    margin-top: -4px;
+    border-radius: 4px;
+    background-color: #0078A8;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*opacity: .5;*/
+}
+
+.elevation-profile-marker-label {
+    display: inline-block;
+    text-shadow: 1px 0 0 #fff,
+    1px 1px 1px #fff,
+    0 1px 1px #fff,
+    -1px 1px 1px #fff,
+    -1px 0 1px #fff,
+    -1px -1px 1px #fff,
+    0 -1px 1px #fff,
+    1px -1px 1px #fff;
+    margin-left: 20px;
+}
+
+.elevation-profile-close {
+    float: right;
+    margin: 4px;
+    width: 16px;
+    height: 16px;
+    background-image: url("close.png");
+    cursor: pointer;
+}
+

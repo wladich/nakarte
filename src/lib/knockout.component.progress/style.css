@@ -1,0 +1,32 @@
+.ko-progress-unknown {
+    display: inline-block;
+    height: 26px;
+    width: 26px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    margin-bottom: -5px;
+}
+
+.ko-progress {
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    height: 26px;
+    line-height: 26px;
+    vertical-align: middle;
+    padding: 0 4px;
+}
+
+.ko-progress-bkg {
+    display: inline-block;
+    width: 100%;
+    background-color: #ccc;
+    height: 10px;
+}
+
+.ko-progress-bar {
+    width: 30%;
+    background-color: #888;
+    height: 100%    ;
+}

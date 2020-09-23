@@ -1,0 +1,7 @@
+function getNodeText(node) {
+    return [...node.childNodes]
+        .map((node) => node.nodeValue)
+        .join('');
+}
+
+export default {getNodeText}

@@ -1,0 +1,29 @@
+.leaflet-control-single-button {
+    float: left;
+}
+
+.leaflet-control-single-button a div {
+    background-size: 62%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 100%;
+    height: 100%;
+}
+
+.button-with-bar .bar {
+    display: none;
+    float: left;
+    margin-left: 6px;
+
+    background-color: white;
+    border-radius: 4px;
+    padding: 4px 6px 4px 6px;
+}
+
+.button-with-bar.active .bar {
+    display: block;
+}
+
+.highlight a, .highlight a:hover {
+    background-color: #cce8ff;
+}

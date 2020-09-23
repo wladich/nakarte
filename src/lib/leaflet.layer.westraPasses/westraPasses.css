@@ -1,0 +1,154 @@
+.westra-pass-tooltip {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1000000;
+    top: -30px;
+    left: 0;
+    transition-property: visibility;
+    transition-delay: 0.2s;
+}
+
+.westra-pass-tooltip div {
+    margin-left: -50%;
+    margin-right: 50%;
+    white-space: nowrap;
+    background-color: white;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-top: -1px;
+    opacity: 1;
+    padding: 0 2px;
+}
+
+
+.westra-pass-marker {
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    margin-top: -7px;
+    background-repeat: no-repeat;
+}
+
+.westra-pass-marker-summit {
+    background-image: url("summit.png");
+}
+
+.westra-pass-marker-1a {
+    background-image: url("pass-1a.png");
+}
+
+.westra-pass-marker-1b {
+    background-image: url("pass-1b.png");
+}
+
+.westra-pass-marker-2a {
+    background-image: url("pass-2a.png");
+}
+
+.westra-pass-marker-2b {
+    background-image: url("pass-2b.png");
+}
+
+.westra-pass-marker-3a {
+    background-image: url("pass-3a.png");
+}
+
+.westra-pass-marker-3b {
+    background-image: url("pass-3b.png");
+}
+
+.westra-pass-marker-unknown {
+    background-image: url("pass-unknown-notconfirmed.png");
+}
+
+.westra-pass-marker-nograde {
+    background-image: url("pass-nograde.png");
+}
+
+.westra-region-label {
+    white-space: nowrap;
+    width: auto !important;
+    height: auto !important;
+}
+
+.westra-region-label span {
+    margin-left: -50%;
+    color: #c55;
+    font-family: sans-serif;
+    font-size: 14px;
+    /*font-weight: bold;*/
+    text-shadow: 1px 0 0 #eee,
+    1px 1px 0 #eee,
+    0 1px 0 #eee,
+    -1px 1px 0 #eee,
+    -1px 0 0 #eee,
+    -1px -1px 0 #eee,
+    0 -1px 0 #eee,
+    1px -1px 0 #eee;
+
+}
+
+.westra-coverage-polygon {
+    stroke-width: 10;
+    stroke-opacity: 1;
+    fill-opacity: 1;
+    stroke: #c55;
+    fill: #c55;
+    opacity: 0.6;
+
+}
+
+.pass-details {
+    border-collapse: collapse;
+}
+
+.pass-details > tbody > tr > td {
+    border-bottom: 1px solid #ccc;
+    padding: 1mm 0;
+}
+
+.pass-details > tbody > tr > td:last-child {
+    padding-left: 1em;
+}
+
+.pass-details > tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.pass-details .coords {
+    border-collapse: collapse;
+}
+
+.pass-details .coords > tbody > tr > td {
+    padding: 0;
+    padding-left: 1em;
+}
+
+.pass-details .coords td:first-child {
+    padding-left: 0;
+}
+
+.pass-details .coords .header {
+    color: #999;
+    font-size: 9px;
+}
+
+
+.pass-details .coords a {
+    color: #000;
+    border-bottom: 1px dashed #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+.westra-passes-description-comment {
+    margin: 0 !important;
+}
+
+.westra-passes-description-comment-author {
+    font-weight: bold;
+    color: #777;
+    margin-right: 1em !important;
+}

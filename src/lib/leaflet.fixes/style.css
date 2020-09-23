@@ -1,0 +1,15 @@
+.leaflet-popup-pane, .leaflet-control {
+    cursor: default;
+}
+
+.leaflet-control-horizontal-stack {
+    clear: none;
+}
+
+.leaflet-left .leaflet-control-horizontal-stack {
+    margin-left: 8px;
+}
+
+.leaflet-right .leaflet-control-horizontal-stack {
+    margin-right: 8px;
+}

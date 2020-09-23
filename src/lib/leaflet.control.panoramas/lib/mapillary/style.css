@@ -1,0 +1,11 @@
+.mapillary-viewer-date-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0,0,0,.7);
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    padding: 4px 4px;
+    color: #fff;
+    z-index: 1000;
+}

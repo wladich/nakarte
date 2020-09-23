@@ -1,0 +1,22 @@
+.leaflet-control-layers-list label {
+    white-space: nowrap;
+}
+
+.leaflet-control {
+    user-select: none;
+}
+
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    border: none !important;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.65) !important;
+}
+
+.leaflet-control-layers label input + span {
+    display: inline-block;
+    max-width: 250px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+

@@ -1,0 +1,7 @@
+#map {
+  height: 100%;
+}
+
+*:focus {
+  outline: 0;
+}

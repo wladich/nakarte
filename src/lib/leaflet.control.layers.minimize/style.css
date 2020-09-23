@@ -1,0 +1,8 @@
+.leaflet-control-layers .button-minimize {
+    float: right;
+}
+
+
+.leaflet-control-layers .leaflet-control-button-toggle {
+    background-image: url("layers.svg");
+}

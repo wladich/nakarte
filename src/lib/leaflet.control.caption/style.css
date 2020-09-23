@@ -1,0 +1,18 @@
+.leaflet-control-container .leaflet-control-caption {
+    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    padding: 0 5px;
+    color: #333;
+    text-decoration: none;
+    font-size: 11px;
+    user-select: none;
+}
+
+.leaflet-control-container .leaflet-control-caption a {
+    text-decoration: none;
+}
+
+.leaflet-control-container .leaflet-control-caption a:hover {
+    text-decoration: underline;
+}

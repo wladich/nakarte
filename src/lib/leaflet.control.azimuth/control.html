@@ -1,0 +1,22 @@
+<div class="contents">
+    <table>
+        <tr>
+            <td>True azimuth</td>
+            <td data-bind="text: trueAzimuth() !== null ? Math.round(trueAzimuth()) + '&deg;' : '--'"></td>
+        </tr>
+        <tr>
+            <td>Magnetic azimuth</td>
+            <td data-bind="text: magneticAzimuth() !== null ? magneticAzimuth() + '&deg;' : '--'"></td>
+        </tr>
+        <tr>
+            <td>Distance</td>
+            <td data-bind="text: distance() === null ? '--' :
+                distance() > 2000 ? (distance() / 1000).toFixed(2) + ' km' : Math.round(distance()) + ' m'"></td>
+        </tr>
+    </table>
+
+    <div class="buttons">
+        <div class="button" data-bind="click: onReverseButtonClick">Reverse</div>
+        <div class="button" data-bind="click: onProfileButtonClick">Elevation / Sightline</div>
+    </div>
+</div>

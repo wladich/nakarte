@@ -1,0 +1,58 @@
+.leaflet-control-jnx .ko-progress{
+    width: 200px;
+    background-color: white;
+}
+
+.leaflet-control-jnx .button {
+    display: inline-block;
+    background-color: white;
+    height: 26px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 6px;
+    padding: 0 1em;
+    line-height: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+.leaflet-control-jnx .button:hover {
+    background-color: #f4f4f4;
+}
+
+/*.leaflet-rectangle-select-edge {*/
+    /*border: 1px solid black;*/
+    /*background-color: red;*/
+    /*opacity: 0.5;*/
+/*}*/
+
+.leaflet-rectangle-select-edge.edge-top, .leaflet-rectangle-select-edge.edge-bottom {
+    height: 30px !important;
+    margin-top: -15px !important;
+}
+
+.leaflet-rectangle-select-edge.edge-left, .leaflet-rectangle-select-edge.edge-right {
+    width: 30px !important;
+    margin-left: -15px !important;
+}
+
+.leaflet-rectangle-select-edge.edge-top {
+    cursor: n-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-bottom {
+    cursor: s-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-left {
+    cursor: w-resize !important;
+}
+
+.leaflet-rectangle-select-edge.edge-right {
+    cursor: e-resize !important;
+}
+
+.jnx-menu-warning {
+    color: red;
+}

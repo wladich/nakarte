@@ -1,0 +1,7 @@
+.leaflet-control-layers-list {
+    overflow-y: auto;
+    overflow-y: overlay;
+    overflow-x: hidden;
+    padding-right: 18px;
+}
+

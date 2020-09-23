@@ -1,0 +1,136 @@
+.panoramas-container {
+    display: none;
+}
+
+.panoramas-container.enabled {
+    display: flex;
+}
+
+.panoramas-container.split-horizontal {
+    flex-direction: column;
+}
+
+.panoramas-container.split-vertical {
+    flex-direction: row;
+}
+
+.panorama-splitter {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+}
+
+.split-vertical .panorama-splitter {
+    flex-direction: column;
+    width: 3px;
+    cursor: col-resize;
+}
+
+.split-horizontal .panorama-splitter {
+    flex-direction: row;
+    height: 3px;
+    cursor: row-resize;
+}
+
+.panorama-splitter .button {
+    width: 51px;
+    height: 21px;
+    position: absolute;
+    z-index: 20000;
+    background-image: url("slider-button.svg");
+    background-size: 51px 21px;
+    user-select: none;
+    cursor: pointer;
+}
+
+.split-vertical .panorama-splitter .button {
+    margin-left: 13px;
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+}
+.split-horizontal .panorama-splitter .button {
+    margin-top: -9px;
+}
+
+.splitter-border {
+    position: absolute;
+    opacity: 0;
+    z-index: 20000;
+}
+
+.split-vertical .splitter-border {
+    width: 20px;
+    margin-left: -9px;
+    height: 100%;
+}
+
+.split-horizontal .splitter-border {
+    height: 20px;
+    margin-top: -9px;
+    width: 100%;
+}
+
+.icon-panoramas {
+    background-image: url('panoramas-off.png');
+    background-size: 17px 17px !important;
+}
+
+.leaflet-touch .icon-panoramas {
+    background-size: 62% 62% !important;
+}
+
+.leaflet-contol-panoramas.active .icon-panoramas {
+    background-image: url('panoramas-on.png');
+}
+
+.panoramas-list input, .panoramas-list label {
+    vertical-align: bottom;
+}
+
+.panorama-container {
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.panorama-container.enabled {
+    display: block;
+}
+
+.leaflet-panorama-marker-wraper {
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+}
+
+.leaflet-panorama-marker-binocular {
+    background-image: url("binocualar.png");
+    width: 31px;
+    height: 31px;
+    margin-left: -17px;
+    margin-top: -17px;
+}
+
+.leaflet-panorama-marker-circle {
+    background-image: url("circle.svg");
+    background-size: 32px 32px;
+    width: 33px;
+    height: 33px;
+    margin-left: -17px;
+    margin-top: -17px;
+    -webkit-backface-visibility: hidden;
+}
+
+.panoramas-control-active {
+    cursor: pointer;
+}
+
+
+.leaflet-panorama-marker-point {
+    background-image: url("point.svg");
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 12px 12px;
+    width: 12px !important;
+    height: 12px !important;
+}

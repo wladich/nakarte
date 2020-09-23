@@ -1,0 +1,46 @@
+.icon-azimuth {
+    background-image: url('compass-pointing-north-east.svg');
+}
+
+.leaflet-control-azimuth table{
+    border-collapse: collapse;
+    line-height: 16px;
+    float: left;
+    margin-left: 4px;
+}
+
+.leaflet-control-azimuth td:last-child {
+    padding-left: 4px;
+    text-align: center;
+    width: 6em;
+}
+
+.leaflet-control-azimuth .buttons {
+    float: left;
+    margin-left: 8px;
+}
+
+.leaflet-control-azimuth .button {
+    height: 18px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 0 8px;
+    line-height: 18px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+}
+
+.leaflet-control-azimuth .button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-azimuth .button:first-child {
+    margin-top: 2px;
+    margin-bottom: 8px;
+}
+
+.azimuth-control-active {
+    cursor: crosshair;
+}
