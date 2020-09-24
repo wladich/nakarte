@@ -30,7 +30,7 @@ module.exports = {
         'default-case': 'error',
         'default-param-last': 'error',
         'dot-location': ['error', 'property'],
-        // 'dot-notation': 'error', // checked, declined
+        'dot-notation': 'error',
         'eol-last': 'error',
         'eqeqeq': 'error',
         // 'for-direction': 'error', // in eslint-recommended

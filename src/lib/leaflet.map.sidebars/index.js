@@ -15,12 +15,12 @@ const MapWithSidebars = L.Map.extend({
         this._sidebarContainers = {};
         const sidebars = this._sidebarContainers;
         L.DomUtil.addClass(container, 'leaflet-map-sidebars-container');
-        sidebars['left'] = L.DomUtil.create('div', 'leaflet-map-sidebar-left', this._sidebarsContainer);
+        sidebars.left = L.DomUtil.create('div', 'leaflet-map-sidebar-left', this._sidebarsContainer);
         const midColumn = L.DomUtil.create('div', 'leaflet-map-sidebar-mid-column', this._sidebarsContainer);
-        sidebars['right'] = L.DomUtil.create('div', 'leaflet-map-sidebar-right', this._sidebarsContainer);
-        sidebars['top'] = L.DomUtil.create('div', 'leaflet-map-sidebar-top', midColumn);
+        sidebars.right = L.DomUtil.create('div', 'leaflet-map-sidebar-right', this._sidebarsContainer);
+        sidebars.top = L.DomUtil.create('div', 'leaflet-map-sidebar-top', midColumn);
         this._mapContainer = L.DomUtil.create('div', 'leaflet-map-container-with-sidebars', midColumn);
-        sidebars['bottom'] = L.DomUtil.create('div', 'leaflet-map-sidebar-bottom', midColumn);
+        sidebars.bottom = L.DomUtil.create('div', 'leaflet-map-sidebar-bottom', midColumn);
     },
 
     addElementToSidebar: function (barName, element) {

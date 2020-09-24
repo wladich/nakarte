@@ -15,7 +15,7 @@ class TiledDataLoader {
     getFromCache(dataTileCoords) {
         const key = this.makeTileKey(dataTileCoords);
         const res = this._cache.get(key);
-        res['coords'] = dataTileCoords;
+        res.coords = dataTileCoords;
         return res;
     }
 

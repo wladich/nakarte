@@ -16,8 +16,8 @@ L.Layer.CustomLayer = L.TileLayer.extend({
         if (this._map && !this._map.options.crs.infinite) {
             var invertedY = this._globalTileRange.max.y - coords.y;
             if (this.options.tms) {
-                data['y'] = invertedY;
-                data['y_1024'] = Math.floor(invertedY / 1024);
+                data.y = invertedY;
+                data.y_1024 = Math.floor(invertedY / 1024);
             }
             data['-y'] = invertedY;
         }

@@ -40,18 +40,18 @@ const RectangleSelect = L.Rectangle.extend({
             const size = bottomRightPixel.subtract(topLeftPixel);
             let center = topLeftPixel.add(size.divideBy(2));
             center = this._map.unproject(center);
-            this.markers['top'].setLatLng([bounds.getNorth(), center.lng]);
-            this.markers['top']._icon.style.width = `${size.x}px`;
-            this.markers['top']._icon.style.marginLeft = `-${size.x / 2}px`;
-            this.markers['right'].setLatLng([center.lat, bounds.getEast()]);
-            this.markers['right']._icon.style.height = `${size.y}px`;
-            this.markers['right']._icon.style.marginTop = `-${size.y / 2}px`;
-            this.markers['bottom'].setLatLng([bounds.getSouth(), center.lng]);
-            this.markers['bottom']._icon.style.width = `${size.x}px`;
-            this.markers['bottom']._icon.style.marginLeft = `-${size.x / 2}px`;
-            this.markers['left'].setLatLng([center.lat, bounds.getWest()]);
-            this.markers['left']._icon.style.height = `${size.y}px`;
-            this.markers['left']._icon.style.marginTop = `-${size.y / 2}px`;
+            this.markers.top.setLatLng([bounds.getNorth(), center.lng]);
+            this.markers.top._icon.style.width = `${size.x}px`;
+            this.markers.top._icon.style.marginLeft = `-${size.x / 2}px`;
+            this.markers.right.setLatLng([center.lat, bounds.getEast()]);
+            this.markers.right._icon.style.height = `${size.y}px`;
+            this.markers.right._icon.style.marginTop = `-${size.y / 2}px`;
+            this.markers.bottom.setLatLng([bounds.getSouth(), center.lng]);
+            this.markers.bottom._icon.style.width = `${size.x}px`;
+            this.markers.bottom._icon.style.marginLeft = `-${size.x / 2}px`;
+            this.markers.left.setLatLng([center.lat, bounds.getWest()]);
+            this.markers.left._icon.style.height = `${size.y}px`;
+            this.markers.left._icon.style.marginTop = `-${size.y / 2}px`;
         },
 
         onRemove: function(map) {
@@ -66,8 +66,8 @@ const RectangleSelect = L.Rectangle.extend({
         setBoundsFromMarkers: function() {
             this.setBounds(
                 [
-                    [this.markers['top'].getLatLng().lat, this.markers['left'].getLatLng().lng],
-                    [this.markers['bottom'].getLatLng().lat, this.markers['right'].getLatLng().lng]
+                    [this.markers.top.getLatLng().lat, this.markers.left.getLatLng().lng],
+                    [this.markers.bottom.getLatLng().lat, this.markers.right.getLatLng().lng]
                 ]
             );
         },

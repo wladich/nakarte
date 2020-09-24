@@ -20,7 +20,7 @@ class WikimapiaLoader extends TiledDataLoader {
             let res = this._cache.get(key);
             if (res.found) {
                 if (exactMatch || !res.value.hasChildren) {
-                    res['coords'] = dataTileCoords;
+                    res.coords = dataTileCoords;
                     return res;
                 }
                 break;
