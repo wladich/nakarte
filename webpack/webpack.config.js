@@ -2,6 +2,7 @@
 
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
@@ -45,6 +46,7 @@ const babelConfig = {
                 modules: 'commonjs',
             },
         ],
+        '@babel/preset-typescript',
     ],
     overrides: [
         {
@@ -99,6 +101,14 @@ const plugins = [
           ]
         : []),
     new DevToolPlugin(sourceMapOption),
+    new ForkTsCheckerWebpackPlugin({
+        typescript: {
+            diagnosticOptions: {
+                semantic: true,
+                syntactic: true,
+            },
+        },
+    }),
 ];
 
 const productionCSSLoader = [
@@ -148,7 +158,7 @@ const loaders = [
     ...(isProduction || isDevelopment
         ? [
               {
-                  test: /\.js$/u,
+                  test: /\.(js|ts)$/u,
                   include: paths.appSrc,
                   enforce: 'pre',
                   loader: 'eslint-loader',
@@ -160,7 +170,7 @@ const loaders = [
         : []),
 
     {
-        test: /\.js$/u,
+        test: /\.(js|ts)$/u,
         exclude: isProduction ? [/node_modules\/core-js/u, /node_modules\/webpack/u] : /node_modules/u,
         loaders: [
             {
@@ -208,6 +218,7 @@ module.exports = {
         alias: {
             '~': paths.appSrc,
         },
+        extensions: ['.ts', '.js'],
     },
 
     output: isProduction ? productionOutput : {},

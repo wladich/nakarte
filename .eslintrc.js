@@ -16,23 +16,36 @@ module.exports = {
             excludedFiles: [...legacyFiles, vendoredFiles, protobufFiles],
             extends: ['./eslint_rules/prettier.js'],
         },
+        /* typescript code */
+        {
+            files: './**/*.ts',
+            extends: ['./eslint_rules/prettier.js', './eslint_rules/typescript.js', 'prettier/@typescript-eslint'],
+            rules: {
+                // re-enable rules softly disabled by prettier/@typescript-eslint
+                '@typescript-eslint/quotes': ['error', 'single', {allowTemplateLiterals: false}],
+            },
+        },
         /* web application */
         {
-            files: './src/**/*.js',
-            extends: ['./eslint_rules/relax_webapp_js.js', './eslint_rules/imports_webapp.js'],
+            files: ['./src/**/*.js', './src/**/*.ts'],
+            extends: ['./eslint_rules/imports_webapp.js'],
             env: {
                 browser: true,
                 es2020: true,
-                commonjs: true,
-            },
-            parser: 'babel-eslint',
-            parserOptions: {
-                sourceType: 'module',
             },
             globals: {
                 NODE_ENV: true,
                 RELEASE_VER: true,
             },
+            overrides: [
+                {
+                    files: './src/**/*.js',
+                    parser: 'babel-eslint',
+                    parserOptions: {
+                        sourceType: 'module',
+                    },
+                },
+            ],
         },
         /* web application legacy code*/
         {
@@ -48,6 +61,9 @@ module.exports = {
         {
             files: protobufFiles,
             extends: ['./eslint_rules/relax_protobuf.js', './eslint_rules/imports_relax_protobuf.js'],
+            env: {
+                commonjs: true,
+            },
         },
         /* tests code */
         {

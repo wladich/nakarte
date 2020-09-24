@@ -10,12 +10,14 @@ function getCoverageLayer(options) {
 }
 
 function getMapillary() {
+    /* eslint-disable no-undef */
     return new Promise((resolve) => {
         require.ensure(['mapillary-js/dist/mapillary.min.js', 'mapillary-js/dist/mapillary.min.css'], () => {
             require('mapillary-js/dist/mapillary.min.css');
             resolve(require('mapillary-js/dist/mapillary.min.js'));
         }, 'mapillary');
     });
+    /* eslint-enable no-undef */
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {

@@ -1,5 +1,7 @@
 'use strict';
 
+const allExtensions = ['.ts', '.tsx', '.d.ts', '.js', '.jsx'];
+
 module.exports = {
     plugins: ['import'],
     rules: {
@@ -38,7 +40,7 @@ module.exports = {
         'import/exports-last': 'error',
         'import/no-duplicates': 'error',
         // 'import/no-namespace': 'error', // checked, declined
-        'import/extensions': ['error', 'always', {js: 'never'}],
+        'import/extensions': ['error', 'always', {js: 'never', ts: 'never'}],
         'import/order': [
             'error',
             {
@@ -60,13 +62,17 @@ module.exports = {
         // 'import/dynamic-import-chunkname': 'error', // checked, no idea why to use
     },
     settings: {
+        'import/extensions': allExtensions,
+        'import/external-module-folders': ['node_modules', 'node_modules/@types'],
+        'import/parsers': {
+            '@typescript-eslint/parser': ['.ts', '.tsx', '.d.ts'],
+        },
         'import/resolver': {
-            node: {}, // workaround for https://github.com/benmosher/eslint-plugin-import/issues/1861
-            webpack: {
-                config: './webpack/webpack.config.js',
-                env: {
-                    NODE_ENV: 'production',
-                },
+            node: {
+                extensions: allExtensions,
+            },
+            typescript: {
+                alwaysTryTypes: true,
             },
         },
     },

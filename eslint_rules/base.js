@@ -133,6 +133,7 @@ module.exports = {
         'no-lone-blocks': 'error',
         // 'no-lonely-if': 'error', // checked, declined
         'no-loop-func': 'error',
+        'no-loss-of-precision': 'error',
         // 'no-magic-numbers': 'error', // checked, declined
         // 'no-misleading-character-class': 'error', // in eslint-recommended
         // 'no-mixed-operators': 'error', // checked, declined
