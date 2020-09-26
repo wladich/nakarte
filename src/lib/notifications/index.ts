@@ -1,15 +1,15 @@
 import alertify from 'alertify.js';
 import './style.css';
 
-function notify(message, onOk) {
+function notify(message: string, onOk?: () => void): void {
     alertify.alert(message, onOk);
 }
 
-function query(message, value) {
-    function removeFocusFromInput() {
+function query(message: string, value?: string): string | null {
+    function removeFocusFromInput(): void {
         const activeElement = document.activeElement;
         if (activeElement?.tagName === 'INPUT') {
-            activeElement.blur();
+            (activeElement as HTMLElement).blur();
         }
     }
 
