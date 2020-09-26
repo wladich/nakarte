@@ -1,53 +1,58 @@
 import * as Sentry from '@sentry/browser';
+import type * as SentryTypes from '@sentry/types';
 
-function randId() {
+function randId(): string {
     return Math.random().toString(36).substring(2, 13);
 }
 
 const sessionId = randId();
 
-function captureMessage(msg, extra = {}) {
+function captureMessage(msg: string, extra: SentryTypes.Extras = {}): void {
     extra.url = window.location.toString();
     console.log('captureMessage', msg, extra); // eslint-disable-line no-console
-    Sentry.withScope(function(scope) {
+    Sentry.withScope(function (scope) {
         scope.setExtras(extra);
         Sentry.captureMessage(msg);
     });
 }
 
-function captureException(e, description) {
+function captureException(e: Error, description?: string): void {
     console.log('captureException', e, description); // eslint-disable-line no-console
-    Sentry.withScope(function(scope) {
-        if (description) {
+    Sentry.withScope(function (scope) {
+        if (typeof description !== 'undefined') {
             scope.setTag('description', description);
         }
         scope.setExtra('url', window.location.toString());
         Sentry.captureException(e);
     });
 }
-function captureBreadcrumb(message, data = {}) {
+
+function captureBreadcrumb(message: string, data: {[key: string]: unknown} = {}): void {
     data.url = window.location.toString();
     Sentry.addBreadcrumb({
-        message, data
+        message,
+        data,
     });
 }
 
-function logEvent(eventName, extra) {
+function logEvent(eventName: string, extra?: {[key: string]: unknown}): void {
     const url = 'https://nakarte.me/event';
 
-    const data = {event: eventName.toString()};
-    data.data = {
-        ...extra,
-        beacon: true,
-        session: sessionId,
-        address: window.location.toString()
+    const payload = {
+        event: eventName.toString(),
+        data: {
+            ...extra,
+            beacon: true,
+            session: sessionId,
+            address: window.location.toString(),
+        },
     };
-    let s = JSON.stringify(data);
+    let s = JSON.stringify(payload);
     try {
         navigator.sendBeacon(url, s);
-    } catch (e) {
-        data.data.beacon = false;
-        s = JSON.stringify(data);
+    } catch (e: unknown) {
+        payload.data.beacon = false;
+        s = JSON.stringify(payload);
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'https://nakarte.me/event');
         xhr.send(s);
