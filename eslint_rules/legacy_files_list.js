@@ -17,7 +17,6 @@ module.exports = [
     'src/lib/leaflet.control.layers.adaptive-height/index.js',
     // 'src/lib/leaflet.control.external-maps/index.js',
     'src/lib/leaflet.placemark/index.js',
-    'src/lib/leaflet.layer.geojson-ajax/index.js',
     'src/lib/leaflet.layer.geocaching-su/index.js',
     'src/lib/file-read/index.js',
     'src/lib/CORSProxy/index.js',

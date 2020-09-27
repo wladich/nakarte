@@ -19,7 +19,6 @@ const filesMissingExport = [
     'src/lib/leaflet.hashState/Leaflet.Map.js',
     'src/lib/leaflet.hashState/leaflet.hashState.js',
     'src/lib/leaflet.layer.canvasMarkers/index.js',
-    'src/lib/leaflet.layer.geojson-ajax/index.js',
     'src/lib/leaflet.layer.google/index.js',
     'src/lib/leaflet.layer.rasterize/Bing.js',
     'src/lib/leaflet.layer.rasterize/CanvasMarkers.js',
