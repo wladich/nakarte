@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import './westraPasses.css';
-import '~/lib/leaflet.layer.geojson-ajax';
+import {GeoJSONAjax} from "~/lib/leaflet.layer.geojson-ajax";
+
 import {WestraPassesMarkers} from './westraPassesMarkers';
 
 L.Layer.WestraPasses = L.Layer.extend({
@@ -18,15 +19,15 @@ L.Layer.WestraPasses = L.Layer.extend({
         initialize: function(baseUrl, options) {
             L.setOptions(this, options);
             this.markers = new WestraPassesMarkers(baseUrl, options.markersOptions);
-            this.coverage = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileCoverage, {
+            this.coverage = new GeoJSONAjax(baseUrl + this.options.fileCoverage, {
                 className: 'westra-coverage-polygon',
                 onEachFeature: this._setEventsForRegion.bind(this)
             });
-            this.labels1 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileLabels1, {
+            this.labels1 = new GeoJSONAjax(baseUrl + this.options.fileLabels1, {
                 pointToLayer: this._makeMarker,
                 onEachFeature: this._setEventsForRegion.bind(this)
             });
-            this.labels2 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileLabels2, {
+            this.labels2 = new GeoJSONAjax(baseUrl + this.options.fileLabels2, {
                 pointToLayer: this._makeMarker,
                 onEachFeature: this._setEventsForRegion.bind(this)
             });

@@ -4,7 +4,7 @@ import {openPopupWindow} from '~/lib/popup-window';
 import escapeHtml from 'escape-html';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
-import {fetch} from '~/lib/xhr-promise';
+import {HttpRequest} from '~/lib/xhr-promise';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
 
@@ -26,13 +26,24 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 return;
             }
             this._downloadStarted = true;
-            fetch(this.url)
+            new HttpRequest({url: this.url, responseType: 'json'})
                 .then(
-                    (xhr) => this._loadMarkers(xhr),
-                    (e) => {
-                        this._downloadStarted = false;
-                        logging.captureException(e, 'failed to get westra passes');
-                        notify('Failed to get Westra passes data');
+                    (response) => {
+                        if (response.isOk()) {
+                            if (response.responseJSON) {
+                                this._loadMarkers(response.responseJSON);
+                            } else {
+                                logging.captureMessage('Invalid JSON for Westra passes');
+                                notify('Error loading Westra passes: invalid data');
+                            }
+                        } else {
+                            this._downloadStarted = false;
+                            logging.captureMessage('Error loading Westra passes', {url: this.url, response});
+                            notify('Error loading Westra passes data: ' + response.formatStatus());
+                        }
+                    },
+                    (_unused) => {
+                        throw new Error('Unexpected promise rejection in WestraPassesMarkers.loadData');
                     }
                 );
         },
@@ -111,9 +122,8 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             return iconFromBackgroundImage(className);
         },
 
-        _loadMarkers: function(xhr) {
+        _loadMarkers: function(features) {
             var markers = [],
-                features = JSON.parse(xhr.response),
                 feature, i, marker;
             for (i = 0; i < features.length; i++) {
                 feature = features[i];
