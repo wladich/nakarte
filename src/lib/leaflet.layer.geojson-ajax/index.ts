@@ -1,40 +1,61 @@
-import L from 'leaflet';
-import {fetch} from '~/lib/xhr-promise';
-import {notify} from '~/lib/notifications';
+import type * as geojson from 'geojson';
+import * as L from 'leaflet';
+
 import * as logging from '~/lib/logging';
+import {notify} from '~/lib/notifications';
+import {HttpRequest} from '~/lib/xhr-promise';
 
-L.Layer.GeoJSONAjax = L.GeoJSON.extend({
-        options: {
-            requestTimeout: 30000
-        },
+type GeoJSONAjaxOptions = L.GeoJSONOptions & {
+    requestTimeout?: number;
+};
 
-        initialize: function(url, options) {
-            L.GeoJSON.prototype.initialize.call(this, null, options);
-            this.url = url;
-        },
+class GeoJSONAjax extends L.GeoJSON {
+    public options: GeoJSONAjaxOptions = {
+        requestTimeout: 30000,
+    };
 
-        // Promise can be rejected if json invalid or addData fails
-        loadData: function() {
-            if (this._loadStarted) {
-                return;
-            }
-            this._loadStarted = true;
-            fetch(this.url, {timeout: this.options.requestTimeout})
-                .then(
-                    (xhr) => {
-                        this.addData(JSON.parse(xhr.response));
-                    },
-                    (e) => {
-                        logging.captureException(e, 'failed to get geojson');
-                        notify(`Failed to get GeoJSON data from ${this.url}: ${e.message}`);
-                    }
-                );
-        },
+    public readonly url: string;
 
-        onAdd: function(map) {
-            L.GeoJSON.prototype.onAdd.call(this, map);
-            this.loadData();
-        }
+    private _loadStarted = false;
+
+    constructor(url: string, options: GeoJSONAjaxOptions) {
+        super(undefined, options);
+        L.Util.setOptions(this, options);
+        this.url = url;
     }
-);
 
+    public loadData(): void {
+        if (this._loadStarted) {
+            return;
+        }
+        this._loadStarted = true;
+        new HttpRequest({url: this.url, timeout: this.options.requestTimeout, responseType: 'json'}).then(
+            (response) => {
+                if (response.isOk()) {
+                    try {
+                        this.addData(response.responseJSON as geojson.GeoJsonObject);
+                    } catch (e: unknown) {
+                        // we catch two cases: 1) when received response is not JSON and response.responseJSON is null
+                        // and 2) when object is not a valid GeoJSON and addData throws exception
+                        logging.captureMessage('Invalid GeoJSON loaded', {url: this.url, response});
+                        notify('Error loading layer data: JSON data invalid');
+                    }
+                } else {
+                    logging.captureMessage('Error loading GeoJSON', {url: this.url, response});
+                    notify('Error loading layer data: ' + response.formatStatus());
+                }
+            },
+            (_unused: unknown) => {
+                throw new Error('Unexpected promise rejection in GeoJSONAjax.loadData');
+            }
+        );
+    }
+
+    public onAdd(map: L.Map): this {
+        const result = super.onAdd(map);
+        this.loadData();
+        return result;
+    }
+}
+
+export {GeoJSONAjax};
