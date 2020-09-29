@@ -8,7 +8,7 @@ function randId(): string {
 const sessionId = randId();
 
 function captureMessage(msg: string, extra: SentryTypes.Extras = {}): void {
-    extra.url = window.location.toString();
+    extra.documentUrl = window.location.toString();
     console.log('captureMessage', msg, extra); // eslint-disable-line no-console
     Sentry.withScope(function (scope) {
         scope.setExtras(extra);
@@ -22,13 +22,13 @@ function captureException(e: Error, description?: string): void {
         if (typeof description !== 'undefined') {
             scope.setTag('description', description);
         }
-        scope.setExtra('url', window.location.toString());
+        scope.setExtra('documentUrl', window.location.toString());
         Sentry.captureException(e);
     });
 }
 
 function captureBreadcrumb(message: string, data: {[key: string]: unknown} = {}): void {
-    data.url = window.location.toString();
+    data.documentUrl = window.location.toString();
     Sentry.addBreadcrumb({
         message,
         data,
