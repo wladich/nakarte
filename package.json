@@ -72,7 +72,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@sentry/browser": "^5.22.3",
+    "@sentry/browser": "^5.24.2",
     "alertify.js": "^1.0.12",
     "blueimp-md5": "^2.17.0",
     "browser-filesaver": "^1.1.1",
