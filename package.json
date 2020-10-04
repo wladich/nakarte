@@ -33,7 +33,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.1.1",
     "cross-env": "^7.0.2",
-    "css-loader": "^4.2.2",
+    "css-loader": "^4.3.0",
     "cssnano": "^4.1.10",
     "csv-loader": "^3.0.3",
     "eslint": "^7.10.0",
