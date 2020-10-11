@@ -66,16 +66,15 @@ function parseKml(txt, name) {
                 error = 'CORRUPT';
                 break;
             }
-            name = placemarks[i].getElementsByTagName('name');
-            if (name.length !== 1) {
-                error = 'CORRUPT';
-                break;
-            }
-            try {
-                name = utf8_decode(xmlGetNodeText(name[0])).trim();
-            } catch (e) {
-                error = 'CORRUPT';
-                break;
+            name = '';
+            const nameTags = placemarks[i].getElementsByTagName('name');
+            if (nameTags[0]) {
+                try {
+                    name = xmlGetNodeText(nameTags[0]);
+                    name = utf8_decode(name);
+                } catch (e) {
+                    error = 'CORRUPT';
+                }
             }
             points.push({
                     name: name,
