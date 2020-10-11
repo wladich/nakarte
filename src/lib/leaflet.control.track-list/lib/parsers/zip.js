@@ -32,7 +32,7 @@ function parseZip(txt, _unused_name) {
         var file_name = decode866(entry.fileName);
         var geodata = parseGeoFile(file_name, uncompressed);
         for (let item of geodata) {
-            if (item.error === 'UNSUPPORTED' && item.name.match(/\.pdf$|\.doc$|\.txt$\.jpg$/u)) {
+            if (item.error === 'UNSUPPORTED' && item.name.match(/(\.(pdf|doc|txt|jpg))|\/$/ui)) {
                 continue;
             }
             geodata_array.push(item);
