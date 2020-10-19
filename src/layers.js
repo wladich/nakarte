@@ -160,13 +160,15 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     title: 'Topomapper 1km',
                     isDefault: true,
                     layer: L.tileLayer(
-                        'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
+                        urlViaCorsProxy(
+                            'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg'
+                        ),
                         {
                             code: 'T',
                             isOverlay: false,
                             scaleDependent: false,
                             maxNativeZoom: 13,
-                            noCors: true,
+                            noCors: false,
                             print: true,
                             jnx: true,
                             shortName: 'topomapper_1k'
@@ -553,7 +555,8 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                     description:
                         'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     isDefault: true,
-                    layer: L.tileLayer("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png",
+                    layer: L.tileLayer(
+                        urlViaCorsProxy("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png"),
                         // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
                         {
                             code: 'Mt',
@@ -565,7 +568,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            noCors: true,
+                            noCors: false,
                             shortName: 'tsvetkov_mountains'
                         }
                     )
