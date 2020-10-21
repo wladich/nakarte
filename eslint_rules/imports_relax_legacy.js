@@ -28,6 +28,7 @@ const filesMissingExport = [
     'src/lib/leaflet.layer.rasterize/TileLayer.js',
     'src/lib/leaflet.layer.rasterize/WestraPasses.js',
     'src/lib/leaflet.layer.rasterize/Yandex.js',
+    'src/lib/leaflet.layer.rasterize/RetinaTileLayer.js',
     'src/lib/leaflet.layer.soviet-topomaps-grid/index.js',
     'src/lib/leaflet.layer.westraPasses/index.js',
     'src/lib/leaflet.layer.wikimapia/index.js',

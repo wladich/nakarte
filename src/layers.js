@@ -8,6 +8,7 @@ import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
+import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
 import urlViaCorsProxy from '~/lib/CORSProxy';
 
     const layersDefs = [
@@ -616,10 +617,15 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Strava heatmap (all)',
                     isDefault: false,
-                    layer: L.tileLayer(
-                        urlViaCorsProxy(
-                            'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
-                        ),
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sa',
                             isOverlay: true,
@@ -628,19 +634,24 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
                             noCors: true,
                             shortName: 'strava_all',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (run)',
                     isDefault: false,
-                    layer: L.tileLayer(
-                        urlViaCorsProxy(
-                            'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
-                        ),
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sr',
                             isOverlay: true,
@@ -649,19 +660,24 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
                             noCors: true,
                             shortName: 'strava_run',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (ride)',
                     isDefault: false,
-                    layer: L.tileLayer(
-                        urlViaCorsProxy(
-                            'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
-                        ),
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sb',
                             isOverlay: true,
@@ -670,19 +686,24 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
                             noCors: true,
                             shortName: 'strava_ride',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (winter)',
                     isDefault: false,
-                    layer: L.tileLayer(
-                        urlViaCorsProxy(
-                            'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
-                        ),
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sw',
                             isOverlay: true,
@@ -691,9 +712,9 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
                             noCors: true,
                             shortName: 'strava_winter',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                         }
                     )
                 },
@@ -756,7 +777,11 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Czech base',
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}',
+                            'https://m{s}.mapserver.mapy.cz/base-m/retina/{z}-{x}-{y}'
+                        ],
                         {
                             code: 'Czb',
                             isOverlay: false,
@@ -772,7 +797,11 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'mapy.cz tourist',
                     isDefault: true,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}',
+                            'https://m{s}.mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}',
+                        ],
                         {
                             code: 'Czt',
                             isOverlay: false,
@@ -789,7 +818,11 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                 {
                     title: 'Czech winter',
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}',
+                            'https://m{s}.mapserver.mapy.cz/winter-m/retina/{z}-{x}-{y}',
+                        ],
                         {
                             code: 'Czw',
                             isOverlay: false,

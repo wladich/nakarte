@@ -6,6 +6,7 @@ import './Google';
 import './WestraPasses';
 import './CanvasMarkers';
 import './MeasuredLine';
+import './RetinaTileLayer';
 
 function getTempMap(zoom, fullSize, pixelBounds) {
     const container = L.DomUtil.create('div', '', document.body);
