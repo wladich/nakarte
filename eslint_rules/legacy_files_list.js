@@ -127,6 +127,7 @@ module.exports = [
     'src/lib/leaflet.layer.rasterize/MeasuredLine.js',
     'src/lib/leaflet.layer.rasterize/Bing.js',
     'src/lib/leaflet.layer.rasterize/Yandex.js',
+    'src/lib/leaflet.layer.rasterize/RetinaTileLayer.js',
     'src/lib/leaflet.layer.bing/dates.js',
     'src/lib/leaflet.layer.bing/index.js',
     'src/lib/logging/index.js',

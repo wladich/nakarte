@@ -105,6 +105,7 @@ class PageComposer {
         this.projectedBounds = pixelBoundsAtZoom24;
         this.currentCanvas = null;
         this.currentZoom = null;
+        this.currentTileScale = null;
         this.targetCanvas = this.createCanvas(destSize);
     }
 
@@ -125,20 +126,26 @@ class PageComposer {
         } else {
             zoom = tileInfo.zoom;
         }
-        if (zoom !== this.currentZoom) {
+        if (zoom !== this.currentZoom || tileInfo.tileScale !== this.currentTileScale) {
             this.mergeCurrentCanvas();
-            this.setupCurrentCanvas(zoom);
+            this.setupCurrentCanvas(zoom, tileInfo.tileScale);
         }
         if (tileInfo.isOverlay) {
             tileInfo.draw(this.currentCanvas);
         } else {
             const ctx = this.currentCanvas.getContext('2d');
             const {tilePos, tileSize} = tileInfo;
-            ctx.drawImage(tileInfo.image, tilePos.x, tilePos.y, tileSize.x, tileSize.y);
+            ctx.drawImage(
+                tileInfo.image,
+                tilePos.x * tileInfo.tileScale,
+                tilePos.y * tileInfo.tileScale,
+                tileSize.x * tileInfo.tileScale,
+                tileSize.y * tileInfo.tileScale
+            );
         }
     }
 
-    setupCurrentCanvas(zoom) {
+    setupCurrentCanvas(zoom, tileScale) {
         let size;
         if (zoom === 'overlay' || zoom === 'solidOverlay') {
             size = this.destSize;
@@ -147,10 +154,11 @@ class PageComposer {
             const
                 topLeft = this.projectedBounds.min.divideBy(q).round(),
                 bottomRight = this.projectedBounds.max.divideBy(q).round();
-            size = bottomRight.subtract(topLeft);
+            size = bottomRight.subtract(topLeft).multiplyBy(tileScale);
         }
         this.currentCanvas = this.createCanvas(size);
         this.currentZoom = zoom;
+        this.currentTileScale = tileScale;
     }
 
     mergeCurrentCanvas() {
@@ -211,7 +219,7 @@ async function* iterateLayersTiles(
             map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
             map.addLayer(layer);
         }
-        let {iterateTilePromises, count} = await layer.getTilesInfo({
+        let {iterateTilePromises, count, tileScale = 1} = await layer.getTilesInfo({
                 xhrOptions: defaultXHROptions,
                 pixelBounds,
                 latLngBounds,
@@ -227,8 +235,13 @@ async function* iterateLayersTiles(
         for (let tilePromise of iterateTilePromises()) {
             layerPromises.push(tilePromise.tilePromise);
             let progressInc = (layer._printProgressWeight || 1) / count;
-            tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => ({zoom, progressInc, layer, ...tileInfo}));
+            tilePromise.tilePromise = tilePromise.tilePromise.then((tileInfo) => ({
+                zoom,
+                progressInc,
+                layer,
+                tileScale,
+                ...tileInfo,
+            }));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
