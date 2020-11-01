@@ -65,7 +65,7 @@
     "stylelint": "^13.7.2",
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-webpack-plugin": "^2.1.0",
-    "terser-webpack-plugin": "^4.2.2",
+    "terser-webpack-plugin": "^4.2.3",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
