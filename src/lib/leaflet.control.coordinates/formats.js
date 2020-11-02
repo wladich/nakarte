@@ -1,13 +1,28 @@
+function truncToFixed(x, precision) {
+    let s = x.toString();
+    let point = s.indexOf('.');
+    if (point === -1) {
+        point = s.length;
+        s += '.';
+    }
+    let sliceEnd = point + precision;
+    if (precision > 0) {
+        s = s.padEnd(point + precision + 1, '0');
+        sliceEnd += 1;
+    }
+    s = s.slice(0, sliceEnd);
+    return s;
+}
+
 function formatNumber(value, size, precision = 0) {
     if (value < 0) {
-      return value.toFixed(precision);
+      throw new Error('Negative values not supported');
     }
 
     if (precision > 0) {
         size += 1;
     }
-
-    return value.toFixed(precision).padStart(size + precision, '0');
+    return truncToFixed(value, precision).padStart(size + precision, '0');
 }
 
 function coordinatePresentations(coordinate, isLat) {
@@ -25,7 +40,7 @@ function coordinatePresentations(coordinate, isLat) {
     }
 
     return {
-        signedDegrees: formatNumber(coordinate, 0, 5),
+        signedDegrees: coordinate.toFixed(5),
         degrees: formatNumber(degrees, 0, 5),
         intDegrees: formatNumber(intDegrees, 0),
         minutes: formatNumber(minutes, 2, 3),
