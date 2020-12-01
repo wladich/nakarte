@@ -45,7 +45,7 @@
     "file-loader": "^6.2.0",
     "filesize": "^6.1.0",
     "fs-extra": "^9.0.1",
-    "gzip-size": "^5.1.1",
+    "gzip-size": "^6.0.0",
     "html-webpack-plugin": "^4.5.0",
     "karma": "^5.2.3",
     "karma-chai": "^0.1.0",
