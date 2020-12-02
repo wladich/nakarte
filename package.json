@@ -62,7 +62,7 @@
     "raw-loader": "^4.0.2",
     "recursive-readdir": "^2.2.2",
     "style-loader": "^2.0.0",
-    "stylelint": "^13.7.2",
+    "stylelint": "^13.8.0",
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-webpack-plugin": "^2.1.1",
     "terser-webpack-plugin": "^4.2.3",
