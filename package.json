@@ -25,7 +25,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@babel/preset-env": "^7.12.7",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^8.2.2",
     "babel-plugin-rewire": "^1.2.0",
     "chai": "^4.2.0",
     "chalk": "^4.1.0",
