@@ -79,4 +79,26 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
 
 // CanvasLayerGrabMixin has been deleted
 
-L.TileLayer.include(TileLayerGrabMixin);
+const TileLayerWithCutlineGrabMixin = L.Util.extend({}, TileLayerGrabMixin, {
+    waitTilesReadyToGrab: function() {
+        return TileLayerGrabMixin.waitTilesReadyToGrab.call(this).then(() => this._cutlinePromise);
+    },
+
+    tileImagePromiseFromCoords: function(coords, printOptions) {
+        const result = TileLayerGrabMixin.tileImagePromiseFromCoords.call(this, coords, printOptions);
+        if (!printOptions.rawData && this._cutlinePromise && this.isCutlineIntersectingTile(coords, true)) {
+            result.tilePromise = result.tilePromise.then((img) => {
+                if (!img) {
+                    return img;
+                }
+                const clipped = document.createElement('canvas');
+                return new Promise((resolve) => {
+                    this._drawTileClippedByCutline(coords, img, clipped, () => resolve(clipped));
+                });
+            });
+        }
+        return result;
+    }
+});
+
+L.TileLayer.include(TileLayerWithCutlineGrabMixin);
