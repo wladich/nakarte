@@ -10,6 +10,8 @@ import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
 import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
 import urlViaCorsProxy from '~/lib/CORSProxy';
+import '~/lib/leaflet.layer.TileLayer.cutline';
+import {getCutline} from '~/lib/layers-cutlines';
 
     const layersDefs = [
                 {
@@ -947,9 +949,10 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
                             isOverlayTransparent: false,
                             maxNativeZoom: 15,
                             minZoom: 10,
-                            bounds: [[47.51737, 16.74334], [49.66632, 22.74788]],
+                            bounds: [[47.5172, 16.74316], [49.91343, 22.74837]],
                             noCors: true,
-                        })
+                            cutline: getCutline('slovakia'),
+                        }),
                 },
                 {
                     title: 'Yandex tracks (zoom ≥ 10)',
