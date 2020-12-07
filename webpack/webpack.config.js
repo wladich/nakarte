@@ -43,6 +43,7 @@ const babelConfig = {
                 useBuiltIns: 'usage',
                 corejs: '3.0.0',
                 modules: 'commonjs',
+                exclude: ['proposal-dynamic-import'],
             },
         ],
     ],
