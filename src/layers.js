@@ -889,16 +889,18 @@ import {getCutline} from '~/lib/layers-cutlines';
                             type: 'OrdnanceSurvey',
                             minZoom: 12,
                             maxNativeZoom: 16,
-                            bounds: [[49.85171, -7.74708], [60.86949, 1.80382]],
+                            bounds: [[49.83793, -7.75643], [60.87164, 1.82356]],
                             code: 'Gbt',
                             isOverlay: true,
                             isOverlayTransparent: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'england_topo'
+                            shortName: 'england_topo',
+                            cutline: getCutline('great_britain'),
                         }
-                    )
+                    ),
+
                 },
                 {
                     title: 'Waymarked Cycling Trails',
