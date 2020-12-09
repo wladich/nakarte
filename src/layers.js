@@ -848,13 +848,17 @@ import {getCutline} from '~/lib/layers-cutlines';
                         "&TileMatrix={z}&TileCol={x}&TileRow={y}",
                         {
                             code: 'Fmk',
-                            isOverlay: false,
+                            isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: false,
                             print: true,
                             jnx: true,
                             scaleDependent: true,
                             noCors: true,
-                            shortName: 'finland_topo'
+                            shortName: 'finland_topo',
+                            bound: [[59.45416, 19.08321], [70.09211, 31.58671]],
+                            cutline: getCutline('finland'),
+                            cutlineApprox: true,
                         }
                     )
                 },
@@ -1093,7 +1097,6 @@ import {getCutline} from '~/lib/layers-cutlines';
         // local base layers
         'Czech base',
         'Czech winter',
-        'Finland Topo',
 
         // map overlays
         '#custom-bottom',
@@ -1104,6 +1107,7 @@ import {getCutline} from '~/lib/layers-cutlines';
         'ArbaletMO',
         'Norway paper map',
         'Norway topo',
+        'Finland Topo',
         'Slovakia topo (zoom ≥ 10)',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
