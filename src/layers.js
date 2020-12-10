@@ -873,7 +873,7 @@ import {getCutline} from '~/lib/layers-cutlines';
                         {
                             minZoom: 6,
                             maxNativeZoom: 16,
-                            bounds: [[41.29019, -4.94385], [51.23441, 9.82178]],
+                            bounds: [[-46.44072, -178.18694], [51.12562, 77.61086]],
                             code: 'Ft',
                             isOverlay: true,
                             isOverlayTransparent: false,
@@ -881,7 +881,8 @@ import {getCutline} from '~/lib/layers-cutlines';
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            shortName: 'france_topo_25k'
+                            shortName: 'france_topo_25k',
+                            cutline: getCutline('france'),
                         }
                     )
                 },
