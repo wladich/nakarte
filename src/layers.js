@@ -981,6 +981,29 @@ import {getCutline} from '~/lib/layers-cutlines';
                         }
                     )
                 },
+                {
+                    title: 'Spain topo',
+                    isDefault: false,
+                    layer: L.tileLayer(
+                            'http://www.ign.es/wmts/mapa-raster?layer=MTN&style=default&' +
+                            'tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&' +
+                            'Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
+                            {
+                                code: 'Sp',
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: false,
+                                shortName: 'spain_topo',
+                                isOverlayTransparent: false,
+                                bounds: [[35.9024, -9.51828], [43.8375, 4.50439]],
+                                noCors: false,
+                                cutline: getCutline('spain'),
+                            }
+                    )
+                },
+
     ];
 
     const groupsDefs = [
@@ -1035,6 +1058,7 @@ import {getCutline} from '~/lib/layers-cutlines';
                 'France Topo 250m (zoom ≥ 6)',
                 'Great Britain Topo (zoom ≥ 12)',
                 'Slovakia topo (zoom ≥ 10)',
+                'Spain topo',
             ],
         },
         {
@@ -1114,6 +1138,7 @@ import {getCutline} from '~/lib/layers-cutlines';
         'Norway topo',
         'Finland Topo',
         'Slovakia topo (zoom ≥ 10)',
+        'Spain topo',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
