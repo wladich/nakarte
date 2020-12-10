@@ -735,7 +735,8 @@ import {getCutline} from '~/lib/layers-cutlines';
                             jnx: true,
                             scaleDependent: true,
                             noCors: false,
-                            shortName: 'norway_paper'
+                            shortName: 'norway_paper',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
                         }
                     )
                 },
@@ -753,7 +754,8 @@ import {getCutline} from '~/lib/layers-cutlines';
                             jnx: true,
                             scaleDependent: true,
                             noCors: false,
-                            shortName: 'norway_topo'
+                            shortName: 'norway_topo',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
                         }
                     )
                 },
@@ -765,14 +767,16 @@ import {getCutline} from '~/lib/layers-cutlines';
                     layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {
                             code: 'Nr',
-                            isOverlay: false,
+                            isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: false,
                             print: true,
                             jnx: true,
-                            minZoom: 2,
                             scaleDependent: true,
                             noCors: false,
-                            shortName: 'norway_roads'
+                            shortName: 'norway_roads',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            cutline: getCutline('norway'),
                         }
                     )
                 },
@@ -1101,11 +1105,11 @@ import {getCutline} from '~/lib/layers-cutlines';
 
         // map overlays
         '#custom-bottom',
-        'Norway roads',
         'Eurasia 25km',
         'Topo 10km',
         'GGC 2 km',
         'ArbaletMO',
+        'Norway roads',
         'Norway paper map',
         'Norway topo',
         'Finland Topo',
