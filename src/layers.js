@@ -566,23 +566,39 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     description:
                         'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     isDefault: true,
-                    layer: L.tileLayer(
-                        urlViaCorsProxy("http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png"),
-                        // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
+                    layer: new LayerGroupWithOptions(
+                        [
+                            L.tileLayer(
+                                urlViaCorsProxy(
+                                    'http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png'
+                                ),
+                                {
+                                    isOverlay: true,
+                                    isOverlayTransparent: false,
+                                    tms: false,
+                                    minZoom: 2,
+                                    maxNativeZoom: 15,
+                                    print: true,
+                                    jnx: true,
+                                    scaleDependent: false,
+                                    noCors: false,
+                                    shortName: 'tsvetkov_mountains',
+                                    cutline: getCutline('tsvetkov_mountains'),
+                                    bounds: [
+                                        [40.66664, 71.00007],
+                                        [45.33338, 81.00001],
+                                    ],
+                                }
+                            ),
+                            new LayerCutlineOverview(getCutline('tsvetkov_mountains'), 6,
+                                'Mountains by Aleksey Tsvetkov'),
+                        ],
                         {
                             code: 'Mt',
                             isOverlay: true,
-                            isOverlayTransparent: false,
-                            tms: false,
-                            minZoom: 2,
-                            maxNativeZoom: 15,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: false,
-                            noCors: false,
-                            shortName: 'tsvetkov_mountains'
+                            isWrapper: true,
                         }
-                    )
+                    ),
                 },
                 {
                     title: 'Bing imagery acquisition dates',
