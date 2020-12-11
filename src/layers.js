@@ -12,6 +12,14 @@ import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
 import urlViaCorsProxy from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
 import {getCutline} from '~/lib/layers-cutlines';
+import {LayerCutlineOverview} from '~/lib/leaflet.layer.LayerCutlineOverview';
+
+class LayerGroupWithOptions extends L.LayerGroup {
+    constructor(layers, options) {
+        super(layers);
+        L.setOptions(this, options);
+    }
+}
 
     const layersDefs = [
                 {
@@ -867,49 +875,65 @@ import {getCutline} from '~/lib/layers-cutlines';
                     )
                 },
                 {
-                    title: 'France Topo 250m (zoom ≥ 6)',
+                    title: 'France Topo 250m',
                     isDefault: false,
-                    layer: L.tileLayer(
-                        "https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?" +
-                        "layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&" +
-                        "Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&" +
-                        "TileMatrix={z}&TileCol={x}&TileRow={y}",
-                        {
-                            minZoom: 6,
-                            maxNativeZoom: 16,
-                            bounds: [[-46.44072, -178.18694], [51.12562, 77.61086]],
-                            code: 'Ft',
-                            isOverlay: true,
-                            isOverlayTransparent: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: false,
-                            shortName: 'france_topo_25k',
-                            cutline: getCutline('france'),
-                        }
-                    )
+                    layer: new LayerGroupWithOptions(
+                        [
+                            L.tileLayer(
+                                'https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?' +
+                                'layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&' +
+                                'Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&' +
+                                'TileMatrix={z}&TileCol={x}&TileRow={y}',
+                                {
+                                    minZoom: 6,
+                                    maxNativeZoom: 16,
+                                    bounds: [
+                                        [-46.44072, -178.18694],
+                                        [51.12562, 77.61086],
+                                    ],
+                                    isOverlay: true,
+                                    isOverlayTransparent: false,
+                                    tms: false,
+                                    print: true,
+                                    jnx: true,
+                                    scaleDependent: false,
+                                    shortName: 'france_topo_25k',
+                                    cutline: getCutline('france'),
+                                }
+                            ),
+                            new LayerCutlineOverview(getCutline('france'), 5, 'France Topo 250m (zoom ≥ 6)'),
+                        ],
+                        {code: 'Ft', isOverlay: true}
+                    ),
                 },
                 {
-                    title: 'Great Britain Topo (zoom ≥ 12)',
+                    title: 'Great Britain Topo',
                     isDefault: false,
-                    layer: new BingLayer(config.bingKey,
+                    layer: new LayerGroupWithOptions(
+                        [
+                            new BingLayer(config.bingKey, {
+                                type: 'OrdnanceSurvey',
+                                minZoom: 12,
+                                maxNativeZoom: 16,
+                                bounds: [
+                                    [49.83793, -7.75643],
+                                    [60.87164, 1.82356],
+                                ],
+                                isOverlay: true,
+                                isOverlayTransparent: false,
+                                scaleDependent: false,
+                                print: true,
+                                jnx: true,
+                                shortName: 'england_topo',
+                                cutline: getCutline('great_britain'),
+                            }),
+                            new LayerCutlineOverview(getCutline('great_britain'), 11, 'Great Britain Topo (zoom ≥ 12)'),
+                        ],
                         {
-                            type: 'OrdnanceSurvey',
-                            minZoom: 12,
-                            maxNativeZoom: 16,
-                            bounds: [[49.83793, -7.75643], [60.87164, 1.82356]],
                             code: 'Gbt',
                             isOverlay: true,
-                            isOverlayTransparent: false,
-                            scaleDependent: false,
-                            print: true,
-                            jnx: true,
-                            shortName: 'england_topo',
-                            cutline: getCutline('great_britain'),
                         }
                     ),
-
                 },
                 {
                     title: 'Waymarked Cycling Trails',
@@ -945,25 +969,35 @@ import {getCutline} from '~/lib/layers-cutlines';
                         })
                 },
                 {
-                    title: 'Slovakia topo (zoom ≥ 10)',
+                    title: 'Slovakia topo',
                     description: '<a href="https://mapy.hiking.sk">https://mapy.hiking.sk/</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://static.mapy.hiking.sk/topo/{z}/{x}/{y}.png',
+                    layer: new LayerGroupWithOptions(
+                        [
+                            L.tileLayer('https://static.mapy.hiking.sk/topo/{z}/{x}/{y}.png', {
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: false,
+                                shortName: 'slovakia_topo',
+                                isOverlayTransparent: false,
+                                maxNativeZoom: 15,
+                                minZoom: 10,
+                                bounds: [
+                                    [47.5172, 16.74316],
+                                    [49.91343, 22.74837],
+                                ],
+                                noCors: true,
+                                cutline: getCutline('slovakia'),
+                            }),
+                            new LayerCutlineOverview(getCutline('slovakia'), 9, 'Slovakia topo (zoom ≥ 10)'),
+                        ],
                         {
                             code: 'St',
                             isOverlay: true,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: false,
-                            shortName: 'slovakia_topo',
-                            isOverlayTransparent: false,
-                            maxNativeZoom: 15,
-                            minZoom: 10,
-                            bounds: [[47.5172, 16.74316], [49.91343, 22.74837]],
-                            noCors: true,
-                            cutline: getCutline('slovakia'),
-                        }),
+                        }
+                    ),
                 },
                 {
                     title: 'Yandex tracks (zoom ≥ 10)',
@@ -1055,9 +1089,9 @@ import {getCutline} from '~/lib/layers-cutlines';
                 'Topo 250m',
                 'Montenegro topo 250m',
                 'Finland Topo',
-                'France Topo 250m (zoom ≥ 6)',
-                'Great Britain Topo (zoom ≥ 12)',
-                'Slovakia topo (zoom ≥ 10)',
+                'France Topo 250m',
+                'Great Britain Topo',
+                'Slovakia topo',
                 'Spain topo',
             ],
         },
@@ -1137,21 +1171,21 @@ import {getCutline} from '~/lib/layers-cutlines';
         'Norway paper map',
         'Norway topo',
         'Finland Topo',
-        'Slovakia topo (zoom ≥ 10)',
+        'Slovakia topo',
         'Spain topo',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
         'Topo 1km',
         'Caucasus 1km',
-        'Great Britain Topo (zoom ≥ 12)',
+        'Great Britain Topo',
         'GGC 500m',
         'Topo 500m',
         'Caucasus 500m',
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
-        'France Topo 250m (zoom ≥ 6)',
+        'France Topo 250m',
         'Slazav map',
         'Races',
         'O-sport',
