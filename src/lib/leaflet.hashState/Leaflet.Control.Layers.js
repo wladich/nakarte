@@ -39,10 +39,13 @@ L.Control.Layers.include({
             }
 
             for (let layer of this._layers) {
+                if (layer.layer.options && !values.includes(layer.layer.options.code)) {
+                    this._map.removeLayer(layer.layer);
+                }
+            }
+            for (let layer of this._layers) {
                 if (layer.layer.options && values.includes(layer.layer.options.code)) {
                     this._map.addLayer(layer.layer);
-                } else {
-                    this._map.removeLayer(layer.layer);
                 }
             }
             return true;
