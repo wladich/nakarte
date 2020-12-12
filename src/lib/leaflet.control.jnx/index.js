@@ -58,7 +58,10 @@ L.Control.JNX = L.Control.extend({
                 return [{text: 'No supported layers'}];
             }
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
-            const minLevel = Math.max(0, maxLevel - 6);
+            let minLevel = Math.max(0, maxLevel - 6);
+            if (layer.options.minZoom) {
+                minLevel = Math.max(minLevel, layer.options.minZoom);
+            }
 
             const equatorLength = 40075016;
             const lat = this._selector.getBounds().getCenter().lat;
