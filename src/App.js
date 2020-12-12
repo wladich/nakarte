@@ -123,10 +123,24 @@ function setUp() {
 
     /* controls bottom-left corner */
 
-    L.control.attribution({
+    const attribution = L.control.attribution({
         position: 'bottomleft',
         prefix: false,
-    }).addTo(map);
+    });
+    map.on('resize', function() {
+        if (map.getSize().y > 567) {
+            map.addControl(attribution);
+            // Hack to keep control at the bottom of the map
+            const container = attribution._container;
+            const parent = container.parentElement;
+            parent.appendChild(container);
+        } else {
+            map.removeControl(attribution);
+        }
+    });
+    if (map.getSize().y > 567) {
+        map.addControl(attribution);
+    }
 
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
