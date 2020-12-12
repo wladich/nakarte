@@ -22,17 +22,23 @@ L.Control.JNX = L.Control.extend({
         },
 
         getLayerForJnx: function() {
-            let selectedLayer = {};
-            for (let layerRec of this._layersControl._layers) {
+            for (let layerRec of this._layersControl._layers.slice().reverse()) {
                 let layer = layerRec.layer;
-                if (this._map.hasLayer(layer) && layer.options && layer.options.jnx) {
-                    selectedLayer = {
-                        layer,
-                        layerName: layerRec.name
-                    };
+                if (!this._map.hasLayer(layer) || !layer.options) {
+                    continue;
+                }
+                if (layer.options.isWrapper) {
+                    const layerName = layerRec.name;
+                    for (const subLayer of layer.getLayers().slice().reverse()) {
+                        if (subLayer.options?.jnx) {
+                            return {layer: subLayer, layerName};
+                        }
+                    }
+                } else if (layer.options.jnx) {
+                    return {layer, layerName: layerRec.name};
                 }
             }
-            return selectedLayer;
+            return {};
         },
 
         estimateTilesCount: function(maxZoom) {
