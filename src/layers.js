@@ -33,7 +33,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'osm'
+                            shortName: 'osm',
+                            attribution: '<a href="https://www.openstreetmap.org/copyright">' +
+                                '&copy; OpenStreetMap contributors</a>',
                         }
                     )
                 },
@@ -49,7 +51,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 18,
                             print: true,
                             jnx: true,
-                            shortName: 'esri'
+                            shortName: 'esri',
+                            attribution:
+                                '<a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">' +
+                                'ESRI World Imagery for ArcGIS</a>',
                         }
                     )
                 },
@@ -63,7 +68,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             print: true,
                             jnx: true,
-                            shortName: 'yandex'
+                            shortName: 'yandex',
+                            attribution: '<a href="https://yandex.ru/maps/">Yandex</a>',
                         }
                     )
                 },
@@ -77,7 +83,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             print: true,
                             jnx: true,
-                            shortName: 'yandex_sat'
+                            shortName: 'yandex_sat',
+                            attribution: '<a href="https://yandex.ru/maps/?l=sat">Yandex</a>',
                         }
                     )
                 },
@@ -91,7 +98,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'google'
+                            shortName: 'google',
+                            attribution: '<a href="https://www.google.com/maps">Google</a>',
                         }
                     )
                 },
@@ -106,7 +114,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: false,
                             shortName: 'google_hybrid',
-                            isOverlayTransparent: true
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
+                                '/data=!3m1!1e3">Google</a>',
                         }
                     )
                 },
@@ -120,7 +130,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'google_sat'
+                            shortName: 'google_sat',
+                            attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
+                                '/data=!3m1!1e3">Google</a>',
                         }
                     )
                 },
@@ -133,7 +145,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'google_terrain'
+                            shortName: 'google_terrain',
+                            attribution: '<a href="https://www.google.com/maps/@43.1203575,42.1105049,9.58z' +
+                                '/data=!5m1!1e4">Google</a>',
                         }
                     )
                 },
@@ -163,7 +177,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'marshruty'
+                            shortName: 'marshruty',
+                            attribution: '<a href="https://www.marshruty.ru/Maps/Maps.aspx?x=60&y=55&z=8&t=4">' +
+                                'marshruty.ru</a>',
                         }
                     )
                 },
@@ -182,7 +198,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             print: true,
                             jnx: true,
-                            shortName: 'topomapper_1k'
+                            shortName: 'topomapper_1k',
+                            attribution: '<a href="https://play.google.com/store/apps/' +
+                                'details?id=com.atlogis.sovietmaps.free&hl=en&gl=US">Russian Topo Maps</a>',
                         }
                     )
                 },
@@ -234,7 +252,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 13,
                             print: true,
                             jnx: true,
-                            shortName: 'arbalet'
+                            shortName: 'arbalet',
+                            attribution:
+                                '<a href="http://www.velozona.ru/forums/showmessage.php?id=3370">Arbalet (2004)</a>',
                         }
                     )
                 },
@@ -251,7 +271,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 13,
                             print: true,
                             jnx: true,
-                            shortName: 'slazav_mountains'
+                            shortName: 'slazav_mountains',
+                            attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
                     )
                 },
@@ -353,7 +374,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 14,
                             print: true,
                             jnx: true,
-                            shortName: 'slazav'
+                            shortName: 'slazav',
+                            attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
                     )
                 },
@@ -408,7 +430,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         code: 'W',
                         isOverlay: true,
                         print: false,
-                        jnx: false
+                        jnx: false,
+                        attribution: '<a href="https://wikimapia.org/">Wikimapia</a>'
                     })
                 },
                 {
@@ -426,7 +449,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: true,
                             isOverlayTransparent: true,
                             shortName: 'passes'
-                        }
+                        },
+                        attribution: '<a href="http://westra.ru/passes/">Westra passes catalog</a>',
                     })
                 },
                 {
@@ -441,7 +465,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             noCors: false,
-                            shortName: 'opentopo'
+                            shortName: 'opentopo',
+                            attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
                         }
                     )
                 },
@@ -457,6 +482,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             shortName: 'opencyclemap',
+                            attribution: '<a href="https://www.opencyclemap.org/">Thunderforest OpenCycleMap</a>',
                         }
                     )
                 },
@@ -471,6 +497,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             shortName: 'osm_outdoors',
+                            attribution:
+                                '<a href="https://www.thunderforest.com/maps/outdoors/">Thunderforest Outdoors</a>',
                         }
                     )
                 },
@@ -505,7 +533,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            shortName: 'caucasus_1k'
+                            shortName: 'caucasus_1k',
+                            attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (2006)</a>',
                         }
                     )
                 },
@@ -522,7 +551,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            shortName: 'caucasus_500'
+                            shortName: 'caucasus_500',
+                            attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (1998 - 2003)</a>',
                         }
                     )
                 },
@@ -588,6 +618,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                         [40.66664, 71.00007],
                                         [45.33338, 81.00001],
                                     ],
+                                    attribution: '<a href="http://pereval.g-utka.ru/">Aleksey Tsvetkov</a>',
                                 }
                             ),
                             new LayerCutlineOverview(getCutline('tsvetkov_mountains'), 6,
@@ -610,7 +641,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         print: false,
                         jnx: false,
                         scaleDependent: false,
-                        noCors: true
+                        noCors: true,
+                        attribution:
+                            '<a href="https://github.com/mvexel/bingimageanalyzer">Bing Aerial Imagery Analyzer</a>',
                     })
                 },
                 {
@@ -622,7 +655,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         isOverlayTransparent: true,
                         print: true,
                         jnx: false,
-                        shortName: 'geocaching'
+                        shortName: 'geocaching',
+                        attribution: '<a href="https://geocaching.su/">geocaching.su</a>',
                     })
                 },
                 {
@@ -636,7 +670,9 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: true,
                             print: true,
                             jnx: false,
-                            shortName: 'osm_gps_traces'
+                            shortName: 'osm_gps_traces',
+                            attribution: '<a href="https://www.openstreetmap.org/#&layers=G">' +
+                                'OpenStreetMap public GPS traces</a>',
                         }
                     )
                 },
@@ -663,6 +699,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: true,
                             shortName: 'strava_all',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
                         }
                     )
                 },
@@ -689,6 +726,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: true,
                             shortName: 'strava_run',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
                         }
                     )
                 },
@@ -715,6 +753,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: true,
                             shortName: 'strava_ride',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
                         }
                     )
                 },
@@ -741,6 +780,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: true,
                             shortName: 'strava_winter',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
                         }
                     )
                 },
@@ -761,6 +801,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'norway_paper',
                             bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            attribution: '<a href="https://www.geonorge.no/aktuelt/om-geonorge/brukerveiledning' +
+                                '/#!#se_paa_kart">Geonorge</a>',
                         }
                     )
                 },
@@ -780,6 +822,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'norway_topo',
                             bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            attribution: '<a href="https://www.geonorge.no/aktuelt/om-geonorge/brukerveiledning' +
+                                '/#!#se_paa_kart">Geonorge</a>',
                         }
                     )
                 },
@@ -801,6 +845,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             shortName: 'norway_roads',
                             bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
                             cutline: getCutline('norway'),
+                            attribution: '<a href="https://kart.finn.no/">finn.no</a>',
                         }
                     )
                 },
@@ -820,7 +865,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: true,
                             subdomains: '1234',
                             scaleDependent: true,
-                            shortName: 'czech'
+                            shortName: 'czech',
+                            attribution: '<a href="https://mapy.cz/zakladni">mapy.cz base map</a>',
                         }
                     )
                 },
@@ -841,7 +887,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_tourist',
-                            hotkey: 'H'
+                            hotkey: 'H',
+                            attribution: '<a href="https://mapy.cz/turisticka">mapy.cz outdoor map</a>',
                         }
                     )
                 },
@@ -861,7 +908,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: true,
                             subdomains: '1234',
                             scaleDependent: true,
-                            shortName: 'czech_winter'
+                            shortName: 'czech_winter',
+                            attribution: '<a href="https://mapy.cz/zimni">mapy.cz winter map</a>',
                         }
                     )
                 },
@@ -887,6 +935,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             bound: [[59.45416, 19.08321], [70.09211, 31.58671]],
                             cutline: getCutline('finland'),
                             cutlineApprox: true,
+                            attribution: '<a href="https://www.retkikartta.fi/">Retkikartta.fi</a>',
                         }
                     )
                 },
@@ -915,6 +964,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                     scaleDependent: false,
                                     shortName: 'france_topo_25k',
                                     cutline: getCutline('france'),
+                                    attribution: '<a href="https://www.geoportail.gouv.fr/carte">' +
+                                        'IGN (France) topographic map</a>',
                                 }
                             ),
                             new LayerCutlineOverview(getCutline('france'), 5, 'France Topo 250m (zoom ≥ 6)'),
@@ -946,6 +997,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 jnx: true,
                                 shortName: 'england_topo',
                                 cutline: getCutline('great_britain'),
+                                attribution: '<a href="https://docs.microsoft.com/en-us/bingmaps/v8-web-control/' +
+                                    'map-control-api/maptypeid-enumeration">Ordnance Survey</a>',
                             }),
                             new LayerCutlineOverview(getCutline('great_britain'), 11, 'Great Britain Topo (zoom ≥ 12)'),
                         ],
@@ -970,7 +1023,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: false,
                             scaleDependent: true,
                             shortName: 'cycling_trails',
-                            isOverlayTransparent: true
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://cycling.waymarkedtrails.org/">Waymarked Cycling Trails</a>',
                         })
                 },
                 {
@@ -986,7 +1040,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: false,
                             scaleDependent: true,
                             shortName: 'hiking_trails',
-                            isOverlayTransparent: true
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://hiking.waymarkedtrails.org/">Waymarked Hiking Trails</a>',
                         })
                 },
                 {
@@ -1011,6 +1066,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 ],
                                 noCors: true,
                                 cutline: getCutline('slovakia'),
+                                attribution: '<a href="https://mapy.hiking.sk/">mapy.hiking.sk</a>',
                             }),
                             new LayerCutlineOverview(getCutline('slovakia'), 9, 'Slovakia topo (zoom ≥ 10)'),
                         ],
@@ -1034,6 +1090,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: false,
                             shortName: 'yandex_tracks',
                             noCors: true,
+                            attribution: '<a href="https://n.maps.yandex.ru/">Yandex Map Editor</a>',
                         }
                     )
                 },
@@ -1056,6 +1113,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 bounds: [[35.9024, -9.51828], [43.8375, 4.50439]],
                                 noCors: false,
                                 cutline: getCutline('spain'),
+                                attribution: '<a href="https://www.ign.es/iberpix2/visor/">' +
+                                    'IGN (Spain) topographic map</a>'
                             }
                     )
                 },

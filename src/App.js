@@ -123,6 +123,11 @@ function setUp() {
 
     /* controls bottom-left corner */
 
+    L.control.attribution({
+        position: 'bottomleft',
+        prefix: false,
+    }).addTo(map);
+
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
         .enableHashState('p');
