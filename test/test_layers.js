@@ -2,6 +2,41 @@ import {layersDefs, groupsDefs, titlesByOrder} from '~/layers';
 
 suite('layers definitions');
 
+function checkLayer(layerDef, isWrapper, parentLayer) {
+    const isSublayer = Boolean(parentLayer);
+    const options = layerDef.layer.options;
+    assert.isObject(layerDef.layer.options, 'options');
+    if (isSublayer) {
+        assert.notExists(options.code, 'options.code');
+    } else {
+        assert.isString(options.code, 'options.code');
+        assert.isNotEmpty(options.code, 'options.code');
+    }
+    assert.oneOf(options.isOverlay, [true, false], 'isOverlay');
+    if (isSublayer) {
+        assert.equal(options.isOverlay, parentLayer.options.isOverlay);
+    }
+    if (options.isOverlay && options.print) {
+        assert.oneOf(options.isOverlayTransparent, [true, false], 'isOverlayTransparent');
+    }
+    if (isWrapper) {
+        assert.notExists(options.print, 'print');
+        assert.notExists(options.scaleDependent, 'scaleDependent');
+        assert.notExists(options.shortName, 'shortName');
+        assert.notExists(options.jnx, 'jnx');
+        assert.notExists(options.noCors, 'noCors');
+    } else {
+        assert.oneOf(options.print, [true, false], 'print');
+        if (options.print) {
+            assert.oneOf(options.scaleDependent, [true, false], 'scaleDependent');
+            assert.isString(options.shortName, 'shortName');
+            assert.isNotEmpty(options.shortName, 'shortName');
+        }
+        assert.oneOf(options.jnx, [true, false], 'jnx');
+        assert.oneOf(options.noCors, [true, false, undefined], 'noCors');
+    }
+}
+
 layersDefs.forEach(function (layerDef) {
     test(`layer properties ${layerDef.title}`, function () {
         assert.isString(layerDef.title, 'title defined');
@@ -13,22 +48,10 @@ layersDefs.forEach(function (layerDef) {
         assert.oneOf(layerDef.isDefault, [true, false], 'isDefault');
         assert.isObject(layerDef.layer, 'layer');
 
-        const options = layerDef.layer.options;
-        assert.isObject(layerDef.layer.options, 'options');
-        assert.isString(options.code, 'options.code');
-        assert.isNotEmpty(options.code, 'options.code');
-        assert.oneOf(options.isOverlay, [true, false], 'isOverlay');
-        if (options.isOverlay && options.print) {
-            assert.oneOf(options.isOverlayTransparent, [true, false], 'isOverlayTransparent');
+        checkLayer(layerDef, layerDef.layer.options?.isWrapper);
+        if (layerDef.options?.isWrapper) {
+            layerDef.getLayers().forEach((subLayer) => checkLayer(subLayer, false, layerDef.layer));
         }
-        assert.oneOf(options.print, [true, false], 'print');
-        if (options.print) {
-            assert.oneOf(options.scaleDependent, [true, false], 'scaleDependent');
-            assert.isString(options.shortName, 'shortName');
-            assert.isNotEmpty(options.shortName, 'shortName');
-        }
-        assert.oneOf(options.jnx, [true, false], 'jnx');
-        assert.oneOf(options.noCors, [true, false, undefined], 'noCors');
     });
 });
 
@@ -61,15 +84,22 @@ test('Layers codes unique', function () {
 test('Layers short names unique', function () {
     const seen = new Set();
     const duplicates = new Set();
-    for (const layerDef of layersDefs) {
-        if (!layerDef.layer.options.print) {
-            continue;
+    function processLayer(layer) {
+        if (!layer.options.print) {
+            return;
         }
-        const shortName = layerDef.layer.options.shortName;
+        const shortName = layer.options.shortName;
         if (seen.has(shortName)) {
             duplicates.add(shortName);
         }
         seen.add(shortName);
+    }
+    for (const layerDef of layersDefs) {
+        const layer = layerDef.layer;
+        processLayer(layer);
+        if (layer.options.isWrapper) {
+            layer.getLayers().forEach(processLayer);
+        }
     }
     assert.isEmpty(Array.from(duplicates), 'duplicate short names');
 });
