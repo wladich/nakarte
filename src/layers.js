@@ -903,7 +903,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             ),
                             new LayerCutlineOverview(getCutline('france'), 5, 'France Topo 250m (zoom ≥ 6)'),
                         ],
-                        {code: 'Ft', isOverlay: true}
+                        {
+                            code: 'Ft',
+                            isOverlay: true,
+                            isWrapper: true,
+                        }
                     ),
                 },
                 {
@@ -932,6 +936,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         {
                             code: 'Gbt',
                             isOverlay: true,
+                            isWrapper: true,
                         }
                     ),
                 },
@@ -996,6 +1001,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         {
                             code: 'St',
                             isOverlay: true,
+                            isWrapper: true,
                         }
                     ),
                 },
