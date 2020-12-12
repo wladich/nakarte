@@ -69,6 +69,7 @@ class LayerCutlineOverview extends L.Layer {
         const zoom = this._map.getZoom();
         if (zoom <= this.maxZoom) {
             this._map.addLayer(this._features);
+            this._features.bringToBack();
         } else {
             this._map.removeLayer(this._features);
         }
