@@ -1098,7 +1098,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     title: 'Spain topo',
                     isDefault: false,
                     layer: L.tileLayer(
-                            'http://www.ign.es/wmts/mapa-raster?layer=MTN&style=default&' +
+                            'https://www.ign.es/wmts/mapa-raster?layer=MTN&style=default&' +
                             'tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&' +
                             'Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
                             {
