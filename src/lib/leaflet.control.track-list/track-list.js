@@ -78,6 +78,26 @@ L.Control.TrackList = L.Control.extend({
             lineCursorInvalidStyle: {color: 'red'},
             splitExtensions: ['gpx', 'kml', 'kmz', 'wpt', 'rte', 'plt', 'fit', 'tmp', 'jpg', 'crdownload'],
             splitExtensionsFirstStage: ['xml', 'txt', 'html', 'php', 'tmp', 'gz'],
+            trackHighlightStyle: {
+                color: 'yellow',
+                weight: 15,
+                opacity: 0.5,
+            },
+            trackMarkerHighlightStyle: {
+                color: 'yellow',
+                weight: 20,
+                opacity: 0.6,
+            },
+            trackStartHighlightStyle: {
+                color: 'green',
+                weight: 13,
+                opacity: 0.6,
+            },
+            trackEndHighlightStyle: {
+                color: 'red',
+                weight: 13,
+                opacity: 0.6,
+            },
         },
         includes: L.Mixin.Events,
 
@@ -1196,19 +1216,27 @@ L.Control.TrackList = L.Control.extend({
                 this._trackHighlight = null;
             }
             if (this._highlightedTrack && this._highlightedTrack.visible()) {
-                const trackHighlight = L.featureGroup([]);
-
-                this._highlightedTrack.feature.eachLayer((line) => {
+                const trackHighlight = L.featureGroup([]).addTo(this._map).bringToBack();
+                for (const line of this._highlightedTrack.feature.getLayers()) {
                     let latlngs = line.getFixedLatLngs();
-                    L.polyline(latlngs).addTo(trackHighlight);
-                });
-
-                trackHighlight.setStyle({
-                    color: 'yellow',
-                    weight: '15',
-                    opacity: 0.5
-                });
-                trackHighlight.addTo(this._map).bringToBack();
+                    L.polyline(latlngs, {...this.options.trackHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                    const start = latlngs[0];
+                    const end = latlngs[latlngs.length - 1];
+                    L.polyline([start, start], {...this.options.trackStartHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                    L.polyline([end, end], {...this.options.trackEndHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                }
+                for (const marker of this._highlightedTrack.markers) {
+                    const latlng = marker.latlng.clone();
+                    L.polyline([latlng, latlng], {...this.options.trackMarkerHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                }
                 this._trackHighlight = trackHighlight;
             }
         },
