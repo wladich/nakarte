@@ -268,8 +268,7 @@
 }
 
 
-.leaflet-control-tracklist .hover,
-.leaflet-control-tracklist tr:hover {
+.leaflet-control-tracklist .hover {
     background-color: rgb(93%, 93%, 93%);
 }
 

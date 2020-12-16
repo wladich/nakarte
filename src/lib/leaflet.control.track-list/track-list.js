@@ -1095,15 +1095,11 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackRowMouseEnter: function(track) {
-            this._highlightedTrack = track;
-            this.updateTrackHighlight();
+            track.hover(true);
         },
 
         onTrackRowMouseLeave: function(track) {
-            if (this._highlightedTrack === track) {
-                this._highlightedTrack = null;
-                this.updateTrackHighlight();
-            }
+            track.hover(false);
         },
 
         onTrackSegmentDrawEnd: function() {
@@ -1173,12 +1169,22 @@ L.Control.TrackList = L.Control.extend({
             if (!L.Browser.touch) {
                 track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
             }
+            track.hover.subscribe(this.onTrackHoverChanged.bind(this, track));
 
             // this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
             return track;
+        },
+
+        onTrackHoverChanged: function(track, hover) {
+            if (hover) {
+                this._highlightedTrack = track;
+            } else if (this._highlightedTrack === track) {
+                this._highlightedTrack = null;
+            }
+            this.updateTrackHighlight();
         },
 
         updateTrackHighlight: function() {
