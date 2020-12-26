@@ -1219,6 +1219,9 @@ L.Control.TrackList = L.Control.extend({
                 const trackHighlight = L.featureGroup([]).addTo(this._map).bringToBack();
                 for (const line of this._highlightedTrack.feature.getLayers()) {
                     let latlngs = line.getFixedLatLngs();
+                    if (latlngs.length === 0) {
+                        continue;
+                    }
                     L.polyline(latlngs, {...this.options.trackHighlightStyle, interactive: false}).addTo(
                         trackHighlight
                     );
