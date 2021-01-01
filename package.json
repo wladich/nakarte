@@ -35,7 +35,7 @@
     "css-loader": "^5.0.1",
     "cssnano": "^4.1.10",
     "csv-loader": "^3.0.3",
-    "eslint": "^7.14.0",
+    "eslint": "^7.16.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-import-resolver-webpack": "^0.13.0",
     "eslint-loader": "^4.0.2",
