@@ -6106,6 +6106,11 @@ loglevel@^1.6.8:
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.8.tgz#8a25fb75d092230ecd4457270d80b54e28011171"
   integrity sha512-bsU7+gc9AJ2SqpzxwU3+1fedl8zAntbtC5XYlt3s2j1hJcn2PsXSmgN8TaLG/J1/2mod4+cE/3vNL70/c1RNCA==
 
+long@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/long/-/long-3.2.0.tgz#d821b7138ca1cb581c172990ef14db200b5c474b"
+  integrity sha1-2CG3E4yhy1gcFymQ7xTbIAtcR0s=
+
 longest-streak@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/longest-streak/-/longest-streak-2.0.4.tgz#b8599957da5b5dab64dee3fe316fa774597d90e4"
@@ -6194,10 +6199,10 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-mapillary-js@2.21.0:
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-2.21.0.tgz#ac9691c4913432da505adbdfd70c7634f4e2aa7b"
-  integrity sha512-vk7V9lIABYki4Q+jyh/og9PrcN5U6xkzPxkL+Zu1a8C/zPxELaSiGukpLBZPprsEDBUUvih9KwJcTPo8Rl40Rw==
+mapillary-js@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-3.0.0.tgz#18365cca67da3c84986475280efb21d2dbfc8556"
+  integrity sha512-GkSx7ZHijrlzm6W6KgyfVjtVbSwEnY6dXspDP/Wm14sy5e0nuvuopGoWmAPUadp6X6h6xL2vepmlNJefx1wHbg==
   dependencies:
     earcut "^2.2.2"
     falcor "^0.1.17"
@@ -6208,6 +6213,7 @@ mapillary-js@2.21.0:
     pbf "^3.2.1"
     rbush "^3.0.1"
     rxjs "^6.5.5"
+    s2-geometry "^1.2.10"
     three "^0.117.1"
     virtual-dom "^2.1.1"
     when "^3.7.8"
@@ -8875,6 +8881,13 @@ rxjs@^6.4.0, rxjs@^6.5.5:
   integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
   dependencies:
     tslib "^1.9.0"
+
+s2-geometry@^1.2.10:
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/s2-geometry/-/s2-geometry-1.2.10.tgz#c6ff22f3eccafd0eea491b60b44c141b9887acab"
+  integrity sha1-xv8i8+zK/Q7qSRtgtEwUG5iHrKs=
+  dependencies:
+    long "^3.2.0"
 
 safe-buffer@5.1.2, safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
