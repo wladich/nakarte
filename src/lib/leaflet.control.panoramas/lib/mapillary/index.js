@@ -45,7 +45,6 @@ const Viewer = L.Evented.extend({
                 }
             );
             viewer.on('nodechanged', this.onNodeChanged.bind(this));
-            viewer.on('bearingchanged', this.onBearingChanged.bind(this));
             this.createDateLabel(container);
             this.createCloseButton(container);
             this._bearing = 0;
@@ -79,15 +78,6 @@ const Viewer = L.Evented.extend({
             return 0;
         },
 
-        onBearingChanged: function(bearing) {
-            bearing -= this.getBearingCorrection();
-            if (this._bearing === bearing) {
-                return;
-            }
-            this._bearing = bearing;
-            this.fireChangeEvent();
-        },
-
         fireChangeEvent: function() {
             if (this._node) {
                 const latlon = this._node.originalLatLon;
@@ -111,13 +101,26 @@ const Viewer = L.Evented.extend({
 
         updateZoomAndCenter: function() {
             this.viewer.getZoom().then((zoom) => {
-                this._zoom = zoom;
+                if (zoom !== this._zoom) {
+                    this._zoom = zoom;
+                    this.fireChangeEvent();
+                }
             });
             this.viewer.getCenter().then((center) => {
-                this._center = center;
+                if (center[0] < 0 || center[0] > 1 || center[1] < 0 || center[1] > 1) {
+                    center = [0.5, 0.5];
+                }
+                if (center[0] !== this._center[0] || center[1] !== this._center[1]) {
+                    this._center = center;
+                    this.fireChangeEvent();
+                }
             });
             this.viewer.getBearing().then((bearing) => {
-                this.onBearingChanged(bearing);
+                bearing -= this.getBearingCorrection();
+                if (this._bearing !== bearing) {
+                    this._bearing = bearing;
+                    this.fireChangeEvent();
+                }
             });
         },
 
@@ -156,7 +159,6 @@ const Viewer = L.Evented.extend({
                         this.viewer.setCenter([center0, center1]);
                         this.viewer.setZoom(zoom);
                     }
-
                 });
                 return true;
             }
