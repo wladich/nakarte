@@ -35,7 +35,11 @@ const Viewer = L.Evented.extend({
             const id = `container-${L.stamp(container)}`;
             container.id = id;
             const viewer = this.viewer = new mapillary.Viewer(
-                id, config.mapillary, null, {component: {cover: false, bearing: false}});
+                {
+                    container: id,
+                    apiClient: config.mapillary,
+                    component: {cover: false, bearing: false}
+                });
             window.addEventListener('resize', function() {
                     viewer.resize();
                 }
@@ -146,9 +150,13 @@ const Viewer = L.Evented.extend({
             const center1 = parseFloat(state[3]);
             const zoom = parseFloat(state[4]);
             if (!isNaN(lat) && !isNaN(lng) && !isNaN(center0) && !isNaN(center1) && !isNaN(zoom)) {
-                this.viewer.moveCloseTo(lat, lng).then(() => {
-                    this.viewer.setCenter([center0, center1]);
-                    this.viewer.setZoom(zoom);
+                getPanoramaAtPos(L.latLng(lat, lng), 0.01).then((res) => {
+                    if (res.found) {
+                        this.viewer.moveToKey(res.data);
+                        this.viewer.setCenter([center0, center1]);
+                        this.viewer.setZoom(zoom);
+                    }
+
                 });
                 return true;
             }
