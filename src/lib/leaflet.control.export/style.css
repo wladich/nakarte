@@ -1,6 +1,53 @@
-.leaflet-control-export .ko-progress{
+.leaflet-control-export > .leaflet-control-content {
+    min-width: 300px;
+}
+
+.leaflet-control-export > a.button {
+    border: 0;
+    margin: 0;
+    display: none;
+}
+
+.leaflet-control-export.minimized > a.button {
+    display: block;
+}
+
+.leaflet-control-export a.cancel {
+    background-image: url("images/cancel.svg");
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    margin-right: 5px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+.leaflet-control-export a.cancel.disabled {
+    cursor: progress;
+    background-color: #ebebeb;
+}
+
+.form-row {
+    padding-top: 1.5mm;
+    padding-bottom: 1mm;
+}
+
+.leaflet-control-export .progress-row {
+    border-top: 1px solid #eee;
+    height: 30px;
+    position: relative;
+    text-align: center;
+}
+
+.leaflet-control-export .layer-name {
+    font-weight: bold;
+}
+
+.leaflet-control-export .progress-row .ko-progress {
     width: 200px;
     background-color: white;
+    margin: 0 auto;
 }
 
 .leaflet-control-export .button {
@@ -21,38 +68,37 @@
     background-color: #f4f4f4;
 }
 
-/*.leaflet-rectangle-select-edge {*/
-    /*border: 1px solid black;*/
-    /*background-color: red;*/
-    /*opacity: 0.5;*/
-/*}*/
-
-.leaflet-rectangle-select-edge.edge-top, .leaflet-rectangle-select-edge.edge-bottom {
-    height: 30px !important;
-    margin-top: -15px !important;
+.leaflet-control-export .button-minimize {
+    position: absolute;
+    left: 0;
+    bottom: 4px;
 }
 
-.leaflet-rectangle-select-edge.edge-left, .leaflet-rectangle-select-edge.edge-right {
-    width: 30px !important;
-    margin-left: -15px !important;
+.leaflet-control-export .option {
+    display: block;
+    color: hsl(0, 0%, 15%);
+    font-size: 12px;
+    line-height: 16px;
+    height: 16px;
+    text-decoration: none;
+    padding: 0;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+    overflow: hidden;
 }
 
-.leaflet-rectangle-select-edge.edge-top {
-    cursor: n-resize !important;
-}
-
-.leaflet-rectangle-select-edge.edge-bottom {
-    cursor: s-resize !important;
-}
-
-.leaflet-rectangle-select-edge.edge-left {
-    cursor: w-resize !important;
-}
-
-.leaflet-rectangle-select-edge.edge-right {
-    cursor: e-resize !important;
-}
-
-.export-menu-warning {
+.leaflet-control-export .option.warning {
     color: red;
 }
+
+.leaflet-control-export .option:hover {
+    background-color: hsl(0, 0%, 95%);
+}
+
+.leaflet-control-export .option.disabled {
+    color: hsl(0, 0%, 40%);
+    background: white !important;
+    cursor: default;
+}
+

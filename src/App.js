@@ -149,6 +149,9 @@ function setUp() {
     const exportControl = new L.Control.Export(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
+    if (!exportControl.hasExportOptions()) {
+        exportControl.setMinimized();
+    }
 
     /* controls bottom-right corner */
 

@@ -1,10 +1,12 @@
 import L from 'leaflet';
 import ko from 'knockout';
 import './style.css';
+import './selector.css';
 import '~/lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
-import Contextmenu from '~/lib/contextmenu';
 import {exportFromLayer, minZoom} from './jnx-maker';
+import formHtml from './form.html';
+
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
@@ -18,10 +20,18 @@ L.Control.Export = L.Control.extend({
             this.exportInProgress = ko.observable(false);
             this.downloadProgressRange = ko.observable(1);
             this.downloadProgressDone = ko.observable(0);
-            this.contextMenu = new Contextmenu(() => this.makeMenuItems());
+            this.exportLayer = ko.observable(this.getLayerForExport());
+            this.cancelFlag = ko.observable(false);
+            this.exportOptions = ko.observable(this.getExportOptions());
+            this.on("selectionchange", () => {
+                this.exportOptions(this.getExportOptions());
+            });
         },
 
         getLayerForExport: function() {
+            if (!this._map) {
+                return {};
+            }
             for (let layerRec of this._layersControl._layers.slice().reverse()) {
                 let layer = layerRec.layer;
                 if (!this._map.hasLayer(layer) || !layer.options) {
@@ -52,37 +62,47 @@ L.Control.Export = L.Control.extend({
             return tilesCount;
         },
 
-        makeMenuItems: function() {
-            const {layer, layerName} = this.getLayerForExport();
-            if (!layer) {
-                return [{text: 'No supported layers'}];
+        setExpanded: function() {
+            L.DomUtil.removeClass(this._container, 'minimized');
+        },
+
+        setMinimized: function() {
+            L.DomUtil.addClass(this._container, 'minimized');
+        },
+
+        getExportOptions: function() {
+            const {layer, layerName} = this.exportLayer();
+            const bounds = this._selector ? this._selector.getBounds() : null;
+            if (!layer || !bounds) {
+                return [];
             }
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
             let minLevel = Math.max(0, maxLevel - 6);
             if (layer.options.minZoom) {
                 minLevel = Math.max(minLevel, layer.options.minZoom);
             }
-
             const equatorLength = 40075016;
-            const lat = this._selector.getBounds().getCenter().lat;
+            const lat = bounds.getCenter().lat;
             let metersPerPixel = equatorLength / 2 ** maxLevel / 256 * Math.cos(lat / 180 * Math.PI);
-
-            const items = [{text: layerName, header: true}];
+            const items = [];
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
                 let tilesCount = this.estimateTilesCount(zoom);
                 let fileSizeMb = tilesCount * 0.02;
-                let itemClass = tilesCount > 50000 ? 'export-menu-warning' : '';
                 let resolutionString = metersPerPixel.toFixed(2);
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
-                let item = {
-                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`, // eslint-disable-line max-len
-                    callback: () => this.makeJnx(layer, layerName, zoom),
-                    disabled: this.exportInProgress()
-                };
-                items.push(item);
+                let option = {layer, layerName, zoom, metersPerPixel, tilesCount, fileSizeMb};
+                option.label =
+                    `Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)`;
+                option.warning = option.tilesCount > 50000;
+                option.tooltip = option.tilesCount > 50000 ? '> 50000 tiles' : '';
+                items.push(option);
                 metersPerPixel *= 2;
             }
             return items;
+        },
+
+        hasExportOptions: function() {
+            return this.getExportOptions().length > 0;
         },
 
         notifyProgress: function(value, maxValue) {
@@ -90,56 +110,53 @@ L.Control.Export = L.Control.extend({
             this.downloadProgressRange(maxValue);
         },
 
-        makeJnx: function(layer, layerName, zoom) {
-            logging.captureBreadcrumb('start making jnx');
+        exportOptionClickHandler: function(option) {
+            if (!this.exportInProgress()) {
+                this.startExport(option.layer, option.layerName, option.zoom);
+            }
+        },
+
+        startExport: function(layer, layerName, zoom) {
+            logging.captureBreadcrumb('start export');
             this.exportInProgress(true);
             this.downloadProgressDone(0);
-
             const bounds = this._selector.getBounds();
             const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/u, '_');
             const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.jnx`;
             const eventId = logging.randId();
-            this.fire('tileExportStart', {
-                eventId,
-                layer,
-                zoom,
-                bounds,
-            });
-            exportFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
+            logging.logEvent('export start', {eventId, layerName, zoom, bounds});
+            this.cancelFlag(false);
+            exportFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this), this.cancelFlag)
                 .then((fileData) => {
                     saveAs(fileData, fileName, true);
-                    this.fire('tileExportEnd', {eventId, success: true});
+                    logging.logEvent('export end', {eventId, success: true});
                 })
                 .catch((e) => {
-                    logging.captureException(e, 'Failed to create JNX');
-                    this.fire('tileExportEnd', {
-                        eventId,
-                        success: false,
-                        error: e
-                    });
-                    notify(`Failed to create JNX: ${e.message}`);
+                    if (e.message === 'canceled') {
+                        logging.logEvent('export cancelled', {eventId, success: true});
+                    } else {
+                        logging.captureException(e);
+                        logging.logEvent('export end', {eventId, success: false, error: e.stack});
+                        notify(`Export failed: ${e.message}`);
+                    }
                 })
                 .then(() => this.exportInProgress(false));
         },
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-export');
-            container.innerHTML = `
-                <a class="button" data-bind="visible: !exportInProgress(), click: onButtonClicked"
-                 title="Make JNX for Garmin receivers">JNX</a>
-                <div data-bind="
-                    component:{
-                        name: 'progress-indicator',
-                        params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
-                    },
-                    visible: exportInProgress()"></div>`;
-            ko.applyBindings(this, container);
+            const container = this._container =
+            L.DomUtil.create('div', 'leaflet-control control-form leaflet-control-export');
+            container.innerHTML = formHtml;
             this._stopContainerEvents();
+            map.on("layeradd", () => this.exportLayer(this.getLayerForExport()));
+            map.on("layerremove", () => this.exportLayer(this.getLayerForExport()));
+            ko.applyBindings(this, container);
             return container;
         },
 
         removeSelector: function() {
+            this.setMinimized();
             if (this._selector) {
                 this._map.removeLayer(this._selector);
                 this._selector = null;
@@ -148,24 +165,19 @@ L.Control.Export = L.Control.extend({
         },
 
         addSelector: function(bounds) {
+            this.setExpanded();
             if (!bounds) {
                 bounds = this._map.getBounds().pad(-0.25);
             }
             this._selector = new RectangleSelect(bounds)
                 .addTo(this._map)
-                .on('change', () => this.fire('selectionchange'))
-                .on('click contextmenu', (e) => {
-                    L.DomEvent.stop(e);
-                    this.contextMenu.show(e);
-                });
+                .on('change', () => this.fire('selectionchange'));
             this.fire('selectionchange');
         },
 
-        onButtonClicked: function() {
+        showSelector: function() {
             if (this._selector) {
-                if (this._selector.getBounds().intersects(this._map.getBounds().pad(-0.05))) {
-                    this.removeSelector();
-                } else {
+                if (!this._selector.getBounds().intersects(this._map.getBounds().pad(-0.05))) {
                     this.removeSelector();
                     this.addSelector();
                 }
@@ -173,6 +185,8 @@ L.Control.Export = L.Control.extend({
                 this.addSelector();
             }
         },
-    }
-);
 
+        cancelExport: function() {
+            this.cancelFlag(true);
+        }
+});
