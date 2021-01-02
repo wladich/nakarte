@@ -405,7 +405,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         maxNativeZoom: fieldValues.maxZoom,
                         scaleDependent: fieldValues.scaleDependent,
                         print: true,
-                        jnx: true,
+                        export: true,
                         code: serialized,
                         noCors: true,
                         isTop: fieldValues.isTop

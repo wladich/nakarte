@@ -55,7 +55,7 @@ function ensureImageJpg(image) {
     return null;
 }
 
-async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
+async function exportFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
     const jnxProductId = L.stamp(srcLayer);
     const jnxZOrder = Math.min(jnxProductId, 100);
     const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder);
@@ -117,4 +117,4 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
     return writer.getJnx();
 }
 
-export {makeJnxFromLayer, minZoom};
+export {exportFromLayer, minZoom};

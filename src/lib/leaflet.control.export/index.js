@@ -4,24 +4,24 @@ import './style.css';
 import '~/lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
 import Contextmenu from '~/lib/contextmenu';
-import {makeJnxFromLayer, minZoom} from './jnx-maker';
+import {exportFromLayer, minZoom} from './jnx-maker';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
 
-L.Control.JNX = L.Control.extend({
+L.Control.Export = L.Control.extend({
         includes: L.Mixin.Events,
 
         initialize: function(layersControl, options) {
             L.Control.prototype.initialize.call(this, options);
             this._layersControl = layersControl;
-            this.makingJnx = ko.observable(false);
+            this.exportInProgress = ko.observable(false);
             this.downloadProgressRange = ko.observable(1);
             this.downloadProgressDone = ko.observable(0);
             this.contextMenu = new Contextmenu(() => this.makeMenuItems());
         },
 
-        getLayerForJnx: function() {
+        getLayerForExport: function() {
             for (let layerRec of this._layersControl._layers.slice().reverse()) {
                 let layer = layerRec.layer;
                 if (!this._map.hasLayer(layer) || !layer.options) {
@@ -30,11 +30,11 @@ L.Control.JNX = L.Control.extend({
                 if (layer.options.isWrapper) {
                     const layerName = layerRec.name;
                     for (const subLayer of layer.getLayers().slice().reverse()) {
-                        if (subLayer.options?.jnx) {
+                        if (subLayer.options?.export) {
                             return {layer: subLayer, layerName};
                         }
                     }
-                } else if (layer.options.jnx) {
+                } else if (layer.options.export) {
                     return {layer, layerName: layerRec.name};
                 }
             }
@@ -53,7 +53,7 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeMenuItems: function() {
-            const {layer, layerName} = this.getLayerForJnx();
+            const {layer, layerName} = this.getLayerForExport();
             if (!layer) {
                 return [{text: 'No supported layers'}];
             }
@@ -71,13 +71,13 @@ L.Control.JNX = L.Control.extend({
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
                 let tilesCount = this.estimateTilesCount(zoom);
                 let fileSizeMb = tilesCount * 0.02;
-                let itemClass = tilesCount > 50000 ? 'jnx-menu-warning' : '';
+                let itemClass = tilesCount > 50000 ? 'export-menu-warning' : '';
                 let resolutionString = metersPerPixel.toFixed(2);
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
                 let item = {
                     text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`, // eslint-disable-line max-len
                     callback: () => this.makeJnx(layer, layerName, zoom),
-                    disabled: this.makingJnx()
+                    disabled: this.exportInProgress()
                 };
                 items.push(item);
                 metersPerPixel *= 2;
@@ -92,7 +92,7 @@ L.Control.JNX = L.Control.extend({
 
         makeJnx: function(layer, layerName, zoom) {
             logging.captureBreadcrumb('start making jnx');
-            this.makingJnx(true);
+            this.exportInProgress(true);
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
@@ -105,7 +105,7 @@ L.Control.JNX = L.Control.extend({
                 zoom,
                 bounds,
             });
-            makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
+            exportFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => {
                     saveAs(fileData, fileName, true);
                     this.fire('tileExportEnd', {eventId, success: true});
@@ -119,21 +119,21 @@ L.Control.JNX = L.Control.extend({
                     });
                     notify(`Failed to create JNX: ${e.message}`);
                 })
-                .then(() => this.makingJnx(false));
+                .then(() => this.exportInProgress(false));
         },
 
         onAdd: function(map) {
             this._map = map;
-            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-jnx');
+            const container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-export');
             container.innerHTML = `
-                <a class="button" data-bind="visible: !makingJnx(), click: onButtonClicked"
+                <a class="button" data-bind="visible: !exportInProgress(), click: onButtonClicked"
                  title="Make JNX for Garmin receivers">JNX</a>
                 <div data-bind="
                     component:{
                         name: 'progress-indicator',
                         params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
                     },
-                    visible: makingJnx()"></div>`;
+                    visible: exportInProgress()"></div>`;
             ko.applyBindings(this, container);
             this._stopContainerEvents();
             return container;
