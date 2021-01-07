@@ -1,3 +1,6 @@
 .leaflet-controls-corner-raised {
     z-index: 2000 !important;
+    /* workaround for Chrome bug displaying scrollbar above all other objects */
+    /* https://stackoverflow.com/questions/16874546/strange-z-index-behavior-with-scrollbars-under-chrome */
+    transform: translate3d(0,0,0);
 }
