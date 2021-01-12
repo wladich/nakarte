@@ -35,6 +35,7 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
+import {ElevationDisplay} from '~/lib/leaflet.control.elevation-display';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -91,7 +92,9 @@ function setUp() {
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
 
-    new L.Control.Coordinates({position: 'topleft'}).addTo(map);
+    new ElevationDisplay({stackHorizontally: true}).addTo(map);
+
+    new L.Control.Coordinates({position: 'topleft', stackHorizontally: true}).addTo(map);
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
