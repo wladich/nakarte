@@ -101,12 +101,13 @@ L.TileLayer.include({
         if (this._cutline && !this._cutline.approx && this.isCutlineIntersectingTile(coords, true)) {
             const img = document.createElement('img');
             img.crossOrigin = '';
-            L.DomEvent.on(img, 'error', L.bind(this._tileOnError, this, done, img));
 
             const tile = document.createElement('canvas');
             tile.setAttribute('role', 'presentation');
 
             L.DomEvent.on(img, 'load', L.bind(this._drawTileClippedByCutline, this, coords, img, tile, done));
+            L.DomEvent.on(img, 'error', L.bind(this._tileOnError, this, done, tile));
+
             let url = this.getTileUrl(coords);
             if (this.options.noCors) {
                 url = urlViaCorsProxy(url);
