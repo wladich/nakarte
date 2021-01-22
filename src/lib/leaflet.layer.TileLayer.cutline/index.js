@@ -51,6 +51,9 @@ function isPointInsidePolygon(polygon, latLng) {
 
 L.TileLayer.include({
     _drawTileClippedByCutline: function (coords, srcImg, destCanvas, done) {
+        if (!this._map) {
+            return;
+        }
         const width = srcImg.naturalWidth;
         const height = srcImg.naturalHeight;
         destCanvas.width = width;
