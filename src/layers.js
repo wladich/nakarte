@@ -1120,7 +1120,38 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             }
                     )
                 },
+                {
+                    title: 'Switzerland topo',
+                    isDefault: false,
+                    layer: new RetinaTileLayer(
+                        [
+                            null,
+                            urlViaCorsProxy(
+                                'https:///wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/' +
+                                '3857/{z}/{x}/{y}.jpeg'
+                            ),
+                        ],
 
+                        {
+                                code: 'Si',
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: true,
+                                shortName: 'swiss_topo',
+                                isOverlayTransparent: false,
+                                bounds: [[45.80269, 5.87352], [47.86445, 10.6847]],
+                                noCors: false,
+                                maxNativeZoom: 16,
+                                tileSize: 128,
+                                zoomOffset: 1,
+                                cutline: getCutline('switzerland'),
+                                attribution: '<a href="https://map.geo.admin.ch/?topic=swisstopo&lang=en&bgLayer=' +
+                                    'ch.swisstopo.pixelkarte-farbe&E=2586000.76&N=1202020.96&zoom=1">Swisstopo'
+                            }, true
+                    )
+                },
     ];
 
     const groupsDefs = [
@@ -1176,6 +1207,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Great Britain Topo',
                 'Slovakia topo',
                 'Spain topo',
+                'Switzerland topo',
             ],
         },
         {
@@ -1269,6 +1301,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Topo 250m',
         'Montenegro topo 250m',
         'France Topo 250m',
+        'Switzerland topo',
         'Slazav Moscow region map',
         'Races',
         'O-sport',
