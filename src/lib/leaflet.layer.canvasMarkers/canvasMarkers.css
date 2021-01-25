@@ -1,5 +1,5 @@
 .canvas-marker-tooltip {
-    visibility: hidden;
+    display: none;
     margin-left: -50%;
     margin-right: 50%;
     white-space: nowrap;
@@ -13,6 +13,6 @@
 }
 
 .canvas-marker-tooltip-on {
-    visibility: visible;
+    display: block;
     transition-delay: 0.2s;
 }
