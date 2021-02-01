@@ -1,0 +1,19 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+      - cron: '15 3 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: cp src/secrets.js.template src/secrets.js
+      - run: yarnpkg
+      - run: npm run lint:code
+      - run: npm run lint:style
+      - run: npm run test
+      - run: npm run build
