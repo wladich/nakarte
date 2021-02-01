@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/wladich/nakarte.svg?branch=master)](https://travis-ci.com/wladich/nakarte)
+[![tests status](https://github.com/wladich/nakarte/workflows/test/badge.svg)](https://github.com/wladich/nakarte/actions?query=workflow%3Atest)
 
 Source code of site http://nakarte.me (former http://nakarte.tk)
 
