@@ -6232,10 +6232,10 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-mapillary-js@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-3.0.0.tgz#18365cca67da3c84986475280efb21d2dbfc8556"
-  integrity sha512-GkSx7ZHijrlzm6W6KgyfVjtVbSwEnY6dXspDP/Wm14sy5e0nuvuopGoWmAPUadp6X6h6xL2vepmlNJefx1wHbg==
+mapillary-js@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-3.1.0.tgz#d22d292ff0c9b289cae5650d516f56bf8cb252f1"
+  integrity sha512-HDO3dtVfe/T9tAifJyx6CrCWeIa+NIkeHiexjxhm4p9Kwma12RaNfjXJ+xWqrjAS3bTgMzZ0t56jmtb/zfpsyA==
   dependencies:
     earcut "^2.2.2"
     falcor "^0.1.17"
