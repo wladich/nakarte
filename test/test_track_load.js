@@ -56,10 +56,9 @@ suite('Load tracks from services');
     'movescount_route_with_title',
     'movescount_route_private',
     'movescount_route_not_exists',
-    // temporary disabled
-    // 'gpslib_with_title',
-    // 'gpslib_without_title',
-    // 'gpslib_not_exists',
+    'gpslib_with_title',
+    'gpslib_without_title',
+    'gpslib_not_exists',
     'osm_with_title',
     'osm_without_title',
     'osm_private',
