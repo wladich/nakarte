@@ -198,16 +198,28 @@ L.Control.Azimuth = L.Control.extend({
             }
         },
 
-        onMapClick: function(e) {
-            if (!this.points.start && !this.points.end) {
-                this.setPoints({start: e.latlng});
-            } else if (this.points.start && !this.points.end) {
-                this.setPoints({end: e.latlng});
-            } else if (this.points.start && this.points.end) {
-                this.hideProfile();
-                this.setPoints({start: e.latlng, end: null});
+        // onMapClick: function(e) {
+        //     if (!this.points.start && !this.points.end) {
+        //         this.setPoints({start: e.latlng});
+        //     } else if (this.points.start && !this.points.end) {
+        //         this.setPoints({end: e.latlng});
+        //     } else if (this.points.start && this.points.end) {
+        //         this.hideProfile();
+        //         this.setPoints({start: e.latlng, end: null});
+        //     }
+        // },
+    onMapClick: function(e) {
+        if (!this.points.start && !this.points.end) {
+            this.setPoints({start: e.latlng});
+        } else if (this.points.start && !this.points.end) {
+            this.setPoints({end: e.latlng});
+        } else if (this.points.start && this.points.end) {
+            this.setPoints({start: this.points.end, end: e.latlng});
+            if (this.elevationControl) {
+                this.showProfile();
             }
-        },
+        }
+    },
 
         showProfile: function() {
             if (!this.points.end) {
@@ -236,7 +248,11 @@ L.Control.Azimuth = L.Control.extend({
         },
 
         onProfileButtonClick: function() {
-            this.showProfile();
+            if (this.elevationControl) {
+                this.hideProfile();
+            } else {
+                this.showProfile();
+            }
         },
 
         onReverseButtonClick: function() {

@@ -1,0 +1,13 @@
+.elevation-display-label {
+    border: none;
+    box-shadow: none;
+    border-radius: unset;
+    background-color: rgba(140, 140, 140, 0.8);
+    padding: 0 4px;
+    color: black;
+    opacity: 1;
+}
+
+.elevation-display-label:before {
+    border: none;
+}

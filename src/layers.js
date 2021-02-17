@@ -13,6 +13,7 @@ import urlViaCorsProxy from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
 import {getCutline} from '~/lib/layers-cutlines';
 import {LayerCutlineOverview} from '~/lib/leaflet.layer.LayerCutlineOverview';
+import {ElevationLayer} from "~/lib/leaflet.layer.elevation-display";
 
 class LayerGroupWithOptions extends L.LayerGroup {
     constructor(layers, options) {
@@ -22,6 +23,21 @@ class LayerGroupWithOptions extends L.LayerGroup {
 }
 
     const layersDefs = [
+                {
+                    title: 'Elevation',
+                    isDefault: true,
+                    layer: new ElevationLayer('http://tiles:5080/elevation/{z}/{x}/{y}',
+                        {
+                            code: 'Ele',
+                            isOverlay: true,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: true,
+                            shortName: 'elev'
+
+                        }
+                    )
+                },
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
@@ -1152,7 +1168,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'O-sport',
                 'Soviet topo maps grid',
                 'Wikimapia',
-                'Mountain passes (Westra)'
+                'Mountain passes (Westra)',
+                'Elevation'
             ],
         },
         {
@@ -1291,6 +1308,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         // point overlays
         'Mountain passes (Westra)',
         'geocaching.su',
+        'Elevation',
     ];
 
 function getLayers() {
