@@ -476,6 +476,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 this._customLayers.splice(layerPos, 0, newLayer);
                 if (
                     this._map.hasLayer(layer.layer) &&
+                    // turn off layer if changing from overlay to baselayer
                     (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)
                 ) {
                     this._map.addLayer(newLayer.layer);
