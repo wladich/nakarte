@@ -128,8 +128,8 @@ const LocateControl = L.Control.extend({
             return container;
         },
 
-        moveMapToCurrentLocation: function(zoom, fallbackLatLng, forceLatLng, forceZoom) {
-            let storedPosition;
+        moveMapToCurrentLocation: function(zoom) {
+            let storedPosition = null;
             try {
                 storedPosition = JSON.parse(localStorage.getItem(LOCALSTORAGE_POSITION));
                 let {lat, lon} = storedPosition;
@@ -143,21 +143,16 @@ const LocateControl = L.Control.extend({
             }
 
             if (storedPosition) {
-                this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {
-                    animate: false,
-                });
+                this._map.setView(storedPosition, zoom, {animate: false});
                 if (!('geolocation' in navigator)) {
                     return;
                 }
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
                         this._storePositionToLocalStorage(pos);
-                        if (!forceLatLng) {
-                            // TODO: check if map has not moved
-                            this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {
-                                animate: false,
-                            });
-                        }
+                        this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {
+                            animate: false,
+                        });
                     },
                     (e) => {
                         if (e.code === 1) {
@@ -168,9 +163,6 @@ const LocateControl = L.Control.extend({
                     timeout: 500,
                     maximumAge: 0
                 });
-            } else {
-                this._map.setView(forceLatLng ? forceLatLng : fallbackLatLng, forceZoom ? forceZoom : zoom,
-                    {animate: false});
             }
         },
 

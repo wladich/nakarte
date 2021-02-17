@@ -105,11 +105,8 @@ function setUp() {
             notify(customMessage);
         }
     }).addTo(map);
-
-    let {lat, lng, zoom, valid: validPositionInHash} = map.validateState(hashState.getState('m'));
-    locateControl.moveMapToCurrentLocation(config.defaultZoom, L.latLng(config.defaultLocation),
-        validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
-    map.enableHashState('m');
+    let {valid: validPositionInHash} = map.validateState(hashState.getState('m'));
+    map.enableHashState('m', [config.defaultZoom, ...config.defaultLocation]);
 
     /* controls top-right corner */
 
@@ -178,8 +175,14 @@ function setUp() {
     }
     startInfo.tracksAfterLoadFromHash = trackNames();
 
+    /* set map position */
+
     if (!validPositionInHash) {
-        tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
+        if (hasTrackParamsInHash) {
+            tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
+        } else {
+            locateControl.moveMapToCurrentLocation(config.defaultZoom);
+        }
     }
 
     /* adaptive layout */
