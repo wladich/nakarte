@@ -77,7 +77,9 @@ const hashState = {
         const hash = stateItems.join('&');
         const href = `${location.origin}${location.pathname}${location.search}#${hash}`;
         this._ignoreChanges = true;
-        location.replace(href);
+        if (href !== location.href) {
+            location.replace(href);
+        }
         this._ignoreChanges = false;
     },
 
