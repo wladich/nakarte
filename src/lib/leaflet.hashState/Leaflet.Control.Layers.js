@@ -4,7 +4,7 @@ import './leaflet.hashState';
 L.Control.Layers.include(L.Mixin.HashState);
 
 L.Control.Layers.include({
-        stateChangeEvents: ['layeradd', 'layerremove'],
+        stateChangeEvents: ['baselayerchange', 'overlayadd', 'overlayremove'],
         stateChangeEventsSource: '_map',
 
         serializeState: function() {
