@@ -474,15 +474,19 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const newLayer = this.createCustomLayer(newFieldValues);
                 this._customLayers.splice(layerPos, 0, newLayer);
-                if (
+                const newLayerVisible = (
                     this._map.hasLayer(layer.layer) &&
                     // turn off layer if changing from overlay to baselayer
                     (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)
-                ) {
+                );
+                if (newLayerVisible) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);
                 this.updateEnabledLayers();
+                if (newLayerVisible) {
+                    newLayer.layer.fire('add');
+                }
                 this.hideCustomLayerForm();
             },
 
