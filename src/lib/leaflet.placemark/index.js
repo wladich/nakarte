@@ -27,7 +27,6 @@ const Placemark = L.Marker.extend({
     },
 
     onRemove: function(map) {
-        this._map.off('move', this.onMapMove, this);
         this._map.off('click', this.onMapClick, this);
         this._map.suggestedPoint = null;
         L.Marker.prototype.onRemove.call(this, map);
