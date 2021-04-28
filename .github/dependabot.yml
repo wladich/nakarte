@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "02:00"
+  open-pull-requests-limit: 99
+  versioning-strategy: increase
+  ignore:
+  - dependency-name: prettier
+    versions:
+    - ">= 2.0.a, < 2.1"
+  - dependency-name: webpack-cli
+    versions:
+    - 4.3.1
+    - 4.4.0
