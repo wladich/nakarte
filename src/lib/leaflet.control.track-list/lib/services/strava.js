@@ -22,7 +22,7 @@ class Strava extends BaseService {
                 }
             },
             {
-                url: urlViaCorsProxy(`https://www.strava.com/stream/${trackId}?streams%5B%5D=latlng`),
+                url: urlViaCorsProxy(`https://www.strava.com/activities/${trackId}/streams?stream_types%5B%5D=latlng`),
                 options: {
                     responseType: 'json',
                     isResponseSuccess
