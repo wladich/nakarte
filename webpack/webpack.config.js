@@ -41,7 +41,7 @@ const babelConfig = {
             '@babel/preset-env',
             {
                 useBuiltIns: 'usage',
-                corejs: '3.0.0',
+                corejs: {version: '3.8', proposals: true},
                 modules: 'commonjs',
                 exclude: ['proposal-dynamic-import'],
             },
