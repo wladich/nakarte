@@ -10,6 +10,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - browser: FirefoxHeadless
+          - browser: ChromeHeadless
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -17,5 +22,5 @@ jobs:
       - run: yarnpkg
       - run: npm run lint:code
       - run: npm run lint:style
-      - run: npm run test
+      - run: npm run test -- --browsers ${{matrix.browser}}
       - run: npm run build
