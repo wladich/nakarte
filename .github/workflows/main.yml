@@ -1,4 +1,4 @@
-name: test
+name: check
 
 on:
   push:
@@ -8,11 +8,27 @@ on:
       - cron: '15 3 * * *'
 
 jobs:
-  build:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: cp src/secrets.js.template src/secrets.js
+      - run: yarnpkg
+
+      - run: npm run lint:code
+      - run: npm run lint:style
+      - run: npm run build
+
+  test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
+          - browser: FirefoxHeadless
+            firefox-version: '52.9.0esr'
+            needs-xvfb: true
           - browser: FirefoxHeadless
           - browser: ChromeHeadless
     steps:
@@ -20,7 +36,16 @@ jobs:
       - uses: actions/setup-node@v1
       - run: cp src/secrets.js.template src/secrets.js
       - run: yarnpkg
-      - run: npm run lint:code
-      - run: npm run lint:style
+
+      - name: install specific version of Firefox
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: ${{matrix.firefox-version}}
+        if: matrix.firefox-version
       - run: npm run test -- --browsers ${{matrix.browser}}
-      - run: npm run build
+        if: ${{! matrix.needs-xvfb}}
+      - name: run tests with xvfb
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test -- --browsers ${{matrix.browser}}
+        if: matrix.needs-xvfb
