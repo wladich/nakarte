@@ -52,6 +52,7 @@
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
+    "karma-safari-applescript-launcher": "^0.1.0",
     "karma-webpack": "^4.0.2",
     "mini-css-extract-plugin": "^1.6.0",
     "mocha": "^8.3.2",

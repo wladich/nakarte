@@ -21,16 +21,21 @@ jobs:
       - run: npm run build
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
       matrix:
         include:
           - browser: FirefoxHeadless
+            os: ubuntu-latest
             firefox-version: '52.9.0esr'
             needs-xvfb: true
           - browser: FirefoxHeadless
+            os: ubuntu-latest
           - browser: ChromeHeadless
+            os: ubuntu-latest
+          - browser: Safari
+            os: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
