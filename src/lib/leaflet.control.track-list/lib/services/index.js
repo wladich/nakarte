@@ -1,5 +1,4 @@
 import SimpleService from './simpleService';
-import Endomondo from './endomondo';
 import Etomesto from './etomesto';
 import Gpsies from './gpsies';
 import Gpslib from './gpslib';
@@ -17,7 +16,6 @@ const services = [
     YandexRuler,
     NakarteTrack,
     NakarteUrl,
-    Endomondo,
     Etomesto,
     Gpsies,
     Gpslib,
