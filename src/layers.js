@@ -702,6 +702,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             shortName: 'strava_all',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                             attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
@@ -729,6 +730,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             shortName: 'strava_run',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                             attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
@@ -756,6 +758,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             shortName: 'strava_ride',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                             attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
@@ -783,6 +786,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             shortName: 'strava_winter',
                             retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
                             attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
