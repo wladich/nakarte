@@ -10,6 +10,7 @@ import {MovescountMove, MovescountRoute} from './movescount';
 import {GarminActivity, GarminRoute} from './garmin';
 import {SportsTrackerActivity} from './sportstracker';
 import OpenStreetMapRu from './openstreetmapRu';
+import Wikiloc from './wikiloc';
 
 const services = [
     YandexRuler,
@@ -26,6 +27,7 @@ const services = [
     GarminRoute,
     SportsTrackerActivity,
     OpenStreetMapRu,
+    Wikiloc,
     SimpleService
 ];
 
