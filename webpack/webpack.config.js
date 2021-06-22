@@ -163,7 +163,7 @@ const loaders = [
     {
         test: /\.js$/u,
         exclude: isProduction ? [/node_modules\/core-js/u, /node_modules\/webpack/u] : /node_modules/u,
-        loaders: [
+        use: [
             {
                 loader: 'babel-loader',
                 options: babelConfig,
@@ -173,7 +173,7 @@ const loaders = [
 
     {
         test: /\.s?css/iu,
-        loaders: isProduction ? productionCSSLoader : developmentCSSLoader,
+        use: isProduction ? productionCSSLoader : developmentCSSLoader,
     },
 ];
 
@@ -192,7 +192,6 @@ module.exports = {
     optimization: {
         splitChunks: {
             chunks: 'all',
-            name: true,
         },
         runtimeChunk: 'single',
         minimizer: [
