@@ -169,6 +169,7 @@ const loaders = [
                 options: babelConfig,
             },
         ],
+        type: 'javascript/auto',
     },
 
     {
