@@ -2,14 +2,16 @@
 
 const webpackConfig = require('../webpack/webpack.config');
 
+webpackConfig.entry = {};
+
 module.exports = function (config) {
     config.glob = config.glob ? config.glob : './test/**/*.js';
     config.set({
         basePath: '../',
-        frameworks: ['mocha', 'chai'],
+        frameworks: ['mocha', 'chai', 'webpack'],
         files: [config.glob],
         preprocessors: {
-            './test/**/*.js': ['webpack'],
+            './test/test_*.js': ['webpack'],
         },
         webpack: webpackConfig,
         webpackMiddleware: {
