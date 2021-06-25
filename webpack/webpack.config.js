@@ -184,11 +184,9 @@ module.exports = {
     stats: 'errors-warnings',
     bail: isProduction || isTesting,
 
-    entry: isTesting
-        ? false
-        : {
-              app: paths.appIndexJs,
-          },
+    entry: {
+        app: paths.appIndexJs,
+    },
 
     optimization: {
         splitChunks: {
