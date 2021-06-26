@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
+        with:
+          version: '12'
       - run: cp src/secrets.js.template src/secrets.js
       - run: yarnpkg
 
@@ -33,7 +35,9 @@ jobs:
           - browser: ChromeHeadless
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
+        with:
+          version: '12'
       - run: cp src/secrets.js.template src/secrets.js
       - run: yarnpkg
 
