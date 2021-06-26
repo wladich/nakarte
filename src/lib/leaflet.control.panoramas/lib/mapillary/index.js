@@ -9,13 +9,12 @@ function getCoverageLayer(options) {
     return new MapillaryCoverage(options);
 }
 
-function getMapillary() {
-    return new Promise((resolve) => {
-        require.ensure(['mapillary-js/dist/mapillary.min.js', 'mapillary-js/dist/mapillary.min.css'], () => {
-            require('mapillary-js/dist/mapillary.min.css');
-            resolve(require('mapillary-js/dist/mapillary.min.js'));
-        }, 'mapillary');
-    });
+async function getMapillary() {
+    const [mapillary] = await Promise.all([
+        import('mapillary-js'),
+        import('mapillary-js/dist/mapillary.min.css'),
+    ]);
+    return mapillary;
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
