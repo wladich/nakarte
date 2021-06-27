@@ -198,7 +198,7 @@ module.exports = {
                 cache: true,
                 parallel: true,
                 sourceMap: true,
-                exclude: /mapillary/u,
+                exclude: /node_modules\/mapillary/u,
             }),
         ],
     },
