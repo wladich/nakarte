@@ -11,8 +11,14 @@ function getCoverageLayer(options) {
 
 async function getMapillary() {
     const [mapillary] = await Promise.all([
-        import('mapillary-js'),
-        import('mapillary-js/dist/mapillary.min.css'),
+        import(
+            /* webpackChunkName: "mapillary" */
+            'mapillary-js'
+            ),
+        import(
+            /* webpackChunkName: "mapillary" */
+            'mapillary-js/dist/mapillary.min.css'
+            ),
     ]);
     return mapillary;
 }
