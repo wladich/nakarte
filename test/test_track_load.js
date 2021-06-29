@@ -74,6 +74,9 @@ suite('Load tracks from services');
     // 'openstreetmapRu',
     // 'openstreetmapRuGpx',
     // 'openstreetmapRu_not_exists',
+    'wikiloc_not_exists',
+    'wikiloc_with_waypoints',
+    'wikiloc',
 ].forEach(function (testcase) {
     // eslint-disable-next-line import/no-dynamic-require
     const testData = require('./track_load_data/testcases/' + testcase + '.json');
