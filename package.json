@@ -42,7 +42,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-prettier": "^3.4.0",
     "file-loader": "^6.2.0",
-    "filesize": "^6.3.0",
+    "filesize": "^6.4.0",
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "html-webpack-plugin": "^4.5.2",
