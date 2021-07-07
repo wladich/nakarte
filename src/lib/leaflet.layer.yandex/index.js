@@ -39,11 +39,11 @@ L.Layer.Yandex = L.TileLayer.extend({
 
 L.Layer.Yandex.Map = L.Layer.Yandex.extend({
     initialize: function(options) {
-        L.Layer.Yandex.prototype.initialize.call(
-            this,
-            'https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}',
-            options
-        );
+        let url = 'https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}';
+        if (navigator.language) {
+            url += `&lang=${navigator.language}`;
+        }
+        L.Layer.Yandex.prototype.initialize.call(this, url, options);
     },
 });
 
