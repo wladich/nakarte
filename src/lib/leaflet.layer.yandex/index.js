@@ -5,7 +5,6 @@ const yandexCrs = L.CRS.EPSG3395;
 
 L.Layer.Yandex = L.TileLayer.extend({
         options: {
-            subdomains: '1234',
             className: L.Browser.retina ? '' : 'yandex-tile-layer',
             yandexScale: L.Browser.retina ? 2 : 1
         },
@@ -42,7 +41,7 @@ L.Layer.Yandex.Map = L.Layer.Yandex.extend({
     initialize: function(options) {
         L.Layer.Yandex.prototype.initialize.call(
             this,
-            'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}',
+            'https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}',
             options
         );
     },
@@ -52,7 +51,7 @@ L.Layer.Yandex.Sat = L.Layer.Yandex.extend({
     initialize: function(options) {
         L.Layer.Yandex.prototype.initialize.call(
             this,
-            'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}',
+            'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}',
             options
         );
     },
