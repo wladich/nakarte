@@ -1,3 +1,5 @@
+import utf8 from 'utf8';
+
 import * as urlSafeBase64 from '../../parsers/urlSafeBase64';
 import {TRACKLIST_TRACK_COLORS} from '../../../track-list';
 import loadFromUrl from '../../loadFromUrl';
@@ -43,8 +45,12 @@ function parseTrack(rawTrack) {
 
 async function loadTracksFromJson(value) { // eslint-disable-line complexity
     const errCorrupt = [{name: 'Track in url', error: 'CORRUPT'}];
-
-    const jsonString = urlSafeBase64.decode(value);
+    let jsonString = urlSafeBase64.decode(value);
+    try {
+        jsonString = utf8.decode(jsonString);
+    } catch (e) {
+        // so it was not encoded in utf-8, leave it as it is
+    }
     let data;
     try {
         data = JSON.parse(jsonString);
