@@ -195,9 +195,7 @@ module.exports = {
         runtimeChunk: 'single',
         minimizer: [
             new TerserPlugin({
-                cache: true,
                 parallel: true,
-                sourceMap: true,
                 exclude: /node_modules\/mapillary/u,
             }),
         ],
