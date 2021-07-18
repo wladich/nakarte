@@ -32,7 +32,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osm',
                             attribution: '<a href="https://www.openstreetmap.org/copyright">' +
                                 '&copy; OpenStreetMap contributors</a>',
@@ -50,7 +50,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 18,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'esri',
                             attribution:
                                 '<a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">' +
@@ -67,7 +67,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             code: 'Y',
                             isOverlay: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'yandex',
                             attribution: '<a href="https://yandex.ru/maps/">Yandex</a>',
                         }
@@ -82,7 +82,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             code: 'S',
                             isOverlay: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'yandex_sat',
                             attribution: '<a href="https://yandex.ru/maps/?l=sat">Yandex</a>',
                         }
@@ -97,7 +97,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google',
                             attribution: '<a href="https://www.google.com/maps">Google</a>',
                         }
@@ -112,7 +112,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'google_hybrid',
                             isOverlayTransparent: true,
                             attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
@@ -129,7 +129,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google_sat',
                             attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
                                 '/data=!3m1!1e3">Google</a>',
@@ -144,7 +144,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'google_terrain',
                             attribution: '<a href="https://www.google.com/maps/@43.1203575,42.1105049,9.58z' +
                                 '/data=!5m1!1e4">Google</a>',
@@ -160,7 +160,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'bing_sat'
                         }
                     )
@@ -176,7 +176,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'marshruty',
                             attribution: '<a href="https://www.marshruty.ru/Maps/Maps.aspx?x=60&y=55&z=8&t=4">' +
                                 'marshruty.ru</a>',
@@ -197,7 +197,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 13,
                             noCors: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topomapper_1k',
                             attribution: '<a href="https://play.google.com/store/apps/' +
                                 'details?id=com.atlogis.sovietmaps.free&hl=en&gl=US">Russian Topo Maps</a>',
@@ -217,7 +217,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 9,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_10k'
                         }
                     )
@@ -234,7 +234,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 12,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_2k'
                         }
                     )
@@ -251,7 +251,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'arbalet',
                             attribution:
                                 '<a href="http://www.velozona.ru/forums/showmessage.php?id=3370">Arbalet (2004)</a>',
@@ -271,7 +271,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 13,
                             noCors: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'slazav_mountains',
                             attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
@@ -289,7 +289,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_1k'
                         }
                     )
@@ -306,7 +306,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 13,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_1k'
                         }
                     )
@@ -323,7 +323,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_500'
                         }
                     )
@@ -340,7 +340,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'topo_500'
                         }
                     )
@@ -357,7 +357,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'ggc_250'
                         }
                     )
@@ -375,7 +375,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 14,
                             noCors: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'slazav',
                             attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
@@ -393,7 +393,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'races'
                         }
                     )
@@ -410,7 +410,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             scaleDependent: false,
                             maxNativeZoom: 17,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osport'
                         }
                     )
@@ -422,7 +422,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         code: 'Ng',
                         isOverlay: true,
                         print: false,
-                        jnx: false
+                        export: false
                     })
                 },
                 {
@@ -432,7 +432,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         code: 'W',
                         isOverlay: true,
                         print: false,
-                        jnx: false,
+                        export: false,
                         attribution: '<a href="https://wikimapia.org/">Wikimapia</a>'
                     })
                 },
@@ -442,7 +442,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
                         code: 'Wp',
                         print: true,
-                        jnx: false,
+                        export: false,
                         scaleDependent: true,
                         isOverlay: true,
                         isOverlayTransparent: true,
@@ -465,7 +465,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 17,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             noCors: false,
                             shortName: 'opentopo',
                             attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
@@ -482,7 +482,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'opencyclemap',
                             attribution: '<a href="https://www.opencyclemap.org/">Thunderforest OpenCycleMap</a>',
                         }
@@ -497,7 +497,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
-                            jnx: true,
+                            export: true,
                             shortName: 'osm_outdoors',
                             attribution:
                                 '<a href="https://www.thunderforest.com/maps/outdoors/">Thunderforest Outdoors</a>',
@@ -516,7 +516,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: true,
                             maxNativeZoom: 9,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'eurasia_25k'
                         }
@@ -533,7 +533,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: true,
                             maxNativeZoom: 14,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'caucasus_1k',
                             attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (2006)</a>',
@@ -551,7 +551,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'caucasus_500',
                             attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (1998 - 2003)</a>',
@@ -569,7 +569,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'topo_250'
                         }
@@ -587,7 +587,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: true,
                             maxNativeZoom: 15,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: false,
                             shortName: 'montenegro_250'
                         }
@@ -611,7 +611,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                     minZoom: 2,
                                     maxNativeZoom: 15,
                                     print: true,
-                                    jnx: true,
+                                    export: true,
                                     scaleDependent: false,
                                     noCors: false,
                                     shortName: 'tsvetkov_mountains',
@@ -641,7 +641,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         isOverlay: true,
                         maxNativeZoom: 18,
                         print: false,
-                        jnx: false,
+                        export: false,
                         scaleDependent: false,
                         noCors: true,
                         attribution:
@@ -656,7 +656,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         isOverlay: true,
                         isOverlayTransparent: true,
                         print: true,
-                        jnx: false,
+                        export: false,
                         shortName: 'geocaching',
                         attribution: '<a href="https://geocaching.su/">geocaching.su</a>',
                     })
@@ -671,7 +671,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: true,
                             scaleDependent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'osm_gps_traces',
                             attribution: '<a href="https://www.openstreetmap.org/#&layers=G">' +
                                 'OpenStreetMap public GPS traces</a>',
@@ -696,7 +696,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: true,
                             scaleDependent: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             noCors: true,
                             shortName: 'strava_all',
@@ -724,7 +724,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: true,
                             scaleDependent: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             noCors: true,
                             shortName: 'strava_run',
@@ -752,7 +752,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: true,
                             scaleDependent: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             noCors: true,
                             shortName: 'strava_ride',
@@ -780,7 +780,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: true,
                             scaleDependent: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             subdomains: 'abc',
                             noCors: true,
                             shortName: 'strava_winter',
@@ -802,7 +802,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             maxNativeZoom: 16,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_paper',
@@ -823,7 +823,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_topo',
@@ -845,7 +845,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: false,
                             shortName: 'norway_roads',
@@ -868,7 +868,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech',
@@ -889,7 +889,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_tourist',
@@ -911,7 +911,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_winter',
@@ -934,7 +934,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
-                            jnx: true,
+                            export: true,
                             scaleDependent: true,
                             noCors: true,
                             shortName: 'finland_topo',
@@ -966,7 +966,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                     isOverlayTransparent: false,
                                     tms: false,
                                     print: true,
-                                    jnx: true,
+                                    export: true,
                                     scaleDependent: false,
                                     shortName: 'france_topo_25k',
                                     cutline: getCutline('france'),
@@ -1000,7 +1000,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 isOverlayTransparent: false,
                                 scaleDependent: true,
                                 print: true,
-                                jnx: true,
+                                export: true,
                                 shortName: 'england_topo',
                                 cutline: getCutline('great_britain'),
                                 attribution: '<a href="https://docs.microsoft.com/en-us/bingmaps/v8-web-control/' +
@@ -1026,7 +1026,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: true,
                             tms: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             scaleDependent: true,
                             shortName: 'cycling_trails',
                             isOverlayTransparent: true,
@@ -1043,7 +1043,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: true,
                             tms: false,
                             print: true,
-                            jnx: false,
+                            export: false,
                             scaleDependent: true,
                             shortName: 'hiking_trails',
                             isOverlayTransparent: true,
@@ -1060,7 +1060,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 isOverlay: true,
                                 tms: false,
                                 print: true,
-                                jnx: true,
+                                export: true,
                                 scaleDependent: true,
                                 shortName: 'slovakia_topo',
                                 isOverlayTransparent: false,
@@ -1093,7 +1093,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlay: true,
                             isOverlayTransparent: true,
                             print: true,
-                            jnx: false,
+                            export: false,
                             shortName: 'yandex_tracks',
                             noCors: true,
                             attribution: '<a href="https://n.maps.yandex.ru/">Yandex Map Editor</a>',
@@ -1112,7 +1112,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 isOverlay: true,
                                 tms: false,
                                 print: true,
-                                jnx: true,
+                                export: true,
                                 scaleDependent: true,
                                 shortName: 'spain_topo',
                                 isOverlayTransparent: false,
@@ -1141,7 +1141,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 isOverlay: true,
                                 tms: false,
                                 print: true,
-                                jnx: true,
+                                export: true,
                                 scaleDependent: true,
                                 shortName: 'swiss_topo',
                                 isOverlayTransparent: false,

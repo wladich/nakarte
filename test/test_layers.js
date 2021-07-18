@@ -23,7 +23,7 @@ function checkLayer(layerDef, isWrapper, parentLayer) {
         assert.notExists(options.print, 'print');
         assert.notExists(options.scaleDependent, 'scaleDependent');
         assert.notExists(options.shortName, 'shortName');
-        assert.notExists(options.jnx, 'jnx');
+        assert.notExists(options.export, 'export');
         assert.notExists(options.noCors, 'noCors');
     } else {
         assert.oneOf(options.print, [true, false], 'print');
@@ -32,7 +32,7 @@ function checkLayer(layerDef, isWrapper, parentLayer) {
             assert.isString(options.shortName, 'shortName');
             assert.isNotEmpty(options.shortName, 'shortName');
         }
-        assert.oneOf(options.jnx, [true, false], 'jnx');
+        assert.oneOf(options.export, [true, false], 'export');
         assert.oneOf(options.noCors, [true, false, undefined], 'noCors');
     }
 }

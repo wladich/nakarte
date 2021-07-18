@@ -1,0 +1,23 @@
+<a class="button" title="Export tiles for GPS receivers"
+   data-bind="click: showSelector">JNX
+</a>
+
+<div class="leaflet-control-content">
+    <div class="form-row layer-name" data-bind="text: exportLayer().layerName"></div>
+    <div class="form-row export-format">JNX</div>
+    <!-- ko foreach: exportOptions -->
+    <div data-bind="html: $data.label,
+                    click: function() {$root.exportOptionClickHandler($data);},
+                    css: {option: true, warning: $data.warning, disabled: $root.exportInProgress},
+                    attr: {title: $data.tooltip}"></div>
+    <!-- /ko -->
+    <div class="form-row progress-row">
+        <div class="button-minimize" data-bind="click: removeSelector"></div>
+        <div data-bind="component:{
+                name: 'progress-indicator',
+                params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
+            },
+            visible: exportInProgress"></div>
+        <a title="cancel" data-bind="visible: exportInProgress, click: cancelExport, css: {disabled: cancelFlag}" class="button cancel cancel-button"></a>
+    </div>
+</div>
