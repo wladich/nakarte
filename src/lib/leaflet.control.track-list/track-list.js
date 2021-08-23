@@ -523,8 +523,8 @@ L.Control.TrackList = L.Control.extend({
                 '-',
                 {text: 'Delete', callback: this.removeTrack.bind(this, track)},
                 '-',
-                {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
-                {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
+                {text: 'Save as GPX', callback: () => this.saveTrackAsFile(track, geoExporters.saveGpx, '.gpx')},
+                {text: 'Save as KML', callback: () => this.saveTrackAsFile(track, geoExporters.saveKml, '.kml')},
                 {text: 'Copy link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
                 {text: 'Extra', separator: true},
                 {
