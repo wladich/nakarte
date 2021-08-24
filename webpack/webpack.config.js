@@ -183,6 +183,11 @@ module.exports = {
     devtool: false,
     stats: 'errors-warnings',
     bail: isProduction || isTesting,
+    devServer: {
+        client: {
+            overlay: false,
+        },
+    },
 
     entry: {
         app: paths.appIndexJs,
