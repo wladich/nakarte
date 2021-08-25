@@ -5,6 +5,7 @@ import {saveNktk} from './parsers/nktk';
 function saveGpx(segments, name, points, withElevations = false) {
     const gpx = [];
     const fakeTime = '1970-01-01T00:00:01.000Z';
+    const creationTime = new Date().toISOString();
 
     gpx.push('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>');
     gpx.push(
@@ -12,6 +13,11 @@ function saveGpx(segments, name, points, withElevations = false) {
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 ' +
         'http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1">'
     );
+
+    gpx.push('\t<metadata>');
+    gpx.push(`\t\t<time>${creationTime}</time>`);
+    gpx.push('\t</metadata>');
+
     points.forEach(function(marker) {
             var label = marker.label;
             label = escapeHtml(label);
