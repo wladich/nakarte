@@ -399,7 +399,9 @@ L.Control.TrackList = L.Control.extend({
             );
             var markers = this.getTrackPoints(track);
             markers.forEach(this.setMarkerIcon.bind(this));
-            this._markerLayer.updateMarkers(markers);
+            if (track.visible()) {
+                this._markerLayer.updateMarkers(markers);
+            }
         },
 
         onTrackVisibilityChanged: function(track) {
