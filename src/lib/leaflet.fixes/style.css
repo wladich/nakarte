@@ -13,3 +13,7 @@
 .leaflet-right .leaflet-control-horizontal-stack {
     margin-right: 8px;
 }
+
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+    float: left;
+}
