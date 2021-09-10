@@ -35,6 +35,9 @@ function checkLayer(layerDef, isWrapper, parentLayer) {
         assert.oneOf(options.jnx, [true, false], 'jnx');
         assert.oneOf(options.noCors, [true, false, undefined], 'noCors');
     }
+    if ('hotkey' in options) {
+        assert.match(options.hotkey, /^[A-Z]$/u);
+    }
 }
 
 layersDefs.forEach(function (layerDef) {
@@ -102,6 +105,26 @@ test('Layers short names unique', function () {
         }
     }
     assert.isEmpty(Array.from(duplicates), 'duplicate short names');
+});
+
+test('Layers hotkeys unique', function () {
+    const seen = new Set();
+    const duplicates = new Set();
+    for (const layerDef of layersDefs) {
+        let hotkey = layerDef.layer.options.hotkey;
+        if (!hotkey) {
+            hotkey = layerDef.layer.options.code;
+            if (hotkey.length !== 1) {
+                continue;
+            }
+        }
+
+        if (seen.has(hotkey)) {
+            duplicates.add(hotkey);
+        }
+        seen.add(hotkey);
+    }
+    assert.isEmpty(Array.from(duplicates), 'duplicate hotkeys');
 });
 
 suite('Layers groups definitions');
