@@ -469,6 +469,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'opentopo',
                             attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
+                            hotkey: 'V',
                         }
                     )
                 },
