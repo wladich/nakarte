@@ -23,8 +23,8 @@ import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
 import raiseControlsOnFocus from '~/lib/leaflet.controls.raise-on-focus';
 import {getLayers} from './layers';
 import '~/lib/leaflet.control.layers.events';
-import '~/lib/leaflet.control.jnx';
-import '~/lib/leaflet.control.jnx/hash-state';
+import '~/lib/leaflet.control.export';
+import '~/lib/leaflet.control.export/hash-state';
 import '~/lib/leaflet.control.azimuth';
 import {hashState, bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
 import {LocateControl} from '~/lib/leaflet.control.locate';
@@ -146,9 +146,12 @@ function setUp() {
         printControl.setMinimized();
     }
 
-    const jnxControl = new L.Control.JNX(layersControl, {position: 'bottomleft'})
+    const exportControl = new L.Control.Export(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
+    if (!exportControl.hasExportOptions()) {
+        exportControl.setMinimized();
+    }
 
     /* controls bottom-right corner */
 
@@ -308,7 +311,7 @@ function setUp() {
         });
     });
 
-    jnxControl.on('tileExportStart', function(e) {
+    exportControl.on('tileExportStart', function(e) {
         logging.logEvent('tileExportStart', {
             eventId: e.eventId,
             layer: getLayerLoggingInfo(e.layer),
@@ -317,7 +320,7 @@ function setUp() {
         });
     });
 
-    jnxControl.on('tileExportEnd', function(e) {
+    exportControl.on('tileExportEnd', function(e) {
         logging.logEvent('tileExportEnd', {
             eventId: e.eventId,
             success: e.success,

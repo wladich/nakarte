@@ -55,7 +55,7 @@ function ensureImageJpg(image) {
     return null;
 }
 
-async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
+async function exportFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress, cancelFlag) {
     const jnxProductId = L.stamp(srcLayer);
     const jnxZOrder = Math.min(jnxProductId, 100);
     const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder);
@@ -82,8 +82,18 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
         );
         for (let tilePromiseRec of iterateTilePromises()) {
             promises.push(tilePromiseRec);
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
         }
         for (let {tilePromise} of promises) {
+            if (cancelFlag()) {
+                doStop = true;
+                error = new Error('canceled');
+                break;
+            }
             let imageRec;
             try {
                 imageRec = await tilePromise;
@@ -117,4 +127,4 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
     return writer.getJnx();
 }
 
-export {makeJnxFromLayer, minZoom};
+export {exportFromLayer, minZoom};

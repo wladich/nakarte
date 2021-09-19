@@ -1,8 +1,8 @@
 import L from 'leaflet';
 import '~/lib/leaflet.hashState/leaflet.hashState';
 
-L.Control.JNX.include(L.Mixin.HashState);
-L.Control.JNX.include({
+L.Control.Export.include(L.Mixin.HashState);
+L.Control.Export.include({
         stateChangeEvents: ['selectionchange'],
 
         serializeState: function() {
