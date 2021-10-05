@@ -23,6 +23,25 @@ class LayerGroupWithOptions extends L.LayerGroup {
 
     const layersDefs = [
                 {
+                    title: 'Mapillary',
+                    isDefault: true,
+                    layer: L.tileLayer('http://localhost:8051/{z}/{x}/{y}',
+                        {
+                            code: 'mapillary',
+                            isOverlay: true,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: true,
+                            shortName: 'mapillary',
+                            isOverlayTransparent: true,
+                            tms: false,
+                            tileSize: 512,
+                            zoomOffset: -1,
+                            minNativeZoom: 0,
+                        }
+                    )
+                },
+                {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
                     isDefault: true,
@@ -1220,7 +1239,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
             layers: [
                 'Google Hybrid',
                 'Bing imagery acquisition dates',
-                'geocaching.su'
+                'geocaching.su',
+                'Mapillary'
             ]
         },
         {
@@ -1329,6 +1349,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         // point overlays
         'Mountain passes (Westra)',
         'geocaching.su',
+        'Mapillary',
     ];
 
 function getLayers() {
