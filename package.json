@@ -46,7 +46,7 @@
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "html-webpack-plugin": "^5.3.2",
-    "karma": "^6.3.4",
+    "karma": "^6.3.6",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.1",
