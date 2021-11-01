@@ -82,7 +82,7 @@
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
     "leaflet-rotatedmarker": "^0.2.0",
-    "load-script": "^1.0.0",
+    "load-script": "^2.0.0",
     "mapillary-js": "3.1.0",
     "pbf": "^3.0.5",
     "rbush": "^3.0.1",
