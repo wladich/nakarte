@@ -13,11 +13,27 @@ function getCoverageLayer(options) {
     ]);
 }
 
+function isCoordLikeArtificial(x) {
+    // check if number has less then 2 non-zero digits after decimal point
+    return Number.isInteger(x * 10);
+}
+
 function parseSearchResponse(resp) { // eslint-disable-line complexity
     const images = [];
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {
-            if (!page.coordinates || page.title.slice(-4).toLowerCase() !== '.jpg') {
+            const coordinates = page.coordinates?.[0];
+            const [baseName, extension] = (page.title ?? '').split('.', 2);
+            if (
+                !coordinates ||
+                coordinates.globe !== 'earth' ||
+                (isCoordLikeArtificial(coordinates.lat) && isCoordLikeArtificial(coordinates.lon)) ||
+                coordinates.lat === 0 ||
+                coordinates.lon === 0 ||
+                coordinates.lat === coordinates.lon ||
+                (baseName ?? '').includes('View of Earth') ||
+                (extension ?? '').toLowerCase() !== 'jpg'
+            ) {
                 continue;
             }
 
@@ -73,8 +89,8 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
                 url,
                 width: iinfo.width,
                 height: iinfo.height,
-                lat: page.coordinates[0].lat,
-                lng: page.coordinates[0].lon,
+                lat: coordinates.lat,
+                lng: coordinates.lon,
                 author: author,
                 timeOriginal: iinfo.extmetadata.DateTimeOriginal ? iinfo.extmetadata.DateTimeOriginal.value : null,
                 time: iinfo.extmetadata.DateTime ? iinfo.extmetadata.DateTime.value : null,
