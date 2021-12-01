@@ -27,7 +27,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-rewire": "^1.2.0",
     "chai": "^4.3.4",
-    "chalk": "^4.1.1",
+    "chalk": "^5.0.0",
     "child_process": "^1.0.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^9.0.1",
