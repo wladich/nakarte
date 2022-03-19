@@ -1,4 +1,4 @@
-[![tests status](https://github.com/wladich/nakarte/workflows/test/badge.svg)](https://github.com/wladich/nakarte/actions?query=workflow%3Atest)
+[![tests status](https://github.com/wladich/nakarte/workflows/check/badge.svg)](https://github.com/wladich/nakarte/actions?query=workflow%3Atest)
 
 Source code of site http://nakarte.me (former http://nakarte.tk)
 
