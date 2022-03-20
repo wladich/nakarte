@@ -23,7 +23,8 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {
             const coordinates = page.coordinates?.[0];
-            const [baseName, extension] = (page.title ?? '').split('.', 2);
+            const pageTitle = page.title ?? '';
+            const extension = pageTitle.split('.').pop();
             if (
                 !coordinates ||
                 coordinates.globe !== 'earth' ||
@@ -31,8 +32,8 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
                 coordinates.lat === 0 ||
                 coordinates.lon === 0 ||
                 coordinates.lat === coordinates.lon ||
-                (baseName ?? '').includes('View of Earth') ||
-                (extension ?? '').toLowerCase() !== 'jpg'
+                pageTitle.includes('View of Earth') ||
+                extension.toLowerCase() !== 'jpg'
             ) {
                 continue;
             }
