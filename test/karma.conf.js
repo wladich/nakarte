@@ -30,5 +30,11 @@ module.exports = function (config) {
         mochaReporter: {
             showDiff: true,
         },
+        customLaunchers: {
+            ChromiumHeadlessInDocker: {
+                base: 'ChromiumHeadless',
+                flags: ['--no-sandbox'],
+            },
+        },
     });
 };
