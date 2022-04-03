@@ -14,11 +14,11 @@ function getTileId({x, y, z}) {
     return id.reverse().join('');
 }
 
-function makeTileUrl(coords) {
+function makeTilePath(coords) {
     const
         tileId = getTileId(coords),
         urlPath = tileId.replace(/(\d{3})(?!$)/gu, '$1/'); // "033331022" -> "033/331/022"
-    return `http://wikimapia.org/z1/itiles/${urlPath}.xy?342342`;
+    return `z1/itiles/${urlPath}.xy?342342`;
 }
 
 function tileIdToCoords(tileId) {
@@ -262,4 +262,4 @@ async function parseTile(s, projectObj) {
 //     }
 // },
 
-export {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl};
+export {getTileId, getWikimapiaTileCoords, parseTile, makeTilePath};
