@@ -23,7 +23,8 @@ function isPointInPolygon(polygon, p) {
 L.Wikimapia = L.GridLayer.extend({
         options: {
             tileSize: 1024,
-            updateWhenIdle: true
+            updateWhenIdle: true,
+            tilesBaseUrl: 'http://wikimapia.org/',
         },
 
         initialize: function(options) {
@@ -33,7 +34,7 @@ L.Wikimapia = L.GridLayer.extend({
 
         onAdd: function(map) {
             if (!this.loader) {
-                this.loader = new WikimapiaLoader(map);
+                this.loader = new WikimapiaLoader(this.options.tilesBaseUrl, map);
             }
             L.GridLayer.prototype.onAdd.call(this, map);
             this.on('tileunload', this.onTileUnload, this);

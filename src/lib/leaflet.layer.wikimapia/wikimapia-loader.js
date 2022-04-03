@@ -1,15 +1,15 @@
 import {TiledDataLoader} from '~/lib/tiled-data-loader';
 import * as wmUtils from './wm-utils';
-import urlViaCorsProxy from '~/lib/CORSProxy';
 
 class WikimapiaLoader extends TiledDataLoader {
     maxZoom = 15;
     minZoom = 1;
     tileSize = 1024;
 
-    constructor(projectObj) {
+    constructor(tilesBaseUrl, projectObj) {
         super();
         this._projectObj = projectObj;
+        this.tilesBaseUrl = tilesBaseUrl;
     }
 
     getFromCache(dataTileCoords) {
@@ -56,8 +56,7 @@ class WikimapiaLoader extends TiledDataLoader {
     }
 
     makeRequestData(dataTileCoords) {
-        let url = wmUtils.makeTileUrl(dataTileCoords);
-        url = urlViaCorsProxy(url);
+        let url = this.tilesBaseUrl + wmUtils.makeTilePath(dataTileCoords);
         return {
             url,
             options: {timeout: 20000}

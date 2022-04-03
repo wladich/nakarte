@@ -433,7 +433,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         isOverlay: true,
                         print: false,
                         jnx: false,
-                        attribution: '<a href="https://wikimapia.org/">Wikimapia</a>'
+                        attribution: '<a href="https://wikimapia.org/">Wikimapia</a>',
+                        tilesBaseUrl: config.wikimapiaTilesBaseUrl,
                     })
                 },
                 {
