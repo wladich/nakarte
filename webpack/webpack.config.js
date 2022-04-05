@@ -11,7 +11,6 @@ const Webpack = require('webpack');
 const paths = require('./paths');
 
 const errorExitStatus = 1;
-const urlLoaderSizeLimit = 10000;
 
 const envs = {
     production: true,
@@ -124,13 +123,7 @@ const loaders = [
     },
     {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/u,
-        use: {
-            loader: 'url-loader',
-            options: {
-                limit: isProduction || isDevelopment ? urlLoaderSizeLimit : false,
-                name: '[path][name].[ext]',
-            },
-        },
+        type: 'asset/inline',
     },
     {
         test: /\.(html)(\?.*)?$/u,
