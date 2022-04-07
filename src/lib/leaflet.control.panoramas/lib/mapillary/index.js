@@ -20,24 +20,57 @@ async function getMapillary() {
             ),
         import(
             /* webpackChunkName: "mapillary" */
-            'mapillary-js/dist/mapillary.min.css'
+            'mapillary-js/dist/mapillary.css'
             ),
     ]);
     return mapillary;
 }
-
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
-    const url = `https://a.mapillary.com/v3/images?` +
-        `client_id=${config.mapillary}&closeto=${latlng.lng},${latlng.lat}&radius=${searchRadiusMeters}`;
-    const resp = await fetch(url, {responseType: 'json', timeout: 10000});
-    if (resp.status === 200 && resp.responseJSON.features.length) {
-        return {found: true, data: resp.responseJSON.features[0].properties.key};
+    function radiusToBbox(latlng, radiusInMeters) {
+        const center = L.CRS.EPSG3857.project(latlng);
+        const metersPerMapUnit = L.CRS.EPSG3857.unproject(L.point(center.x, center.y + 1)).distanceTo(latlng);
+        const radiusInMapUnits = radiusInMeters / metersPerMapUnit;
+        return L.latLngBounds(
+            L.CRS.EPSG3857.unproject(L.point(center.x - radiusInMapUnits, center.y - radiusInMapUnits)),
+            L.CRS.EPSG3857.unproject(L.point(center.x + radiusInMapUnits, center.y + radiusInMapUnits))
+        );
+    }
+
+    function isCloser(target, a, b) {
+        const d1 = target.distanceTo(a);
+        const d2 = target.distanceTo(b);
+        if (d1 < d2) {
+            return -1;
+        } else if (d1 === d2) {
+            return 0;
+        }
+        return 1;
+    }
+
+    const searchBbox = radiusToBbox(latlng, searchRadiusMeters);
+    const precision = 6;
+    const searchBboxStr = [
+        searchBbox.getWest().toFixed(precision),
+        searchBbox.getSouth().toFixed(precision),
+        searchBbox.getEast().toFixed(precision),
+        searchBbox.getNorth().toFixed(precision),
+    ].join(',');
+    const url = `https://graph.mapillary.com/images?access_token=${config.mapillary4}&bbox=${searchBboxStr}&limit=100`;
+    const resp = await fetch(url, {responseType: 'json', timeout: 20000});
+    if (resp.responseJSON.data.length) {
+        const points = resp.responseJSON.data.map((it) => ({
+            id: it.id,
+            lat: it.geometry.coordinates[1],
+            lng: it.geometry.coordinates[0],
+        }));
+        points.sort((p1, p2) => isCloser(latlng, p1, p2));
+        return {found: true, data: points[0].id};
     }
     return {found: false};
 }
 
 const Viewer = L.Evented.extend({
-        includes: [CloseButtonMixin, DateLabelMixin],
+        includes: [CloseButtonMixin],
 
         initialize: function(mapillary, container) {
             const id = `container-${L.stamp(container)}`;
@@ -45,15 +78,10 @@ const Viewer = L.Evented.extend({
             const viewer = this.viewer = new mapillary.Viewer(
                 {
                     container: id,
-                    apiClient: config.mapillary,
-                    component: {cover: false, bearing: false}
+                    accessToken: config.mapillary4,
+                    component: {cover: false, bearing: false, cache: false}
                 });
-            window.addEventListener('resize', function() {
-                    viewer.resize();
-                }
-            );
-            viewer.on('nodechanged', this.onNodeChanged.bind(this));
-            this.createDateLabel(container);
+            viewer.on('image', this.onNodeChanged.bind(this));
             this.createCloseButton(container);
             this._bearing = 0;
             this._zoom = 0;
@@ -64,33 +92,32 @@ const Viewer = L.Evented.extend({
         showPano: function(data) {
             this.deactivate();
             this.activate();
-            this.viewer.moveToKey(data).then(() => {
+            this.viewer.moveTo(data).then(() => {
                 this.viewer.setZoom(0);
                 this.updateZoomAndCenter();
             });
         },
 
-        onNodeChanged: function(node) {
-            if (this._node && (node.key === this._node.key)) {
+        onNodeChanged: function(event) {
+            if (this.currentImage && (event.image.id === this.currentImage.id)) {
                 return;
             }
-            this._node = node;
+            this.currentImage = event.image;
             this.fireChangeEvent();
-            this.updateDateLabel(node.capturedAt);
         },
 
         getBearingCorrection: function() {
-            if (this._node && 'computedCA' in this._node) {
-                return (this._node.computedCA - this._node.originalCA);
+            if (this.currentImage && 'computedCompassAngle' in this.currentImage) {
+                return (this.currentImage.computedCompassAngle - this.currentImage.originalCompassAngle);
             }
             return 0;
         },
 
         fireChangeEvent: function() {
-            if (this._node) {
-                const latlon = this._node.originalLatLon;
+            if (this.currentImage) {
+                const lnglat = this.currentImage.originalLngLat;
                 this.fire('change', {
-                        latlng: L.latLng(latlon.lat, latlon.lon),
+                        latlng: L.latLng(lnglat.lat, lnglat.lng),
                         heading: this._bearing,
                         pitch: this._pitch,
                         zoom: this._zoom
@@ -141,13 +168,13 @@ const Viewer = L.Evented.extend({
         },
 
         getState: function() {
-            if (!this._node) {
+            if (!this.currentImage) {
                 return [];
             }
-            const {lat, lon} = this._node.originalLatLon;
+            const {lat, lng} = this.currentImage.originalLngLat;
             return [
                 lat.toFixed(6),
-                lon.toFixed(6),
+                lng.toFixed(6),
                 this._center[0].toFixed(4),
                 this._center[1].toFixed(4),
                 this._zoom.toFixed(2)
@@ -163,7 +190,7 @@ const Viewer = L.Evented.extend({
             if (!isNaN(lat) && !isNaN(lng) && !isNaN(center0) && !isNaN(center1) && !isNaN(zoom)) {
                 getPanoramaAtPos(L.latLng(lat, lng), 0.01).then((res) => {
                     if (res.found) {
-                        this.viewer.moveToKey(res.data);
+                        this.viewer.moveTo(res.data);
                         this.viewer.setCenter([center0, center1]);
                         this.viewer.setZoom(zoom);
                     }
