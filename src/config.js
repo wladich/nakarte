@@ -16,6 +16,7 @@ const config = {
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',
     tracksStorageServer: 'https://tracks.nakarte.me',
     wikimapiaTilesBaseUrl: 'https://proxy.nakarte.me/wikimapia/',
+    mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     ...secrets
 };
 

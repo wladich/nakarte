@@ -1,12 +1,15 @@
 import L from 'leaflet';
-import {MapillaryCoverage} from './mapillary-coverage-layer';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import './style.css';
 import {CloseButtonMixin, DateLabelMixin} from '../common';
 
 function getCoverageLayer(options) {
-    return new MapillaryCoverage(options);
+    return L.tileLayer(config.mapillaryRasterTilesUrl, L.extend({
+        tileSize: 1024,
+        zoomOffset: -2,
+        minNativeZoom: 0,
+    }, options));
 }
 
 async function getMapillary() {
