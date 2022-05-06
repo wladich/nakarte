@@ -106,7 +106,6 @@ class WikimediaLoader extends TiledDataLoader {
 const WikimediaVectorCoverage = L.GridLayer.extend({
         options: {
             tileSize: 256,
-            // updateWhenIdle: true,
             color: '#ff00ff',
         },
 

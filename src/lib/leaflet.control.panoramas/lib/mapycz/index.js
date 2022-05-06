@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import {getSMap} from './apiLoader';
-import {CloseButtonMixin, DateLabelMixin} from '../common';
+import {CloseButtonMixin, DateLabelMixin, Events} from '../common';
 
 function getCoverageLayer(options) {
     return L.tileLayer('https://mapserver.mapy.cz/panorama_hybrid-m/{z}-{x}-{y}', options);
@@ -36,30 +36,36 @@ const Viewer = L.Evented.extend({
         this.createCloseButton(container);
         window.addEventListener('resize', this.resize.bind(this));
         this.invalidateSize = L.Util.throttle(this._invalidateSize, 100, this);
+        this._updateHandler = null;
+        this._placeId = null;
+        this._yaw = null;
+        this._pitch = null;
+        this._fov = null;
+        this._yawPitchZoomChangeTimer = null;
     },
 
-    showPano: function(data) {
-        const yaw = this.panorama.getCamera().yaw;
-        this.panorama.show(data, {yaw});
-        this.panorama.setCamera({fov: 1.256637061});
-        this.updatePositionAndView();
-        this.updateDateLabel();
+    showPano: function(place, yaw = null, pitch = 0, fov = 1.256637061) {
+        if (yaw === null) {
+            yaw = this.panorama.getCamera().yaw;
+        }
+        this.panorama.show(place, {yaw});
+        this.panorama.setCamera({fov, pitch});
+        if (!this._updateHandler) {
+            this._updateHandler = setInterval(this.watchMapyStateChange.bind(this), 50);
+        }
     },
 
     activate: function() {
-        this._active = true;
         this.resize();
-        if (!this._updateHandler) {
-            this._updateHandler = setInterval(() => this.updatePositionAndView(), 200);
-        }
     },
 
     deactivate: function() {
-        this._active = false;
-        if (this._updateHandler) {
-            clearInterval(this._updateHandler);
-            this._updateHandler = null;
-        }
+        this._placeId = null;
+        this._yaw = null;
+        this._pitch = null;
+        this._fov = null;
+        clearInterval(this._updateHandler);
+        this._updateHandler = null;
     },
 
     getState: function() {
@@ -85,11 +91,9 @@ const Viewer = L.Evented.extend({
         const pitch = parseFloat(state[3]);
         const fov = parseFloat(state[4]);
         if (!isNaN(lat) && !isNaN(lng) && !isNaN(yaw) && !isNaN(pitch) && !isNaN(fov)) {
-            getPanoramaAtPos({lat, lng}, 0).then(({data, found}) => {
+            getPanoramaAtPos({lat, lng}, 0).then(({data: place, found}) => {
                 if (found) {
-                    this.panorama.show(data, {yaw, pitch, fov});
-                    this.panorama.setCamera({yaw, pitch, fov});
-                    this.updateDateLabel();
+                    this.showPano(place, yaw, pitch, fov);
                 }
             });
             return true;
@@ -101,26 +105,33 @@ const Viewer = L.Evented.extend({
         this.panorama.syncPort();
     },
 
-    updatePositionAndView: function() {
+    watchMapyStateChange: function() {
         const place = this.panorama.getPlace();
         if (!place) {
             return;
         }
-        const oldPlaceId = this._placeId;
-        const oldHeading = this._heading;
-        this._placeId = place.getId();
-        this._heading = this.panorama.getCamera().yaw;
-        const placeIdChanged = this._placeId !== oldPlaceId;
-        const headingChanged = this._heading !== oldHeading;
-        if (placeIdChanged) {
-            this.updateDateLabel();
-        }
-        if (placeIdChanged || headingChanged) {
+        const placeId = place.getId();
+        if (this._placeId !== placeId) {
+            this._placeId = placeId;
             const coords = place.getCoords().toWGS84();
-            this.fire('change', {
-                latlng: L.latLng(coords[1], coords[0]),
-                heading: (this._heading * 180) / Math.PI,
-            });
+            this.updateDateLabel();
+            this.fire(Events.ImageChange, {latlng: L.latLng(coords[1], coords[0])});
+        }
+        const camera = this.panorama.getCamera();
+        if (this._yaw !== camera.yaw || this._pitch !== camera.pitch || this._fov !== camera.fov) {
+            if (this._yaw !== camera.yaw) {
+                this.fire(Events.BearingChange, {bearing: (this._yaw * 180) / Math.PI});
+            }
+            this._yaw = camera.yaw;
+            this._pitch = camera.pitch;
+            this._fov = camera.fov;
+            if (this._yawPitchZoomChangeTimer !== null) {
+                clearTimeout(this._yawPitchZoomChangeTimer);
+                this._yawPitchZoomChangeTimer = null;
+            }
+            this._yawPitchZoomChangeTimer = setTimeout(() => {
+                this.fire(Events.YawPitchZoomChangeEnd);
+            }, 120);
         }
     },
 

@@ -4,6 +4,7 @@ import googleProvider from './lib/google';
 import '~/lib/leaflet.hashState/leaflet.hashState';
 
 import './style.css';
+import {Events} from './lib/common';
 import '~/lib/controls-styles/controls-styles.css';
 import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import mapillaryProvider from './lib/mapillary';
@@ -25,6 +26,22 @@ const PanoMarker = L.Marker.extend({
             }
         );
         L.Marker.prototype.initialize.call(this, [0, 0], {icon, interactive: false});
+        this._postponeType = null;
+        this._postponeHeading = null;
+    },
+
+    onAdd: function(map) {
+        L.Marker.prototype.onAdd.call(this, map);
+        if (this._postponeType !== null) {
+            this.setType(this._postponeType);
+        }
+        if (this._postponeHeading !== null) {
+            this.setHeading(this._postponeHeading);
+        }
+    },
+
+    onRemove: function(map) {
+        L.Marker.prototype.onRemove.call(this, map);
     },
 
     getIcon: function() {
@@ -34,11 +51,19 @@ const PanoMarker = L.Marker.extend({
     },
 
     setHeading: function(angle) {
+        this._postponeHeading = angle;
+        if (!this._map) {
+            return;
+        }
         const markerIcon = this.getIcon();
         markerIcon.style.transform = `rotate(${angle || 0}deg)`;
     },
 
     setType: function(markerType) {
+        this._postponeType = markerType;
+        if (!this._map) {
+            return;
+        }
         const className = {
             slim: 'leaflet-panorama-marker-circle',
             normal: 'leaflet-panorama-marker-binocular'
@@ -112,6 +137,7 @@ L.Control.Panoramas = L.Control.extend({
                 provider.container = L.DomUtil.create('div', 'panorama-container', this._panoramasContainer);
             }
             this.nearbyPoints = [];
+            this.marker = new PanoMarker();
         },
 
         loadSettings: function() {
@@ -219,7 +245,7 @@ L.Control.Panoramas = L.Control.extend({
             this.updateCoverageVisibility();
             this._map.on('click', this.onMapClick, this);
             L.DomUtil.addClass(this._map._container, 'panoramas-control-active');
-            this.notifyChanged();
+            this.notifyChange();
         },
 
         disableControl: function() {
@@ -232,7 +258,7 @@ L.Control.Panoramas = L.Control.extend({
             this._map.off('click', this.onMapClick, this);
             this.hidePanoViewer();
             L.DomUtil.removeClass(this._map._container, 'panoramas-control-active');
-            this.notifyChanged();
+            this.notifyChange();
         },
 
         updateCoverageVisibility: function() {
@@ -252,7 +278,7 @@ L.Control.Panoramas = L.Control.extend({
                     }
                 }
             }
-            this.notifyChanged();
+            this.notifyChange();
         },
 
         showPanoramaContainer: function() {
@@ -309,12 +335,15 @@ L.Control.Panoramas = L.Control.extend({
                 setTimeout(() => provider.viewer.showPano(data), 0);
             }
             provider.viewer.activate();
-            this.notifyChanged();
+            this.marker.setType(provider.mapMarkerType);
+            this.notifyChange();
         },
 
         setupViewerEvents: function(provider) {
             provider.viewer.on({
-                change: this.onPanoramaChangeView.bind(this, provider),
+                [Events.ImageChange]: this.onViewerImageChange,
+                [Events.BearingChange]: this.onViewerBearingChange,
+                [Events.YawPitchZoomChangeEnd]: this.onViewerZoomYawPitchChangeEnd,
                 closeclick: this.onPanoramaCloseClick
             }, this);
         },
@@ -324,39 +353,29 @@ L.Control.Panoramas = L.Control.extend({
                 this.hidePano(provider);
             }
             L.DomUtil.removeClass(this._panoramasContainer, 'enabled');
-            this.hideMarker();
-            this.notifyChanged();
+            this._map.removeLayer(this.marker);
+            this.notifyChange();
         },
 
-        placeMarker: function(latlng, heading) {
-            if (!this.panoramaVisible()) {
-                return;
-            }
-            if (!this.marker) {
-                this.marker = new PanoMarker();
-            }
-            this._map.addLayer(this.marker);
-            this.marker.setLatLng(latlng);
-            this.marker.setHeading(heading);
+        notifyChange: function() {
+            this.fire('change');
         },
 
-        hideMarker: function() {
-            if (this.marker) {
-                this._map.removeLayer(this.marker);
-            }
-        },
-        notifyChanged: function() {
-            this.fire('panoramachanged');
-        },
-
-        onPanoramaChangeView: function(provider, e) {
+        onViewerImageChange: function(e) {
             if (!this._map.getBounds().pad(-0.05).contains(e.latlng)) {
                 this._map.panTo(e.latlng);
             }
-            this.placeMarker(e.latlng, e.heading);
-            this.marker.setType(provider.mapMarkerType);
-            this.setupNearbyPoints(e.latlngs);
-            this.notifyChanged();
+            this._map.addLayer(this.marker);
+            this.marker.setLatLng(e.latlng);
+            this.notifyChange();
+        },
+
+        onViewerBearingChange: function(e) {
+            this.marker.setHeading(e.bearing);
+        },
+
+        onViewerZoomYawPitchChangeEnd: function() {
+            this.notifyChange();
         },
 
         onPanoramaCloseClick: function() {
@@ -381,6 +400,8 @@ L.Control.Panoramas = L.Control.extend({
             for (let {promise, provider} of promises) {
                 let searchResult = await promise;
                 if (searchResult.found) {
+                    this._map.removeLayer(this.marker);
+                    this.provider = provider;
                     this.showPano(provider, searchResult.data);
                     return;
                 }
@@ -448,7 +469,7 @@ L.Control.Panoramas = L.Control.extend({
 
 L.Control.Panoramas.include(L.Mixin.HashState);
 L.Control.Panoramas.include({
-        stateChangeEvents: ['panoramachanged'],
+        stateChangeEvents: ['change'],
 
         serializeState: function() {
             let state = null;
