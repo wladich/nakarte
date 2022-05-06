@@ -79,7 +79,7 @@ const Viewer = L.Evented.extend({
                 {
                     container: id,
                     accessToken: config.mapillary4,
-                    component: {cover: false, bearing: false, cache: false}
+                    component: {cover: false, bearing: false, cache: true, zoom: true},
                 });
             viewer.on('image', this.onNodeChanged.bind(this));
             this.createCloseButton(container);
