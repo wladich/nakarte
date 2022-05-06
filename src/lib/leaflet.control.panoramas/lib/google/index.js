@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import getGoogle from '~/lib/googleMapsApi';
+import {Events} from "../common";
 
 function getCoverageLayer(options) {
     return L.tileLayer(
@@ -41,26 +42,38 @@ const Viewer = L.Evented.extend({
                 motionTrackingControl: false,
             }
         );
-        panorama.addListener('position_changed', () => this.onPanoramaChangeView());
-        panorama.addListener('pov_changed', () => this.onPanoramaChangeView());
+        panorama.addListener('position_changed', () => this.onPanoramaPositionChanged());
+        panorama.addListener('pov_changed', () => this.onPanoramaPovChanged());
         panorama.addListener('closeclick', () => this.onCloseClick());
-
         this.invalidateSize = L.Util.throttle(this._invalidateSize, 50, this);
+        this._yawPitchZoomChangeTimer = null;
     },
 
     showPano: function(data) {
         this.panorama.setPosition(data.location.latLng);
         this.panorama.setZoom(1);
+        const heading = this.panorama.getPov().heading;
+        this.panorama.setPov({heading, pitch: 0});
     },
 
-    onPanoramaChangeView: function() {
+    onPanoramaPositionChanged: function() {
         if (!this._active) {
             return;
         }
-        let pos = this.panorama.getPosition();
-        pos = L.latLng(pos.lat(), pos.lng());
+        const pos = this.panorama.getPosition();
+        this.fire(Events.ImageChange, {latlng: L.latLng(pos.lat(), pos.lng())});
+    },
+
+    onPanoramaPovChanged: function() {
         const pov = this.panorama.getPov();
-        this.fire('change', {latlng: pos, heading: pov.heading, zoom: pov.zoom, pitch: pov.pitch});
+        this.fire(Events.BearingChange, {bearing: pov.heading});
+        if (this._yawPitchZoomChangeTimer !== null) {
+            clearTimeout(this._yawPitchZoomChangeTimer);
+            this._yawPitchZoomChangeTimer = null;
+        }
+        this._yawPitchZoomChangeTimer = setTimeout(() => {
+            this.fire(Events.YawPitchZoomChangeEnd);
+        }, 120);
     },
 
     onCloseClick: function() {

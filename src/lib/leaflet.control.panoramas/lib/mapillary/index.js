@@ -2,7 +2,7 @@ import L from 'leaflet';
 import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import './style.css';
-import {CloseButtonMixin, DateLabelMixin} from '../common';
+import {CloseButtonMixin, Events} from '../common';
 
 function getCoverageLayer(options) {
     return L.tileLayer(config.mapillaryRasterTilesUrl, L.extend({
@@ -75,126 +75,119 @@ const Viewer = L.Evented.extend({
         initialize: function(mapillary, container) {
             const id = `container-${L.stamp(container)}`;
             container.id = id;
-            const viewer = this.viewer = new mapillary.Viewer(
+            this.viewer = new mapillary.Viewer(
                 {
                     container: id,
                     accessToken: config.mapillary4,
-                    component: {cover: false, bearing: false, cache: true, zoom: true},
+                    component: {cover: false, bearing: false, cache: true, zoom: false, trackResize: true},
                 });
-            viewer.on('image', this.onNodeChanged.bind(this));
             this.createCloseButton(container);
-            this._bearing = 0;
-            this._zoom = 0;
-            this._center = [0, 0];
             this.invalidateSize = L.Util.throttle(this._invalidateSize, 100, this);
+            this._updateHandler = null;
+            this._currentImage = null;
+            this._zoom = null;
+            this._centerX = null;
+            this._centerY = null;
+            this._bearing = null;
+            this._yawPitchZoomChangeTimer = null;
         },
 
-        showPano: function(data) {
-            this.deactivate();
-            this.activate();
-            this.viewer.moveTo(data).then(() => {
-                this.viewer.setZoom(0);
-                this.updateZoomAndCenter();
+        showPano: function(imageId) {
+            this.viewer.moveTo(imageId)
+                .then(() => {
+                    if (!this._updateHandler) {
+                        this._updateHandler = setInterval(this.watchMapillaryStateChange.bind(this), 50);
+                    }
+                })
+                .catch(() => {
+                    // ignore error
+                });
+        },
+
+        watchMapillaryStateChange: function() {
+            Promise.all([
+                this.viewer.getImage(),
+                this.viewer.getCenter(),
+                this.viewer.getZoom(),
+                this.viewer.getBearing(),
+            ]).then(([image, center, zoom, bearing]) => {
+                if (this._currentImage?.id !== image.id) {
+                    this._currentImage = image;
+                    const lngLat = image.originalLngLat;
+                    this.fire(Events.ImageChange, {latlng: L.latLng(lngLat.lat, lngLat.lng)});
+                }
+                const [centerX, centerY] = center;
+                if (centerX !== this._centerX || centerY !== this._centerY || zoom !== this._zoom) {
+                    this._zoom = zoom;
+                    this._centerX = centerX;
+                    this._centerY = centerY;
+                    if (this._yawPitchZoomChangeTimer !== null) {
+                        clearTimeout(this._yawPitchZoomChangeTimer);
+                        this._yawPitchZoomChangeTimer = null;
+                    }
+                    this._yawPitchZoomChangeTimer = setTimeout(() => {
+                        this.fire(Events.YawPitchZoomChangeEnd);
+                    }, 120);
+                }
+                bearing -= this.getBearingCorrection();
+                if (bearing !== this._bearing) {
+                    this._bearing = bearing;
+                    this.fire(Events.BearingChange, {bearing: bearing});
+                }
+            }).catch(() => {
+                // ignore error
             });
         },
 
-        onNodeChanged: function(event) {
-            if (this.currentImage && (event.image.id === this.currentImage.id)) {
-                return;
-            }
-            this.currentImage = event.image;
-            this.fireChangeEvent();
-        },
-
         getBearingCorrection: function() {
-            if (this.currentImage && 'computedCompassAngle' in this.currentImage) {
-                return (this.currentImage.computedCompassAngle - this.currentImage.originalCompassAngle);
+            if (this._currentImage && 'computedCompassAngle' in this._currentImage) {
+                return (this._currentImage.computedCompassAngle - this._currentImage.originalCompassAngle);
             }
             return 0;
         },
 
-        fireChangeEvent: function() {
-            if (this.currentImage) {
-                const lnglat = this.currentImage.originalLngLat;
-                this.fire('change', {
-                        latlng: L.latLng(lnglat.lat, lnglat.lng),
-                        heading: this._bearing,
-                        pitch: this._pitch,
-                        zoom: this._zoom
-                    }
-                );
-            }
-        },
-
         deactivate: function() {
-            this.viewer.activateCover();
-            if (this._updateHandler) {
-                clearInterval(this._updateHandler);
-                this._updateHandler = null;
-            }
-        },
-
-        updateZoomAndCenter: function() {
-            this.viewer.getZoom().then((zoom) => {
-                if (zoom !== this._zoom) {
-                    this._zoom = zoom;
-                    this.fireChangeEvent();
-                }
-            });
-            this.viewer.getCenter().then((center) => {
-                if (center[0] < 0 || center[0] > 1 || center[1] < 0 || center[1] > 1) {
-                    center = [0.5, 0.5];
-                }
-                if (center[0] !== this._center[0] || center[1] !== this._center[1]) {
-                    this._center = center;
-                    this.fireChangeEvent();
-                }
-            });
-            this.viewer.getBearing().then((bearing) => {
-                bearing -= this.getBearingCorrection();
-                if (this._bearing !== bearing) {
-                    this._bearing = bearing;
-                    this.fireChangeEvent();
-                }
-            });
+            this._currentImage = null;
+            this._bearing = null;
+            this._zoom = null;
+            this._centerX = null;
+            this._centerY = null;
+            clearInterval(this._updateHandler);
+            this._updateHandler = null;
+            this.viewer.setCenter([0.5, 0.5]);
+            this.viewer.setZoom(0);
         },
 
         activate: function() {
             this.viewer.resize();
-            this.viewer.deactivateCover();
-            if (!this._updateHandler) {
-                this._updateHandler = setInterval(() => this.updateZoomAndCenter(), 200);
-            }
         },
 
         getState: function() {
-            if (!this.currentImage) {
+            if (
+                this._currentImage === null ||
+                this._zoom === null ||
+                this._centerX === null ||
+                this._centerY === null
+            ) {
                 return [];
             }
-            const {lat, lng} = this.currentImage.originalLngLat;
             return [
-                lat.toFixed(6),
-                lng.toFixed(6),
-                this._center[0].toFixed(4),
-                this._center[1].toFixed(4),
+                this._currentImage.id,
+                this._centerX.toFixed(6),
+                this._centerY.toFixed(6),
                 this._zoom.toFixed(2)
             ];
         },
 
         setState: function(state) {
-            const lat = parseFloat(state[0]);
-            const lng = parseFloat(state[1]);
-            const center0 = parseFloat(state[2]);
-            const center1 = parseFloat(state[3]);
-            const zoom = parseFloat(state[4]);
-            if (!isNaN(lat) && !isNaN(lng) && !isNaN(center0) && !isNaN(center1) && !isNaN(zoom)) {
-                getPanoramaAtPos(L.latLng(lat, lng), 0.01).then((res) => {
-                    if (res.found) {
-                        this.viewer.moveTo(res.data);
-                        this.viewer.setCenter([center0, center1]);
-                        this.viewer.setZoom(zoom);
-                    }
-                });
+            const imageId = state[0];
+            const center0 = parseFloat(state[1]);
+            const center1 = parseFloat(state[2]);
+            const zoom = parseFloat(state[3]);
+            if (imageId && !isNaN(center0) && !isNaN(center1) && !isNaN(zoom)) {
+                this.showPano(imageId);
+                this.viewer.setCenter([center0, center1]);
+                this.viewer.setZoom(zoom);
                 return true;
             }
             return false;

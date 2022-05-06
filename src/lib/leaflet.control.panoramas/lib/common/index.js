@@ -28,4 +28,10 @@ const DateLabelMixin = {
     }
 };
 
-export {CloseButtonMixin, DateLabelMixin};
+const Events = {
+    ImageChange: 'ImageChange',
+    BearingChange: 'BearingChange',
+    YawPitchZoomChangeEnd: 'YawPitchZoomChangeEnd',
+};
+
+export {CloseButtonMixin, DateLabelMixin, Events};
