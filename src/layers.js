@@ -26,7 +26,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
                     isDefault: true,
-                    layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    layer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {
                             code: 'O',
                             isOverlay: false,
