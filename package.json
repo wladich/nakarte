@@ -40,7 +40,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
     "file-loader": "^6.2.0",
     "filesize": "^8.0.7",
