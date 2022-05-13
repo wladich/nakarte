@@ -42,13 +42,32 @@ const locationErrorMessage = {
     2: 'Failed to acquire position for unknown reason.',
 };
 
-function setUp() {
+const minimizeStateAuto = 0;
+const minimizeStateMinimized = 1;
+const minimizeStateExpanded = 2;
+
+function setUp() { // eslint-disable-line complexity
     const startInfo = {
         href: window.location.href,
         localStorageKeys: Object.keys(safeLocalStorage),
         mobile: L.Browser.mobile,
     };
     fixAll();
+
+    function validateMinimizeState(state) {
+        state = Number(state);
+        if (state === minimizeStateMinimized || state === minimizeStateExpanded) {
+            return state;
+        }
+        return minimizeStateAuto;
+    }
+    const minimizeState = hashState.getState('min') ?? [];
+    const minimizeControls = {
+        tracks: validateMinimizeState(minimizeState[0]),
+        layers: validateMinimizeState(minimizeState[1]),
+        print: validateMinimizeState(minimizeState[2]),
+        search: validateMinimizeState(minimizeState[3]),
+    };
 
     const map = new MapWithSidebars('map', {
             zoomControl: false,
@@ -71,7 +90,19 @@ function setUp() {
 
     new ZoomDisplay().addTo(map);
 
-    const searchControl = new SearchControl({position: 'topleft', stackHorizontally: true, maxMapWidthToMinimize: 620})
+    const searchOptions = {
+        position: 'topleft',
+        stackHorizontally: true,
+        maxMapWidthToMinimize: 620,
+    };
+    if (minimizeControls.search === minimizeStateMinimized) {
+        searchOptions.maxMapHeightToMinimize = Infinity;
+        searchOptions.maxMapWidthToMinimize = Infinity;
+    } else if (minimizeControls.search === minimizeStateExpanded) {
+        searchOptions.maxMapHeightToMinimize = 0;
+        searchOptions.maxMapWidthToMinimize = 0;
+    }
+    const searchControl = new SearchControl(searchOptions)
         .addTo(map)
         .enableHashState('q');
     map.getPlacemarkHashStateInterface().enableHashState('r');
@@ -142,7 +173,10 @@ function setUp() {
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
         .enableHashState('p');
-    if (!printControl.hasPages()) {
+    if (
+        minimizeControls.print === minimizeStateMinimized ||
+        (minimizeControls.print === minimizeStateAuto && !printControl.hasPages())
+    ) {
         printControl.setMinimized();
     }
 
@@ -187,15 +221,22 @@ function setUp() {
 
     /* adaptive layout */
 
-    if (L.Browser.mobile) {
+    if (
+        minimizeControls.layers === minimizeStateAuto && L.Browser.mobile ||
+        minimizeControls.layers === minimizeStateMinimized
+    ) {
         layersControl.setMinimized();
-        if (!tracklist.hasTracks()) {
-            tracklist.setMinimized();
-        }
     }
 
     if (L.Browser.mobile) {
         map.on('mousedown dragstart', () => layersControl.setMinimized());
+    }
+
+    if (
+        minimizeControls.tracks === minimizeStateAuto && L.Browser.mobile && !tracklist.hasTracks() ||
+        minimizeControls.tracks === minimizeStateMinimized
+    ) {
+        tracklist.setMinimized();
     }
 
     raiseControlsOnFocus(map);
