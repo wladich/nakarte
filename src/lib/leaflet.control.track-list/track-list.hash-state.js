@@ -15,7 +15,7 @@ L.Control.TrackList.include({
             const notEmpty = this.addTracksFromGeodataArray(geodata);
             this.readingFiles(this.readingFiles() - 1);
             if (notEmpty) {
-                this.setExpanded();
+                this.fire('loadedTracksFromParam');
             }
         },
     }

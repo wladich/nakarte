@@ -204,6 +204,23 @@ function setUp() { // eslint-disable-line complexity
     }
     startInfo.tracksAfterLoadFromStorage = trackNames();
 
+    if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
+        tracklist.once('loadedTracksFromParam', () => {
+            const track = tracklist.tracks()[0];
+            if (track) {
+                tracklist.showElevationProfileForTrack(track)
+            }
+        });
+    }
+
+    // This is not quite correct: minimizeControls should have effect only during loading, but the way it is
+    // implemented, it will affect expanding when loading track from hash param during session.
+    // But as parameter is expected to be found only when site is embedded using iframe,
+    // the latter scenario is not very probable.
+    if (minimizeControls.tracks !== minimizeStateMinimized) {
+        tracklist.on('loadedTracksFromParam', () => tracklist.setExpanded());
+    }
+
     for (let param of tracksHashParams) {
         bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
     }
