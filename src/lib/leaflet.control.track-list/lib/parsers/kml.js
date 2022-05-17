@@ -6,7 +6,7 @@ import jsInflate from './jsInflate';
 
 function parseKml(txt, name) {
     var error;
-    function getSegmentPoints(coordinates_element) {
+    function getLinestringPoints(coordinates_element) {
         // convert multiline text value of tag to single line
         var coordinates_string = xmlGetNodeText(coordinates_element);
         var points_strings = coordinates_string.split(/\s+/u);
@@ -26,13 +26,13 @@ function parseKml(txt, name) {
         return points;
     }
 
-    function getTrackSegments(xml) {
+    function getLinestrings(xml) {
         var segments_elements = xml.getElementsByTagName('LineString');
         var segments = [];
         for (var i = 0; i < segments_elements.length; i++) {
             var coordinates_element = segments_elements[i].getElementsByTagName('coordinates');
             if (coordinates_element.length) {
-                var segment_points = getSegmentPoints(coordinates_element[0]);
+                var segment_points = getLinestringPoints(coordinates_element[0]);
                 if (segment_points.length) {
                     segments.push(segment_points);
                 }
@@ -86,6 +86,25 @@ function parseKml(txt, name) {
         return points;
     }
 
+    function getTracks(dom) {
+        const segments = [];
+        for (const track of dom.getElementsByTagName('gx_Track')) {
+            const points = [];
+            for (const coord of track.getElementsByTagName('gx_coord')) {
+                const [lng, lat] = (xmlGetNodeText(coord) ?? '').split(/\s+/u).map(Number);
+                if (isNaN(lat) || isNaN(lng)) {
+                    error = 'CORRUPT';
+                    break;
+                }
+                points.push({lat, lng});
+            }
+            if (points.length > 0) {
+                segments.push(points);
+            }
+        }
+        return segments;
+    }
+
     txt = stripBom(txt);
     txt = txt.replace(/<([^ >]+):([^ >]+)/ug, '<$1_$2');
     let dom;
@@ -101,7 +120,7 @@ function parseKml(txt, name) {
         return null;
     }
 
-    return [{name: name, tracks: getTrackSegments(dom), points: getPoints(dom), error: error}];
+    return [{name: name, tracks: [...getLinestrings(dom), ...getTracks(dom)], points: getPoints(dom), error: error}];
 }
 
 function parseKmz(txt, name) {
