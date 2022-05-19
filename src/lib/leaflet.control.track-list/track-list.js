@@ -185,7 +185,11 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.addListener(map.getContainer(), 'dragover', this.onFileDraging, this);
             this.menu = new Contextmenu([
                     {text: 'Copy link for all tracks', callback: this.copyAllTracksToClipboard.bind(this)},
-                    {text: 'Copy link for visible tracks', callback: this.copyVisibleTracks.bind(this)},
+                    {text: 'Copy link for visible tracks', callback: this.copyVisibleTracksToClipboard.bind(this)},
+                {
+                    text: 'Create new track from all visible tracks',
+                    callback: this.createNewTrackFromVisibleTracks.bind(this)
+                },
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
@@ -1345,9 +1349,39 @@ L.Control.TrackList = L.Control.extend({
             this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
         },
 
-        copyVisibleTracks: function(mouseEvent) {
+        copyVisibleTracksToClipboard: function(mouseEvent) {
             const tracks = this.tracks().filter((track) => track.visible());
             this.copyTracksLinkToClipboard(tracks, mouseEvent);
+        },
+
+        createNewTrackFromVisibleTracks: function() {
+            const tracks = this.tracks().filter((track) => track.visible());
+            if (tracks.length === 0) {
+                return;
+            }
+            let newTrackName = tracks[0].name();
+            newTrackName = query('New track name', newTrackName);
+            if (newTrackName === null) {
+                return;
+            }
+
+            const newTrackSegments = [];
+            const newTrackPoints = [];
+
+            for (const track of tracks) {
+                for (let segment of this.getTrackPolylines(track)) {
+                    const points = segment.getFixedLatLngs().map(({lat, lng}) => ({lat, lng}));
+                    newTrackSegments.push(points);
+                }
+                const points = this.getTrackPoints(track).map((point) => ({
+                    lat: point.latlng.lat,
+                    lng: point.latlng.lng,
+                    name: point.label
+                }));
+                newTrackPoints.push(...points);
+            }
+
+            this.addTrack({name: newTrackName, tracks: newTrackSegments, points: newTrackPoints});
         },
 
         exportTracks: function(minTicksIntervalMeters) {
