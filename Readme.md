@@ -5,7 +5,7 @@ Source code of site http://nakarte.me (former http://nakarte.tk)
 Install locally for development
 
 ```bash
-git clone git://github.com/wladich/nakarte
+git clone https://github.com/wladich/nakarte.git
 cd nakarte
 yarn
 ```
