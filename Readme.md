@@ -11,7 +11,7 @@ yarn
 ```
 
 Create a dummy `secrets.js` file:
-```
+```bash
 cp src/secrets.js.template src/secrets.js
 ```
 
