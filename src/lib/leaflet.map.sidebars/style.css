@@ -13,11 +13,11 @@
 .leaflet-map-sidebar-mid-column {
     display: flex;
     flex-direction: column;
-    flex-basis: 100%;
+    flex-grow: 1;
 }
 
 .leaflet-map-container-with-sidebars {
-    flex-basis: 100%;
+    flex-grow: 1;
 }
 
 .leaflet-map-sidebar-left {
