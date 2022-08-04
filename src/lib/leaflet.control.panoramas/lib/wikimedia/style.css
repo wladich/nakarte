@@ -17,7 +17,6 @@
 }
 
 .wikimedia-viewer-page-buttons-container {
-    width: 100%;
     background-color: #aaaaaa;
     white-space: nowrap;
     overflow-x: auto;
@@ -26,7 +25,7 @@
 }
 
 .wikimedia-viewer-page-buttons-container.enabled {
-    display: block;
+    display: flex;
 }
 
 .wikimedia-viewer-page-button {
@@ -35,7 +34,9 @@
     border: 3px solid #777777;
     color: white;
     height: 37px;
-    width: 37px;
+    flex-basis: 37px;
+    flex-grow: 0;
+    flex-shrink: 0;
     line-height: 37px;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 20px;
@@ -43,7 +44,6 @@
     text-align: center;
     cursor: pointer;
     user-select: none;
-    display: inline-block;
 }
 
 .wikimedia-viewer-page-button.active {
