@@ -1158,6 +1158,25 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             }, true
                     )
                 },
+                {
+                    title: 'Mountains by Alexander Purikov',
+                    isDefault: false,
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/purikov/{z}/{x}/{y}",
+                        {
+                            code: 'Pur',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            tms: true,
+                            scaleDependent: false,
+                            maxNativeZoom: 14,
+                            noCors: false,
+                            print: true,
+                            jnx: true,
+                            shortName: 'purikov_mountains',
+                            attribution: '<a href="https://westra.ru/reports/">Alexander Purikov</a>',
+                        }
+                    )
+                },
     ];
 
     const groupsDefs = [
@@ -1219,6 +1238,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         {
             title: 'Miscellaneous',
             layers: [
+                'Mountains by Alexander Purikov',
                 'Google Hybrid',
                 'Bing imagery acquisition dates',
                 'geocaching.su'
@@ -1294,6 +1314,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Finland Topo',
         'Slovakia topo',
         'Spain topo',
+        'Mountains by Alexander Purikov',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
