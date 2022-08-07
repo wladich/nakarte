@@ -140,4 +140,4 @@ const BingLayer = L.TileLayer.extend({
     }
 });
 
-export {BingLayer, tile2quad};
+export {BingLayer};

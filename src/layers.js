@@ -2,7 +2,6 @@ import L from "leaflet";
 import '~/lib/leaflet.layer.yandex';
 import '~/lib/leaflet.layer.google';
 import {BingLayer} from '~/lib/leaflet.layer.bing';
-import {BingDates} from '~/lib/leaflet.layer.bing/dates';
 import config from './config';
 import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
@@ -636,21 +635,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     ),
                 },
                 {
-                    title: 'Bing imagery acquisition dates',
-                    isDefault: false,
-                    layer: new BingDates({
-                        code: 'Bd',
-                        isOverlay: true,
-                        maxNativeZoom: 18,
-                        print: false,
-                        jnx: false,
-                        scaleDependent: false,
-                        noCors: true,
-                        attribution:
-                            '<a href="https://github.com/mvexel/bingimageanalyzer">Bing Aerial Imagery Analyzer</a>',
-                    })
-                },
-                {
                     title: 'geocaching.su',
                     isDefault: false,
                     layer: new GeocachingSu(config.geocachingSuUrl, {
@@ -1240,7 +1224,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
             layers: [
                 'Mountains by Alexander Purikov',
                 'Google Hybrid',
-                'Bing imagery acquisition dates',
                 'geocaching.su'
             ]
         },
@@ -1338,7 +1321,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Google Hybrid',
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
-        'Bing imagery acquisition dates',
         'OpenStreetMap GPS traces',
         'Strava heatmap (all)',
         'Strava heatmap (run)',
