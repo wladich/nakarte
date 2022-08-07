@@ -462,7 +462,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         {
                             code: 'Otm',
                             isOverlay: false,
-                            maxNativeZoom: 16,
+                            maxNativeZoom: 15,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
