@@ -80,9 +80,10 @@ const YandexMapsUrl = {
 };
 
 const GoogleMapsSimpleMapUrl = {
-    viewRe: /\/@([-\d.]+),([-\d.]+),([\d.]+)([mz])(?:\/|$)/u,
+    viewRe: /\/@([-\d.]+),([-\d.]+),(?:([\d.]+)([mz]))?/u,
     placeRe: /\/place\/([^/]+)/u,
     placeZoom: 14,
+    panoramaZoom: 16,
 
     isOurUrl: function (url) {
         return Boolean(url.pathname.match(this.viewRe)) || Boolean(url.pathname.match(this.placeRe));
@@ -107,12 +108,18 @@ const GoogleMapsSimpleMapUrl = {
             const viewMatch = path.match(this.viewRe);
             const lat = parseFloat(viewMatch[1]);
             const lon = parseFloat(viewMatch[2]);
-            let zoom = parseFloat(viewMatch[3]);
-            // zoom for satellite images is expressed in meters
-            if (viewMatch[4] === 'm') {
-                zoom = Math.log2((149175296 / zoom) * Math.cos((lat / 180) * Math.PI));
+            let zoom;
+            // no need to check viewMatch[4] as they are together in same group
+            if (viewMatch[3] === undefined) {
+                zoom = this.panoramaZoom;
+            } else {
+                zoom = parseFloat(viewMatch[3]);
+                // zoom for satellite images is expressed in meters
+                if (viewMatch[4] === 'm') {
+                    zoom = Math.log2((149175296 / zoom) * Math.cos((lat / 180) * Math.PI));
+                }
+                zoom = Math.round(zoom);
             }
-            zoom = Math.round(zoom);
             results.push(makeSearchResult(lat, lon, zoom, 'Google map view'));
         } catch (e) {
             // pass

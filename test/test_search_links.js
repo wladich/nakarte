@@ -117,6 +117,10 @@ suite('LinksProvider - parsing valid links');
         [{title: 'Google map view', latlng: {lat: 56.0836099, lng: 37.3849634}, zoom: 16}],
     ],
     [
+        'https://www.google.com/maps/@48.6514614,16.9945421,3a,75y,253.17h,90t/data=!3m7!1e1!3m5!1s4MYpvu63gL3ZArPiSohExg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fpanoid%3D4MYpvu63gL3ZArPiSohExg%26cb_client%3Dmaps_sv.tactile.gps%26w%3D203%26h%3D100%26yaw%3D253.16992%26pitch%3D0%26thumbfov%3D100!7i13312!8i6656', // eslint-disable-line max-len
+        [{title: 'Google map view', latlng: {lat: 48.6514614, lng: 16.9945421}, zoom: 16}],
+    ],
+    [
         'https://nakarte.me/#m=11/49.44893/16.59897&l=O',
         [{title: 'Nakarte view', latlng: {lat: 49.44893, lng: 16.59897}, zoom: 11}],
     ],
