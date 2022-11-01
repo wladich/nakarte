@@ -87,7 +87,7 @@
     "mapillary-js": "4.1.0",
     "pbf": "^3.0.5",
     "rbush": "^3.0.1",
-    "regenerator-runtime": "^0.13.9",
+    "regenerator-runtime": "^0.13.10",
     "tiny-inflate": "^1.0.2",
     "twkb": "^0.2.2",
     "utf8": "^3.0.0"
