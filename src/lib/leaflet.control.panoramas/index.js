@@ -91,8 +91,7 @@ L.Control.Panoramas = L.Control.extend({
                     layerOptions: {zIndex: 10},
                     code: 'g',
                     selected: ko.observable(true),
-                    mapMarkerType: 'normal',
-                    disabled: false,
+                    mapMarkerType: 'normal'
                 },
                 {
                     name: 'wikimedia',
@@ -101,18 +100,16 @@ L.Control.Panoramas = L.Control.extend({
                     layerOptions: {opacity: 0.7, zIndex: 9},
                     code: 'w',
                     selected: ko.observable(false),
-                    mapMarkerType: 'slim',
-                    disabled: false,
+                    mapMarkerType: 'slim'
                 },
                 {
                     name: 'mapillary',
-                    title: 'Mapillary (out of order)',
+                    title: 'Mapillary',
                     provider: mapillaryProvider,
                     layerOptions: {opacity: 0.7, zIndex: 8},
                     code: 'm',
                     selected: ko.observable(false),
-                    mapMarkerType: 'normal',
-                    disabled: true,
+                    mapMarkerType: 'normal'
                 },
                 {
                     name: 'mapycz',
@@ -121,8 +118,7 @@ L.Control.Panoramas = L.Control.extend({
                     layerOptions: {opacity: 0.7, zIndex: 8},
                     code: 'c',
                     selected: ko.observable(false),
-                    mapMarkerType: 'normal',
-                    disabled: false,
+                    mapMarkerType: 'normal'
                 }
             ];
         },
@@ -189,8 +185,7 @@ L.Control.Panoramas = L.Control.extend({
                  <div class="panoramas-list" data-bind="foreach: providers">
                      <div>
                          <label>
-                             <input type="checkbox" data-bind="checked: selected, disable: disabled">
-                             <span data-bind="text: title"></span>
+                             <input type="checkbox" data-bind="checked: selected"><span data-bind="text: title"></span>
                          </label>
                      </div>
                  </div>
