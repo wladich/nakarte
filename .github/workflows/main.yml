@@ -32,6 +32,7 @@ jobs:
             firefox-version: '52.9.0esr'
             needs-xvfb: true
           - browser: FirefoxHeadless
+            firefox-version: 'latest'
           - browser: ChromeHeadless
     steps:
       - uses: actions/checkout@v2
