@@ -846,7 +846,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: false,
                     layer: new RetinaTileLayer(
                         [
-                            'https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}',
+                            'https://mapserver.mapy.cz/base-m/{z}-{x}-{y}',
                             'https://m{s}.mapserver.mapy.cz/base-m/retina/{z}-{x}-{y}'
                         ],
                         {
@@ -855,7 +855,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: false,
                             print: true,
                             jnx: true,
-                            subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech',
                             attribution: '<a href="https://mapy.cz/zakladni">mapy.cz base map</a>',
@@ -867,7 +866,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: true,
                     layer: new RetinaTileLayer(
                         [
-                            'https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}',
+                            'https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}',
                             'https://m{s}.mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}',
                         ],
                         {
@@ -876,7 +875,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: false,
                             print: true,
                             jnx: true,
-                            subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_tourist',
                             hotkey: 'H',
@@ -889,7 +887,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: false,
                     layer: new RetinaTileLayer(
                         [
-                            'https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}',
+                            'https://mapserver.mapy.cz/winter-m/{z}-{x}-{y}',
                             'https://m{s}.mapserver.mapy.cz/winter-m/retina/{z}-{x}-{y}',
                         ],
                         {
@@ -898,7 +896,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             tms: false,
                             print: true,
                             jnx: true,
-                            subdomains: '1234',
                             scaleDependent: true,
                             shortName: 'czech_winter',
                             attribution: '<a href="https://mapy.cz/zimni">mapy.cz winter map</a>',
