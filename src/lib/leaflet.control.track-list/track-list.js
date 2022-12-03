@@ -26,6 +26,7 @@ import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
+import {formatTrackLength} from '../utils';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -438,15 +439,7 @@ L.Control.TrackList = L.Control.extend({
             track.length(length);
         },
 
-        formatLength: function(x) {
-            var digits = 0;
-            if (x < 10000) {
-                digits = 2;
-            } else if (x < 100000) {
-                digits = 1;
-            }
-            return (x / 1000).toFixed(digits) + ' km';
-        },
+        formatLength: (length) => formatTrackLength(length, true),
 
         setTrackMeasureTicksVisibility: function(track) {
             var visible = track.measureTicksShown(),

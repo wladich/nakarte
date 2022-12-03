@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import './measured_line.css';
+import {formatTrackLength} from '../utils';
 
 function pointOnSegmentAtDistance(p1, p2, dist) {
     // FIXME: we should place markers along projected line to avoid transformation distortions
@@ -61,7 +62,7 @@ L.MeasuredLine = L.Polyline.extend({
                 marker._icon.childNodes[0].style.transform = transformMatrixString;
                 marker.setLatLng(tick.position);
             } else {
-                var labelText = Math.round((tick.distanceValue / 10)) / 100 + ' km',
+                var labelText = formatTrackLength(tick.distanceValue),
                     icon = L.divIcon(
                         {
                             html: '<div class="measure-tick-icon-text" style="transform:' +
