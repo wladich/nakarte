@@ -40,6 +40,7 @@ L.Wikimapia = L.GridLayer.extend({
             this.on('tileunload', this.onTileUnload, this);
             map.on('mousemove', this.onMouseMove, this);
             map.on('click', this.onClick, this);
+            map.on('zoom', this.onZoom, this);
         },
 
         onRemove: function(map) {
@@ -157,9 +158,15 @@ L.Wikimapia = L.GridLayer.extend({
             return this.getPlaceAtLatlng(e.latlng.wrap(), tileData.places);
         },
 
-        onMouseMove: function(e) {
+        onZoom: function() {
+            if (this.highlightedPlace && this.highlightedPlace.e) {
+                this.onMouseMove(this.highlightedPlace.e, true);
+            }
+        },
+
+        onMouseMove: function(e, calledAfterZoom) {
             const place = this.getPlaceAtMousePos(e);
-            if (this.highlightedPlace && (!place || this.highlightedPlace.id !== place.id)) {
+            if (calledAfterZoom || this.highlightedPlace && (!place || this.highlightedPlace.id !== place.id)) {
                 this._map.removeLayer(this.highlightedPlace.polygon);
                 this._map.removeLayer(this.highlightedPlace.label);
                 this.highlightedPlace = null;
@@ -167,6 +174,7 @@ L.Wikimapia = L.GridLayer.extend({
 
             if (place && !this.highlightedPlace) {
                 this.highlightedPlace = {
+                    e: e, // save event to call after zooming
                     id: place.id,
                     polygon: L.polygon(place.polygon, {
                             weight: 0,
