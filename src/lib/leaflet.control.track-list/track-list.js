@@ -41,6 +41,32 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+function getLocationExcludeParams(paramsToExclude, paramsToAdd) {
+    const {href, origin, pathname, hash} = window.location;
+
+    if (!paramsToExclude) {
+        return href;
+    }
+
+    const params = [];
+
+    hash.substring(1).split('&').forEach((param) => {
+        let [key, value] = param.split('=');
+
+        if (!paramsToExclude.includes(key)) {
+            params.push(key + '=' + value);
+        }
+    });
+
+    if (paramsToAdd) {
+        paramsToAdd.forEach((param) => {
+            params.push(param);
+        });
+    }
+
+    return origin + pathname + params.join('&');
+}
+
 function unwrapLatLngsCrossing180Meridian(latngs) {
     if (latngs.length === 0) {
         return [];
@@ -186,10 +212,10 @@ L.Control.TrackList = L.Control.extend({
             this.menu = new Contextmenu([
                     {text: 'Copy link for all tracks', callback: this.copyAllTracksToClipboard.bind(this)},
                     {text: 'Copy link for visible tracks', callback: this.copyVisibleTracksToClipboard.bind(this)},
-                {
-                    text: 'Create new track from all visible tracks',
-                    callback: this.createNewTrackFromVisibleTracks.bind(this)
-                },
+                    {
+                        text: 'Create new track from all visible tracks',
+                        callback: this.createNewTrackFromVisibleTracks.bind(this)
+                    },
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
@@ -299,7 +325,7 @@ L.Control.TrackList = L.Control.extend({
             readFiles(files).then(function(fileDataArray) {
                 const geodataArray = [];
                 for (let fileData of fileDataArray) {
-                        geodataArray.push(...parseGeoFile(fileData.filename, fileData.data));
+                    geodataArray.push(...parseGeoFile(fileData.filename, fileData.data));
                 }
                 this.readingFiles(this.readingFiles() - 1);
 
@@ -594,7 +620,8 @@ L.Control.TrackList = L.Control.extend({
             let serialized = tracks.map((track) => this.trackToString(track)).join('/');
             const hashDigest = md5(serialized, null, true);
             const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
-            const url = window.location + '&nktl=' + key;
+
+            const url = getLocationExcludeParams(['q', 'r'], ['nktl=' + key]);
             copyToClipboard(url, mouseEvent);
             fetch(`${config.tracksStorageServer}/track/${key}`, {
                 method: 'POST',
@@ -1412,8 +1439,8 @@ L.Control.TrackList = L.Control.extend({
                             bounds: capturedBounds,
                             measureTicksShown: track.measureTicksShown(),
                             measureTicks: [].concat(...track.feature.getLayers().map(function(pl) {
-                                    return pl.getTicksPositions(minTicksIntervalMeters);
-                                }
+                                        return pl.getTicksPositions(minTicksIntervalMeters);
+                                    }
                                 )
                             )
                         };
