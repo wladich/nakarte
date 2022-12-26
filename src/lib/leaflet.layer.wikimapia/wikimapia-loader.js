@@ -63,8 +63,8 @@ class WikimapiaLoader extends TiledDataLoader {
         };
     }
 
-    processResponse(xhr) {
-        return wmUtils.parseTile(xhr.response, this._projectObj)
+    processResponse(xhr, requestedCoords) {
+        return wmUtils.parseTile(xhr.response, this._projectObj, requestedCoords)
             .then((tileData) => ({
                         tileData,
                         coords: tileData.coords
