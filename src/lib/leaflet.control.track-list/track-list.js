@@ -41,6 +41,26 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+function getLinkToShare(keysToExclude, paramsToAdd) {
+    const {origin, pathname, hash} = window.location;
+
+    const params = new URLSearchParams(hash.substring(1));
+
+    if (keysToExclude.length) {
+        for (const key of params.keys()) {
+            if (keysToExclude.includes(key)) {
+                params.delete(key);
+            }
+        }
+    }
+
+    for (const key in paramsToAdd) {
+        params.set(key, paramsToAdd[key]);
+    }
+
+    return origin + pathname + '#' + decodeURIComponent(params.toString());
+}
+
 function unwrapLatLngsCrossing180Meridian(latngs) {
     if (latngs.length === 0) {
         return [];
@@ -103,7 +123,7 @@ L.Control.TrackList = L.Control.extend({
 
         colors: TRACKLIST_TRACK_COLORS,
 
-        initialize: function() {
+        initialize: function(params) {
             L.Control.prototype.initialize.call(this);
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
@@ -115,6 +135,7 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+            this.keysToExcludeOnCopyLink = params?.keysToExcludeOnCopyLink ?? [];
         },
 
         onAdd: function(map) {
@@ -594,7 +615,7 @@ L.Control.TrackList = L.Control.extend({
             let serialized = tracks.map((track) => this.trackToString(track)).join('/');
             const hashDigest = md5(serialized, null, true);
             const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
-            const url = window.location + '&nktl=' + key;
+            const url = getLinkToShare(this.keysToExcludeOnCopyLink, {nktl: key});
             copyToClipboard(url, mouseEvent);
             fetch(`${config.tracksStorageServer}/track/${key}`, {
                 method: 'POST',
