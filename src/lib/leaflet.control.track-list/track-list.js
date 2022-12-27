@@ -41,6 +41,22 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+function getLinkToShare(keysToExclude, paramsToAdd) {
+    const {origin, pathname, hash} = window.location;
+
+    const params = new URLSearchParams(hash.substring(1));
+
+    for (const key of keysToExclude) {
+        params.delete(key);
+    }
+
+    for (const [key, value] of Object.entries(paramsToAdd)) {
+        params.set(key, value);
+    }
+
+    return origin + pathname + '#' + decodeURIComponent(params.toString());
+}
+
 function unwrapLatLngsCrossing180Meridian(latngs) {
     if (latngs.length === 0) {
         return [];
@@ -98,13 +114,14 @@ L.Control.TrackList = L.Control.extend({
                 weight: 13,
                 opacity: 0.6,
             },
+            keysToExcludeOnCopyLink: [],
         },
         includes: L.Mixin.Events,
 
         colors: TRACKLIST_TRACK_COLORS,
 
-        initialize: function() {
-            L.Control.prototype.initialize.call(this);
+        initialize: function(options) {
+            L.Control.prototype.initialize.call(this, options);
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
             this.readingFiles = ko.observable(0);
@@ -594,7 +611,7 @@ L.Control.TrackList = L.Control.extend({
             let serialized = tracks.map((track) => this.trackToString(track)).join('/');
             const hashDigest = md5(serialized, null, true);
             const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
-            const url = window.location + '&nktl=' + key;
+            const url = getLinkToShare(this.options.keysToExcludeOnCopyLink, {nktl: key});
             copyToClipboard(url, mouseEvent);
             fetch(`${config.tracksStorageServer}/track/${key}`, {
                 method: 'POST',

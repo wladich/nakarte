@@ -79,7 +79,9 @@ function setUp() { // eslint-disable-line complexity
         }
     );
 
-    const tracklist = new L.Control.TrackList();
+    const tracklist = new L.Control.TrackList({
+        keysToExcludeOnCopyLink: ['q', 'r']
+    });
 
     /* controls top-left corner */
 
