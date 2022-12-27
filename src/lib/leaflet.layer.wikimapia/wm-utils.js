@@ -61,6 +61,14 @@ function decodeTitles(s) {
     return titles;
 }
 
+function tileCoordsEqual(tile1, tile2) {
+    return (
+        tile1.x === tile2.x &&
+        tile1.y === tile2.y &&
+        tile1.z === tile2.z
+    );
+}
+
 function chooseTitle(titles) {
     var popularLanguages = ['1', '0', '3', '2', '5', '4', '9', '28', '17', '27'];
     for (let langCode of popularLanguages) {
@@ -146,7 +154,7 @@ function simplifyPolygon(latlngs, tileCoords, tileHasChildren, projectObj) {
     return latlngs;
 }
 
-async function parseTile(s, projectObj) {
+async function parseTile(s, projectObj, requestedCoords) {
     const tile = {};
     const places = tile.places = [];
     const lines = s.split('\n');
@@ -160,7 +168,7 @@ async function parseTile(s, projectObj) {
     }
     tile.tileId = tileId;
     tile.coords = tileIdToCoords(tileId);
-    tile.hasChildren = fields[1] === '1';
+    tile.hasChildren = tileCoordsEqual(requestedCoords, tile.coords);
 
     // FIXME: ignore some errors
     let prevTime = Date.now();
