@@ -92,7 +92,7 @@ L.Control.TrackList = L.Control.extend({
             lineCursorStyle: {interactive: false, weight: 1.5, opacity: 1, dashArray: '7,7'},
             lineCursorValidStyle: {color: 'green'},
             lineCursorInvalidStyle: {color: 'red'},
-            splitExtensions: ['gpx', 'kml', 'kmz', 'wpt', 'rte', 'plt', 'fit', 'tmp', 'jpg', 'crdownload'],
+            splitExtensions: ['gpx', 'kml', 'geojson', 'kmz', 'wpt', 'rte', 'plt', 'fit', 'tmp', 'jpg', 'crdownload'],
             splitExtensionsFirstStage: ['xml', 'txt', 'html', 'php', 'tmp', 'gz'],
             trackHighlightStyle: {
                 color: 'yellow',
@@ -147,8 +147,8 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint"
-                     title="gpx kml Ozi zip YandexMaps Strava GPSLib Etomesto GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
-                        gpx kml Ozi zip YandexMaps Strava
+                     title="gpx kml Ozi geojson zip YandexMaps Strava GPSLib Etomesto GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
+                        gpx kml Ozi geojson zip YandexMaps Strava
                         <span class="formats-hint-more">&hellip;</span>
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
