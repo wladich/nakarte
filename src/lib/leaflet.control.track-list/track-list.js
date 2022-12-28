@@ -398,6 +398,10 @@ L.Control.TrackList = L.Control.extend({
                         } else {
                             message += ', loaded data can be invalid or incomplete';
                         }
+                    } else if (data_empty) {
+                        message =
+                            'No data could be loaded from file "{name}". ' +
+                            'File is empty or contains only unsupported data.';
                     }
                     if (message) {
                         message = L.Util.template(message, {name: geodata.name});
