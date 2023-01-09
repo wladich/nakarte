@@ -9,10 +9,10 @@ const PhotonProvider = BaseProvider.extend({
     name: 'Photon',
 
     options: {
-        apiUrl: 'https://photon.komoot.de/api/',
+        apiUrl: 'https://photon.komoot.io/api/',
         attribution: {
             text: 'Photon by Komoot',
-            url: 'https://photon.komoot.de/',
+            url: 'https://photon.komoot.io/',
         },
         delay: 700,
         languages: ['en', 'de', 'fr', 'it'],
