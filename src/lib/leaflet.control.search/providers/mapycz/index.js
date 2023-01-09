@@ -34,6 +34,7 @@ const MapyCzProvider = BaseProvider.extend({
     },
 
     search: async function (query, {latlng, zoom}) {
+        return {error: 'Search for places is temporary not working.'};
         if (!(await this.waitNoNewRequestsSent())) {
             return {error: 'Request cancelled'};
         }
