@@ -846,8 +846,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: false,
                     layer: new RetinaTileLayer(
                         [
-                            'https://mapserver.mapy.cz/base-m/{z}-{x}-{y}',
-                            'https://mapserver.mapy.cz/base-m/retina/{z}-{x}-{y}'
+                            `https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
+                            `https://api.mapy.cz/v1/maptiles/basic/256@2x/{z}/{x}/{y}?apikey=${config.mapyCz}`,
                         ],
                         {
                             code: 'Czb',
@@ -866,8 +866,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: true,
                     layer: new RetinaTileLayer(
                         [
-                            'https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}',
-                            'https://mapserver.mapy.cz/turist-m/retina/{z}-{x}-{y}',
+                            `https://api.mapy.cz/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
+                            `https://api.mapy.cz/v1/maptiles/outdoor/256@2x/{z}/{x}/{y}?apikey=${config.mapyCz}`,
                         ],
                         {
                             code: 'Czt',
