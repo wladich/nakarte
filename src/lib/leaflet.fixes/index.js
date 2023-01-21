@@ -100,6 +100,15 @@ function addTooltipDelay() {
     };
 }
 
+// Should become obsolete when https://github.com/Leaflet/Leaflet/issues/4696 is done
+function fixDoubleZoomOnMouseWheel() {
+    const origGetWheelDelta = L.DomEvent.getWheelDelta;
+    L.DomEvent.getWheelDelta = function(e) {
+        const delta = origGetWheelDelta(e);
+        return Math.sign(delta) * Math.min(Math.abs(delta), 60);
+    };
+}
+
 function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
@@ -108,6 +117,7 @@ function fixAll() {
     fixVectorMarkerWorldJump();
     allowControlHorizontalStacking();
     addTooltipDelay();
+    fixDoubleZoomOnMouseWheel();
 }
 
 export {fixAll};
