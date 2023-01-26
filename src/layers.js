@@ -885,11 +885,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 {
                     title: 'Czech winter',
                     isDefault: false,
-                    layer: new RetinaTileLayer(
-                        [
-                            'https://mapserver.mapy.cz/winter-m/{z}-{x}-{y}',
-                            'https://mapserver.mapy.cz/winter-m/retina/{z}-{x}-{y}',
-                        ],
+                    layer: L.tileLayer(
+                        `https://api.mapy.cz/v1/maptiles/winter/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
                         {
                             code: 'Czw',
                             isOverlay: false,
