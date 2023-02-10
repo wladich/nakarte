@@ -901,13 +901,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Finland Topo',
-                    description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
+                    description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
                     layer: L.tileLayer(
-                        "https://maps-mml.anderscloud.com/wmts/?" +
-                        "ngsw-bypass=1&layer=maastokartta&style=default&tilematrixset=WGS84_Pseudo-Mercator" +
-                        "&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng" +
-                        "&TileMatrix={z}&TileCol={x}&TileRow={y}",
+                        "https://proxy.laji.fi/mml_wmts/maasto/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/" +
+                        "{z}/{y}/{x}.png",
                         {
                             code: 'Fmk',
                             isOverlay: true,
@@ -916,12 +914,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             print: true,
                             jnx: true,
                             scaleDependent: true,
-                            noCors: true,
+                            noCors: false,
                             shortName: 'finland_topo',
                             bound: [[59.45416, 19.08321], [70.09211, 31.58671]],
                             cutline: getCutline('finland'),
-                            cutlineApprox: true,
-                            attribution: '<a href="https://www.retkikartta.fi/">Retkikartta.fi</a>',
+                            attribution: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                         }
                     )
                 },
