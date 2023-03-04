@@ -53,6 +53,15 @@ class Wikiloc extends BaseService {
                     tracks.push(geom.features[0].geometry.coordinates.map((obj) => ({lat: obj[1], lng: obj[0]})));
                 }
             }
+            if (data.waypoints) {
+                for (const waypoint of data.waypoints) {
+                    points.push({
+                        name: waypoint.name,
+                        lat: waypoint.lat,
+                        lng: waypoint.lon,
+                    });
+                }
+            }
 
             return [{
                 name: data.mapData?.[0]?.nom ?? name,
