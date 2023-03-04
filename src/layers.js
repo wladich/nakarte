@@ -165,24 +165,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'marshruty.ru',
-                    isDefault: true,
-                    layer: L.tileLayer('https://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
-                        {
-                            code: 'M',
-                            isOverlay: false,
-                            maxNativeZoom: 18,
-                            noCors: true,
-                            scaleDependent: true,
-                            print: true,
-                            jnx: true,
-                            shortName: 'marshruty',
-                            attribution: '<a href="https://www.marshruty.ru/Maps/Maps.aspx?x=60&y=55&z=8&t=4">' +
-                                'marshruty.ru</a>',
-                        }
-                    )
-                },
-                {
                     title: 'Topomapper 1km',
                     isDefault: true,
                     layer: L.tileLayer(
@@ -1166,7 +1148,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Google Satellite',
                 'Google Terrain',
                 'Bing Satellite',
-                'marshruty.ru',
                 'Topomapper 1km',
                 'Topo 10km',
                 'GGC 2 km',
@@ -1269,7 +1250,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Google Map',
         'Google Terrain',
         // Topo maps
-        'marshruty.ru',
         'Topomapper 1km',
 
         // local base layers
