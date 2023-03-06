@@ -101,6 +101,9 @@ suite('Load tracks from services');
                     if (track.tracks) {
                         track.tracks = reduceSegmentsPointsPrecision(track.tracks);
                     }
+                    if (track.points) {
+                        track.points = track.points.sort((point) => point.name);
+                    }
                 }
             }
             assert.deepEqual(testData.geodata.map(trackSummary), result.map(trackSummary));
