@@ -27,7 +27,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.5",
     "babel-plugin-rewire": "^1.2.0",
-    "chai": "^4.3.6",
+    "chai": "^4.3.7",
     "chalk": "^4.1.1",
     "child_process": "^1.0.2",
     "clean-webpack-plugin": "^4.0.0",
