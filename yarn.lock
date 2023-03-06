@@ -4708,10 +4708,10 @@ map-obj@^4.0.0:
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-4.1.0.tgz#b91221b542734b9f14256c0132c897c5d7256fd5"
   integrity sha512-glc9y00wgtwcDmp7GaE/0b0OnxpNJsVf3ael/An6Fe2Q51LLwN1er6sdomLRzz5h0+yMpiYLhWYF5R7HeqVd4g==
 
-mapillary-js@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-4.1.0.tgz#ea7df10562f7694765a898e6e2562414006d7b34"
-  integrity sha512-QcJL/OaiFw9G6v/cUxUfQbycCll12rfTJ/Zpa/4CMr2Bp9Nlg9qI8pDi8AlBHJvIe/fB/LKdaJfQdYlnxfYHwQ==
+mapillary-js@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/mapillary-js/-/mapillary-js-4.1.1.tgz#6ffafa3788b7e80661eeb2cfec75e42dee84d8a6"
+  integrity sha512-T/MqRKGTOAKAWSB3xKnu0FujNdBbaoWajXh1u7BDNQBeLptPXnlTNFmg/0iAkjBBfLWgO9iFP5W/9qM3gRVNiQ==
   dependencies:
     "@types/earcut" "^2.1.1"
     "@types/node" "^14.14.31"
