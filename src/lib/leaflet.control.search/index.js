@@ -215,7 +215,7 @@ const SearchControl = L.Control.extend({
     includes: L.Mixin.Events,
 
     options: {
-        provider: 'mapycz',
+        provider: 'photon',
         providerOptions: {
             maxResponses: 5,
         },
