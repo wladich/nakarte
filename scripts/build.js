@@ -2,7 +2,7 @@
 
 const chalk = require('chalk');
 const execSync = require('child_process').execSync;
-const filesize = require('filesize');
+const filesize = require('filesize').filesize;
 const fs = require('fs-extra');
 const gzipSize = require('gzip-size').sync;
 const path = require('path');
