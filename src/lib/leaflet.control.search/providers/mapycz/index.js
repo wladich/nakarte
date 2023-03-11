@@ -4,9 +4,9 @@ import config from '~/config';
 import * as logging from '~/lib/logging';
 import {fetch} from '~/lib/xhr-promise';
 
-import {BaseProvider} from '../remoteBase';
 import _categories from './categories.csv';
 import icons from './icons.json';
+import {BaseProvider} from '../remoteBase';
 
 const categories = Object.assign({}, ..._categories.map((it) => ({[String(it.id)]: it})));
 
