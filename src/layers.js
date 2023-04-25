@@ -39,6 +39,24 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
+                    title: 'CyclOSM',
+                    isDefault: true,
+                    layer: L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                        {
+                            code: 'Co',
+                            isOverlay: false,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: true,
+                            shortName: 'cyclosm',
+                            attribution:
+                                '<a href="https://www.openstreetmap.org/copyright">' +
+                                '&copy; OpenStreetMap contributors</a>. ' +
+                                'Tiles style by <a href="https://www.cyclosm.org/">CyclOSM</a>',
+                        }
+                    )
+                },
+                {
                     title: 'ESRI Satellite',
                     isDefault: true,
                     layer: L.tileLayer(
@@ -1083,6 +1101,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
             title: 'Default layers',
             layers: [
                 'OpenStreetMap',
+                'CyclOSM',
                 'ESRI Satellite',
                 'Yandex map',
                 'Yandex Satellite',
@@ -1114,7 +1133,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
             layers: [
                 'OpenTopoMap',
                 'OpenCycleMap',
-                'OSM Outdoors'
+                'OSM Outdoors',
             ],
         },
         {
@@ -1170,6 +1189,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         // common base layers
         // OSM
         'OpenStreetMap',
+        'CyclOSM',
         'OpenTopoMap',
         'OpenCycleMap',
         'OSM Outdoors',
