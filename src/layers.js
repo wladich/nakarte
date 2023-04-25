@@ -824,64 +824,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'Czech base',
-                    isDefault: false,
-                    layer: new RetinaTileLayer(
-                        [
-                            `https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
-                            `https://api.mapy.cz/v1/maptiles/basic/256@2x/{z}/{x}/{y}?apikey=${config.mapyCz}`,
-                        ],
-                        {
-                            code: 'Czb',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            shortName: 'czech',
-                            attribution: '<a href="https://mapy.cz/zakladni">mapy.cz base map</a>',
-                        }
-                    )
-                },
-                {
-                    title: 'mapy.cz tourist',
-                    isDefault: true,
-                    layer: new RetinaTileLayer(
-                        [
-                            `https://api.mapy.cz/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
-                            `https://api.mapy.cz/v1/maptiles/outdoor/256@2x/{z}/{x}/{y}?apikey=${config.mapyCz}`,
-                        ],
-                        {
-                            code: 'Czt',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            shortName: 'czech_tourist',
-                            hotkey: 'H',
-                            attribution: '<a href="https://mapy.cz/turisticka">mapy.cz outdoor map</a>',
-                        }
-                    )
-                },
-                {
-                    title: 'Czech winter',
-                    isDefault: false,
-                    layer: L.tileLayer(
-                        `https://api.mapy.cz/v1/maptiles/winter/256/{z}/{x}/{y}?apikey=${config.mapyCz}`,
-                        {
-                            code: 'Czw',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            shortName: 'czech_winter',
-                            attribution: '<a href="https://mapy.cz/zimni">mapy.cz winter map</a>',
-                        }
-                    )
-                },
-                {
                     title: 'Finland Topo',
                     description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
@@ -1222,14 +1164,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
             ],
 
         },
-        {
-            title: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
-            layers: [
-                'Czech base',
-                'mapy.cz tourist',
-                'Czech winter'
-            ],
-        },
     ];
 
     const titlesByOrder = [
@@ -1239,7 +1173,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'OpenTopoMap',
         'OpenCycleMap',
         'OSM Outdoors',
-        'mapy.cz tourist',
         // Satellite
         'ESRI Satellite',
         'Yandex Satellite',
@@ -1253,8 +1186,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Topomapper 1km',
 
         // local base layers
-        'Czech base',
-        'Czech winter',
 
         // map overlays
         '#custom-bottom',
