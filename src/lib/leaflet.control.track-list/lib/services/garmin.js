@@ -35,13 +35,23 @@ class GarminRoute extends GarminBase {
         if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        let points = data.coursePoints.map((pt) => ({name: pt.name, lat: pt.lat, lng: pt.lon}));
-        let track = data.geoPoints.map((obj) => ({lat: obj.latitude, lng: obj.longitude}));
+        let points = null;
+        let tracks = [];
+        try {
+            if (data.coursePoints) {
+                points = data.coursePoints.map((pt) => ({name: pt.name, lat: pt.lat, lng: pt.lon}));
+            }
+            if (data.geoPoints) {
+                tracks = [data.geoPoints.map((obj) => ({lat: obj.latitude, lng: obj.longitude}))];
+            }
+        } catch {
+            return [{name, error: 'UNSUPPORTED'}];
+        }
         name = data.courseName ? data.courseName : name;
         return [{
             name,
             points,
-            tracks: [track]
+            tracks: tracks,
         }];
     }
 }
@@ -77,7 +87,13 @@ class GarminActivity extends GarminBase {
         if (!data) {
             return [{name, error: 'UNSUPPORTED'}];
         }
-        let track = data.geoPolylineDTO.polyline.map((obj) => ({lat: obj.lat, lng: obj.lon}));
+        let track;
+        try {
+            track = data.geoPolylineDTO.polyline.map((obj) => ({lat: obj.lat, lng: obj.lon}));
+        } catch {
+            return [{name, error: 'UNSUPPORTED'}];
+        }
+
         return [{
             name,
             tracks: [track]
