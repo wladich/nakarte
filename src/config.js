@@ -17,7 +17,8 @@ const config = {
     tracksStorageServer: 'https://tracks.nakarte.me',
     wikimapiaTilesBaseUrl: 'https://proxy.nakarte.me/wikimapia/',
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
-    ...secrets
+    urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
+    ...secrets,
 };
 
 export default config;
