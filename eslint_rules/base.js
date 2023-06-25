@@ -236,7 +236,7 @@ module.exports = {
         'prefer-numeric-literals': 'error',
         'prefer-object-spread': 'error',
         'prefer-promise-reject-errors': 'error',
-        'prefer-regex-literals': 'error',
+        // 'prefer-regex-literals': 'error', // checked, declined
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         // 'prefer-template': 'error', // checked, declined
