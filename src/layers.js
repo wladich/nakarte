@@ -477,7 +477,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                            'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}@2x.png',
+                        ],
                         {
                             code: 'Ocm',
                             isOverlay: false,
@@ -492,7 +496,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 {
                     title: 'OSM Outdoors',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
+                            'https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}@2x.png',
+                        ],
                         {
                             code: 'Oso',
                             isOverlay: false,
