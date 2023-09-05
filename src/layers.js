@@ -462,11 +462,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         {
                             code: 'Otm',
                             isOverlay: false,
-                            maxNativeZoom: 15,
+                            maxNativeZoom: 14,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            noCors: false,
+                            noCors: true,
                             shortName: 'opentopo',
                             attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
                             hotkey: 'V',
