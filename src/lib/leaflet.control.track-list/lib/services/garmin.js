@@ -14,7 +14,7 @@ class GarminRoute extends GarminBase {
         const m = this.urlRe.exec(this.origUrl);
         const trackId = this.trackId = m[1];
         return [{
-            url: urlViaCorsProxy(`https://connect.garmin.com/modern/proxy/course-service/course/${trackId}`),
+            url: urlViaCorsProxy(`https://connect.garmin.com/course-service/course/${trackId}`),
             options: {
                 responseType: 'json',
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
@@ -65,7 +65,7 @@ class GarminActivity extends GarminBase {
         return [
             {
                 url: urlViaCorsProxy(
-                    `https://connect.garmin.com/modern/proxy/activity-service/activity/${trackId}/details`),
+                    `https://connect.garmin.com/activity-service/activity/${trackId}/details`),
                 options: {
                     responseType: 'json',
                     isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
