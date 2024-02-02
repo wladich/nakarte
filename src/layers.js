@@ -850,6 +850,27 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
+                    title: 'mapy.cz tourist',
+                    isDefault: false,
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://proxy.nakarte.me/mapy/turist-en/{z}-{x}-{y}',
+                            'https://proxy.nakarte.me/mapy/turist-en/retina/{z}-{x}-{y}',
+                        ],
+                        {
+                            code: 'Czt',
+                            isOverlay: false,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: true,
+                            shortName: 'czech_tourist',
+                            hotkey: 'H',
+                            attribution: '<a href="https://mapy.cz/turisticka">mapy.cz outdoor map</a>',
+                        }
+                    )
+                },
+                {
                     title: 'Finland Topo',
                     description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
@@ -1142,6 +1163,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'OpenTopoMap',
                 'OpenCycleMap',
                 'OSM Outdoors',
+                'mapy.cz tourist',
+
             ],
         },
         {
@@ -1201,6 +1224,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'OpenTopoMap',
         'OpenCycleMap',
         'OSM Outdoors',
+        'mapy.cz tourist',
         // Satellite
         'ESRI Satellite',
         'Yandex Satellite',
