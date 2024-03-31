@@ -1032,23 +1032,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     ),
                 },
                 {
-                    title: 'Yandex tracks (zoom ≥ 10)',
-                    isDefault: false,
-                    layer: new L.Layer.Yandex.Tracks(
-                        {
-                            scaleDependent: true,
-                            code: 'Ytr',
-                            isOverlay: true,
-                            isOverlayTransparent: true,
-                            print: true,
-                            jnx: false,
-                            shortName: 'yandex_tracks',
-                            noCors: true,
-                            attribution: '<a href="https://n.maps.yandex.ru/">Yandex Map Editor</a>',
-                        }
-                    )
-                },
-                {
                     title: 'Spain topo',
                     isDefault: false,
                     layer: L.tileLayer(
@@ -1201,7 +1184,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Strava heatmap (run)',
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
-                'Yandex tracks (zoom ≥ 10)',
             ],
 
         },
@@ -1280,7 +1262,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Strava heatmap (run)',
         'Strava heatmap (ride)',
         'Strava heatmap (winter)',
-        'Yandex tracks (zoom ≥ 10)',
         'Soviet topo maps grid',
         'Wikimapia',
 
