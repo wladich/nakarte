@@ -5,7 +5,7 @@ import twkb from 'twkb';
 
 class Wikiloc extends BaseService {
     urlRe = /^https?:\/\/(?:.+\.)?wikiloc\.com\/.*-(\d+)/u;
-    mapDataRe = /mapData=(.*);/u;
+    mapDataRe = /mapData\s*=\s*(.+);/u;
 
     getTrackId() {
         const m = this.urlRe.exec(this.origUrl);
@@ -29,11 +29,10 @@ class Wikiloc extends BaseService {
         const trackId = this.getTrackId();
         const name = `Wikiloc track ${trackId}`;
         const response = responses[0];
-        const m = this.mapDataRe.exec(response.responseText);
         if (response.status === 404) {
             return [{error: 'Wikiloc trail does not exist'}];
         }
-
+        const m = this.mapDataRe.exec(response.responseText);
         try {
             const data = JSON.parse(m[1]);
 
