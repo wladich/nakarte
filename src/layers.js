@@ -894,44 +894,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'France Topo 250m',
-                    isDefault: false,
-                    layer: new LayerGroupWithOptions(
-                        [
-                            L.tileLayer(
-                                'https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?' +
-                                'layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&' +
-                                'Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&' +
-                                'TileMatrix={z}&TileCol={x}&TileRow={y}',
-                                {
-                                    minZoom: 6,
-                                    maxNativeZoom: 16,
-                                    bounds: [
-                                        [-46.44072, -178.18694],
-                                        [51.12562, 77.61086],
-                                    ],
-                                    isOverlay: true,
-                                    isOverlayTransparent: false,
-                                    tms: false,
-                                    print: true,
-                                    jnx: true,
-                                    scaleDependent: false,
-                                    shortName: 'france_topo_25k',
-                                    cutline: getCutline('france'),
-                                    attribution: '<a href="https://www.geoportail.gouv.fr/carte">' +
-                                        'IGN (France) topographic map</a>',
-                                }
-                            ),
-                            new LayerCutlineOverview(getCutline('france'), 5, 'France Topo 250m (zoom ≥ 6)'),
-                        ],
-                        {
-                            code: 'Ft',
-                            isOverlay: true,
-                            isWrapper: true,
-                        }
-                    ),
-                },
-                {
                     title: 'Great Britain Topo',
                     isDefault: false,
                     layer: new LayerGroupWithOptions(
@@ -1159,7 +1121,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Topo 250m',
                 'Montenegro topo 250m',
                 'Finland Topo',
-                'France Topo 250m',
                 'Great Britain Topo',
                 'Slovakia topo',
                 'Spain topo',
@@ -1246,7 +1207,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
-        'France Topo 250m',
         'Switzerland topo',
         'Slazav Moscow region map',
         'Races',
