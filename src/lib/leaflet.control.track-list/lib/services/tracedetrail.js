@@ -10,21 +10,33 @@ class Tracedetrail extends BaseService {
     }
 
     requestOptions() {
-        const m = this.urlRe.exec(this.origUrl);
-        const trackId = this.trackId = m[1];
-
         return [{
-            url: urlViaCorsProxy(`https://tracedetrail.com/en/trace/geomSections/${trackId}`),
-            options: {responseType: 'json'}
+            url: urlViaCorsProxy(this.origUrl),
         }];
     }
 
     parseResponse(responses) {
-        const response = responses[0];
-        let name = `Tracedetrail track ${this.trackId}`;
+        const trackId = this.urlRe.exec(this.origUrl)[1];
+        let name = `Tracedetrail track ${trackId}`;
+        const documentText = responses[0].responseText;
         try {
-            name = response.responseJSON.nom_fr || name;
-            const geometry = JSON.parse(response.responseJSON.geometry);
+            const geometryMatch = /geometry\s*:\s*"(.+)",\n/u.exec(documentText);
+            if (!geometryMatch) {
+                let error = 'UNSUPPORTED';
+                if (documentText.includes("track doesn't exist")) {
+                    error = '{name} was deleted or did not exist';
+                } else if (documentText.includes('Private track')) {
+                    error = '{name} is private';
+                }
+                return [{name, error}];
+            }
+            const encodedGeometry = geometryMatch[1];
+            const titleMatch = /<title>.+:\s*(.+)<\/title>/u.exec(documentText);
+            if (titleMatch) {
+                name = titleMatch[1];
+            }
+
+            const geometry = JSON.parse(encodedGeometry.replaceAll('\\"', '"'));
             const proj = L.CRS.EPSG3857;
             const points = geometry.map((item) => proj.unproject(L.point(item.lon, item.lat)));
 
@@ -33,13 +45,7 @@ class Tracedetrail extends BaseService {
                 tracks: [points]
             }];
         } catch (e) {
-            let error = 'UNSUPPORTED';
-
-            if (response.status === 200) {
-                error = `Track with id ${this.trackId} was deleted or did not exist`;
-            }
-
-            return [{name, error}];
+            return [{name, error: 'UNSUPPORTED'}];
         }
     }
 }
