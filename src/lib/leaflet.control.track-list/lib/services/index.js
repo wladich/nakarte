@@ -1,6 +1,5 @@
 import SimpleService from './simpleService';
 import Etomesto from './etomesto';
-import Gpslib from './gpslib';
 import Osm from './osm';
 import Strava from './strava';
 import Tracedetrail from './tracedetrail';
@@ -16,7 +15,6 @@ const services = [
     NakarteTrack,
     NakarteUrl,
     Etomesto,
-    Gpslib,
     Osm,
     Strava,
     Tracedetrail,
