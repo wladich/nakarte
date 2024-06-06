@@ -187,7 +187,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: true,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'http://88.99.52.155/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg'
+                            'http://88.99.52.155/tmg/{z}/{x}/{y}'
                         ),
                         {
                             code: 'T',
