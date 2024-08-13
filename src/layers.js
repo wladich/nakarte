@@ -1009,6 +1009,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                                 scaleDependent: true,
                                 shortName: 'spain_topo',
                                 isOverlayTransparent: false,
+                                minZoom: 1,
                                 bounds: [[35.9024, -9.51828], [43.8375, 4.50439]],
                                 noCors: false,
                                 cutline: getCutline('spain'),
