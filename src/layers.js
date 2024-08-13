@@ -788,12 +788,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     title: 'Norway paper map',
                     isDefault: false,
                     layer: new L.TileLayer(
-                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster4&zoom={z}&x={x}&y={y}', // eslint-disable-line max-len
+                        'https://cache.kartverket.no/v1/wmts/1.0.0/toporaster/default/webmercator/{z}/{y}/{x}.png',
                         {
                             code: 'Np',
                             isOverlay: true,
                             isOverlayTransparent: false,
-                            maxNativeZoom: 16,
                             tms: false,
                             print: true,
                             jnx: true,
@@ -801,8 +800,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'norway_paper',
                             bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
-                            attribution: '<a href="https://www.geonorge.no/aktuelt/om-geonorge/brukerveiledning' +
-                                '/#!#se_paa_kart">Geonorge</a>',
+                            attribution: '<a href="https://kartverket.no/til-lands/kart/turkart">Kartverket</a>',
                         }
                     )
                 },
@@ -810,7 +808,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     title: 'Norway topo',
                     isDefault: false,
                     layer: new L.TileLayer(
-                        'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
+                        'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
                         {
                             code: 'Nm',
                             isOverlay: true,
@@ -822,8 +820,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'norway_topo',
                             bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
-                            attribution: '<a href="https://www.geonorge.no/aktuelt/om-geonorge/brukerveiledning' +
-                                '/#!#se_paa_kart">Geonorge</a>',
+                            attribution: '<a href="https://kartverket.no/til-lands/kart/turkart">Kartverket</a>',
                         }
                     )
                 },
