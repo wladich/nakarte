@@ -11,7 +11,7 @@
         <tr>
             <td>Distance</td>
             <td data-bind="text: distance() === null ? '--' :
-                distance() > 2000 ? (distance() / 1000).toFixed(2) + ' km' : Math.round(distance()) + ' m'"></td>
+                distance() > 2000 ? formatLength(distance()) : Math.round(distance()) + ' m'"></td>
         </tr>
     </table>
 
