@@ -1066,6 +1066,33 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         }
                     )
                 },
+                {
+                    title: 'Sweden topo',
+                    isDefault: false,
+                    layer: L.tileLayer(
+                        'https://minkarta.lantmateriet.se/map/topowebbcache' +
+                        '?layer=topowebb&style=default&tilematrixset=3857&Service=WMTS&Request=GetTile&Version=1.0.0' +
+                        '&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}',
+                        {
+                            code: 'Se',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: true,
+                            shortName: 'sweden_topo',
+                            isOverlayTransparent: false,
+                            minZoom: 0,
+                            maxNativeZoom: 17,
+                            bounds: [[55.13493, 10.58876], [69.07200, 24.18365]],
+                            noCors: false,
+                            cutline: getCutline('sweden'),
+                            attribution: '<a href="https://minkarta.lantmateriet.se/">' +
+                                'Lantmäteriet</a>'
+                        }
+                    )
+                },
+
     ];
 
     const groupsDefs = [
@@ -1119,6 +1146,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Topo 250m',
                 'Montenegro topo 250m',
                 'Finland Topo',
+                'Sweden topo',
                 'Great Britain Topo',
                 'Slovakia topo',
                 'Spain topo',
@@ -1190,6 +1218,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Norway paper map',
         'Norway topo',
         'Finland Topo',
+        'Sweden topo',
         'Slovakia topo',
         'Spain topo',
         'Mountains by Alexander Purikov',
