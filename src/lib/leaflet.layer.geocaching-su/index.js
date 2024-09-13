@@ -3,9 +3,10 @@ import {fetch} from '~/lib/xhr-promise';
 import '~/lib/leaflet.layer.canvasMarkers';
 import * as logging from '~/lib/logging';
 import {notify} from '~/lib/notifications';
-import './style.css';
-import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
 import {openPopupWindow} from '~/lib/popup-window';
+import icon from './tr.png';
+
+const markerIcon = {url: icon, center: [10, 10]};
 
 const GeocachingSu = L.Layer.CanvasMarkers.extend({
     options: {
@@ -49,8 +50,6 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
     },
 
     _loadMarkers: function(data) {
-        const icon = iconFromBackgroundImage('geocaching-icon');
-
         function getLabel(marker, zoom) {
             return zoom >= 10 ? marker._label : null;
         }
@@ -59,7 +58,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                 latlng: {lat, lng},
                 _label: label,
                 label: getLabel,
-                icon,
+                icon: markerIcon,
                 cacheId
         }));
         this.addMarkers(markers);
