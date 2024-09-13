@@ -3,10 +3,31 @@ import '~/lib/leaflet.layer.canvasMarkers';
 import {openPopupWindow} from '~/lib/popup-window';
 import escapeHtml from 'escape-html';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
-import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
 import {fetch} from '~/lib/xhr-promise';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
+
+import iconPass1a from './pass-1a.png';
+import iconPass1b from './pass-1b.png';
+import iconPass2a from './pass-2a.png';
+import iconPass2b from './pass-2b.png';
+import iconPass3a from './pass-3a.png';
+import iconPass3b from './pass-3b.png';
+import iconPassNoGrade from './pass-nograde.png';
+import iconPassUnknownGrade from './pass-unknown-notconfirmed.png';
+import iconSummit from './summit.png';
+
+const markerIcons = {
+    "1a": {url: iconPass1a, center: [7, 7]},
+    "1b": {url: iconPass1b, center: [7, 7]},
+    "2a": {url: iconPass2a, center: [7, 7]},
+    "2b": {url: iconPass2b, center: [7, 7]},
+    "3a": {url: iconPass3a, center: [7, 7]},
+    "3b": {url: iconPass3b, center: [7, 7]},
+    "nograde": {url: iconPassNoGrade, center: [7, 7]},
+    "unknown": {url: iconPassUnknownGrade, center: [7, 7]},
+    "summit": {url: iconSummit, center: [7, 7]},
+};
 
 const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {
@@ -101,14 +122,13 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         },
 
         _makeIcon: function(marker) {
-            var className;
-            className = 'westra-pass-marker ';
+            let icon;
             if (marker.properties.is_summit) {
-                className += 'westra-pass-marker-summit';
+                icon = markerIcons.summit;
             } else {
-                className += 'westra-pass-marker-' + marker.properties.grade_eng;
+                icon = markerIcons[marker.properties.grade_eng];
             }
-            return iconFromBackgroundImage(className);
+            return icon;
         },
 
         _loadMarkers: function(xhr) {
