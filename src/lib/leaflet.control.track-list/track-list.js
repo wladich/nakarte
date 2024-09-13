@@ -11,7 +11,6 @@ import copyToClipboard from '~/lib/clipboardCopy';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
 import '~/lib/leaflet.layer.canvasMarkers';
 import '~/lib/leaflet.lineutil.simplifyLatLngs';
-import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
 import '~/lib/controls-styles/controls-styles.css';
 import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
 import '~/lib/leaflet.control.commons';
@@ -26,6 +25,22 @@ import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
+
+import markerIcon1 from './images/marker_1.png';
+import markerIcon2 from './images/marker_2.png';
+import markerIcon3 from './images/marker_3.png';
+import markerIcon4 from './images/marker_4.png';
+import markerIcon5 from './images/marker_5.png';
+import markerIcon6 from './images/marker_6.png';
+
+const markerIcons = {
+    "marker-1": {url: markerIcon1, center: [10.5, 21]},
+    "marker-2": {url: markerIcon2, center: [10.5, 21]},
+    "marker-3": {url: markerIcon3, center: [10.5, 21]},
+    "marker-4": {url: markerIcon4, center: [10.5, 21]},
+    "marker-5": {url: markerIcon5, center: [10.5, 21]},
+    "marker-6": {url: markerIcon6, center: [10.5, 21]},
+};
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -1272,10 +1287,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerIcon: function(marker) {
-            var symbol = 'marker',
-                colorInd = marker._parentTrack.color() + 1,
-                className = 'symbol-' + symbol + '-' + colorInd;
-            marker.icon = iconFromBackgroundImage('track-waypoint ' + className);
+            const symbol = 'marker';
+            const colorInd = marker._parentTrack.color() + 1;
+            const iconName = `${symbol}-${colorInd}`;
+            marker.icon = markerIcons[iconName];
         },
 
         setMarkerLabel: function(marker, label) {

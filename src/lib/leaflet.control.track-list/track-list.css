@@ -197,48 +197,6 @@
     width: 100%;
 }
 
-.track-waypoint {
-    display: block;
-    width: 21px !important;
-    height: 21px !important;
-    background-repeat: no-repeat;
-    margin-top: -21px !important;
-    margin-left: -10.5px !important;
-    padding-left: 20px;
-    padding-bottom: 15px;
-    font-size: 10px;
-    font-weight: bold;
-    font-family: Verdana, Arial, sans-serif;
-    white-space: nowrap;
-    text-shadow: 1px 0 1px #fff,
-        1px 1px 1px #fff,
-        0 1px 1px #fff,
-        -1px 1px 1px #fff,
-        -1px 0 1px #fff,
-        -1px -1px 1px #fff,
-        0 -1px 1px #fff,
-        1px -1px 1px #fff;
-}
-
-.track-waypoint.symbol-marker-1 {
-    background-image: url("images/marker_1.png");
-}
-.track-waypoint.symbol-marker-2 {
-    background-image: url("images/marker_2.png");
-}
-.track-waypoint.symbol-marker-3 {
-    background-image: url("images/marker_3.png");
-}
-.track-waypoint.symbol-marker-4 {
-    background-image: url("images/marker_4.png");
-}
-.track-waypoint.symbol-marker-5 {
-    background-image: url("images/marker_5.png");
-}
-.track-waypoint.symbol-marker-6 {
-    background-image: url("images/marker_6.png");
-}
-
 .leaflet-point-placing {
     cursor: crosshair !important;
 }
