@@ -5,6 +5,7 @@ import '~/lib/leaflet.control.commons';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
 import {DragEvents} from '~/lib/leaflet.events.drag';
+import {formatTrackLength} from '../utils';
 
 function calcSamplingInterval(length) {
     var targetPointsN = 2000;
@@ -395,14 +396,14 @@ const ElevationProfile = L.Class.extend({
                         ),
                     ascent: Math.round(stats.ascent),
                     descent: Math.round(stats.descent),
-                    dist: (stats.distance / 1000).toFixed(1),
                     startApprox: stats.dataLostAtStart > 0.02 ? '~ ' : '',
                     endApprox: stats.dataLostAtEnd > 0.02 ? '~ ' : '',
                     approx: stats.dataLost > 0.02 ? '~ ' : '',
                     incomplete: stats.dataLost > 0.02 ? 'Some elevation data missing' : '',
                 };
             }
-            d.dist = (stats.distance / 1000).toFixed(1);
+
+            const distance = formatTrackLength(stats.distance);
 
             this.propsContainer.innerHTML = `
                 <table>
@@ -415,7 +416,7 @@ const ElevationProfile = L.Class.extend({
                 <tr><td>Avg / Max descent inclination:</td><td>${d.descentAngleStr}</td></tr>
                 <tr class="start-group"><td>Total ascent:</td><td>${d.approx}${d.ascent}</td></tr>
                 <tr><td>Total descent:</td><td>${d.approx}${d.descent}</td></tr>
-                <tr class="start-group"><td>Distance:</td><td>${d.dist} km</td></tr>
+                <tr class="start-group"><td>Distance:</td><td>${distance}</td></tr>
                 <tr><td colspan="2" style="text-align: center">${d.incomplete}</td></tr>
                 </table>
                 `;

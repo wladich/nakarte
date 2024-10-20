@@ -10,6 +10,7 @@ import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
 import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
+import {formatTrackLength} from '../utils';
 
 function radians(x) {
     return x / 180 * Math.PI;
@@ -57,6 +58,7 @@ L.Control.Azimuth = L.Control.extend({
             this.trueAzimuth = ko.observable(null);
             this.magneticAzimuth = ko.observable(null);
             this.distance = ko.observable(null);
+            this.formatLength = (length) => formatTrackLength(length, true);
             this.points = {
                 start: null,
                 end: null
