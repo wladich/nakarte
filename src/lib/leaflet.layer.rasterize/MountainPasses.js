@@ -1,15 +1,15 @@
 import L from "leaflet";
-import '~/lib/leaflet.layer.westraPasses';
-import {WestraPassesMarkers} from '~/lib/leaflet.layer.westraPasses/westraPassesMarkers';
+import '~/lib/leaflet.layer.mountainPasses';
+import {MountainPassesMarkers} from '~/lib/leaflet.layer.mountainPasses/mountainPassesMarkers';
 import '~/lib/leaflet.layer.canvasMarkers';
 import './CanvasMarkers';
 
-L.Layer.WestraPasses.addInitHook(function() {
+L.Layer.MountainPasses.addInitHook(function() {
     this.markers.options.print = this.options.print;
     this.options.print = false;
 });
 
-WestraPassesMarkers.include({
+MountainPassesMarkers.include({
     waitDataReady: function() {
         if (this._dataLoaded) {
             return Promise.resolve();
@@ -21,7 +21,7 @@ WestraPassesMarkers.include({
 
     cloneForPrint: function(options) {
         options = L.Util.extend({}, this.options, options);
-        return new WestraPassesMarkers(this._baseUrl, options);
+        return new this.constructor(this.url, options);
     },
 
     getTilesInfo: async function(printOptions) {

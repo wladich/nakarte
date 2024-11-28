@@ -1,0 +1,54 @@
+.mountain-pass-tooltip {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1000000;
+    top: -30px;
+    left: 0;
+    transition-property: visibility;
+    transition-delay: 0.2s;
+}
+
+.mountain-pass-tooltip div {
+    margin-left: -50%;
+    margin-right: 50%;
+    white-space: nowrap;
+    background-color: white;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-top: -1px;
+    opacity: 1;
+    padding: 0 2px;
+}
+
+.mountain-region-label {
+    white-space: nowrap;
+    width: auto !important;
+    height: auto !important;
+}
+
+.mountain-region-label span {
+    margin-left: -50%;
+    color: #c55;
+    font-family: sans-serif;
+    font-size: 14px;
+    /*font-weight: bold;*/
+    text-shadow: 1px 0 0 #eee,
+    1px 1px 0 #eee,
+    0 1px 0 #eee,
+    -1px 1px 0 #eee,
+    -1px 0 0 #eee,
+    -1px -1px 0 #eee,
+    0 -1px 0 #eee,
+    1px -1px 0 #eee;
+
+}
+
+.mountain-coverage-polygon {
+    stroke-width: 10;
+    stroke-opacity: 1;
+    fill-opacity: 1;
+    stroke: #c55;
+    fill: #c55;
+    opacity: 0.6;
+
+}
