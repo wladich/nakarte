@@ -3,7 +3,7 @@ import './TileLayer';
 import './Bing';
 import './Yandex';
 import './Google';
-import './WestraPasses';
+import './MountainPasses';
 import './CanvasMarkers';
 import './MeasuredLine';
 import './RetinaTileLayer';

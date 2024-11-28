@@ -10,6 +10,7 @@ const config = {
     defaultZoom: 8,
     googleApiUrl: `https://maps.googleapis.com/maps/api/js?v=3&key=${secrets.google}`,
     westraDataBaseUrl: 'https://nakarte.me/westraPasses/',
+    fstrDataBaseUrl: 'https://nakarte.me/fstrPasses/',
     CORSProxyUrl: 'https://proxy.nakarte.me/',
     elevationsServer: 'https://elevation.nakarte.me/',
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',

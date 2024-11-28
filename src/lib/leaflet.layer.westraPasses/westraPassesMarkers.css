@@ -1,0 +1,51 @@
+.westra-pass-details {
+    border-collapse: collapse;
+}
+
+.westra-pass-details > tbody > tr > td {
+    border-bottom: 1px solid #ccc;
+    padding: 1mm 0;
+}
+
+.westra-pass-details > tbody > tr > td:last-child {
+    padding-left: 1em;
+}
+
+.westra-pass-details > tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.westra-pass-details .coords {
+    border-collapse: collapse;
+}
+
+.westra-pass-details .coords > tbody > tr > td {
+    padding: 0;
+    padding-left: 1em;
+}
+
+.westra-pass-details .coords td:first-child {
+    padding-left: 0;
+}
+
+.westra-pass-details .coords .header {
+    color: #999;
+    font-size: 9px;
+}
+
+.westra-pass-details .coords a {
+    color: #000;
+    border-bottom: 1px dashed #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.westra-passes-description-comment {
+    margin: 0 !important;
+}
+
+.westra-passes-description-comment-author {
+    font-weight: bold;
+    color: #777;
+    margin-right: 1em !important;
+}

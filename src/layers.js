@@ -5,6 +5,7 @@ import {BingLayer} from '~/lib/leaflet.layer.bing';
 import config from './config';
 import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
+import '~/lib/leaflet.layer.fstrPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
 import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
@@ -446,13 +447,33 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         scaleDependent: true,
                         isOverlay: true,
                         isOverlayTransparent: true,
-                        shortName: 'passes',
+                        shortName: 'westra_passes',
                         markersOptions: {
                             isOverlay: true,
                             isOverlayTransparent: true,
-                            shortName: 'passes'
+                            shortName: 'westra_passes'
                         },
                         attribution: '<a href="http://westra.ru/passes/">Westra passes catalog</a>',
+                    })
+                },
+                {
+                    title: 'Mountain passes (FSTR)',
+                    isDefault: false,
+                    layer: new L.Layer.FstrPasses(config.fstrDataBaseUrl, {
+                        code: 'Fp',
+                        print: true,
+                        jnx: false,
+                        scaleDependent: true,
+                        isOverlay: true,
+                        isOverlayTransparent: true,
+                        shortName: 'fstr_passes',
+                        markersOptions: {
+                            isOverlay: true,
+                            isOverlayTransparent: true,
+                            shortName: 'fstr_passes'
+                        },
+                        attribution: '<a href="https://tssr.ru/www/phportal/docs/mountain/pereval/">' +
+                            'FSTR passes catalog</a>',
                     })
                 },
                 {
@@ -1151,7 +1172,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'O-sport',
                 'Soviet topo maps grid',
                 'Wikimapia',
-                'Mountain passes (Westra)'
+                'Mountain passes (Westra)',
             ],
         },
         {
@@ -1184,6 +1205,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         {
             title: 'Miscellaneous',
             layers: [
+                'Mountain passes (FSTR)',
                 'Mountains by Alexander Purikov',
                 'Google Hybrid',
                 'geocaching.su'
@@ -1283,6 +1305,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
 
         // point overlays
         'Mountain passes (Westra)',
+        'Mountain passes (FSTR)',
         'geocaching.su',
     ];
 
