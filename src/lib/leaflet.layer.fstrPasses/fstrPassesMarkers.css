@@ -1,0 +1,21 @@
+.fstr-pass-variants {
+    margin-top: 16px;
+    border-collapse: collapse;
+    border-style: hidden;
+}
+
+.fstr-pass-variants td, .fstr-pass-variants th {
+    border: 1px solid #bbb;
+    vertical-align: middle;
+    padding: 2px 4px 2px 4px;
+}
+
+.fstr-pass-variants td.center {
+    text-align: center;
+}
+
+.fstr-pass-variants th {
+    font-size: 10px;
+    text-align: center;
+    padding-top: 0;
+}
