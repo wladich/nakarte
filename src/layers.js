@@ -868,6 +868,33 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
+                    title: 'mapy.cz winter',
+                    isDefault: false,
+                    layer: new LayerGroupWithOptions([
+                        new L.TileLayer('https://proxy.nakarte.me/mapy/winter-en-down/{z}-{x}-{y}', {
+                            tms: false,
+                            print: true,
+                            isOverlay: false,
+                            jnx: true,
+                            scaleDependent: true,
+                            shortName: 'czech_winter',
+                        }),
+                        new L.TileLayer('https://proxy.nakarte.me/mapy/winter-en-up/{z}-{x}-{y}', {
+                            tms: false,
+                            print: true,
+                            jnx: false,
+                            isOverlay: true,
+                            isOverlayTransparent: true,
+                            scaleDependent: true,
+                        }),
+                    ], {
+                        code: 'Czw',
+                        isOverlay: false,
+                        isWrapper: true,
+                        attribution: '<a href="https://mapy.cz/zimni">mapy.cz winter map</a>',
+                    }),
+                },
+                {
                     title: 'Finland Topo',
                     description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
@@ -1134,6 +1161,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'OpenCycleMap',
                 'OSM Outdoors',
                 'mapy.cz tourist',
+                'mapy.cz winter',
 
             ],
         },
@@ -1194,6 +1222,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'OpenCycleMap',
         'OSM Outdoors',
         'mapy.cz tourist',
+        'mapy.cz winter',
         // Satellite
         'ESRI Satellite',
         'Yandex Satellite',
