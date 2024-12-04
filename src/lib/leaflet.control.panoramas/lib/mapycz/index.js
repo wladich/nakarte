@@ -3,7 +3,7 @@ import {getSMap} from './apiLoader';
 import {CloseButtonMixin, DateLabelMixin, Events} from '../common';
 
 function getCoverageLayer(options) {
-    return L.tileLayer('https://mapserver.mapy.cz/panorama_hybrid-m/{z}-{x}-{y}', options);
+    return L.tileLayer('https://proxy.nakarte.me/mapy/panorama_ln_hybrid-m/{z}-{x}-{y}', options);
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
