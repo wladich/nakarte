@@ -848,7 +848,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'mapy.cz tourist',
-                    isDefault: false,
+                    isDefault: true,
                     layer: new RetinaTileLayer(
                         [
                             'https://proxy.nakarte.me/mapy/turist-en/{z}-{x}-{y}',
