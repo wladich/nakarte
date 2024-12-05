@@ -12,26 +12,10 @@ const CloseButtonMixin = {
     },
 };
 
-function formatDateTime(ts) {
-    const d = new Date(ts);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-}
-
-const DateLabelMixin = {
-    createDateLabel: function(container) {
-        this.dateLabel = L.DomUtil.create('div', 'mapillary-viewer-date-overlay', container);
-    },
-
-    updateDateLabel: function(timestamp) {
-        this.dateLabel.innerHTML = formatDateTime(timestamp);
-    }
-};
-
 const Events = {
     ImageChange: 'ImageChange',
     BearingChange: 'BearingChange',
     YawPitchZoomChangeEnd: 'YawPitchZoomChangeEnd',
 };
 
-export {CloseButtonMixin, DateLabelMixin, Events};
+export {CloseButtonMixin, Events};
