@@ -1,154 +1,191 @@
 import L from 'leaflet';
-import {getSMap} from './apiLoader';
-import {CloseButtonMixin, DateLabelMixin, Events} from '../common';
+
+import config from '~/config';
+
+import {getPanorama} from './apiLoader';
+import {CloseButtonMixin, Events} from '../common';
 
 function getCoverageLayer(options) {
     return L.tileLayer('https://proxy.nakarte.me/mapy/panorama_ln_hybrid-m/{z}-{x}-{y}', options);
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
-    const smap = await getSMap();
-    const request = smap.Pano.getBest(smap.Coords.fromWGS84(latlng.lng, latlng.lat), searchRadiusMeters);
-    try {
-        return {
-            found: true,
-            data: await request,
-        };
-    } catch (e) {
-        return {found: false};
-    }
+    const panoramaClass = await getPanorama();
+    const res = await panoramaClass.panoramaExists({
+        lon: latlng.lng,
+        lat: latlng.lat,
+        radius: searchRadiusMeters,
+        apiKey: config.mapyCzKey,
+    });
+    return {
+        found: res.exists,
+        data: res.info,
+    };
 }
 
-const Viewer = L.Evented.extend({
-    includes: [CloseButtonMixin, DateLabelMixin],
+const MapyPanoramaWrapper = L.Evented.extend({
+    initialize: function (mapyPanorama, container, apiKey) {
+        this.apiKey = apiKey;
+        this.container = L.DomUtil.create('div', null, container);
+        this.container.style.height = '100%';
+        this.mapyPanorama = mapyPanorama;
+        this.viewerControl = null;
+        this.position = null;
+        this.pov = null;
+    },
 
-    initialize: function(smap, container) {
+    deactivate: function () {
+        this.reset();
+        this.position = null;
+        this.pov = null;
+    },
+    showPano: async function (position, pov) {
+        this.reset();
+        this.position = null;
         // Disable keyboard events for panorama as they  conflict with other hotkeys.
-        const orig_windowAddEventListener = window.addEventListener;
-        window.addEventListener = (function(type, ...args) {
+        const origWindowAddEventListener = window.addEventListener;
+        window.addEventListener = function (type, ...args) {
             if (!/^key/u.test(type)) {
-                orig_windowAddEventListener(type, ...args);
+                origWindowAddEventListener(type, ...args);
             }
-        });
-        this.panorama = new smap.Pano.Scene(container);
-        window.addEventListener = orig_windowAddEventListener;
-        this.createDateLabel(container);
-        this.createCloseButton(container);
-        window.addEventListener('resize', this.resize.bind(this));
-        this.invalidateSize = L.Util.throttle(this._invalidateSize, 100, this);
-        this._updateHandler = null;
-        this._placeId = null;
-        this._yaw = null;
-        this._pitch = null;
-        this._fov = null;
-        this._yawPitchZoomChangeTimer = null;
-    },
-
-    showPano: function(place, yaw = null, pitch = 0, fov = 1.256637061) {
-        if (yaw === null) {
-            yaw = this.panorama.getCamera().yaw;
+        };
+        let res;
+        try {
+            res = await this.mapyPanorama.panoramaFromPosition({
+                parent: this.container,
+                ...position,
+                ...(pov ?? this.pov ?? {yaw: 'auto'}),
+                radius: 0.01,
+                showNavigation: true,
+                apiKey: this.apiKey,
+                lang: 'en',
+            });
+        } finally {
+            window.addEventListener = origWindowAddEventListener; // eslint-disable-line require-atomic-updates
         }
-        this.panorama.show(place, {yaw});
-        this.panorama.setCamera({fov, pitch});
-        if (!this._updateHandler) {
-            this._updateHandler = setInterval(this.watchMapyStateChange.bind(this), 50);
+        if (res.error) {
+            return;
+        }
+        this.viewerControl = res;
+        this.onPositionChange(res);
+        const loadedPanoPov = res.getCamera();
+        this.onPOVChange(loadedPanoPov);
+        this.viewerControl.addListener('pano-view', this.onPOVChange.bind(this));
+        this.viewerControl.addListener('pano-place', this.onPositionChange.bind(this));
+    },
+
+    reset: function () {
+        if (this.viewerControl) {
+            this.viewerControl.destroy();
+            this.viewerControl = null;
         }
     },
 
-    activate: function() {
-        this.resize();
+    onPOVChange: function (pov) {
+        this.pov = pov;
+        this.notifyViewChanged(pov);
     },
 
-    deactivate: function() {
-        this._placeId = null;
-        this._yaw = null;
-        this._pitch = null;
-        this._fov = null;
-        clearInterval(this._updateHandler);
-        this._updateHandler = null;
+    onPositionChange: function (e) {
+        this.position = e.info;
+        this.notifyPositionChanged(e.info);
     },
 
-    getState: function() {
-        const camera = this.panorama.getCamera();
-        const place = this.panorama.getPlace();
-        if (!place) {
+    notifyPositionChanged: function (position) {
+        this.fire('position-change', position);
+    },
+
+    notifyViewChanged: function (pov) {
+        this.fire('view-change', pov);
+    },
+
+    getPanoramaCoords: function () {
+        return this.position;
+    },
+
+    getPov: function () {
+        if (this.viewerControl === null) {
             return null;
         }
-        const coords = place.getCoords().toWGS84();
+        return this.viewerControl.getCamera();
+    },
+});
+
+const Viewer = L.Evented.extend({
+    includes: [CloseButtonMixin],
+
+    initialize: function (mapyPanorama, container) {
+        this.mapyPanoramaWrapper = new MapyPanoramaWrapper(mapyPanorama, container, config.mapyCzKey);
+        this.createCloseButton(container);
+        this.mapyPanoramaWrapper.on('position-change', this.onPanoramaPositionChanged, this);
+        this.mapyPanoramaWrapper.on('view-change', this.onPanoramaPovChanged, this);
+        this.povChangeTimer = null;
+    },
+
+    showPano: function (place, pov) {
+        this.mapyPanoramaWrapper.showPano(place, pov);
+    },
+
+    activate: function () {
+        // no action needed
+    },
+
+    deactivate: function () {
+        this.mapyPanoramaWrapper.reset();
+    },
+
+    getState: function () {
+        const coords = this.mapyPanoramaWrapper.getPanoramaCoords();
+        const pov = this.mapyPanoramaWrapper.getPov();
+        if (coords === null || pov === null) {
+            return null;
+        }
         return [
-            coords[1].toFixed(6),
-            coords[0].toFixed(6),
-            camera.yaw.toFixed(4),
-            camera.pitch.toFixed(4),
-            camera.fov.toFixed(4),
+            coords.lat.toFixed(6),
+            coords.lon.toFixed(6),
+            pov.yaw.toFixed(4),
+            pov.pitch.toFixed(4),
+            pov.fov.toFixed(4),
         ];
     },
 
-    setState: function(state) {
+    setState: function (state) {
         const lat = parseFloat(state[0]);
         const lng = parseFloat(state[1]);
         const yaw = parseFloat(state[2]);
         const pitch = parseFloat(state[3]);
         const fov = parseFloat(state[4]);
-        if (!isNaN(lat) && !isNaN(lng) && !isNaN(yaw) && !isNaN(pitch) && !isNaN(fov)) {
-            getPanoramaAtPos({lat, lng}, 0).then(({data: place, found}) => {
-                if (found) {
-                    this.showPano(place, yaw, pitch, fov);
-                }
-            });
-            return true;
+        if (isNaN(lat) || isNaN(lng) || isNaN(yaw) || isNaN(pitch) || isNaN(fov)) {
+            return false;
         }
-        return false;
+        this.showPano({lat, lon: lng}, {yaw, pitch, fov});
+        return true;
     },
 
-    resize: function() {
-        this.panorama.syncPort();
+    onPanoramaPositionChanged: function (position) {
+        this.fire(Events.ImageChange, {latlng: L.latLng(position.lat, position.lon)});
     },
 
-    watchMapyStateChange: function() {
-        const place = this.panorama.getPlace();
-        if (!place) {
-            return;
+    onPanoramaPovChanged: function (pov) {
+        this.fire(Events.BearingChange, {bearing: (pov.yaw * 180) / Math.PI});
+        if (this.povChangeTimer !== null) {
+            clearTimeout(this.povChangeTimer);
+            this.povChangeTimer = null;
         }
-        const placeId = place.getId();
-        if (this._placeId !== placeId) {
-            this._placeId = placeId;
-            const coords = place.getCoords().toWGS84();
-            this.updateDateLabel();
-            this.fire(Events.ImageChange, {latlng: L.latLng(coords[1], coords[0])});
-        }
-        const camera = this.panorama.getCamera();
-        if (this._yaw !== camera.yaw || this._pitch !== camera.pitch || this._fov !== camera.fov) {
-            if (this._yaw !== camera.yaw) {
-                this.fire(Events.BearingChange, {bearing: (this._yaw * 180) / Math.PI});
-            }
-            this._yaw = camera.yaw;
-            this._pitch = camera.pitch;
-            this._fov = camera.fov;
-            if (this._yawPitchZoomChangeTimer !== null) {
-                clearTimeout(this._yawPitchZoomChangeTimer);
-                this._yawPitchZoomChangeTimer = null;
-            }
-            this._yawPitchZoomChangeTimer = setTimeout(() => {
-                this.fire(Events.YawPitchZoomChangeEnd);
-            }, 120);
-        }
+        this.povChangeTimer = setTimeout(() => {
+            this.povChangeTimer = null;
+            this.fire(Events.YawPitchZoomChangeEnd);
+        }, 120);
     },
 
-    updateDateLabel: function() {
-        const place = this.panorama.getPlace();
-        const timestamp = Date.parse(place.getDate());
-        DateLabelMixin.updateDateLabel.call(this, timestamp);
+    invalidateSize: function () {
+        // no action needed
     },
-
-    _invalidateSize: function() {
-        this.panorama.syncPort();
-    }
 });
 
 async function getViewer(container) {
-    const smap = await getSMap();
-    return new Viewer(smap, container);
+    const mapyPanorama = await getPanorama();
+    return new Viewer(mapyPanorama, container);
 }
 
 const mapyczProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
