@@ -7,7 +7,6 @@ import {YandexRuler} from './yandex';
 import {NakarteTrack, NakarteUrl} from './nakarte';
 import {GarminActivity, GarminRoute} from './garmin';
 import {SportsTrackerActivity} from './sportstracker';
-import OpenStreetMapRu from './openstreetmapRu';
 import Wikiloc from './wikiloc';
 
 const services = [
@@ -21,7 +20,6 @@ const services = [
     GarminActivity,
     GarminRoute,
     SportsTrackerActivity,
-    OpenStreetMapRu,
     Wikiloc,
     SimpleService
 ];
