@@ -23,13 +23,14 @@ jobs:
       - run: npm run build
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - browser: FirefoxHeadless
             firefox-version: '52.9.0esr'
+            os: ubuntu-20.04
             needs-xvfb: true
           - browser: FirefoxHeadless
             firefox-version: 'latest'
