@@ -45,36 +45,14 @@ const YandexMapsUrl = {
     },
 
     getResults: async function (url) {
-        let isShort = false;
-        let actualUrl;
         try {
-            if (url.pathname.match(/^\/maps\/-\//u)) {
-                isShort = true;
-                const pageText = (await fetch(urlViaCorsProxy(url.toString()))).response;
-                try {
-                    const dom = new DOMParser().parseFromString(pageText, 'text/html');
-                    actualUrl = new URL(dom.querySelector('meta[property="og:image:secure_url"]').content);
-                } catch (_) {
-                    let propertyContent = pageText.match(
-                        /<meta\s+property\s*=\s*["']?og:image:secure_url["']?\s+content\s*=\s*["']?([^"' >]+)/u
-                    )[1];
-                    propertyContent = propertyContent.replaceAll('&amp;', '&');
-                    actualUrl = new URL(decodeURIComponent(propertyContent));
-                }
-            } else {
-                actualUrl = url;
-            }
-            const paramLl = actualUrl.searchParams.get('ll');
-            const paramZ = actualUrl.searchParams.get('z');
+            const paramLl = url.searchParams.get('ll');
+            const paramZ = url.searchParams.get('z');
             const [lon, lat] = paramLl.split(',').map(parseFloat);
             const zoom = Math.round(parseFloat(paramZ));
             return makeSearchResults(lat, lon, zoom, 'Yandex map view');
         } catch (_) {
-            return {
-                error: L.Util.template(isShort ? MESSAGE_SHORT_LINK_MALFORMED : MESSAGE_LINK_MALFORMED, {
-                    name: 'Yandex',
-                }),
-            };
+            return {error: L.Util.template(MESSAGE_LINK_MALFORMED, {name: 'Yandex'})};
         }
     },
 };
