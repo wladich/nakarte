@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-import config from '~/config';
+import urlViaCorsProxy from '~/lib/CORSProxy';
 import * as logging from '~/lib/logging';
 import {fetch} from '~/lib/xhr-promise';
 
@@ -14,7 +14,7 @@ const MapyCzProvider = BaseProvider.extend({
     name: 'Mapy.cz',
 
     options: {
-        apiUrl: 'https://api.mapy.cz/v0/suggest/',
+        apiUrl: urlViaCorsProxy('https://pro.mapy.cz/suggest/'),
         attribution: {
             text: 'Mapy.cz',
             url: 'https://mapy.cz',
@@ -32,7 +32,6 @@ const MapyCzProvider = BaseProvider.extend({
             this.options.categoriesLanguages,
             this.options.defaultLanguage
         )[0];
-        this.apiKey = config.mapyCz;
     },
 
     search: async function (query, {latlng, zoom}) {
@@ -48,7 +47,6 @@ const MapyCzProvider = BaseProvider.extend({
         if (this.options.maxResponses) {
             url.searchParams.append('count', this.options.maxResponses);
         }
-        url.searchParams.append('apikey', this.apiKey);
         let xhr;
         try {
             xhr = await fetch(url.href, {responseType: 'json', timeout: 5000});
