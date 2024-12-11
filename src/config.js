@@ -18,6 +18,7 @@ const config = {
     wikimapiaTilesBaseUrl: 'https://proxy.nakarte.me/wikimapia/',
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
+    elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
     ...secrets,
 };
 
