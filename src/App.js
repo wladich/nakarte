@@ -124,7 +124,7 @@ function setUp() { // eslint-disable-line complexity
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
 
-    new L.Control.Coordinates({position: 'topleft'}).addTo(map);
+    new L.Control.Coordinates(config.elevationTileUrl, {position: 'topleft'}).addTo(map);
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 

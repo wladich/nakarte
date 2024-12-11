@@ -6,6 +6,7 @@ import Contextmenu from '~/lib/contextmenu';
 import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import '~/lib/controls-styles/controls-styles.css';
+import {ElevationLayer} from '~/lib/leaflet.layer.elevation-display';
 import * as formats from './formats';
 
 const DEFAULT_FORMAT = formats.DEGREES;
@@ -19,6 +20,8 @@ L.Control.Coordinates = L.Control.extend({
             position: 'bottomleft'
         },
 
+        includes: L.Mixin.Events,
+
         formats: [
             formats.SIGNED_DEGREES,
             formats.DEGREES,
@@ -26,8 +29,10 @@ L.Control.Coordinates = L.Control.extend({
             formats.DEGREES_AND_MINUTES_AND_SECONDS
         ],
 
-        initialize: function(options) {
+        initialize: function(elevationTilesUrl, options) {
             L.Control.prototype.initialize.call(this, options);
+
+            this.elevationDisplayLayer = new ElevationLayer(elevationTilesUrl);
 
             this.latlng = ko.observable();
             this.format = ko.observable(DEFAULT_FORMAT);
@@ -126,29 +131,58 @@ L.Control.Coordinates = L.Control.extend({
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
+            this._map[enabled ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
             this._isEnabled = Boolean(enabled);
             this.latlng(null);
         },
 
         onMapRightClick: function(e) {
             L.DomEvent.stop(e);
-
-            function createItem(format, options = {}) {
+            function createItem(format, elevation, overrides = {}) {
                 const {lat, lng} = formats.formatLatLng(e.latlng.wrap(), format);
-                const coordinates = `${lat} ${lng}`;
+                let text = `${lat} ${lng}`;
+                if (elevation !== null) {
+                    text += ` H=${elevation} m`;
+                }
 
-                return {text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
-                    callback: () => copyToClipboard(coordinates, e.originalEvent),
-                    ...options};
+                return {text: `${text} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
+                    callback: () => copyToClipboard(text, e.originalEvent),
+                    ...overrides};
             }
 
-            const header = createItem(this.format(), {
-                text: '<b>Copy coordinates to clipboard</b>',
-                header: true,
-            });
-            const items = this.formats.map((format) => createItem(format));
-            items.unshift(header, '-');
-
+            const items = [
+                createItem(
+                    this.format(),
+                    null,
+                    {
+                        text: '<b>Copy coordinates to clipboard</b>',
+                        header: true,
+                    },
+                ),
+                ...this.formats.map((format) => createItem(format, null)),
+            ];
+            const elevationResult = this.elevationDisplayLayer.getElevation(e.latlng);
+            if (elevationResult.ready && !elevationResult.error && elevationResult.elevation !== null) {
+                const elevation = elevationResult.elevation;
+                items.push(
+                    '-',
+                    {
+                        text: `Copy elevation to clipboard: ${elevation}`,
+                        header: true,
+                        callback: () => copyToClipboard(elevation, e.originalEvent),
+                    },
+                    '-',
+                    createItem(
+                        this.format(),
+                        elevation,
+                        {
+                            text: '<b>Copy coordinates with elevation to clipboard</b>',
+                            header: true,
+                        },
+                    ),
+                    ...this.formats.map((format) => createItem(format, elevation)),
+                );
+            }
             new Contextmenu(items).show(e);
         },
 
