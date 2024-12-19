@@ -5,28 +5,6 @@ import {fetch} from '~/lib/xhr-promise';
 import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
 
-import iconPass1a from './pass-1a.png';
-import iconPass1b from './pass-1b.png';
-import iconPass2a from './pass-2a.png';
-import iconPass2b from './pass-2b.png';
-import iconPass3a from './pass-3a.png';
-import iconPass3b from './pass-3b.png';
-import iconPassNoGrade from './pass-nograde.png';
-import iconPassUnknownGrade from './pass-unknown-notconfirmed.png';
-import iconSummit from './summit.png';
-
-const markerIcons = {
-    '1a': {url: iconPass1a, center: [7, 7]},
-    '1b': {url: iconPass1b, center: [7, 7]},
-    '2a': {url: iconPass2a, center: [7, 7]},
-    '2b': {url: iconPass2b, center: [7, 7]},
-    '3a': {url: iconPass3a, center: [7, 7]},
-    '3b': {url: iconPass3b, center: [7, 7]},
-    'nograde': {url: iconPassNoGrade, center: [7, 7]},
-    'unknown': {url: iconPassUnknownGrade, center: [7, 7]},
-    'summit': {url: iconSummit, center: [7, 7]},
-};
-
 const MountainPassesMarkers = L.Layer.CanvasMarkers.extend({
     options: {
         scaleDependent: true,
@@ -109,4 +87,4 @@ const MountainPassesMarkers = L.Layer.CanvasMarkers.extend({
     },
 });
 
-export {MountainPassesMarkers, markerIcons};
+export {MountainPassesMarkers};

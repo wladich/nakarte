@@ -1,0 +1,42 @@
+[pass-1a]
+src = "pass_template.svg"
+var.label = "1А"
+var.background_color = "0dd"
+var.text_color = "000"
+
+[pass-1b]
+src = "pass_template.svg"
+var.label = "1Б"
+var.background_color = "44f"
+var.text_color = "fff"
+
+[pass-2a]
+src = "pass_template.svg"
+var.label = "2А"
+var.background_color = "0e0"
+var.text_color = "000"
+
+[pass-2b]
+src = "pass_template.svg"
+var.label = "2Б"
+var.background_color = "080"
+var.text_color = "fff"
+
+[pass-3a]
+src = "pass_template.svg"
+var.label = "3А"
+var.background_color = "eb0"
+var.text_color = "000"
+
+[pass-3b]
+src = "pass_template.svg"
+var.label = "3Б"
+var.background_color = "c00"
+var.text_color = "fff"
+
+[pass-nograde]
+src = "pass_template.svg"
+var.label = "нк"
+var.background_color = "eee"
+var.text_color = "000"
+var.text_dy = -1

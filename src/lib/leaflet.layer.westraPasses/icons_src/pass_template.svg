@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+    <defs>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex');
+            text {{
+                font-family: Roboto Flex;
+            }}
+        </style>
+    </defs>
+    <rect stroke="#000" fill="#{background_color}" x="0.5" y="0.5" width="14" height="14" rx="3" ry="3"/>
+    <g transform="translate({text_dx}, {text_dy})">
+        <text style="white-space: pre" x="2px" y="11px" font-size="9px" font-weight="500" fill="#{text_color}">{label}</text>
+    </g>
+</svg>
