@@ -1,10 +1,32 @@
 import escapeHtml from 'escape-html';
 import L from 'leaflet';
 
-import './westraPassesMarkers.css';
-import {markerIcons, MountainPassesMarkers} from '~/lib/leaflet.layer.mountainPasses/mountainPassesMarkers';
+import {MountainPassesMarkers} from '~/lib/leaflet.layer.mountainPasses/mountainPassesMarkers';
 import {openPopupWindow} from '~/lib/popup-window';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+
+import './westraPassesMarkers.css';
+import iconPass1a from './icons/pass-1a.png';
+import iconPass1b from './icons/pass-1b.png';
+import iconPass2a from './icons/pass-2a.png';
+import iconPass2b from './icons/pass-2b.png';
+import iconPass3a from './icons/pass-3a.png';
+import iconPass3b from './icons/pass-3b.png';
+import iconPassNoGrade from './icons/pass-nograde.png';
+import iconPassUnknownGrade from './icons/pass-unknown-notconfirmed.png';
+import iconSummit from './icons/summit.png';
+
+const markerIcons = {
+    '1a': {url: iconPass1a, center: [7.5, 7.5]},
+    '1b': {url: iconPass1b, center: [7.5, 7.5]},
+    '2a': {url: iconPass2a, center: [7.5, 7.5]},
+    '2b': {url: iconPass2b, center: [7.5, 7.5]},
+    '3a': {url: iconPass3a, center: [7.5, 7.5]},
+    '3b': {url: iconPass3b, center: [7.5, 7.5]},
+    'nograde': {url: iconPassNoGrade, center: [7.5, 7.5]},
+    'unknown': {url: iconPassUnknownGrade, center: [7.5, 7.5]},
+    'summit': {url: iconSummit, center: [7.5, 7.5]},
+};
 
 const WestraPassesMarkers = MountainPassesMarkers.extend({
     sourceName: 'Westra',

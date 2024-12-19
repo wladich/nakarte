@@ -1,5 +1,23 @@
 import './fstrPassesMarkers.css';
-import {markerIcons, MountainPassesMarkers} from '~/lib/leaflet.layer.mountainPasses/mountainPassesMarkers';
+import {MountainPassesMarkers} from '~/lib/leaflet.layer.mountainPasses/mountainPassesMarkers';
+
+import iconPass1a from './icons/pass-1a.png';
+import iconPass1b from './icons/pass-1b.png';
+import iconPass2a from './icons/pass-2a.png';
+import iconPass2b from './icons/pass-2b.png';
+import iconPass3a from './icons/pass-3a.png';
+import iconPass3b from './icons/pass-3b.png';
+import iconPassNoGrade from './icons/pass-nograde.png';
+
+const markerIcons = {
+    '1a': {url: iconPass1a, center: [7.5, 7.5]},
+    '1b': {url: iconPass1b, center: [7.5, 7.5]},
+    '2a': {url: iconPass2a, center: [7.5, 7.5]},
+    '2b': {url: iconPass2b, center: [7.5, 7.5]},
+    '3a': {url: iconPass3a, center: [7.5, 7.5]},
+    '3b': {url: iconPass3b, center: [7.5, 7.5]},
+    'nograde': {url: iconPassNoGrade, center: [7.5, 7.5]},
+};
 
 const FstrUrl = 'https://tssr.ru/mountain/pereval/';
 
