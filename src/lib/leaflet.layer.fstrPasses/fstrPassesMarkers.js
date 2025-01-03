@@ -66,6 +66,9 @@ const FstrPassesMarkers = MountainPassesMarkers.extend({
         if (properties.elevation) {
             toolTip += `, ${properties.elevation}`;
         }
+        if (properties.approx) {
+            toolTip += ', координаты приблизительные';
+        }
         toolTip += ')';
         return toolTip;
     },
@@ -100,11 +103,15 @@ const FstrPassesMarkers = MountainPassesMarkers.extend({
             </tr>
             `
         );
+        const msgCoordsApprox = properties.approx
+            ? '<p class="fstr-pass-msg-approx">Координаты точки перевала приблизительные</p>'
+            : '';
 
+        const reporUrl =
+            'https://docs.google.com/forms/d/e/1FAIpQLSdjibos1pcPUlRDsUHnycNgp9nJxSCKASMOSqN7PPMndQPL2w/viewform?fbzx=-9176885795887734707'; // eslint-disable-line max-len
         return `
-            <div>
-                <a href="${regionUrl}">${region.name}</a>
-            </div>
+            <p><a href="${regionUrl}">${region.name}</a></p>
+            ${msgCoordsApprox}
             <table class="fstr-pass-variants">
                 <tr>
                     <th>Номер</th>
@@ -121,6 +128,10 @@ const FstrPassesMarkers = MountainPassesMarkers.extend({
                 </tr>
                 ${variantsLines.join('')}
             </table>
+            <p>
+                Заметили ошибку или неточность?
+                <a href="${reporUrl}">Сообщите</a>, пожалуйста, маршрутному комитету ФСТР.
+            </p>
         `;
     },
 });

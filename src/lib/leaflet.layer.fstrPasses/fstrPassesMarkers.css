@@ -19,3 +19,8 @@
     text-align: center;
     padding-top: 0;
 }
+
+.fstr-pass-msg-approx {
+    font-weight: bold;
+    color: #600;
+}
