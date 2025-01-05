@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 
 const origCreateTile = L.TileLayer.prototype.createTile;
 const origIsValidTile = L.TileLayer.prototype._isValidTile;
