@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {corsProxyOriginalUrl, urlViaCorsProxy} from '~/lib/CORSProxy';
 
 class Strava extends BaseService {
     urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/u;
@@ -69,4 +69,34 @@ class Strava extends BaseService {
     }
 }
 
-export default Strava;
+class StravaShortUrl extends BaseService {
+    urlRe = /^https:\/\/strava.app.link\/([A-Za-z0-9]+)/u;
+
+    isOurUrl() {
+        return this.urlRe.test(this.origUrl);
+    }
+
+    requestOptions() {
+        return [
+            {
+                url: urlViaCorsProxy(this.origUrl),
+                options: {isResponseSuccess: (response) => [200, 404].includes(response.status)},
+            },
+        ];
+    }
+
+    parseResponse(responses) {
+        const response = responses[0];
+        const url = corsProxyOriginalUrl(response.responseURL);
+        if (response.status === 404) {
+            return [{error: 'Requested Strava activity was deleted'}];
+        }
+        const strava = new Strava(url);
+        if (!strava.isOurUrl()) {
+            return [{error: 'Bad short link for Strava activity or activity is marked as private'}];
+        }
+        return strava.geoData();
+    }
+}
+
+export {Strava, StravaShortUrl};

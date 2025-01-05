@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import {fetch} from '~/lib/xhr-promise';
 
 const MAX_ZOOM = 18;

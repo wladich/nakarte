@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import {imgFromDataString} from './imgFromDataString';
 
 function noop() {

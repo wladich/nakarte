@@ -8,7 +8,7 @@ import '~/lib/leaflet.layer.westraPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
 import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
 import {getCutline} from '~/lib/layers-cutlines';
 import {LayerCutlineOverview} from '~/lib/leaflet.layer.LayerCutlineOverview';

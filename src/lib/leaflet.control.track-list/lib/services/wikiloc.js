@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import urlViaCorsProxy from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import {stringToArrayBuffer} from '~/lib/binary-strings';
 import twkb from 'twkb';
 

@@ -1,5 +1,8 @@
 {
-    "query": ["https://www.strava.com/activities/3873768093"],
+    "query": [
+        "https://www.strava.com/activities/3873768093",
+        "https://strava.app.link/a2LqU4JPUPb"
+    ],
     "geodata": [
         {
             "name": "я угу - Дневной забег 5 July 2014",
