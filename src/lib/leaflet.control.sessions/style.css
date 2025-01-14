@@ -1,0 +1,82 @@
+.leaflet-control-session-list-wrapper {
+    position: absolute;
+    top: 25px;
+    bottom: 25px;
+    max-width: 70%;
+    left: 50%;
+}
+
+.leaflet-control-session-list-window {
+    position: relative;
+    left: -50%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    z-index: 3000;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 100%;
+    min-height: 100px;
+    /*padding: 6px 0 40px 6px;*/
+    min-width: 290px;
+    cursor: default;
+    box-sizing: border-box;
+    padding: 6px;
+}
+
+.leaflet-control-session-list-item-active,
+.leaflet-control-session-list-item-inactive {
+    padding: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.leaflet-control-session-list-item-active {
+    background-color: #f7f7e7;
+}
+
+.leaflet-control-session-list-item-inactive {
+    background-color: #f0f0f0;
+}
+
+/*.leaflet-control-session-list-active-block .leaflet-control-session-list-item {*/
+/*    background-color: #f7f7e7;*/
+/*}*/
+
+/*.leaflet-control-session-list-inactive-block .leaflet-control-session-list-item {*/
+/*    background-color: #f0f0f0;*/
+/*}*/
+
+/*.leaflet-control-session-list-item p {*/
+/*    margin: 2px 0 2px 0;*/
+/*}*/
+/*.leaflet-control-session-list-item {*/
+    /*margin-left: 12px;*/
+    /*margin-right: 12px;*/
+    /*padding: 0;*/
+    /*border-bottom: 1px solid #aaaaaa;*/
+/*}*/
+
+/*.leaflet-control-session-list-item:last-of-type {*/
+    /*border-bottom: none;*/
+/*}*/
+
+.leaflet-control-session-list-header {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.leaflet-control-session-list-item-date {
+    color: #666666;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.leaflet-control-session-list-item-track {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

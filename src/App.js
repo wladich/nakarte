@@ -16,7 +16,6 @@ import '~/lib/leaflet.control.panoramas';
 import '~/lib/leaflet.control.track-list/track-list';
 import '~/lib/leaflet.control.track-list/control-ruler';
 import '~/lib/leaflet.control.track-list/track-list.hash-state';
-import '~/lib/leaflet.control.track-list/track-list.localstorage';
 import enableLayersControlAdaptiveHeight from '~/lib/leaflet.control.layers.adaptive-height';
 import enableLayersMinimize from '~/lib/leaflet.control.layers.minimize';
 import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
@@ -26,6 +25,7 @@ import '~/lib/leaflet.control.layers.events';
 import '~/lib/leaflet.control.jnx';
 import '~/lib/leaflet.control.jnx/hash-state';
 import '~/lib/leaflet.control.azimuth';
+import {SessionsControl} from '~/lib/leaflet.control.sessions';
 import {hashState, bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
 import {LocateControl} from '~/lib/leaflet.control.locate';
 import {notify} from '~/lib/notifications';
@@ -35,6 +35,7 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
+import {sessionState} from '~/lib/session-state';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -45,6 +46,12 @@ const locationErrorMessage = {
 const minimizeStateAuto = 0;
 const minimizeStateMinimized = 1;
 const minimizeStateExpanded = 2;
+
+function isInIframe() {
+    // Check if the window is not the top window
+    return window.self !== window.top;
+}
+
 
 function setUp() { // eslint-disable-line complexity
     const startInfo = {
@@ -114,6 +121,8 @@ function setUp() { // eslint-disable-line complexity
         position: 'topleft',
         stackHorizontally: true
     }).addTo(map);
+
+    const sessionsControl = new SessionsControl({position: 'topleft'}).addTo(map);
 
     new ExternalMaps({position: 'topleft'}).addTo(map);
 
@@ -188,9 +197,6 @@ function setUp() { // eslint-disable-line complexity
 
     /* controls bottom-right corner */
 
-    function trackNames() {
-        return tracklist.tracks().map((track) => track.name());
-    }
     tracklist.addTo(map);
     const tracksHashParams = tracklist.hashParams();
 
@@ -201,10 +207,6 @@ function setUp() { // eslint-disable-line complexity
             break;
         }
     }
-    if (!hasTrackParamsInHash) {
-        tracklist.loadTracksFromStorage();
-    }
-    startInfo.tracksAfterLoadFromStorage = trackNames();
 
     if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
         tracklist.once('loadedTracksFromParam', () => {
@@ -226,7 +228,6 @@ function setUp() { // eslint-disable-line complexity
     for (let param of tracksHashParams) {
         bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
     }
-    startInfo.tracksAfterLoadFromHash = trackNames();
 
     /* set map position */
 
@@ -259,28 +260,6 @@ function setUp() { // eslint-disable-line complexity
     }
 
     raiseControlsOnFocus(map);
-
-    /* save state at unload */
-
-    L.DomEvent.on(window, 'beforeunload', () => {
-        logging.logEvent('saveTracksToStorage begin', {
-            localStorageKeys: Object.keys(safeLocalStorage),
-            trackNames: trackNames(),
-        });
-        const t = Date.now();
-        let localStorageKeys;
-        try {
-            tracklist.saveTracksToStorage();
-            localStorageKeys = Object.keys(safeLocalStorage);
-        } catch (e) {
-            logging.logEvent('saveTracksToStorage failed', {error: e});
-            return;
-        }
-        logging.logEvent('saveTracksToStorage done', {
-            time: Date.now() - t,
-            localStorageKeys
-        });
-    });
 
     /* track list and azimuth measure interaction */
 
@@ -403,6 +382,30 @@ function setUp() { // eslint-disable-line complexity
             });
         }
     });
+
+    const sessionSavedTracks = sessionState.loadState()?.tracks;
+    if (sessionSavedTracks) {
+        tracklist.loadTracksFromString(sessionSavedTracks);
+    }
+
+    function _saveSessionState() {
+        // TODO: skip for iframes
+        // TODO: import old states
+        const tracks = tracklist.tracks();
+        const {hash} = window.location;
+        const trackNames = tracks.map((track) => track.name());
+        const tracksSerialized = tracklist.serializeTracks(tracks);
+        sessionsControl.saveCurrentState(hash, tracksSerialized, trackNames);
+    }
+    const saveSessionState = L.Util.throttle(_saveSessionState, 1000);
+
+    sessionsControl.loadSessionFromHash((sessionState) => {
+        tracklist.loadTracksFromString(sessionState.tracks);
+    });
+
+    tracklist.on('trackschanged', () => saveSessionState());
+    window.addEventListener('hashchange', () => saveSessionState());
+    saveSessionState();
 
     logging.logEvent('start', startInfo);
     logUsedMaps();
