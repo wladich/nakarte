@@ -14,7 +14,6 @@ const filesWithSideEffects = [
     'src/lib/leaflet.control.printPages/control.js',
     'src/lib/leaflet.control.track-list/control-ruler.js',
     'src/lib/leaflet.control.track-list/track-list.hash-state.js',
-    'src/lib/leaflet.control.track-list/track-list.localstorage.js',
     'src/lib/leaflet.hashState/Leaflet.Control.Layers.js',
     'src/lib/leaflet.hashState/Leaflet.Map.js',
     'src/lib/leaflet.hashState/leaflet.hashState.js',
