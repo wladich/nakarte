@@ -61,6 +61,7 @@ const SessionsControl = L.Control.extend({
                             <div class="leaflet-control-session-list-header">
                                 Active sessions with tracks open in other tabs
                             </div>
+                            <div class="leaflet-control-session-list-header-info">Click to switch tab</div>
                         <!-- /ko -->
                         <!-- ko foreach: activeSessions -->
                             <div 
@@ -84,6 +85,7 @@ const SessionsControl = L.Control.extend({
 
                         <!-- ko if: inactiveSessions().length -->
                             <div class="leaflet-control-session-list-header">Recently opened sessions with tracks</div>
+                            <div class="leaflet-control-session-list-header-info">Click to open in new tab</div>
                         <!-- /ko -->
                         
                         <!-- ko foreach: inactiveSessions -->

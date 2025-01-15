@@ -69,6 +69,11 @@
     text-align: center;
 }
 
+.leaflet-control-session-list-header-info {
+    font-size: 11px;
+    text-align: center;
+}
+
 .leaflet-control-session-list-item-date {
     color: #666666;
     font-size: 11px;
