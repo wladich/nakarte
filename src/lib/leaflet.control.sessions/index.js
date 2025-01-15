@@ -38,6 +38,7 @@ const SessionsControl = L.Control.extend({
         this.saveCurrentState = L.Util.throttle(this.saveCurrentStateImmediate, 1000, this);
         this.trackListControl.on('trackschanged', () => this.onCurrentStateChange());
         window.addEventListener('hashchange', () => this.onCurrentStateChange());
+        window.addEventListener('beforeunload', () => this.saveCurrentStateImmediate());
 
         this.sessionListWindowModel = {
             activeSessions: ko.observableArray([]),
