@@ -85,7 +85,7 @@ const SessionsControl = L.Control.extend({
                                 data-bind="attr: {title: data.trackNames.join('\\n')}, click: $root.openStoredSession"
                             >
                                 <div class="leaflet-control-session-list-item-date">
-                                    Last opened at <span data-bind="text: $root.formatDateTime($data.atime)"></span>
+                                    Last opened at <span data-bind="text: $root.formatDateTime($data.mtime)"></span>
                                 </div>
                                 <!-- ko foreach: data.trackNames.length <= $root.maxTrackLines 
                                     ? data.trackNames 
@@ -225,7 +225,7 @@ const SessionsControl = L.Control.extend({
         const activeSessionIds = activeSessionsMonitor.getActiveSessions();
         const activeSessions = storedSessions.filter((sess) => activeSessionIds.includes(sess.sessionId));
         const inactiveSessions = storedSessions.filter((sess) => !activeSessionIds.includes(sess.sessionId));
-        inactiveSessions.sort((sess1, sess2) => sess2.atime - sess1.atime);
+        inactiveSessions.sort((sess1, sess2) => sess2.mtime - sess1.mtime);
         activeSessions.sort((sess1, sess2) => sess2.sessionId.localeCompare(sess1.sessionId));
         console.log('updateSessionLists', activeSessions, inactiveSessions);
         this.sessionListWindowModel.activeSessions(activeSessions);

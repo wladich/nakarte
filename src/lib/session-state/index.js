@@ -39,10 +39,6 @@ class SessionRepository {
         } catch {
             return null;
         }
-        if (data) {
-            // update atime
-            this.setSessionState(sessionId, data);
-        }
         return data;
     }
 
@@ -50,7 +46,7 @@ class SessionRepository {
         // TODO: remove old entries if total count > MAX_HISTORY_ENTRIES
         const storageKey = this.getStorageKey(sessionId);
         safeLocalStorage[storageKey] = JSON.stringify({
-            atime: Date.now(),
+            mtime: Date.now(),
             sessionId,
             data,
         });
