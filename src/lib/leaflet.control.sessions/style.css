@@ -85,3 +85,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.leaflet-control-session-list-window-header {
+    height: 10px;
+}
+
+.leaflet-control-session-list-window .button-close {
+    width: 10px;
+    height: 10px;
+    background-image: url("./close.svg");
+    cursor: pointer;
+    float: right;
+}

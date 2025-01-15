@@ -8,8 +8,8 @@ import {
     activeSessionsMonitor,
     EVENT_ACTIVE_SESSIONS_CHANGED,
     EVENT_STORED_SESSIONS_CHANGED,
-    sessionRepository,
     session,
+    sessionRepository,
 } from '~/lib/session-state';
 
 import './style.css';
@@ -48,7 +48,9 @@ const SessionsControl = L.Control.extend({
             maxTrackLines: 4,
             requestSwitchFocus: (sessionData) => this.requestSwitchFocus(sessionData.sessionId),
             openStoredSession: (sessionData) => this.openStoredSession(sessionData.sessionId),
+            closeWindow: () => this.hideSessionListWindow(),
         };
+        // TODO: import old states
     },
 
     setupSessionListWindow: function () {
@@ -56,6 +58,9 @@ const SessionsControl = L.Control.extend({
         const layout = `
             <div data-bind="visible: visible" class="leaflet-control-session-list-wrapper">
                 <div class="leaflet-control-session-list-window">
+                    <div class="leaflet-control-session-list-window-header">
+                        <div class="button-close" data-bind="click: closeWindow"></div>
+                    </div>
                     <div class="leaflet-control-session-list-scrollbox">
                         <!-- ko if: activeSessions().length -->
                             <div class="leaflet-control-session-list-header">
@@ -160,23 +165,54 @@ const SessionsControl = L.Control.extend({
     },
 
     toggleSessionListsVisible: function () {
-        this.sessionListWindowVisible = !this.sessionListWindowVisible;
         if (this.sessionListWindowVisible) {
-            this.showSessionListWindow();
-        } else {
             this.hideSessionListWindow();
+        } else {
+            this.showSessionListWindow();
         }
     },
 
     showSessionListWindow: function () {
+        if (this.sessionListWindowVisible) {
+            return;
+        }
+        this.sessionListWindowVisible = true;
         this.updateSessionLists();
         this.sessionListWindowModel.visible(true);
         activeSessionsMonitor.startMonitor();
+        L.DomEvent.on(
+            window,
+            {
+                mousedown: this.hideSessionListWindow,
+                touchstart: this.hideSessionListWindow,
+                keydown: this.onKeyDown,
+            },
+            this
+        );
     },
 
     hideSessionListWindow: function () {
+        if (!this.sessionListWindowVisible) {
+            return;
+        }
+        this.sessionListWindowVisible = false;
         this.sessionListWindowModel.visible(false);
         activeSessionsMonitor.stopMonitor();
+        L.DomEvent.off(
+            window,
+            {
+                mousedown: this.hideSessionListWindow,
+                touchstart: this.hideSessionListWindow,
+                keydown: this.onKeyDown,
+            },
+            this
+        );
+    },
+
+    onKeyDown: function (e) {
+        if (e.keyCode === 27) {
+            this.hideSessionListWindow();
+        }
     },
 
     requestSwitchFocus: async function (sessionId) {
