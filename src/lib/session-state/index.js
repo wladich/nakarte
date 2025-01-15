@@ -24,7 +24,14 @@ class SessionRepository {
     listSessionStates() {
         return Object.entries(safeLocalStorage)
             .filter(([key, _unused]) => key.startsWith(SessionRepository.STORAGE_KEY_PREFIX))
-            .map(([_unused, value]) => JSON.parse(value));
+            .map(([_unused, value]) => {
+                try {
+                    return JSON.parse(value);
+                } catch {
+                    return null
+                }
+            })
+            .filter((it) => !!it);
     }
 
     getSessionState(sessionId) {
