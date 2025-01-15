@@ -59,7 +59,7 @@ const SessionsControl = L.Control.extend({
                     <div class="leaflet-control-session-list-scrollbox">
                         <!-- ko if: activeSessions().length -->
                             <div class="leaflet-control-session-list-header">
-                                Active sessions with tracks open in other tabs
+                                Active sessions with tracks in other tabs
                             </div>
                             <div class="leaflet-control-session-list-header-info">Click to switch tab</div>
                         <!-- /ko -->
