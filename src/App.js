@@ -208,9 +208,12 @@ function setUp() { // eslint-disable-line complexity
             break;
         }
     }
+
     if (sessionsControl) {
-        sessionsControl.loadSession();
-        sessionsControl.consumeSessionFromHash();
+        (async() => {
+            await sessionsControl.loadSession();
+            await sessionsControl.consumeSessionFromHash();
+        })();
     }
 
     if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {

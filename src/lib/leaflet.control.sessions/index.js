@@ -227,8 +227,8 @@ const SessionsControl = L.Control.extend({
         this.channel.postMessage({message: 'focus', sessionId});
     },
 
-    openStoredSession: function (sessionId) {
-        const sessionData = sessionRepository.getSessionState(sessionId);
+    openStoredSession: async function (sessionId) {
+        const sessionData = await sessionRepository.getSessionState(sessionId);
         const {origin, pathname} = window.location; // eslint-disable-line no-shadow
         const url = `${origin}${pathname}${sessionData.hash}&sid=${sessionId}`;
         window.open(url);
@@ -248,19 +248,17 @@ const SessionsControl = L.Control.extend({
     saveCurrentStateImmediate: function () {
         const tracks = this.trackListControl.tracks();
         if (!tracks.length) {
-            console.log('Clearing session state');
             session.clearState();
             return;
         }
-        console.log('Saving session state');
         const {hash} = window.location;
         const trackNames = tracks.map((track) => track.name());
         const tracksSerialized = this.trackListControl.serializeTracks(tracks);
         session.saveState({hash, tracks: tracksSerialized, trackNames});
     },
 
-    loadSession: function () {
-        const sessionSavedTracks = session.loadState()?.tracks;
+    loadSession: async function () {
+        const sessionSavedTracks = (await session.loadState())?.tracks;
         if (sessionSavedTracks) {
             this.loadingState = true;
             try {
@@ -275,11 +273,12 @@ const SessionsControl = L.Control.extend({
     consumeSessionFromHash: function () {
         bindHashStateReadOnly(
             'sid',
-            (sessionId) => {
-                if (!sessionId) {
+            async (params) => {
+                if (!params) {
                     return;
                 }
-                const sessionState = sessionRepository.getSessionState(sessionId);
+                const sessionId = params[0];
+                const sessionState = await sessionRepository.getSessionState(sessionId);
                 if (!sessionState) {
                     return;
                 }
@@ -290,23 +289,22 @@ const SessionsControl = L.Control.extend({
                     this.loadingState = false;
                 }
                 this.saveCurrentStateImmediate();
-                sessionRepository.clearSessionState(sessionId);
+                await sessionRepository.clearSessionState(sessionId);
             },
             true
         );
     },
 
-    updateSessionLists: function () {
+    updateSessionLists: async function () {
         // TODO: validate records
-        const storedSessions = sessionRepository
-            .listSessionStates()
-            .filter((sess) => sess.sessionId !== session.sessionId);
+        const storedSessions = (await sessionRepository.listSessionStates()).filter(
+            (sess) => sess.sessionId !== session.sessionId
+        );
         const activeSessionIds = activeSessionsMonitor.getActiveSessions();
         const activeSessions = storedSessions.filter((sess) => activeSessionIds.includes(sess.sessionId));
         const inactiveSessions = storedSessions.filter((sess) => !activeSessionIds.includes(sess.sessionId));
         inactiveSessions.sort((sess1, sess2) => sess2.mtime - sess1.mtime);
         activeSessions.sort((sess1, sess2) => sess2.sessionId.localeCompare(sess1.sessionId));
-        console.log('updateSessionLists', activeSessions, inactiveSessions);
         this.sessionListWindowModel.activeSessions(activeSessions);
         this.sessionListWindowModel.inactiveSessions(inactiveSessions);
     },

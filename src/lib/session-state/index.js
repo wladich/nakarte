@@ -1,67 +1,59 @@
-import safeLocalStorage from '~/lib/safe-localstorage';
+import {openDB} from 'idb';
 
 const EVENT_STORED_SESSIONS_CHANGED = 'storedsessionschanged';
 const EVENT_ACTIVE_SESSIONS_CHANGED = 'activesessionschanged';
 
 class SessionRepository {
-    static STORAGE_KEY_PREFIX = 'session_';
+    static DB_NAME = 'sessions';
+    static STORE_NAME = 'sessionData';
     static MAX_HISTORY_ENTRIES = 10;
+    static MESSAGE_SESSION_CHANGED = 'sessionchanged';
 
     constructor() {
-        window.addEventListener('storage', (e) => this.onStorageChanged(e));
+        this.channel = new BroadcastChannel('sessionrepository');
+        this.channel.addEventListener('message', (e) => this.onChannelMessage(e));
+        this.dbPromise = openDB(SessionRepository.DB_NAME, 1, {
+            upgrade(db) {
+                db.createObjectStore(SessionRepository.STORE_NAME, {keyPath: 'sessionId'});
+            },
+        });
     }
 
-    getStorageKey(sessionId) {
-        return SessionRepository.STORAGE_KEY_PREFIX + sessionId;
-    }
-
-    onStorageChanged(e) {
-        if (e.key === null || e.key.startsWith(SessionRepository.STORAGE_KEY_PREFIX)) {
+    onChannelMessage(e) {
+        if (e.data.message === SessionRepository.MESSAGE_SESSION_CHANGED) {
             document.dispatchEvent(new Event(EVENT_STORED_SESSIONS_CHANGED));
         }
     }
 
-    listSessionStates() {
-        return Object.entries(safeLocalStorage)
-            .filter(([key, _unused]) => key.startsWith(SessionRepository.STORAGE_KEY_PREFIX))
-            .map(([_unused, value]) => {
-                try {
-                    return JSON.parse(value);
-                } catch {
-                    return null;
-                }
-            })
-            .filter((it) => Boolean(it));
+    async listSessionStates() {
+        const db = await this.dbPromise;
+        return db.getAll(SessionRepository.STORE_NAME);
     }
 
-    getSessionState(sessionId) {
-        const storageKey = this.getStorageKey(sessionId);
-        const sessionRecord = safeLocalStorage[storageKey];
-        if (!sessionRecord) {
-            return null;
-        }
-        let data;
-        try {
-            data = JSON.parse(sessionRecord)?.data;
-        } catch {
-            return null;
-        }
-        return data;
+    async getSessionState(sessionId) {
+        const db = await this.dbPromise;
+        const record = await db.get(SessionRepository.STORE_NAME, sessionId);
+        return record?.data;
     }
 
-    setSessionState(sessionId, data) {
+    async setSessionState(sessionId, data) {
         // TODO: remove old entries if total count > MAX_HISTORY_ENTRIES
-        const storageKey = this.getStorageKey(sessionId);
-        safeLocalStorage[storageKey] = JSON.stringify({
-            mtime: Date.now(),
+        const db = await this.dbPromise;
+        await db.put(SessionRepository.STORE_NAME, {
             sessionId,
+            mtime: Date.now(),
             data,
         });
+        this.broadcastStorageChanged();
     }
 
-    clearSessionState(sessionId) {
-        const storageKey = this.getStorageKey(sessionId);
-        delete safeLocalStorage[storageKey];
+    async clearSessionState(sessionId) {
+        await (await this.dbPromise).delete(SessionRepository.STORE_NAME, sessionId);
+        this.broadcastStorageChanged();
+    }
+
+    broadcastStorageChanged() {
+        this.channel.postMessage({message: SessionRepository.MESSAGE_SESSION_CHANGED});
     }
 }
 
@@ -82,15 +74,15 @@ class Session {
         return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2);
     }
 
-    loadState() {
+    async loadState() {
         return sessionRepository.getSessionState(this.sessionId);
     }
 
-    saveState(data) {
+    async saveState(data) {
         sessionRepository.setSessionState(this.sessionId, data);
     }
 
-    clearState() {
+    async clearState() {
         sessionRepository.clearSessionState(this.sessionId);
     }
 }
