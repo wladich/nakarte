@@ -35,7 +35,6 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
-import {sessionState} from '~/lib/session-state';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -123,6 +122,8 @@ function setUp() { // eslint-disable-line complexity
     }).addTo(map);
 
     const sessionsControl = new SessionsControl({position: 'topleft'}).addTo(map);
+    sessionsControl.loadSession();
+    sessionsControl.consumeSessionFromHash();
 
     new ExternalMaps({position: 'topleft'}).addTo(map);
 
@@ -382,30 +383,6 @@ function setUp() { // eslint-disable-line complexity
             });
         }
     });
-
-    const sessionSavedTracks = sessionState.loadState()?.tracks;
-    if (sessionSavedTracks) {
-        tracklist.loadTracksFromString(sessionSavedTracks);
-    }
-
-    function _saveSessionState() {
-        // TODO: skip for iframes
-        // TODO: import old states
-        const tracks = tracklist.tracks();
-        const {hash} = window.location;
-        const trackNames = tracks.map((track) => track.name());
-        const tracksSerialized = tracklist.serializeTracks(tracks);
-        sessionsControl.saveCurrentState(hash, tracksSerialized, trackNames);
-    }
-    const saveSessionState = L.Util.throttle(_saveSessionState, 1000);
-
-    sessionsControl.loadSessionFromHash((sessionState) => {
-        tracklist.loadTracksFromString(sessionState.tracks);
-    });
-
-    tracklist.on('trackschanged', () => saveSessionState());
-    window.addEventListener('hashchange', () => saveSessionState());
-    saveSessionState();
 
     logging.logEvent('start', startInfo);
     logUsedMaps();

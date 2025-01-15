@@ -5,9 +5,9 @@ import {makeButton} from '~/lib/leaflet.control.commons';
 import {bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
 import {notify} from '~/lib/notifications';
 import {
-    EVENT_STORED_SESSIONS_CHANGED,
-    EVENT_ACTIVE_SESSIONS_CHANGED,
     activeSessionsMonitor,
+    EVENT_ACTIVE_SESSIONS_CHANGED,
+    EVENT_STORED_SESSIONS_CHANGED,
     sessionRepository,
     sessionState,
 } from '~/lib/session-state';
@@ -32,8 +32,13 @@ const SessionsControl = L.Control.extend({
         L.Control.prototype.initialize.call(this, options);
         this.trackListControl = trackListControl;
         this.sessionListWindowVisible = false;
+        this.loadingState = false;
         this.channel = new BroadcastChannel('session-control');
         this.channel.addEventListener('message', (e) => this.onChannelMessage(e));
+        this.saveCurrentState = L.Util.throttle(this.saveCurrentStateImmediate, 1000, this);
+        this.trackListControl.on('trackschanged', () => this.onCurrentStateChange());
+        window.addEventListener('hashchange', () => this.onCurrentStateChange());
+
         this.sessionListWindowModel = {
             activeSessions: ko.observableArray([]),
             inactiveSessions: ko.observableArray([]),
@@ -145,6 +150,12 @@ const SessionsControl = L.Control.extend({
         this.updateSessionLists();
     },
 
+    onCurrentStateChange: function () {
+        if (!this.loadingState) {
+            this.saveCurrentState();
+        }
+    },
+
     toggleSessionListsVisible: function () {
         this.sessionListWindowVisible = !this.sessionListWindowVisible;
         if (this.sessionListWindowVisible) {
@@ -195,27 +206,55 @@ const SessionsControl = L.Control.extend({
         });
     },
 
-    saveCurrentState: function (hash, tracks, trackNames) {
-        if (trackNames.length) {
-            const state = {hash, tracks, trackNames};
-            sessionState.saveState(state);
-        } else {
+    saveCurrentStateImmediate: function () {
+        const tracks = this.trackListControl.tracks();
+        if (!tracks.length) {
+            console.log('Clearing session state');
             sessionState.clearState();
+            return;
         }
+        console.log('Saving session state');
+        const {hash} = window.location;
+        const trackNames = tracks.map((track) => track.name());
+        const tracksSerialized = this.trackListControl.serializeTracks(tracks);
+        sessionState.saveState({hash, tracks: tracksSerialized, trackNames});
     },
 
-    loadSessionFromHash: function (callback) {
-        bindHashStateReadOnly('sid', (sessionId) => {
-            if (!sessionId) {
-                return;
+    loadSession: function () {
+        const sessionSavedTracks = sessionState.loadState()?.tracks;
+        if (sessionSavedTracks) {
+            this.loadingState = true;
+            try {
+                this.trackListControl.loadTracksFromString(sessionSavedTracks);
+            } finally {
+                this.loadingState = false;
             }
-            const sessionState = sessionRepository.getSessionState(sessionId);
-            if (!sessionState) {
-                return;
-            }
-            callback(sessionState);
-            sessionRepository.clearSessionState(sessionId);
-        }, true);
+        }
+        this.saveCurrentStateImmediate();
+    },
+
+    consumeSessionFromHash: function () {
+        bindHashStateReadOnly(
+            'sid',
+            (sessionId) => {
+                if (!sessionId) {
+                    return;
+                }
+                const sessionState = sessionRepository.getSessionState(sessionId);
+                if (!sessionState) {
+                    return;
+                }
+                this.loadingState = true;
+                try {
+                    this.trackListControl.loadTracksFromString(sessionState.tracks);
+                } finally {
+                    this.loadingState = false;
+                }
+                this.saveCurrentStateImmediate();
+                sessionRepository.clearSessionState(sessionId);
+            },
+            true
+        );
     },
 
     updateSessionLists: function () {
@@ -233,6 +272,5 @@ const SessionsControl = L.Control.extend({
         this.sessionListWindowModel.inactiveSessions(inactiveSessions);
     },
 });
-
 export {SessionsControl};
 // TODO: fix loading empty tracks
