@@ -54,7 +54,6 @@ const SessionsControl = L.Control.extend({
     },
 
     setupSessionListWindow: function () {
-        // TODO: close window on button and esc
         const layout = `
             <div data-bind="visible: visible" class="leaflet-control-session-list-wrapper">
                 <div class="leaflet-control-session-list-window">
