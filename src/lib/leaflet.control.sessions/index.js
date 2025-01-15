@@ -28,8 +28,9 @@ function formatDateTime(ts) {
 const SessionsControl = L.Control.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (options) {
+    initialize: function (trackListControl, options) {
         L.Control.prototype.initialize.call(this, options);
+        this.trackListControl = trackListControl;
         this.sessionListWindowVisible = false;
         this.channel = new BroadcastChannel('session-control');
         this.channel.addEventListener('message', (e) => this.onChannelMessage(e));
@@ -214,7 +215,7 @@ const SessionsControl = L.Control.extend({
             }
             callback(sessionState);
             sessionRepository.clearSessionState(sessionId);
-        });
+        }, true);
     },
 
     updateSessionLists: function () {
