@@ -191,7 +191,7 @@ const SessionsControl = L.Control.extend({
 
     openStoredSession: function (sessionId) {
         const sessionData = sessionRepository.getSessionState(sessionId);
-        const {origin, pathname} = window.location;
+        const {origin, pathname} = window.location; // eslint-disable-line no-shadow
         const url = `${origin}${pathname}${sessionData.hash}&sid=${sessionId}`;
         window.open(url);
     },
