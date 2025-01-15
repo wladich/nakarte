@@ -51,7 +51,6 @@ function isInIframe() {
     return window.self !== window.top;
 }
 
-
 function setUp() { // eslint-disable-line complexity
     const startInfo = {
         href: window.location.href,
@@ -121,9 +120,10 @@ function setUp() { // eslint-disable-line complexity
         stackHorizontally: true
     }).addTo(map);
 
-    const sessionsControl = new SessionsControl({position: 'topleft'}).addTo(map);
-    sessionsControl.loadSession();
-    sessionsControl.consumeSessionFromHash();
+    let sessionsControl;
+    if (!isInIframe()) {
+        sessionsControl = new SessionsControl(tracklist, {position: 'topleft'}).addTo(map);
+    }
 
     new ExternalMaps({position: 'topleft'}).addTo(map);
 
@@ -207,6 +207,10 @@ function setUp() { // eslint-disable-line complexity
             hasTrackParamsInHash = true;
             break;
         }
+    }
+    if (sessionsControl) {
+        sessionsControl.loadSession();
+        sessionsControl.consumeSessionFromHash();
     }
 
     if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
