@@ -67,7 +67,7 @@ class SessionRepository {
 
 const sessionRepository = new SessionRepository();
 
-class SessionState {
+class Session {
     constructor() {
         let sessionId = window.history.state?.sessionId;
         if (!sessionId) {
@@ -95,7 +95,7 @@ class SessionState {
     }
 }
 
-const sessionState = new SessionState();
+const session = new Session();
 
 class ActiveSessionsMonitor {
     static MESSAGE_REQUEST_SESSION = 'requestsessions';
@@ -148,14 +148,14 @@ class ActiveSessionsMonitor {
     broadcastActiveSession() {
         this.channel.postMessage({
             message: ActiveSessionsMonitor.MESSAGE_ACTIVE_SESSION,
-            sessionId: sessionState.sessionId,
+            sessionId: session.sessionId,
         });
     }
 
     broadcastSessionEnd() {
         this.channel.postMessage({
             message: ActiveSessionsMonitor.MESSAGE_CLOSE_SESSION,
-            sessionId: sessionState.sessionId,
+            sessionId: session.sessionId,
         });
     }
 
@@ -175,7 +175,7 @@ class ActiveSessionsMonitor {
 const activeSessionsMonitor = new ActiveSessionsMonitor();
 
 export {
-    sessionState,
+    session,
     sessionRepository,
     activeSessionsMonitor,
     EVENT_STORED_SESSIONS_CHANGED,

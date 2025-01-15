@@ -9,7 +9,7 @@ import {
     EVENT_ACTIVE_SESSIONS_CHANGED,
     EVENT_STORED_SESSIONS_CHANGED,
     sessionRepository,
-    sessionState,
+    session,
 } from '~/lib/session-state';
 
 import './style.css';
@@ -138,7 +138,7 @@ const SessionsControl = L.Control.extend({
 
     onChannelMessage: function (e) {
         const messageData = e.data;
-        if (messageData.message === 'focus' && messageData.sessionId === sessionState.sessionId) {
+        if (messageData.message === 'focus' && messageData.sessionId === session.sessionId) {
             this.switchFocus();
         }
     },
@@ -211,18 +211,18 @@ const SessionsControl = L.Control.extend({
         const tracks = this.trackListControl.tracks();
         if (!tracks.length) {
             console.log('Clearing session state');
-            sessionState.clearState();
+            session.clearState();
             return;
         }
         console.log('Saving session state');
         const {hash} = window.location;
         const trackNames = tracks.map((track) => track.name());
         const tracksSerialized = this.trackListControl.serializeTracks(tracks);
-        sessionState.saveState({hash, tracks: tracksSerialized, trackNames});
+        session.saveState({hash, tracks: tracksSerialized, trackNames});
     },
 
     loadSession: function () {
-        const sessionSavedTracks = sessionState.loadState()?.tracks;
+        const sessionSavedTracks = session.loadState()?.tracks;
         if (sessionSavedTracks) {
             this.loadingState = true;
             try {
@@ -262,7 +262,7 @@ const SessionsControl = L.Control.extend({
         // TODO: validate records
         const storedSessions = sessionRepository
             .listSessionStates()
-            .filter((sess) => sess.sessionId !== sessionState.sessionId);
+            .filter((sess) => sess.sessionId !== session.sessionId);
         const activeSessionIds = activeSessionsMonitor.getActiveSessions();
         const activeSessions = storedSessions.filter((sess) => activeSessionIds.includes(sess.sessionId));
         const inactiveSessions = storedSessions.filter((sess) => !activeSessionIds.includes(sess.sessionId));
