@@ -85,7 +85,7 @@ const SessionsControl = L.Control.extend({
                                 data-bind="attr: {title: data.trackNames.join('\\n')}, click: $root.openStoredSession"
                             >
                                 <div class="leaflet-control-session-list-item-date">
-                                    Last opened at <span data-bind="text: $root.formatDateTime($data.mtime)"></span>
+                                    Last used at <span data-bind="text: $root.formatDateTime($data.mtime)"></span>
                                 </div>
                                 <!-- ko foreach: data.trackNames.length <= $root.maxTrackLines 
                                     ? data.trackNames 
