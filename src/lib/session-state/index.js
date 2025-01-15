@@ -28,10 +28,10 @@ class SessionRepository {
                 try {
                     return JSON.parse(value);
                 } catch {
-                    return null
+                    return null;
                 }
             })
-            .filter((it) => !!it);
+            .filter((it) => Boolean(it));
     }
 
     getSessionState(sessionId) {
