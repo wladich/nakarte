@@ -21,7 +21,7 @@ class SessionRepository {
 
     onChannelMessage(e) {
         if (e.data.message === SessionRepository.MESSAGE_SESSION_CHANGED) {
-            document.dispatchEvent(new Event(EVENT_STORED_SESSIONS_CHANGED));
+            window.dispatchEvent(new Event(EVENT_STORED_SESSIONS_CHANGED));
         }
     }
 
@@ -152,7 +152,7 @@ class ActiveSessionsMonitor {
     }
 
     notifyActiveSessionsChanged() {
-        document.dispatchEvent(new Event(EVENT_ACTIVE_SESSIONS_CHANGED));
+        window.dispatchEvent(new Event(EVENT_ACTIVE_SESSIONS_CHANGED));
     }
 
     requestActiveSessions() {

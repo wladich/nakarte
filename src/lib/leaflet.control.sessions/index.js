@@ -135,9 +135,6 @@ const SessionsControl = L.Control.extend({
     onAdd: function () {
         const {container, link} = makeButton(null, 'Recent sessions');
         L.DomEvent.on(link, 'click', () => this.toggleSessionListsVisible());
-        // TODO: setup/teardown events on window show/hide
-        document.addEventListener(EVENT_ACTIVE_SESSIONS_CHANGED, (e) => this.onActiveSessionsChange(e));
-        document.addEventListener(EVENT_STORED_SESSIONS_CHANGED, (e) => this.onStoredSessionsChange(e));
         this.setupSessionListWindow();
         return container;
     },
@@ -179,15 +176,7 @@ const SessionsControl = L.Control.extend({
         this.updateSessionLists();
         this.sessionListWindowModel.visible(true);
         activeSessionsMonitor.startMonitor();
-        L.DomEvent.on(
-            window,
-            {
-                mousedown: this.hideSessionListWindow,
-                touchstart: this.hideSessionListWindow,
-                keydown: this.onKeyDown,
-            },
-            this
-        );
+        this.setupEventsForSessionListWindow(true);
     },
 
     hideSessionListWindow: function () {
@@ -197,12 +186,18 @@ const SessionsControl = L.Control.extend({
         this.sessionListWindowVisible = false;
         this.sessionListWindowModel.visible(false);
         activeSessionsMonitor.stopMonitor();
-        L.DomEvent.off(
+        this.setupEventsForSessionListWindow(false);
+    },
+
+    setupEventsForSessionListWindow: function (on) {
+        L.DomEvent[on ? 'on' : 'off'](
             window,
             {
                 mousedown: this.hideSessionListWindow,
                 touchstart: this.hideSessionListWindow,
                 keydown: this.onKeyDown,
+                [EVENT_ACTIVE_SESSIONS_CHANGED]: this.onActiveSessionsChange,
+                [EVENT_STORED_SESSIONS_CHANGED]: this.onStoredSessionsChange,
             },
             this
         );
