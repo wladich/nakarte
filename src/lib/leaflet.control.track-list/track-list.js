@@ -360,7 +360,7 @@ L.Control.TrackList = L.Control.extend({
             });
         },
 
-        addTracksFromGeodataArray: function(geodata_array) {
+        addTracksFromGeodataArray: function(geodata_array, allowEmpty = false) {
             let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
@@ -370,7 +370,7 @@ L.Control.TrackList = L.Control.extend({
                     var data_empty = !((geodata.tracks && geodata.tracks.length) ||
                         (geodata.points && geodata.points.length));
 
-                    if (!data_empty) {
+                    if (!data_empty || allowEmpty) {
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
                                     line = unwrapLatLngsCrossing180Meridian(line);
@@ -399,7 +399,7 @@ L.Control.TrackList = L.Control.extend({
                         } else {
                             message += ', loaded data can be invalid or incomplete';
                         }
-                    } else if (data_empty) {
+                    } else if (data_empty && !allowEmpty) {
                         message =
                             'No data could be loaded from file "{name}". ' +
                             'File is empty or contains only unsupported data.';
@@ -1384,9 +1384,9 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        loadTracksFromString(s) {
+        loadTracksFromString(s, allowEmpty = false) {
             const geodata = parseNktkSequence(s);
-            this.addTracksFromGeodataArray(geodata);
+            this.addTracksFromGeodataArray(geodata, allowEmpty);
         },
 
         copyAllTracksToClipboard: function(mouseEvent) {

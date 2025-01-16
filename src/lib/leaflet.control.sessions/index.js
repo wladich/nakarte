@@ -261,7 +261,7 @@ const SessionsControl = L.Control.extend({
         if (sessionSavedTracks) {
             this.loadingState = true;
             try {
-                this.trackListControl.loadTracksFromString(sessionSavedTracks);
+                this.trackListControl.loadTracksFromString(sessionSavedTracks, true);
             } finally {
                 this.loadingState = false;
             }
@@ -283,7 +283,7 @@ const SessionsControl = L.Control.extend({
                 }
                 this.loadingState = true;
                 try {
-                    this.trackListControl.loadTracksFromString(sessionState.tracks);
+                    this.trackListControl.loadTracksFromString(sessionState.tracks, true);
                 } finally {
                     this.loadingState = false;
                 }
@@ -295,7 +295,6 @@ const SessionsControl = L.Control.extend({
     },
 
     updateSessionLists: async function () {
-        // TODO: validate records
         const storedSessions = (await sessionRepository.listSessionStates()).filter(
             (sess) => sess.sessionId !== session.sessionId
         );
@@ -309,4 +308,3 @@ const SessionsControl = L.Control.extend({
     },
 });
 export {SessionsControl};
-// TODO: fix loading empty tracks
