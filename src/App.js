@@ -213,6 +213,12 @@ function setUp() { // eslint-disable-line complexity
         (async() => {
             await sessionsControl.loadSession();
             await sessionsControl.consumeSessionFromHash();
+            if (await sessionsControl.importOldSessions() && !hasTrackParamsInHash) {
+                notify(
+                    'If some tracks disappeared from the tracks list, ' +
+                    'you can find them in the new list of recent sessions in the upper left corner.'
+                );
+            }
         })();
     }
 

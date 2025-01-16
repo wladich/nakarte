@@ -1,7 +1,9 @@
+import md5 from 'blueimp-md5';
 import ko from 'knockout';
 import L from 'leaflet';
 
 import {makeButton} from '~/lib/leaflet.control.commons';
+import {parseNktkSequence} from '~/lib/leaflet.control.track-list/lib/parsers/nktk';
 import {bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
 import {notify} from '~/lib/notifications';
 import {
@@ -50,7 +52,6 @@ const SessionsControl = L.Control.extend({
             openStoredSession: (sessionData) => this.openStoredSession(sessionData.sessionId),
             closeWindow: () => this.hideSessionListWindow(),
         };
-        // TODO: import old states
     },
 
     setupSessionListWindow: function () {
@@ -287,6 +288,24 @@ const SessionsControl = L.Control.extend({
             },
             true
         );
+    },
+
+    importOldSessions: async function () {
+        const oldDataPrefix = '#nktk=';
+        let imported = false;
+        for (const [key, value] of Object.entries(window.localStorage)) {
+            const m = key.match(/^trackList_\d+$/u);
+            if (m && value.startsWith(oldDataPrefix)) {
+                const tracksSerialized = value.slice(oldDataPrefix.length);
+                const geodata = parseNktkSequence(tracksSerialized);
+                const trackNames = geodata.map((track) => track.name);
+                const sessionId = 'imported_' + md5(tracksSerialized);
+                await sessionRepository.setSessionState(sessionId, {hash: '#', tracks: tracksSerialized, trackNames});
+                delete window.localStorage[key];
+                imported = true;
+            }
+        }
+        return imported;
     },
 
     updateSessionLists: async function () {
