@@ -6,7 +6,7 @@ const EVENT_ACTIVE_SESSIONS_CHANGED = 'activesessionschanged';
 class SessionRepository {
     static DB_NAME = 'sessions';
     static STORE_NAME = 'sessionData';
-    static MAX_HISTORY_ENTRIES = 10;
+    static MAX_HISTORY_ENTRIES = 100;
     static MESSAGE_SESSION_CHANGED = 'sessionchanged';
 
     constructor() {
@@ -14,7 +14,8 @@ class SessionRepository {
         this.channel.addEventListener('message', (e) => this.onChannelMessage(e));
         this.dbPromise = openDB(SessionRepository.DB_NAME, 1, {
             upgrade(db) {
-                db.createObjectStore(SessionRepository.STORE_NAME, {keyPath: 'sessionId'});
+                const store = db.createObjectStore(SessionRepository.STORE_NAME, {keyPath: 'sessionId'});
+                store.createIndex('mtime', 'mtime', {unique: false});
             },
         });
     }
@@ -36,8 +37,24 @@ class SessionRepository {
         return record?.data;
     }
 
+    async pruneOldSessions() {
+        const db = await this.dbPromise;
+        const tx = db.transaction(SessionRepository.STORE_NAME, 'readwrite');
+        const recordsCount = await tx.store.count();
+        const recordsCountToDelete = recordsCount - SessionRepository.MAX_HISTORY_ENTRIES;
+        if (recordsCountToDelete > 0) {
+            let cursor = await tx.store.index('mtime').openCursor();
+            for (let i = 0; i < recordsCountToDelete; i++) {
+                if (!cursor) {
+                    break;
+                }
+                await cursor.delete();
+                cursor = await cursor.continue();
+            }
+        }
+    }
+
     async setSessionState(sessionId, data) {
-        // TODO: remove old entries if total count > MAX_HISTORY_ENTRIES
         const db = await this.dbPromise;
         await db.put(SessionRepository.STORE_NAME, {
             sessionId,
@@ -45,6 +62,7 @@ class SessionRepository {
             data,
         });
         this.broadcastStorageChanged();
+        this.pruneOldSessions();
     }
 
     async clearSessionState(sessionId) {
