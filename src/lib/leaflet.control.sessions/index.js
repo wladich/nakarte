@@ -95,7 +95,10 @@ const SessionsControl = L.Control.extend({
                         <!-- ko foreach: activeSessions -->
                             <div 
                                 class="leaflet-control-session-list-item-active" 
-                                data-bind="css: {'click-disabled': !$root.canSwitchFocus}">
+                                data-bind="
+                                    attr: {title: data.trackNames.join('\\n')}, 
+                                    click: $root.requestSwitchFocus,
+                                    css: {'click-disabled': !$root.canSwitchFocus}">
                                 <!-- ko foreach: data.trackNames.length <= $root.maxTrackLines 
                                     ? data.trackNames 
                                     : data.trackNames.slice(0, $root.maxTrackLines - 1) 
