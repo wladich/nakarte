@@ -47,14 +47,16 @@ function getLinkToShare(keysToExclude, paramsToAdd) {
 
     const params = new URLSearchParams(hash.substring(1));
 
-    for (const key of keysToExclude) {
-        params.delete(key);
+    if (keysToExclude) {
+        for (const key of keysToExclude) {
+            params.delete(key);
+        }
     }
-
-    for (const [key, value] of Object.entries(paramsToAdd)) {
-        params.set(key, value);
+    if (paramsToAdd) {
+        for (const [key, value] of Object.entries(paramsToAdd)) {
+            params.set(key, value);
+        }
     }
-
     return origin + pathname + '#' + decodeURIComponent(params.toString());
 }
 
@@ -616,8 +618,13 @@ L.Control.TrackList = L.Control.extend({
             return tracks.map((track) => this.trackToString(track)).join('/');
         },
 
-        copyTracksLinkToClipboard: function(tracks, mouseEvent) {
+        copyTracksLinkToClipboard: function(tracks, mouseEvent, allowWithoutTracks = false) {
             if (!tracks.length) {
+                if (allowWithoutTracks) {
+                    const url = getLinkToShare(this.options.keysToExcludeOnCopyLink);
+                    copyToClipboard(url, mouseEvent);
+                    return;
+                }
                 notify('No tracks to copy');
                 return;
             }
@@ -1389,8 +1396,8 @@ L.Control.TrackList = L.Control.extend({
             this.addTracksFromGeodataArray(geodata, allowEmpty);
         },
 
-        copyAllTracksToClipboard: function(mouseEvent) {
-            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
+        copyAllTracksToClipboard: function(mouseEvent, allowWithoutTracks = false) {
+            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent, allowWithoutTracks);
         },
 
         copyVisibleTracksToClipboard: function(mouseEvent) {

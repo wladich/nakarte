@@ -37,6 +37,7 @@ const filesWithSideEffects = [
     'src/lib/leaflet.placemark/index.js',
     'src/lib/leaflet.polyline-edit/index.js',
     'src/lib/leaflet.polyline-measure/index.js',
+    'src/vendored/mapbbcode/FunctionButton.js',
 ];
 
 const filesWithExportAndSideEffects = [
