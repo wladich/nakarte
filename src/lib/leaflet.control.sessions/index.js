@@ -27,6 +27,22 @@ function formatDateTime(ts) {
     return `${month} ${date.getDate()} ${date.getFullYear()} ${hours}:${minutes}:${seconds}`;
 }
 
+function temporaryDisableAfterInvocation(f, delay) {
+    let lastCalledAt = null;
+
+    function wrapper(...args) {
+        if (lastCalledAt === null || lastCalledAt + delay < Date.now()) {
+            try {
+                f(...args);
+            } finally {
+                lastCalledAt = Date.now();
+            }
+        }
+    }
+
+    return wrapper;
+}
+
 const SessionsControl = L.Control.extend({
     includes: L.Mixin.Events,
 
@@ -49,7 +65,10 @@ const SessionsControl = L.Control.extend({
             formatDateTime,
             maxTrackLines: 4,
             requestSwitchFocus: (sessionData) => this.requestSwitchFocus(sessionData.sessionId),
-            openStoredSession: (sessionData) => this.openStoredSession(sessionData.sessionId),
+            openStoredSession: temporaryDisableAfterInvocation(
+                (sessionData) => this.openStoredSession(sessionData.sessionId),
+                200
+            ),
             closeWindow: () => this.hideSessionListWindow(),
         };
     },
