@@ -56,7 +56,8 @@ const SessionsControl = L.Control.extend({
         this.saveCurrentState = L.Util.throttle(this.saveCurrentStateImmediate, 1000, this);
         this.trackListControl.on('trackschanged', () => this.onCurrentStateChange());
         window.addEventListener('hashchange', () => this.onCurrentStateChange());
-        window.addEventListener('beforeunload', () => this.saveCurrentStateImmediate());
+        window.addEventListener('unload', () => this.saveCurrentStateImmediate());
+        window.addEventListener('pagehide', () => this.saveCurrentStateImmediate());
         this.canSwitchFocus = !L.Browser.mobile;
 
         this.sessionListWindowModel = {

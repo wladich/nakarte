@@ -117,7 +117,8 @@ class ActiveSessionsMonitor {
         this.channel.addEventListener('message', (e) => this.onChannelMessage(e));
         this._activeSessions = {};
         this.broadcastActiveSession();
-        window.addEventListener('beforeunload', () => this.broadcastSessionEnd());
+        window.addEventListener('unload', () => this.broadcastSessionEnd());
+        window.addEventListener('pagehide', () => this.broadcastSessionEnd());
         this.monitorRunning = false;
     }
 
