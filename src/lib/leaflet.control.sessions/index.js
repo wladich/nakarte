@@ -223,10 +223,12 @@ const SessionsControl = L.Control.extend({
     },
 
     openStoredSession: async function (sessionId) {
+        // Opening window before await-ing for promise helps tp avoid new window being blocked in Firefox
+        const newWindow = window.open('', '_blank');
         const sessionData = await sessionRepository.getSessionState(sessionId);
         const {origin, pathname} = window.location; // eslint-disable-line no-shadow
-        const url = `${origin}${pathname}${sessionData.hash}&sid=${sessionId}`;
-        window.open(url);
+        newWindow.location = `${origin}${pathname}${sessionData.hash}&sid=${sessionId}`;
+        newWindow.focus();
     },
 
     switchFocus: function () {
