@@ -126,12 +126,15 @@ function setUp() { // eslint-disable-line complexity
     let sessionsControl;
     if (!isInIframe()) {
         sessionsControl = new SessionsControl(tracklist, {noButton: true}).addTo(map);
+        const size = L.Browser.touch ? 30 : 26;
+        const offset = L.Browser.touch ? 7 : 5;
         const menuButton = L.functionButtons(
             [
                 {
                     content: iconMenu,
                     title: 'Menu',
-                    bgPos: [-5, -5],
+                    bgPos: [-offset, -offset],
+                    imageSize: size,
                 },
             ],
             {position: 'topleft'}
