@@ -160,8 +160,15 @@ const SessionsControl = L.Control.extend({
     },
 
     onAdd: function () {
-        const {container, link} = makeButton(null, 'Recent sessions');
-        L.DomEvent.on(link, 'click', () => this.toggleSessionListsVisible());
+        let container;
+        if (this.options.noButton) {
+            container = L.DomUtil.create('div');
+            container.style.margin = '0';
+        } else {
+            const {container: buttonContainer, link} = makeButton(null, 'Recent sessions');
+            L.DomEvent.on(link, 'click', () => this.toggleSessionListsVisible());
+            container = buttonContainer;
+        }
         this.setupSessionListWindow();
         return container;
     },
