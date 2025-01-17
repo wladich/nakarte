@@ -35,6 +35,9 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
+import '~/vendored/mapbbcode/FunctionButton';
+import Contextmenu from '~/lib/contextmenu';
+import iconMenu from './images/menu.png';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -122,7 +125,30 @@ function setUp() { // eslint-disable-line complexity
 
     let sessionsControl;
     if (!isInIframe()) {
-        sessionsControl = new SessionsControl(tracklist, {position: 'topleft'}).addTo(map);
+        sessionsControl = new SessionsControl(tracklist, {noButton: true}).addTo(map);
+        const menuButton = L.functionButtons(
+            [
+                {
+                    content: iconMenu,
+                    title: 'Menu',
+                    bgPos: [-5, -5],
+                },
+            ],
+            {position: 'topleft'}
+        );
+        menuButton.addTo(map);
+        menuButton.on('clicked', (e) => {
+            new Contextmenu([
+                {
+                    text: 'Recent sessions',
+                    callback: () => sessionsControl.showSessionListWindow(),
+                },
+                {
+                    text: 'Copy link for all tracks',
+                    callback: () => tracklist.copyAllTracksToClipboard(e),
+                },
+            ]).show(e);
+        });
     }
 
     new ExternalMaps({position: 'topleft'}).addTo(map);
