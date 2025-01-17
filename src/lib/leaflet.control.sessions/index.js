@@ -57,6 +57,7 @@ const SessionsControl = L.Control.extend({
         this.trackListControl.on('trackschanged', () => this.onCurrentStateChange());
         window.addEventListener('hashchange', () => this.onCurrentStateChange());
         window.addEventListener('beforeunload', () => this.saveCurrentStateImmediate());
+        this.canSwitchFocus = !L.Browser.mobile;
 
         this.sessionListWindowModel = {
             activeSessions: ko.observableArray([]),
@@ -70,6 +71,7 @@ const SessionsControl = L.Control.extend({
                 200
             ),
             closeWindow: () => this.hideSessionListWindow(),
+            canSwitchFocus: this.canSwitchFocus,
         };
     },
 
@@ -85,13 +87,14 @@ const SessionsControl = L.Control.extend({
                             <div class="leaflet-control-session-list-header">
                                 Active sessions with tracks in other tabs
                             </div>
-                            <div class="leaflet-control-session-list-header-info">Click to switch tab</div>
+                            <!-- ko if: canSwitchFocus -->
+                                <div class="leaflet-control-session-list-header-info">Click to switch tab</div>
+                            <!-- /ko -->
                         <!-- /ko -->
                         <!-- ko foreach: activeSessions -->
                             <div 
                                 class="leaflet-control-session-list-item-active" 
-                                data-bind="attr: {title: data.trackNames.join('\\n')}, click: $root.requestSwitchFocus"
-                            >
+                                data-bind="css: {'click-disabled': !$root.canSwitchFocus}">
                                 <!-- ko foreach: data.trackNames.length <= $root.maxTrackLines 
                                     ? data.trackNames 
                                     : data.trackNames.slice(0, $root.maxTrackLines - 1) 
@@ -230,6 +233,9 @@ const SessionsControl = L.Control.extend({
     },
 
     requestSwitchFocus: async function (sessionId) {
+        if (!this.canSwitchFocus) {
+            return;
+        }
         if (!window.Notification) {
             notify('Can not switch to another window, your browser does not support notifications.');
             return;

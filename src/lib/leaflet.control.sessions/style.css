@@ -37,6 +37,11 @@
     background-color: #f7f7e7;
 }
 
+.click-disabled {
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+}
+
 .leaflet-control-session-list-item-inactive {
     background-color: #f0f0f0;
 }
