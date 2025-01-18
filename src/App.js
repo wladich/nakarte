@@ -147,8 +147,8 @@ function setUp() { // eslint-disable-line complexity
                     callback: () => sessionsControl.showSessionListWindow(),
                 },
                 {
-                    text: 'Copy link for all tracks',
-                    callback: () => tracklist.copyAllTracksToClipboard(e),
+                    text: 'Copy share link',
+                    callback: () => tracklist.copyAllTracksToClipboard(e, true),
                 },
             ]).show(e);
         });
