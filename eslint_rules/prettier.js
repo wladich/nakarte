@@ -12,6 +12,5 @@ module.exports = {
         'no-confusing-arrow': 'error',
         'no-tabs': 'error',
         'no-unexpected-multiline': 'error',
-        'quotes': ['error', 'single', {allowTemplateLiterals: false}],
     },
 };
