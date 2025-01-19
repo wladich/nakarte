@@ -1,4 +1,6 @@
 import L from 'leaflet';
+import escapeHtml from 'escape-html';
+
 import './canvasMarkers.css';
 import RBush from 'rbush';
 import loadImage from 'image-promise';
@@ -409,7 +411,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     return;
                 }
             }
-            this.toolTip.innerHTML = text;
+            this.toolTip.innerHTML = escapeHtml(text);
             const p = this._map.latLngToLayerPoint(e.marker.latlng);
             L.DomUtil.setPosition(this.toolTip, p);
             L.DomUtil.addClass(this.toolTip, 'canvas-marker-tooltip-on');
