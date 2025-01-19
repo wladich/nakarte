@@ -148,7 +148,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 altnames = `
                     <tr>
                         <td>Другие названия</td>
-                        <td>${properties.altnames}</td>
+                        <td>${escapeHtml(properties.altnames)}</td>
                     </tr>`;
             }
 
@@ -156,7 +156,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 connects = `
                     <tr>
                         <td>Соединяет</td>
-                        <td>${properties.connects || "неизвестнo"}</td>
+                        <td>${properties.connects ? escapeHtml(properties.connects) : "неизвестнo"}</td>
                     </tr>`;
             }
 
@@ -164,9 +164,13 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 for (let comment of properties.comments) {
                     let user = '';
                     if (comment.user) {
-                        user = `<span class="westra-passes-description-comment-author">${comment.user}:</span>`;
+                        user = (
+                            `<span class="westra-passes-description-comment-author">${escapeHtml(comment.user)}:</span>`
+                        );
                     }
-                    comments += `<p class="westra-passes-description-comment">${user}${comment.content}</p>`;
+                    comments += (
+                        `<p class="westra-passes-description-comment">${user}${escapeHtml(comment.content)}</p>`
+                    );
                 }
                 comments = `
                     <tr>
@@ -187,21 +191,21 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 <table class="pass-details">
                     <tr>
                         <td>${properties.is_summit ? 'Вершина ' : 'Перевал '}</td>
-                        <td>${properties.name || 'название неизвестно'}</td>
+                        <td>${properties.name ? escapeHtml(properties.name) : 'название неизвестно'}</td>
                     </tr>
                     ${altnames}
                     <tr>
                         <td>Категория</td>
-                        <td>${properties.grade || "неизвестная"}</td>
+                        <td>${properties.grade ? escapeHtml(properties.grade) : "неизвестная"}</td>
                     </tr>
                     <tr>
                         <td>Высота</td>
-                        <td>${properties.elevation ? (properties.elevation + ' м') : 'неизвестная'}</td>
+                        <td>${properties.elevation ? (escapeHtml(properties.elevation) + ' м') : 'неизвестная'}</td>
                     </tr>
                     ${connects}
                     <tr>
                         <td>Характеристика склонов</td>
-                        <td>${properties.slopes || "неизвестная"}</td>
+                        <td>${properties.slopes ? escapeHtml(properties.slopes) : "неизвестная"}</td>
                     </tr>
                     <tr>
                         <td>Координаты</td>
@@ -225,7 +229,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                         <td><a id="westra-pass-link" href="${url}">${url}</a>${reports}</td></tr>
                     <tr>
                         <td>Добавил</td>
-                        <td>${properties.author || "неизвестно"}</td>
+                        <td>${properties.author ? escapeHtml(properties.author) : "неизвестно"}</td>
                     </tr>
                     ${comments}
                 </table>`;
