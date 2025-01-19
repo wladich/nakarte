@@ -57,4 +57,11 @@ function getDeclination(lat, lon) {
 
 data = loadData();
 
-export {getDeclination};
+const magneticModelInfo = {
+    modelName: declination.model,
+    dateYMD: declination.dateYMD,
+    horizontalResolution: declination.step,
+    valueResolution: 1 / declination.valueScale,
+};
+
+export {getDeclination, magneticModelInfo};

@@ -4,7 +4,7 @@ import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import layout from './control.html';
 import '~/lib/controls-styles/controls-styles.css';
 import './style.css';
-import {getDeclination} from '~/lib/magnetic-declination';
+import {getDeclination, magneticModelInfo} from '~/lib/magnetic-declination';
 import 'leaflet-rotatedmarker'; // eslint-disable-line import/no-unassigned-import
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
@@ -57,6 +57,7 @@ L.Control.Azimuth = L.Control.extend({
             this.trueAzimuth = ko.observable(null);
             this.magneticAzimuth = ko.observable(null);
             this.distance = ko.observable(null);
+            this.magneticModelInfo = magneticModelInfo;
             this.points = {
                 start: null,
                 end: null
