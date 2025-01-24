@@ -2,6 +2,7 @@ import L from 'leaflet';
 import './style.css';
 import Contextmenu from '~/lib/contextmenu';
 import copyToClipboard from '~/lib/clipboardCopy';
+import {pulkovo1942ToWgs84} from '~/lib/coordinates-transformations';
 
 function zeroPad(num, size) {
     var s = String(num);
@@ -99,10 +100,11 @@ var Nomenclature = {
     },
 
     _getQuads: function(bounds, row_height, column_width, name_factory) {
+        const margin = 0.002;
         bounds = L.latLngBounds(bounds);
         var quads = [];
-        var min_lat = Math.max(bounds.getSouth(), -84);
-        var max_lat = Math.min(bounds.getNorth(), 84);
+        var min_lat = Math.max(bounds.getSouth() - margin, -84);
+        var max_lat = Math.min(bounds.getNorth() + margin, 84);
         var min_row = Math.floor(min_lat / row_height);
         const maxCols = 360 / column_width;
         for (var row = min_row; row * row_height < max_lat; row++) {
@@ -116,8 +118,8 @@ var Nomenclature = {
             } else {
                 joined_quads = 1;
             }
-            var min_lon = bounds.getWest();
-            var max_lon = bounds.getEast();
+            var min_lon = bounds.getWest() - margin;
+            var max_lon = bounds.getEast() + margin;
             var min_column = Math.floor((min_lon + 180) / column_width / joined_quads) * joined_quads -
                 Math.round(180 / column_width);
             for (var column = min_column; column * column_width < max_lon; column += joined_quads) {
@@ -160,6 +162,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             this.renderer = L.svg({padding: 0.5});
             this._quads = {};
             this._updateRenderer = L.Util.throttle(this._updateRenderer, 100, this);
+            this._update = L.Util.throttle(this._update, 100, this);
         },
 
         onAdd: function(map) {
@@ -191,7 +194,20 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 renderer: this.renderer
             };
 
-            var rect = L.rectangle(bounds, rect_options);
+            const quadPoints = [
+                bounds.getSouthWest(),
+                bounds.getSouthEast(),
+                bounds.getNorthEast(),
+                bounds.getNorthWest(),
+            ].map((latlng) => {
+                const latlon = pulkovo1942ToWgs84({lat: latlng.lat, lon: latlng.lng});
+                return L.latLng(latlon.lat, latlon.lon);
+            });
+            if (quadPoints[0].lng > 0 && quadPoints[1].lng < 0) {
+                quadPoints[1] = L.latLng(quadPoints[1].lat, quadPoints[1].lng + 360);
+                quadPoints[2] = L.latLng(quadPoints[2].lat, quadPoints[2].lng + 360);
+            }
+            var rect = L.polygon(quadPoints, rect_options);
             this.addLayer(rect);
             if (layer === 1) {
                 rect.bringToBack();
