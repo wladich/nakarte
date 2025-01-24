@@ -138,7 +138,8 @@ L.FunctionButtons = L.Control.extend({
 			if( button ) {
 				if( 'callback' in button )
 					button.callback.call(button.context);
-				this.fire('clicked', { idx: link._buttonIndex });
+				e.idx = link._buttonIndex;
+				this.fire('clicked', e);
 			}
 		}
 	}

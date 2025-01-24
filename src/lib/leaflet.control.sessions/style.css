@@ -1,0 +1,92 @@
+.leaflet-control-session-list-wrapper {
+    position: absolute;
+    top: 25px;
+    bottom: 25px;
+    max-width: 90%;
+    left: 50%;
+}
+
+.leaflet-control-session-list-window {
+    position: relative;
+    transform: translate(-50%, 0);
+    min-width: 310px;
+    max-width: 1000px;
+    height: 100%;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+    padding: 6px 0 4px 0;
+
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+
+    cursor: default;
+    z-index: 3000;
+}
+
+.leaflet-control-session-list-scrollbox {
+    overflow: auto;
+    max-height: calc(100% - 10px);
+    padding: 0 6px 0 6px;
+    margin-top: 4px;
+}
+
+.leaflet-control-session-list-item-active,
+.leaflet-control-session-list-item-inactive {
+    padding: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.leaflet-control-session-list-item-active {
+    background-color: #f7f7e7;
+}
+
+.click-disabled {
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.leaflet-control-session-list-item-inactive {
+    background-color: #f0f0f0;
+}
+
+.leaflet-control-session-list-header {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.leaflet-control-session-list-header-info {
+    font-size: 11px;
+    text-align: center;
+}
+
+.leaflet-control-session-list-item-date {
+    color: #666666;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.leaflet-control-session-list-item-track {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaflet-control-session-list-window-header {
+    height: 10px;
+    clear: both;
+    margin-right: 4px;
+}
+
+.leaflet-control-session-list-window .button-close {
+    width: 10px;
+    height: 10px;
+    background-image: url("./close.svg");
+    cursor: pointer;
+    float: right;
+}

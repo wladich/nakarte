@@ -26,6 +26,7 @@ import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
+import {parseNktkSequence} from './lib/parsers/nktk';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -46,14 +47,16 @@ function getLinkToShare(keysToExclude, paramsToAdd) {
 
     const params = new URLSearchParams(hash.substring(1));
 
-    for (const key of keysToExclude) {
-        params.delete(key);
+    if (keysToExclude) {
+        for (const key of keysToExclude) {
+            params.delete(key);
+        }
     }
-
-    for (const [key, value] of Object.entries(paramsToAdd)) {
-        params.set(key, value);
+    if (paramsToAdd) {
+        for (const [key, value] of Object.entries(paramsToAdd)) {
+            params.set(key, value);
+        }
     }
-
     return origin + pathname + '#' + decodeURIComponent(params.toString());
 }
 
@@ -359,7 +362,7 @@ L.Control.TrackList = L.Control.extend({
             });
         },
 
-        addTracksFromGeodataArray: function(geodata_array) {
+        addTracksFromGeodataArray: function(geodata_array, allowEmpty = false) {
             let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
@@ -369,7 +372,7 @@ L.Control.TrackList = L.Control.extend({
                     var data_empty = !((geodata.tracks && geodata.tracks.length) ||
                         (geodata.points && geodata.points.length));
 
-                    if (!data_empty) {
+                    if (!data_empty || allowEmpty) {
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
                                     line = unwrapLatLngsCrossing180Meridian(line);
@@ -398,7 +401,7 @@ L.Control.TrackList = L.Control.extend({
                         } else {
                             message += ', loaded data can be invalid or incomplete';
                         }
-                    } else if (data_empty) {
+                    } else if (data_empty && !allowEmpty) {
                         message =
                             'No data could be loaded from file "{name}". ' +
                             'File is empty or contains only unsupported data.';
@@ -427,6 +430,7 @@ L.Control.TrackList = L.Control.extend({
             if (track.visible()) {
                 this._markerLayer.updateMarkers(markers);
             }
+            this.notifyTracksChanged();
         },
 
         onTrackVisibilityChanged: function(track) {
@@ -441,6 +445,7 @@ L.Control.TrackList = L.Control.extend({
                 this._markerLayer.removeMarkers(track.markers);
             }
             this.updateTrackHighlight();
+            this.notifyTracksChanged();
         },
 
         onTrackSegmentNodesChanged: function(track, segment) {
@@ -448,6 +453,7 @@ L.Control.TrackList = L.Control.extend({
                 this.trackAddingSegment(null);
             }
             this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
         },
 
         recalculateTrackLength: function(track) {
@@ -473,6 +479,7 @@ L.Control.TrackList = L.Control.extend({
             var visible = track.measureTicksShown(),
                 lines = this.getTrackPolylines(track);
             lines.forEach((line) => line.setMeasureTicksVisible(visible));
+            this.notifyTracksChanged();
         },
 
         switchMeasureTicksVisibility: function(track) {
@@ -607,12 +614,21 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        copyTracksLinkToClipboard: function(tracks, mouseEvent) {
+        serializeTracks: function(tracks) {
+            return tracks.map((track) => this.trackToString(track)).join('/');
+        },
+
+        copyTracksLinkToClipboard: function(tracks, mouseEvent, allowWithoutTracks = false) {
             if (!tracks.length) {
+                if (allowWithoutTracks) {
+                    const url = getLinkToShare(this.options.keysToExcludeOnCopyLink);
+                    copyToClipboard(url, mouseEvent);
+                    return;
+                }
                 notify('No tracks to copy');
                 return;
             }
-            let serialized = tracks.map((track) => this.trackToString(track)).join('/');
+            let serialized = this.serializeTracks(tracks);
             const hashDigest = md5(serialized, null, true);
             const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
             const url = getLinkToShare(this.options.keysToExcludeOnCopyLink, {nktl: key});
@@ -699,6 +715,7 @@ L.Control.TrackList = L.Control.extend({
             var newName = query('Enter new name', track.name());
             if (newName && newName.length) {
                 track.name(newName);
+                this.notifyTracksChanged();
             }
         },
 
@@ -777,6 +794,7 @@ L.Control.TrackList = L.Control.extend({
             const newLatLng = e.latlng.wrap();
             this._markerLayer.setMarkerPosition(marker, newLatLng);
             this.stopPlacingPoint();
+            this.notifyTracksChanged();
         },
 
         getNewPointName: function(track) {
@@ -799,6 +817,7 @@ L.Control.TrackList = L.Control.extend({
             const newLatLng = e.latlng.wrap();
             const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
+            this.notifyTracksChanged();
             // we need to show prompt after marker is dispalyed;
             // grid layer is updated in setTimout(..., 0)after adding marker
             // it is better to do it on 'load' event but when it is fired marker is not yet displayed
@@ -883,6 +902,7 @@ L.Control.TrackList = L.Control.extend({
             // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
             track.feature.addLayer(polyline);
             this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
             return polyline;
         },
 
@@ -1175,6 +1195,7 @@ L.Control.TrackList = L.Control.extend({
             const track = trackSegment._parentTrack;
             track.feature.removeLayer(trackSegment);
             this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
         },
 
         newTrackFromSegment: function(trackSegment) {
@@ -1222,6 +1243,7 @@ L.Control.TrackList = L.Control.extend({
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
+            this.notifyTracksChanged();
             return track;
         },
 
@@ -1319,6 +1341,7 @@ L.Control.TrackList = L.Control.extend({
             const markers = marker._parentTrack.markers;
             const i = markers.indexOf(marker);
             markers.splice(i, 1);
+            this.notifyTracksChanged();
         },
 
         renamePoint: function(marker) {
@@ -1327,12 +1350,14 @@ L.Control.TrackList = L.Control.extend({
             if (newLabel !== null) {
                 this.setMarkerLabel(marker, newLabel);
                 this._markerLayer.updateMarker(marker);
+                this.notifyTracksChanged();
             }
         },
 
         removeTrack: function(track) {
             track.visible(false);
             this.tracks.remove(track);
+            this.notifyTracksChanged();
         },
 
         deleteAllTracks: function() {
@@ -1366,8 +1391,13 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        copyAllTracksToClipboard: function(mouseEvent) {
-            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
+        loadTracksFromString(s, allowEmpty = false) {
+            const geodata = parseNktkSequence(s);
+            this.addTracksFromGeodataArray(geodata, allowEmpty);
+        },
+
+        copyAllTracksToClipboard: function(mouseEvent, allowWithoutTracks = false) {
+            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent, allowWithoutTracks);
         },
 
         copyVisibleTracksToClipboard: function(mouseEvent) {
@@ -1480,7 +1510,11 @@ L.Control.TrackList = L.Control.extend({
 
         hasTracks: function() {
             return this.tracks().length > 0;
-        }
+        },
+
+        notifyTracksChanged() {
+            this.fire('trackschanged');
+        },
     }
 );
 

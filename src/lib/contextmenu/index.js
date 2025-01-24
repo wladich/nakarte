@@ -34,7 +34,7 @@ class Contextmenu {
         if (e.originalEvent) {
             e = e.originalEvent;
         }
-        if (e.preventDefault) {
+        if (e.preventDefault && !e.defaultPrevented) {
             e.preventDefault();
         } else {
             e.returnValue = false;
