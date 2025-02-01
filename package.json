@@ -78,7 +78,7 @@
     "alertify.js": "^1.0.12",
     "blueimp-md5": "^2.19.0",
     "browser-filesaver": "^1.1.1",
-    "core-js": "^3.30.1",
+    "core-js": "^3.40.0",
     "escape-html": "^1.0.3",
     "idb": "^8.0.1",
     "image-promise": "^7.0.1",
