@@ -61,7 +61,7 @@ const JnxWriter = L.Class.extend({
                     south = (south < tile.extents.south) ? south : tile.extents.south;
                 }
             }
-            const stream = new BinStream(1024, true);
+            const stream = new BinStream(true);
             // header
             stream.writeInt32(4); // version
             stream.writeInt32(0); // device id
