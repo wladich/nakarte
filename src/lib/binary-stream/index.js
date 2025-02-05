@@ -11,10 +11,10 @@ class BinStream {
 
     grow() {
         this.maxSize *= 2;
-        const old_buffer = this.dv.buffer;
+        const oldBuffer = this.dv.buffer;
         this.dv = new DataView(new ArrayBuffer(this.maxSize));
         const newAr = new Uint8Array(this.dv.buffer);
-        const oldAr = new Uint8Array(old_buffer);
+        const oldAr = new Uint8Array(oldBuffer);
         for (let i = 0; i < oldAr.length; i++) {
             newAr[i] = oldAr[i];
         }
@@ -25,7 +25,7 @@ class BinStream {
             this.grow();
         }
         const newPos = this._pos + size;
-        this.size = (newPos > this.size) ? newPos : this.size;
+        this.size = newPos > this.size ? newPos : this.size;
     }
 
     writeUint8(value) {
