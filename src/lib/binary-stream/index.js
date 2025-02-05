@@ -1,7 +1,7 @@
 import utf8 from 'utf8';
 
 class BinStream {
-    constructor(size, littlEndian) {
+    constructor(littlEndian) {
         this.maxSize = 1024;
         this.dv = new DataView(new ArrayBuffer(this.maxSize));
         this._pos = 0;
