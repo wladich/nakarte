@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {BinStream} from './binary-stream';
+import {BinStream} from '~/lib/binary-stream';
 
 function jnxCoordinates(extents) {
     function toJnx(x) {
