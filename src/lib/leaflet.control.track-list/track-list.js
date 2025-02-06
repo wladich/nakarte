@@ -24,6 +24,7 @@ import {fetch} from '~/lib/xhr-promise';
 import config from '~/config';
 import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
+import {createZipFile} from '~/lib/zip-writer';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
 import {parseNktkSequence} from './lib/parsers/nktk';
@@ -41,6 +42,23 @@ const TrackSegment = L.MeasuredLine.extend({
     }
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
+
+// name: str
+// seen: Set[str]
+// return str[]
+function makeNameUnique(name, seen) {
+    const maxTries = 10_000;
+    let uniqueName = name;
+    let i = 0;
+    while (seen.has(uniqueName)) {
+        i += 1;
+        if (i > maxTries) {
+            throw new Error(`Failed to create unique name for "${name}"`);
+        }
+        uniqueName = `${name}(${i})`;
+    }
+    return uniqueName;
+}
 
 function getLinkToShare(keysToExclude, paramsToAdd) {
     const {origin, pathname, hash} = window.location;
@@ -210,6 +228,11 @@ L.Control.TrackList = L.Control.extend({
                     text: 'Create new track from all visible tracks',
                     callback: this.createNewTrackFromVisibleTracks.bind(this)
                 },
+                    () => ({
+                        text: 'Save all tracks to ZIP file',
+                        callback: this.saveAllTracksToZipFile.bind(this),
+                        disabled: !this.tracks().length
+                    }),
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
@@ -654,7 +677,7 @@ L.Control.TrackList = L.Control.extend({
             this.copyTracksLinkToClipboard([track], mouseEvent);
         },
 
-        saveTrackAsFile: async function(track, exporter, extension, addElevations = false) {
+        exportTrackAsFile: async function(track, exporter, extension, addElevations, allowEmpty) {
             var lines = this.getTrackPolylines(track)
                 .map(function(line) {
                         return line.getFixedLatLngs();
@@ -663,7 +686,7 @@ L.Control.TrackList = L.Control.extend({
             lines = splitLinesAt180Meridian(lines);
             var points = this.getTrackPoints(track);
             let name = track.name();
-            // Browser (Chrome) removes leading dots.
+            // Browser (Chrome) removes leading dots. Also we do not want to create hidden files on Linux
             name = name.replace(/^\./u, '_');
             for (let extensions of [this.options.splitExtensionsFirstStage, this.options.splitExtensions]) {
                 let i = name.lastIndexOf('.');
@@ -671,9 +694,8 @@ L.Control.TrackList = L.Control.extend({
                     name = name.slice(0, i);
                 }
             }
-            if (lines.length === 0 && points.length === 0) {
-                notify('Track is empty, nothing to save');
-                return;
+            if (!allowEmpty && lines.length === 0 && points.length === 0) {
+                return {error: 'Track is empty, nothing to save'};
             }
 
             if (addElevations) {
@@ -706,9 +728,21 @@ L.Control.TrackList = L.Control.extend({
                 }
             }
 
-            var fileText = exporter(lines, name, points);
-            var filename = name + extension;
-            saveAs(blobFromString(fileText), filename, true);
+            return {
+                content: exporter(lines, name, points),
+                filename: name + extension,
+            };
+        },
+
+        saveTrackAsFile: async function(track, exporter, extension, addElevations = false) {
+            const {error, content, filename} = await this.exportTrackAsFile(
+                track, exporter, extension, addElevations, false
+                );
+            if (error) {
+                notify(error);
+                return;
+            }
+            saveAs(blobFromString(content), filename, true);
         },
 
         renameTrack: function(track) {
@@ -1433,6 +1467,40 @@ L.Control.TrackList = L.Control.extend({
             }
 
             this.addTrack({name: newTrackName, tracks: newTrackSegments, points: newTrackPoints});
+        },
+
+        saveAllTracksToZipFile: async function() {
+            const tracks = this.tracks();
+            const trackFilesData = [];
+            const seenNames = new Set();
+            for (const track of tracks) {
+                const {error, content, filename} = await this.exportTrackAsFile(
+                    track, geoExporters.saveGpx, '', false, true
+                );
+                if (error) {
+                    notify(error);
+                    return;
+                }
+                const safeFilename = filename.replaceAll(/[<>:"/\\|?*]/ug, '_');
+                const uniqueFilename = makeNameUnique(safeFilename, seenNames);
+                seenNames.add(uniqueFilename);
+                trackFilesData.push({content, filename: uniqueFilename + '.gpx'});
+            }
+            const zipFile = createZipFile(trackFilesData);
+            const now = new Date();
+            const dateString = [
+                String(now.getDate()).padStart(2, '0'),
+                '.',
+                String(now.getMonth()).padStart(2, '0'),
+                '.',
+                now.getFullYear(),
+                '_',
+                String(now.getHours()).padStart(2, '0'),
+                '.',
+                String(now.getMinutes()).padStart(2, '0'),
+            ].join('');
+            const zipFilename = `nakarte_tracks_${dateString}.zip`;
+            saveAs(new Blob([zipFile], {type: 'application/download'}), zipFilename, true);
         },
 
         exportTracks: function(minTicksIntervalMeters) {
