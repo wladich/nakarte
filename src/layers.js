@@ -214,7 +214,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
-                            maxNativeZoom: 9,
+                            maxNativeZoom: 10,
                             print: true,
                             jnx: true,
                             shortName: 'topo_10k'
