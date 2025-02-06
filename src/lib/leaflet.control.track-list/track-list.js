@@ -1503,44 +1503,6 @@ L.Control.TrackList = L.Control.extend({
             saveAs(new Blob([zipFile], {type: 'application/download'}), zipFilename, true);
         },
 
-        exportTracks: function(minTicksIntervalMeters) {
-            var that = this;
-            /* eslint-disable max-nested-callbacks */
-            return this.tracks()
-                .filter(function(track) {
-                        return that.getTrackPolylines(track).length;
-                    }
-                )
-                .map(function(track) {
-                        var capturedTrack = track.feature.getLayers().map(function(pl) {
-                                return pl.getLatLngs().map(function(ll) {
-                                        return [ll.lat, ll.lng];
-                                    }
-                                );
-                            }
-                        );
-                        var bounds = track.feature.getBounds();
-                        var capturedBounds = [
-                            [bounds.getSouth(), bounds.getWest()],
-                            [bounds.getNorth(), bounds.getEast()]
-                        ];
-                        return {
-                            color: track.color(),
-                            visible: track.visible(),
-                            segments: capturedTrack,
-                            bounds: capturedBounds,
-                            measureTicksShown: track.measureTicksShown(),
-                            measureTicks: [].concat(...track.feature.getLayers().map(function(pl) {
-                                    return pl.getTicksPositions(minTicksIntervalMeters);
-                                }
-                                )
-                            )
-                        };
-                    }
-                );
-            /* eslint-enable max-nested-callbacks */
-        },
-
         showElevationProfileForSegment: function(line) {
             this.hideElevationProfile();
             this.stopEditLine();
