@@ -64,11 +64,14 @@ class BinStream {
         this._pos += 4;
     }
 
-    writeString(s, zeroTerminated) {
-        s = utf8.encode(s);
+    writeBinaryString(s) {
         for (let i = 0; i < s.length; i++) {
             this.writeUint8(s.charCodeAt(i));
         }
+    }
+
+    writeString(s, zeroTerminated) {
+        this.writeBinaryString(utf8.encode(s));
         if (zeroTerminated) {
             this.writeUint8(0);
         }
