@@ -67,7 +67,7 @@ function writeCentralDirectoryFileHeader(stream, fileName, size, date, crc, loca
     stream.writeUint16(0); // File comment length
     stream.writeUint16(0); // Disk # start
     stream.writeUint16(0); // Internal attr
-    stream.writeUint32(0); // External attr
+    stream.writeUint32(0x81a4_0000); // External attr = regular file, 0644
     stream.writeUint32(localHeaderOffset); // External attr
     stream.writeBinaryString(fileName);
 }
