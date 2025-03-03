@@ -10,7 +10,7 @@ import * as logging from '~/lib/logging';
 
 const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {
-            filePasses: 'westra_passes.json',
+            filePasses: 'westra_passes2.json',
             scaleDependent: true
         },
 
@@ -21,20 +21,43 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             this.url = baseUrl + this.options.filePasses;
         },
 
-        loadData: function() {
+        loadData: async function() {
             if (this._downloadStarted) {
                 return;
             }
             this._downloadStarted = true;
-            fetch(this.url)
-                .then(
-                    (xhr) => this._loadMarkers(xhr),
-                    (e) => {
-                        this._downloadStarted = false;
-                        logging.captureException(e, 'failed to get westra passes');
-                        notify('Failed to get Westra passes data');
-                    }
-                );
+            let xhr;
+            try {
+                xhr = await fetch(this.url);
+            } catch (e) {
+                this._downloadStarted = false;
+                logging.captureException(e, 'failed to get westra passes');
+                notify('Failed to get Westra passes data');
+            }
+
+            const {passes, regions} = JSON.parse(xhr.response);
+            this.regions = regions;
+            this._createMarkers(passes);
+        },
+
+        _createMarkers: function(passes) {
+            const markers = [];
+            for (const pass of passes) {
+                const marker = {
+                    latlng: {
+                        lat: pass.latlon[0],
+                        lng: pass.latlon[1]
+                    },
+                    label: pass.name || "",
+                    icon: this._makeIcon,
+                    tooltip: this._makeTooltip.bind(this),
+                    properties: pass
+                };
+                markers.push(marker);
+            }
+            this.addMarkers(markers);
+            this._dataLoaded = true;
+            this.fire('data-loaded');
         },
 
         onAdd: function(map) {
@@ -111,36 +134,15 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             return iconFromBackgroundImage(className);
         },
 
-        _loadMarkers: function(xhr) {
-            var markers = [],
-                features = JSON.parse(xhr.response),
-                feature, i, marker;
-            for (i = 0; i < features.length; i++) {
-                feature = features[i];
-                marker = {
-                    latlng: {
-                        lat: feature.latlon[0],
-                        lng: feature.latlon[1]
-                    },
-                    label: feature.name || "",
-                    icon: this._makeIcon,
-                    tooltip: this._makeTooltip.bind(this),
-                    properties: feature
-                };
-                markers.push(marker);
-            }
-            this.addMarkers(markers);
-            this._dataLoaded = true;
-            this.fire('data-loaded');
-        },
-
         showPassDescription: function(e) {
             if (!this._map) {
                 return;
             }
             const properties = e.marker.properties,
                 latLng = e.marker.latlng,
-                url = 'https://westra.ru/passes/Passes/' + properties.id;
+                catalogueUrlBase = 'https://westra.ru/passes',
+                passUrl = `${catalogueUrlBase}/Passes/${properties.id}`,
+                regionUrlBase = `${catalogueUrlBase}/Places`;
             let altnames = '',
                 connects = '',
                 comments = '';
@@ -187,6 +189,12 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             } else {
                 reports = '<br>Отчетов нет';
             }
+            const region = properties.regions.map((regionId) => {
+                const name = escapeHtml(this.regions[regionId].name);
+                const id = escapeHtml(regionId);
+                return `<a href="${regionUrlBase}/${id}">${name}</a>`;
+            }).join(' / ');
+
             let description = `
                 <table class="pass-details">
                     <tr>
@@ -226,16 +234,21 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     </tr>
                     <tr>
                         <td>На сайте Вестры</td>
-                        <td><a id="westra-pass-link" href="${url}">${url}</a>${reports}</td></tr>
+                        <td><a id="westra-pass-link" href="${passUrl}">${passUrl}</a>${reports}</td></tr>
                     <tr>
                         <td>Добавил</td>
                         <td>${properties.author ? escapeHtml(properties.author) : "неизвестно"}</td>
                     </tr>
                     ${comments}
+                    <tr>
+                        <td>Район</td>
+                        <td>${region}</td>
+                    </tr>
+
                 </table>`;
             this._map.openPopup(description, latLng, {maxWidth: 500});
             document.getElementById('westra-pass-link').onclick = function() {
-                openPopupWindow(url, 780, 'westra-details');
+                openPopupWindow(passUrl, 780, 'westra-details');
                 return false;
             };
             document.getElementById('westra-pass-gpx').onclick = function() {
