@@ -678,10 +678,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new RetinaTileLayer(
                         [
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256'
+                                'https://content-a.strava.com/identified/globalheat/all/hot/{z}/{x}/{y}.png?px=256'
                             ),
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=512'
+                                'https://content-a.strava.com/identified/globalheat/all/hot/{z}/{x}/{y}.png?px=512'
                             ),
                         ],
                         {
@@ -706,10 +706,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new RetinaTileLayer(
                         [
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256'
+                                'https://content-a.strava.com/identified/globalheat/run/hot/{z}/{x}/{y}.png?px=256'
                             ),
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=512'
+                                'https://content-a.strava.com/identified/globalheat/run/hot/{z}/{x}/{y}.png?px=512'
                             ),
                         ],
                         {
@@ -734,10 +734,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new RetinaTileLayer(
                         [
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256'
+                                'https://content-a.strava.com/identified/globalheat/ride/hot/{z}/{x}/{y}.png?px=256'
                             ),
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=512'
+                                'https://content-a.strava.com/identified/globalheat/ride/hot/{z}/{x}/{y}.png?px=512'
                             ),
                         ],
                         {
@@ -762,10 +762,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new RetinaTileLayer(
                         [
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256'
+                                'https://content-a.strava.com/identified/globalheat/winter/hot/{z}/{x}/{y}.png?px=256'
                             ),
                             urlViaCorsProxy(
-                                'https://heatmap-external-a.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=512'
+                                'https://content-a.strava.com/identified/globalheat/winter/hot/{z}/{x}/{y}.png?px=512'
                             ),
                         ],
                         {
