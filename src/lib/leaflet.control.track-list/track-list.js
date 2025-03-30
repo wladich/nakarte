@@ -28,6 +28,7 @@ import {createZipFile} from '~/lib/zip-writer';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
 import {parseNktkSequence} from './lib/parsers/nktk';
+import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -818,6 +819,11 @@ L.Control.TrackList = L.Control.extend({
             this.map.on('click', this.movePoint, this);
         },
 
+        copyPointCoordinatesToClipboard: function(marker, e) {
+            const {lat, lng} = coordFormats.formatLatLng(marker.latlng.wrap(), coordFormats.SIGNED_DEGREES);
+            copyToClipboard(`${lat} ${lng}`, e.originalEvent);
+        },
+
         beginPointCreate: function(track) {
             this._beginPointEdit();
             this.map.on('click', this.createNewPoint, this);
@@ -1357,6 +1363,7 @@ L.Control.TrackList = L.Control.extend({
                     '-',
                     {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
                     {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
+                    {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
                 ]
             ).show(e);
