@@ -258,7 +258,7 @@
     height: 18px;
 }
 
-.leaflet-control-tracklist .leaflet-control-button-toggle {
+.icon-tracks {
     background-image: url("images/route.svg");
  }
 
