@@ -1,6 +1,7 @@
 import L from 'leaflet';
 
 import {fetch} from '~/lib/xhr-promise';
+
 import './style.css';
 
 class DataTileStatus {
@@ -39,25 +40,31 @@ const ElevationLayer = L.TileLayer.extend({
             },
             null
         );
+        this.displayElevation = true;
+    },
+
+    enableElevationDisplay: function (enable) {
+        this.displayElevation = enable;
+        if (!this._map) {
+            return;
+        }
+        if (enable) {
+            this.setupEvents(true);
+        } else {
+            this._map.removeLayer(this.label);
+            this.setupEvents(false);
+        }
     },
 
     onAdd: function (map) {
         L.TileLayer.prototype.onAdd.call(this, map);
-        this.setupElements(true);
-        this.setupEvents(true);
+        this.enableElevationDisplay(this.displayElevation);
     },
 
     onRemove: function (map) {
         this.setupEvents(false);
-        this.setupElements(false);
         map.removeLayer(this.label);
         L.TileLayer.prototype.onRemove.call(this, map);
-    },
-
-    setupElements: function (enable) {
-        const classFunc = enable ? 'addClass' : 'removeClass';
-        L.DomUtil[classFunc](this._container, 'highlight');
-        L.DomUtil[classFunc](this._map._container, 'elevation-display-control-active');
     },
 
     setupEvents: function (on) {
