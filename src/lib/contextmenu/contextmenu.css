@@ -14,7 +14,7 @@
     color: hsl(0, 0%, 15%);
     font-size: 12px;
     line-height: 16px;
-    height: 16px;
+    min-height: 16px;
     text-decoration: none;
     padding: 0 12px;
     border-top: 1px solid transparent;
