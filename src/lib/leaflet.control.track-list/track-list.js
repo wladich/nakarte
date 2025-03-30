@@ -163,7 +163,8 @@ L.Control.TrackList = L.Control.extend({
 
             /* eslint-disable max-len */
             container.innerHTML = `
-                <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"
+                <div class="leaflet-control-button-toggle"
+                 data-bind="click: setExpanded, class: readingFiles() ? 'icon-spinner-nuclear' : 'icon-tracks'"
                  title="Load, edit and save tracks"></div>
                 <div class="leaflet-control-content">
                 <div class="header">
