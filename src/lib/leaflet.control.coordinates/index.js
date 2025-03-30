@@ -33,6 +33,7 @@ L.Control.Coordinates = L.Control.extend({
             L.Control.prototype.initialize.call(this, options);
 
             this.elevationDisplayLayer = new ElevationLayer(elevationTilesUrl);
+            this.displayElevation = ko.observable(true);
 
             this.latlng = ko.observable();
             this.format = ko.observable(DEFAULT_FORMAT);
@@ -57,7 +58,8 @@ L.Control.Coordinates = L.Control.extend({
 
             this.wrapperClass = ko.pureComputed(() => this.format().wrapperClass, this);
 
-            this.formatCode.subscribe(this.saveStateToStorage, this);
+            this.formatCode.subscribe(this.saveFormatStateToStorage, this);
+            this.displayElevation.subscribe(this.onDisplayElevationChange, this);
         },
 
         onAdd: function(map) {
@@ -87,6 +89,13 @@ L.Control.Coordinates = L.Control.extend({
                             </label>
                         </div>
                     </div>
+                    <hr class="leaflet-coordinates-divider" />
+                    <label title="">
+                        <input type="checkbox"
+                            data-bind="checked: displayElevation"
+                            class="leaflet-coordinates-elevation-toggle"/>
+                        Display elevation
+                    </label>
                 </div>
             `;
 
@@ -106,14 +115,23 @@ L.Control.Coordinates = L.Control.extend({
         loadStateFromStorage: function() {
             const active = safeLocalStorage.leafletCoordinatesActive === '1';
             const code = safeLocalStorage.leafletCoordinatesFmt || DEFAULT_FORMAT.code;
+            const elevationDisplayed = (safeLocalStorage.leafletCoordinatesDisplayElevation ?? '1') === '1';
 
             this.formatCode(code);
+            this.displayElevation(elevationDisplayed);
             this.setEnabled(active);
         },
 
-        saveStateToStorage: function() {
+        saveEnabledStateToStorage: function() {
             safeLocalStorage.leafletCoordinatesActive = this.isEnabled() ? '1' : '0';
+        },
+
+        saveFormatStateToStorage: function() {
             safeLocalStorage.leafletCoordinatesFmt = this.formatCode();
+        },
+
+        saveElevationDisplayStateToStorage: function() {
+            safeLocalStorage.leafletCoordinatesDisplayElevation = this.displayElevation() ? '1' : '0';
         },
 
         onMouseMove: function(e) {
@@ -192,7 +210,12 @@ L.Control.Coordinates = L.Control.extend({
 
         onClick: function() {
             this.setEnabled(!this.isEnabled());
-            this.saveStateToStorage();
-        }
+            this.saveEnabledStateToStorage();
+        },
+
+        onDisplayElevationChange: function(on) {
+            this.saveElevationDisplayStateToStorage();
+            this.elevationDisplayLayer.enableElevationDisplay(on);
+        },
     }
 );

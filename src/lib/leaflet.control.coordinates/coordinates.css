@@ -40,7 +40,9 @@
     float: right;
 }
 
-.leaflet-coordinates-format-radio {
+.leaflet-coordinates-format-radio,
+.leaflet-coordinates-elevation-toggle
+{
     margin-top: -1px;
     vertical-align: middle;
 }
@@ -48,6 +50,6 @@
 .leaflet-coordinates-divider {
     border: none;
     border-top: 1px solid hsl(0, 0%, 92%);
-    margin-top: 0px;
+    margin-top: 3px;
     margin-bottom: 3px;
 }
