@@ -164,7 +164,7 @@ const GoogleMapsUrl = {
 
 const MapyCzUrl = {
     isOurUrl: function (url) {
-        return Boolean(url.hostname.match(/\bmapy\.cz$/u));
+        return Boolean(url.hostname.match(/\bmapy\.(cz|com)$/u));
     },
 
     getResults: async function (url) {
@@ -172,6 +172,8 @@ const MapyCzUrl = {
         let actualUrl;
         try {
             if (url.pathname.match(/^\/s\//u)) {
+                // Remove lang subdomain as Seznam broke support for such links when transitioned to mapy.com
+                url.host = url.host.replace(/^[a-z]{2}\./u, '');
                 isShort = true;
                 const xhr = await fetch(urlViaCorsProxy(url.toString()), {method: 'HEAD'});
                 actualUrl = new URL(xhr.responseURL);
@@ -181,11 +183,11 @@ const MapyCzUrl = {
             const lon = parseFloat(actualUrl.searchParams.get('x'));
             const lat = parseFloat(actualUrl.searchParams.get('y'));
             const zoom = Math.round(parseFloat(actualUrl.searchParams.get('z')));
-            return makeSearchResults(lat, lon, zoom, 'Mapy.cz view');
+            return makeSearchResults(lat, lon, zoom, 'Mapy.com view');
         } catch (_) {
             return {
                 error: L.Util.template(isShort ? MESSAGE_SHORT_LINK_MALFORMED : MESSAGE_LINK_MALFORMED, {
-                    name: 'Mapy.cz',
+                    name: 'Mapy.com',
                 }),
             };
         }
