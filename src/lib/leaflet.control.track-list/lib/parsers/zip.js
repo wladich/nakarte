@@ -25,7 +25,11 @@ function parseZip(txt, _unused_name) {
         if (entry.compressionMethod === 0) {
             uncompressed = entry.data;
         } else if (entry.compressionMethod === 8) {
-            uncompressed = jsInflate(entry.data, entry.uncompressedSize);
+            try {
+                uncompressed = jsInflate(entry.data, entry.uncompressedSize);
+            } catch {
+                return null;
+            }
         } else {
             return null;
         }
