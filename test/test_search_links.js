@@ -38,7 +38,11 @@ suite('LinksProvider - parsing valid links');
     ],
     [
         'https://en.mapy.cz/turisticka?x=16.5651083&y=49.2222502&z=14',
-        [{title: 'Mapy.cz view', latlng: {lat: 49.2222502, lng: 16.5651083}, zoom: 14}],
+        [{title: 'Mapy.com view', latlng: {lat: 49.2222502, lng: 16.5651083}, zoom: 14}],
+    ],
+    [
+        'https://mapy.com/en/turisticka?x=16.5651083&y=49.2222502&z=14',
+        [{title: 'Mapy.com view', latlng: {lat: 49.2222502, lng: 16.5651083}, zoom: 14}],
     ],
     [
         'https://www.openstreetmap.org/search?query=%D0%BD%D0%B5%D1%80%D1%81%D0%BA%D0%BE%D0%B5%20%D0%BE%D0%B7%D0%B5%D1%80%D0%BE#map=17/55.56647/38.87365', // eslint-disable-line max-len
@@ -120,18 +124,14 @@ suite('LinksProvider - parsing valid links');
         'https://example.com/#l=O&m=11/49.44893/16.59897',
         [{title: 'Nakarte view', latlng: {lat: 49.44893, lng: 16.59897}, zoom: 11}],
     ],
+    ['https://mapy.cz/s/favepemeko', [{title: 'Mapy.com view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}]],
     [
         'https://en.mapy.cz/s/favepemeko',
-        [{title: 'Mapy.cz view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}],
+        [{title: 'Mapy.com view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}],
     ],
-    [
-        'https://en.mapy.cz/s/lucacunomo',
-        [{title: 'Mapy.cz view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}],
-    ],
-    [
-        'https://en.mapy.cz/s/mepevemazo',
-        [{title: 'Mapy.cz view', latlng: {lat: 50.1592323, lng: 16.8245081}, zoom: 12}],
-    ],
+    ['https://mapy.com/s/favepemeko', [{title: 'Mapy.com view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}]],
+    ['https://mapy.cz/s/lucacunomo', [{title: 'Mapy.com view', latlng: {lat: 49.4113109, lng: 16.8975623}, zoom: 11}]],
+    ['https://mapy.cz/s/mepevemazo', [{title: 'Mapy.com view', latlng: {lat: 50.1592323, lng: 16.8245081}, zoom: 12}]],
     [
         'https://goo.gl/maps/cJ8wwQi9oMYM9yiy6',
         [{title: 'Google map view', latlng: {lat: 49.0030846, lng: 15.2993434}, zoom: 14}],
@@ -181,7 +181,8 @@ suite('LinksProvider - parse invalid links');
         'https://static-maps.yandex.ru/1.x/?lang=ru_RU&size=520%2C440&l=sat%2Cskl&ll=16.548629%2C49.219896',
         'Invalid coordinates in Yandex link',
     ],
-    ['https://en.mapy.cz/turisticka?x=16.5651083&y=49.2222502&z=', 'Invalid coordinates in Mapy.cz link'],
+    ['https://en.mapy.cz/turisticka?x=16.5651083&y=49.2222502&z=', 'Invalid coordinates in Mapy.com link'],
+    ['https://mapy.com/en/turisticka?x=16.5651083&y=49.2222502&z=', 'Invalid coordinates in Mapy.com link'],
     ['https://www.google.com/maps', 'Invalid coordinates in Google link'],
     ['https://www.google.com/maps/@99.1906435,16.5429962,14z', 'Invalid coordinates in Google link'],
     ['https://www.google.com/maps/@49.1906435,190.5429962,14z', 'Invalid coordinates in Google link'],
@@ -199,7 +200,8 @@ suite('LinksProvider - parse invalid links');
     ['https://nakarte.me/#l=O', 'Invalid coordinates in Nakarte link'],
     ['https://example.com/#l=O&m=11/49.44893/', 'Unsupported link'],
     ['https://example.com/#l=O&m=99/49.44893/52.5547', 'Unsupported link'],
-    ['https://en.mapy.cz/s/lucacunom', 'Broken Mapy.cz short link'],
+    ['https://mapy.cz/s/lucacunom', 'Broken Mapy.com short link'],
+    ['https://mapy.com/s/lucacunom', 'Broken Mapy.com short link'],
     ['https://goo.gl/maps/ZvjVBY78HUP8HjQi', 'Broken Google short link'],
 ].forEach(function ([query, expectedError]) {
     test(`Invalid link ${query}`, async function () {
