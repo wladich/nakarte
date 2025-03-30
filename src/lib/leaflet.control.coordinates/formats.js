@@ -85,10 +85,36 @@ const DEGREES_AND_MINUTES_AND_SECONDS = {
     formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`
 };
 
+function getFormats() {
+    return [
+        SIGNED_DEGREES,
+        DEGREES,
+        DEGREES_AND_MINUTES,
+        DEGREES_AND_MINUTES_AND_SECONDS,
+    ];
+}
+
+function getDefaultFormat() {
+    return SIGNED_DEGREES;
+}
+
+function getFormatFromCode(code) {
+   const format = getFormats().find((format) => format.code === code);
+
+   if (!format) {
+       throw new Error(`Unknown format code: ${code}`);
+   }
+
+    return format;
+}
+
 export {
     SIGNED_DEGREES,
     DEGREES,
     DEGREES_AND_MINUTES,
     DEGREES_AND_MINUTES_AND_SECONDS,
-    formatLatLng
+    formatLatLng,
+    getFormats,
+    getDefaultFormat,
+    getFormatFromCode,
 };

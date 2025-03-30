@@ -9,7 +9,7 @@ import '~/lib/controls-styles/controls-styles.css';
 import {ElevationLayer} from '~/lib/leaflet.layer.elevation-display';
 import * as formats from './formats';
 
-const DEFAULT_FORMAT = formats.DEGREES;
+const DEFAULT_FORMAT = formats.getDefaultFormat();
 const UNKNOWN_COORDINATES = {
     lat: '-------',
     lng: '-------'
@@ -22,12 +22,7 @@ L.Control.Coordinates = L.Control.extend({
 
         includes: L.Mixin.Events,
 
-        formats: [
-            formats.SIGNED_DEGREES,
-            formats.DEGREES,
-            formats.DEGREES_AND_MINUTES,
-            formats.DEGREES_AND_MINUTES_AND_SECONDS
-        ],
+        formats: formats.getFormats(),
 
         initialize: function(elevationTilesUrl, options) {
             L.Control.prototype.initialize.call(this, options);
