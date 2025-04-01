@@ -34,6 +34,11 @@ L.Control.Coordinates = L.Control.extend({
 
             this.elevationDisplayLayer = new ElevationLayer(elevationTilesUrl);
 
+            this.displayElevation = ko.observable(safeLocalStorage.leafletCoordinatesDisplayElevation !== '0');
+            this.displayElevation.subscribe(function(on) {
+                safeLocalStorage.leafletCoordinatesDisplayElevation = on ? '1' : '0';
+            }, this);
+
             this.latlng = ko.observable();
             this.format = ko.observable(DEFAULT_FORMAT);
             this.formatCode = ko.pureComputed({
@@ -87,6 +92,13 @@ L.Control.Coordinates = L.Control.extend({
                             </label>
                         </div>
                     </div>
+                    <hr class="leaflet-coordinates-divider" />
+                    <label title="">
+                        <input type="checkbox"
+                            data-bind="checked: displayElevation"
+                            class="leaflet-coordinates-format-toggle"/>
+                        Display elevation data
+                    </label>
                 </div>
             `;
 
@@ -95,6 +107,10 @@ L.Control.Coordinates = L.Control.extend({
             this.loadStateFromStorage();
             ko.applyBindings(this, container);
             L.DomEvent.on(link, 'click', this.onClick, this);
+
+            this.displayElevation.subscribe(function(on) {
+                this._map[on ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
+            }, this);
 
             return container;
         },
@@ -109,6 +125,7 @@ L.Control.Coordinates = L.Control.extend({
 
             this.formatCode(code);
             this.setEnabled(active);
+            this.displayElevation(safeLocalStorage.leafletCoordinatesDisplayElevation !== '0');
         },
 
         saveStateToStorage: function() {
@@ -131,7 +148,7 @@ L.Control.Coordinates = L.Control.extend({
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
-            this._map[enabled ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
+            this._map[enabled && this.displayElevation() ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
             this._isEnabled = Boolean(enabled);
             this.latlng(null);
         },
