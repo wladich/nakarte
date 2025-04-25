@@ -30,7 +30,7 @@ jobs:
         include:
           - browser: FirefoxHeadless
             firefox-version: '52.9.0esr'
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             needs-xvfb: true
           - browser: FirefoxHeadless
             firefox-version: 'latest'
