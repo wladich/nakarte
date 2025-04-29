@@ -109,7 +109,7 @@ L.Control.Coordinates = L.Control.extend({
             L.DomEvent.on(link, 'click', this.onClick, this);
 
             this.displayElevation.subscribe(function(on) {
-                this._map[on ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
+                this.elevationDisplayLayer.toggleElevationAtCursor(on);
             }, this);
 
             return container;
@@ -125,7 +125,6 @@ L.Control.Coordinates = L.Control.extend({
 
             this.formatCode(code);
             this.setEnabled(active);
-            this.displayElevation(safeLocalStorage.leafletCoordinatesDisplayElevation !== '0');
         },
 
         saveStateToStorage: function() {
@@ -148,7 +147,7 @@ L.Control.Coordinates = L.Control.extend({
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
-            this._map[enabled && this.displayElevation() ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
+            this._map[enabled ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
             this._isEnabled = Boolean(enabled);
             this.latlng(null);
         },
