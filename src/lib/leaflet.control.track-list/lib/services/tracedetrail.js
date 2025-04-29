@@ -12,18 +12,22 @@ class Tracedetrail extends BaseService {
     requestOptions() {
         return [{
             url: urlViaCorsProxy(this.origUrl),
+            options: {
+                isResponseSuccess: (xhr) => [200, 500].includes(xhr.status),
+            },
         }];
     }
 
     parseResponse(responses) {
         const trackId = this.urlRe.exec(this.origUrl)[1];
         let name = `Tracedetrail track ${trackId}`;
-        const documentText = responses[0].responseText;
+        const response = responses[0];
+        const documentText = response.responseText;
         try {
             const geometryMatch = /geometry\s*:\s*"(.+)",\n/u.exec(documentText);
             if (!geometryMatch) {
                 let error = 'UNSUPPORTED';
-                if (documentText.includes("track doesn't exist")) {
+                if (documentText.includes("track doesn't exist") || response.status === 500) {
                     error = '{name} was deleted or did not exist';
                 } else if (documentText.includes('Private track')) {
                     error = '{name} is private';
