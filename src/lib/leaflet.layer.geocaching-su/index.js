@@ -68,7 +68,7 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
     },
 
     openCachePage: function(e) {
-        const url = `https://geocaching.su/?pn=101&cid=${e.marker.cacheId}`;
+        const url = `https://geocaching.su/cache/${e.marker.cacheId}`;
         openPopupWindow(url, 900, 'geocaching_su');
     }
 });
