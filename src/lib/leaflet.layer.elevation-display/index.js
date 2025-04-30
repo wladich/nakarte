@@ -1,7 +1,9 @@
 import L from 'leaflet';
 
 import {fetch} from '~/lib/xhr-promise';
+
 import './style.css';
+import safeLocalstorage from '../safe-localstorage';
 
 class DataTileStatus {
     static STATUS_LOADING = 'LOADING';
@@ -41,10 +43,16 @@ const ElevationLayer = L.TileLayer.extend({
         );
     },
 
+    toggleElevationAtCursor: function (hide) {
+        const classFunc = hide ? 'removeClass' : 'addClass';
+        L.DomUtil[classFunc](this._map._container, 'coordinates-control-label-hidden');
+    },
+
     onAdd: function (map) {
         L.TileLayer.prototype.onAdd.call(this, map);
         this.setupElements(true);
         this.setupEvents(true);
+        this.toggleElevationAtCursor(safeLocalstorage.leafletCoordinatesDisplayElevation !== '0');
     },
 
     onRemove: function (map) {
