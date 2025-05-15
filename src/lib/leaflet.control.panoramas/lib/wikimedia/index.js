@@ -86,7 +86,7 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
             // original images can be rotated, 90 degrees
             // thumbnails are always oriented right
             // so we request thumbnail of original image size
-            let url = iinfo.thumburl.replace('134px', `${iinfo.width}px`);
+            let url = iinfo.thumburl.replace(/\/(134|250)px-/u, `/${iinfo.width}px-`);
             images.push({
                 url,
                 width: iinfo.width,
