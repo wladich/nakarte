@@ -16,3 +16,7 @@
 .elevation-display-label:before {
     border: none;
 }
+
+.coordinates-control-label-hidden .elevation-display-label {
+    display: none;
+}
