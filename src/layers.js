@@ -12,6 +12,7 @@ import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
 import {getCutline} from '~/lib/layers-cutlines';
 import {LayerCutlineOverview} from '~/lib/leaflet.layer.LayerCutlineOverview';
+import {WestraRegions} from '~/lib/leaflet.layer.westra-regions';
 
 class LayerGroupWithOptions extends L.LayerGroup {
     constructor(layers, options) {
@@ -420,6 +421,17 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     layer: new L.Layer.SovietTopoGrid({
                         code: 'Ng',
                         isOverlay: true,
+                        print: false,
+                        jnx: false
+                    })
+                },
+                {
+                    title: 'Mountain tourist regions',
+                    isDefault: true,
+                    layer: new WestraRegions('/nakarte_regions.json', {
+                        code: 'Wr',
+                        isOverlay: true,
+                        isOverlayTransparent: true,
                         print: false,
                         jnx: false
                     })
@@ -1150,6 +1162,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Races',
                 'O-sport',
                 'Soviet topo maps grid',
+                'Mountain tourist regions',
                 'Wikimapia',
                 'Mountain passes (Westra)'
             ],
@@ -1267,6 +1280,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Slazav Moscow region map',
         'Races',
         'O-sport',
+        'Mountain tourist regions',
         '#custom-top',
 
         // line overlays

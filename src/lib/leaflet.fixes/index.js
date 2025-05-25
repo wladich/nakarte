@@ -113,7 +113,7 @@ function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
     fixMapKeypressEvent();
-    fixVectorDrawWhileAnimation();
+    // fixVectorDrawWhileAnimation();
     fixVectorMarkerWorldJump();
     allowControlHorizontalStacking();
     addTooltipDelay();

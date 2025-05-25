@@ -1,0 +1,19 @@
+.westra-regions-label {
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    /*opacity: 1 !important;*/
+    opacity: 0.8 !important;
+    font-weight: bold;
+    /*font-family: sans-serif;*/
+
+    text-shadow: 1px 0 0 #eee,
+        1px 1px 0 #eee,
+        0 1px 0 #eee,
+        -1px 1px 0 #eee,
+        -1px 0 0 #eee,
+        -1px -1px 0 #eee,
+        0 -1px 0 #eee,
+        1px -1px 0 #eee;
+}
