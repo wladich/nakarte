@@ -7,7 +7,7 @@ import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
-import {OSMPasses} from 'lib/leaflet.layer.osmpasses';
+import {OSMPasses} from '~/lib/leaflet.layer.osmpasses';
 import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
 import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
@@ -1199,8 +1199,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
             layers: [
                 'Mountains by Alexander Purikov',
                 'Google Hybrid',
-                'geocaching.su'
-                'OSM passes',
+                'geocaching.su',
+                'OSM passes'
             ]
         },
         {
