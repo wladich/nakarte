@@ -1,0 +1,4 @@
+{
+  "query": ["https://connect.garmin.com/modern/activity/53469008380"],
+  "geodata": [{"error":"Garmin Connect activity does not exist"}]
+}

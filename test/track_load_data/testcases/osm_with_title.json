@@ -1,0 +1,30 @@
+{
+    "query": [
+        "https://www.openstreetmap.org/user/Wladich/traces/3376100",
+        "http://www.openstreetmap.org/user/Wladich/traces/3376100",
+        "https://openstreetmap.org/user/Wladich/traces/3376100",
+        "https://www.openstreetmap.org/user/Wladich/traces/3376100?a=1"
+    ],
+    "geodata": [
+        {
+            "name": "Test - Тест - Zkouška",
+            "tracks": [
+                [
+                    {"lat": 56.5269457083, "lng": 28.9624827169},
+                    {"lat": 56.5269602928, "lng": 28.9624775201},
+                    {"lat": 56.5270105843, "lng": 28.9624504466}
+                ],
+                [
+                    {"lat": 56.5270208102, "lng": 28.9624960441},
+                    {"lat": 56.5270130988, "lng": 28.9625022467},
+                    {"lat": 56.5270016156, "lng": 28.9624936972},
+                    {"lat": 56.5270193852, "lng": 28.9625258837}
+                ]
+            ],
+            "points": [
+                {"lat": 56.5263, "lng": 28.96245, "name": "Point 1", "symbol_name": "Bar"},
+                {"lat": 56.5264, "lng": 28.96246, "name": "Точка 2", "symbol_name": "Bar"}
+            ]
+        }
+    ]
+}

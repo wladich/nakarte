@@ -1,16 +1,16 @@
 import L from 'leaflet';
-import 'lib/leaflet.layer.canvasMarkers'
-import {openPopupWindow} from 'lib/popup-window';
+import '~/lib/leaflet.layer.canvasMarkers';
+import {openPopupWindow} from '~/lib/popup-window';
 import escapeHtml from 'escape-html';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
-import {fetch} from 'lib/xhr-promise';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
+import {fetch} from '~/lib/xhr-promise';
+import {notify} from '~/lib/notifications';
+import * as logging from '~/lib/logging';
 
 const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
         options: {
-            filePasses: 'westra_passes.json',
+            filePasses: 'westra_passes2.json',
             scaleDependent: true
         },
 
@@ -21,27 +21,43 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             this.url = baseUrl + this.options.filePasses;
         },
 
-        loadData: function() {
+        loadData: async function() {
             if (this._downloadStarted) {
                 return;
             }
             this._downloadStarted = true;
-            fetch(this.url)
-                .then(
-                    (xhr) => this._loadMarkers(xhr),
-                    (e) => {
-                        this._downloadStarted = false;
-                        logging.captureException(e, {
-                                extra: {
-                                    description: 'failed to get westra passes',
-                                    url: this.url,
-                                    status: e.xhr.status
-                                }
-                            }
-                        );
-                        notify('Failed to get Westra passes data');
-                    }
-                );
+            let xhr;
+            try {
+                xhr = await fetch(this.url);
+            } catch (e) {
+                this._downloadStarted = false;
+                logging.captureException(e, 'failed to get westra passes');
+                notify('Failed to get Westra passes data');
+            }
+
+            const {passes, regions} = JSON.parse(xhr.response);
+            this.regions = regions;
+            this._createMarkers(passes);
+        },
+
+        _createMarkers: function(passes) {
+            const markers = [];
+            for (const pass of passes) {
+                const marker = {
+                    latlng: {
+                        lat: pass.latlon[0],
+                        lng: pass.latlon[1]
+                    },
+                    label: pass.name || "",
+                    icon: this._makeIcon,
+                    tooltip: this._makeTooltip.bind(this),
+                    properties: pass
+                };
+                markers.push(marker);
+            }
+            this.addMarkers(markers);
+            this._dataLoaded = true;
+            this.fire('data-loaded');
         },
 
         onAdd: function(map) {
@@ -53,7 +69,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             var properties = marker.properties,
                 toolTip = properties.grade || '';
             if (toolTip && properties.elevation) {
-                toolTip += ', '
+                toolTip += ', ';
             }
             toolTip += properties.elevation || '';
             if (toolTip) {
@@ -71,7 +87,11 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             }
             label = escapeHtml(label);
             const gpx = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-                <gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://nakarte.me" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1">
+                <gpx xmlns="http://www.topografix.com/GPX/1/1"
+                     creator="http://nakarte.me"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+                     version="1.1">
                     <wpt lat="${marker.latlng.lat.toFixed(6)}" lon="${marker.latlng.lng.toFixed(6)}">
                         <name>${label}</name>
                     </wpt>
@@ -114,43 +134,23 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
             return iconFromBackgroundImage(className);
         },
 
-        _loadMarkers: function(xhr) {
-            var markers = [],
-                features = JSON.parse(xhr.response),
-                feature, i, marker;
-            for (i = 0; i < features.length; i++) {
-                feature = features[i];
-                marker = {
-                    latlng: {
-                        lat: feature.latlon[0],
-                        lng: feature.latlon[1]
-                    },
-                    label: feature.name || "",
-                    icon: this._makeIcon,
-                    tooltip: this._makeTooltip.bind(this),
-                    properties: feature
-                };
-                markers.push(marker);
-            }
-            this.addMarkers(markers);
-            this._dataLoaded = true;
-            this.fire('data-loaded');
-        },
-
-
         showPassDescription: function(e) {
             if (!this._map) {
                 return;
             }
             const properties = e.marker.properties,
                 latLng = e.marker.latlng,
-                url = 'https://westra.ru/passes/Passes/' + properties.id;
-            let altnames = '', connects = '', comments = '';
+                catalogueUrlBase = 'https://westra.ru/passes',
+                passUrl = `${catalogueUrlBase}/Passes/${properties.id}`,
+                regionUrlBase = `${catalogueUrlBase}/Places`;
+            let altnames = '',
+                connects = '',
+                comments = '';
             if (properties.altnames) {
                 altnames = `
                     <tr>
                         <td>Другие названия</td>
-                        <td>${properties.altnames}</td>
+                        <td>${escapeHtml(properties.altnames)}</td>
                     </tr>`;
             }
 
@@ -158,51 +158,68 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 connects = `
                     <tr>
                         <td>Соединяет</td>
-                        <td>${properties.connects || "неизвестнo"}</td>
+                        <td>${properties.connects ? escapeHtml(properties.connects) : "неизвестнo"}</td>
                     </tr>`;
             }
 
             if (properties.comments) {
-
                 for (let comment of properties.comments) {
                     let user = '';
                     if (comment.user) {
-                        user = `<span class="westra-passes-description-comment-author">${comment.user}:</span>`
+                        user = (
+                            `<span class="westra-passes-description-comment-author">${escapeHtml(comment.user)}:</span>`
+                        );
                     }
-                    comments += `<p class="westra-passes-description-comment">${user}${comment.content}</p>`;
+                    comments += (
+                        `<p class="westra-passes-description-comment">${user}${escapeHtml(comment.content)}</p>`
+                    );
                 }
                 comments = `
                     <tr>
                         <td>Комментарии</td>
                         <td>${comments}</td>
-                    </tr>`
+                    </tr>`;
             }
+            let reports;
+            if (properties.reports_total) {
+                reports =
+                    `<br>Отчетов: ${properties.reports_total}, ` +
+                    `с фото: ${properties.reports_photo || 0}, ` +
+                    `с описанием: ${properties.reports_tech || 0}`;
+            } else {
+                reports = '<br>Отчетов нет';
+            }
+            const region = properties.regions.map((regionId) => {
+                const name = escapeHtml(this.regions[regionId].name);
+                const id = escapeHtml(regionId);
+                return `<a href="${regionUrlBase}/${id}">${name}</a>`;
+            }).join(' / ');
 
             let description = `
                 <table class="pass-details">
                     <tr>
                         <td>${properties.is_summit ? 'Вершина ' : 'Перевал '}</td>
-                        <td>${properties.name || 'название неизвестно'}</td>
+                        <td>${properties.name ? escapeHtml(properties.name) : 'название неизвестно'}</td>
                     </tr>
                     ${altnames}
                     <tr>
                         <td>Категория</td>
-                        <td>${properties.grade || "неизвестная"}</td>
+                        <td>${properties.grade ? escapeHtml(properties.grade) : "неизвестная"}</td>
                     </tr>
                     <tr>
                         <td>Высота</td>
-                        <td>${properties.elevation ? (properties.elevation + ' м') : 'неизвестная'}</td>
+                        <td>${properties.elevation ? (escapeHtml(properties.elevation) + ' м') : 'неизвестная'}</td>
                     </tr>
                     ${connects}
                     <tr>
                         <td>Характеристика склонов</td>
-                        <td>${properties.slopes || "неизвестная"}</td>
+                        <td>${properties.slopes ? escapeHtml(properties.slopes) : "неизвестная"}</td>
                     </tr>
                     <tr>
                         <td>Координаты</td>
                         <td>
-                            <table class="westra-passes-description-coords">
-                                <tr>
+                            <table class="coords">
+                                <tr class="header">
                                     <td>Широта</td>
                                     <td>Долгота</td>
                                 </tr>
@@ -217,16 +234,21 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     </tr>
                     <tr>
                         <td>На сайте Вестры</td>
-                        <td><a id="westra-pass-link" href="${url}">${url}</a></td></tr>
+                        <td><a id="westra-pass-link" href="${passUrl}">${passUrl}</a>${reports}</td></tr>
                     <tr>
                         <td>Добавил</td>
-                        <td>${properties.author || "неизвестно"}</td>
+                        <td>${properties.author ? escapeHtml(properties.author) : "неизвестно"}</td>
                     </tr>
                     ${comments}
+                    <tr>
+                        <td>Район</td>
+                        <td>${region}</td>
+                    </tr>
+
                 </table>`;
             this._map.openPopup(description, latLng, {maxWidth: 500});
             document.getElementById('westra-pass-link').onclick = function() {
-                openPopupWindow(url, 780, 'westra-details');
+                openPopupWindow(passUrl, 780, 'westra-details');
                 return false;
             };
             document.getElementById('westra-pass-gpx').onclick = function() {

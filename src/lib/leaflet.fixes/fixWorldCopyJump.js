@@ -6,14 +6,14 @@ function shiftLongitudeToTarget(lng, targetLng) {
             return 0;
         }
         targetLng = targetLng.getCenter().lng;
-    } else if (targetLng instanceof L.LatLng) {
-        targetLng = targetLng.lng;
+    } else {
+        targetLng = targetLng.lng ?? targetLng;
     }
     let shift = 0;
     if (Math.abs(lng + 360 - targetLng) < Math.abs(lng - targetLng)) {
         shift = 360;
     } else if (Math.abs(lng - 360 - targetLng) < Math.abs(lng - targetLng)) {
-        shift= - 360;
+        shift = -360;
     }
     return shift;
 }
@@ -40,7 +40,7 @@ function fixVectorMarkerWorldJump() {
             const mapCenter = this._map.getCenter();
 
             if (polylineCenter.lng < mapCenter.lng - 180) {
-                shift = worldWidth
+                shift = worldWidth;
             } else if (polylineCenter.lng > mapCenter.lng + 180) {
                 shift = -worldWidth;
             } else {
@@ -49,7 +49,6 @@ function fixVectorMarkerWorldJump() {
         }
         return shift;
     };
-
 
     // Shift line points longitude by +360 or -360, to minimize distance between line center and map view center
     // Longitude is changed only for display, longitude of pints is not changed
@@ -62,7 +61,7 @@ function fixVectorMarkerWorldJump() {
         if (this.options.projectedShift) {
             shift = this.options.projectedShift();
         }
-        if (shift === null)  {
+        if (shift === null) {
             shift = this.shiftProjectedFitMapView();
         }
 
@@ -117,14 +116,14 @@ function fixVectorMarkerWorldJump() {
             this._lastResetLongitude = this.getCenter().lng;
         });
 
-        this.on('move', (e) => {
+        this.on('move', () => {
             const lng = this.getCenter().lng;
             if (this._lastResetLongitude === null) {
                 this._lastResetLongitude = lng;
             } else if (Math.abs(lng - this._lastResetLongitude) > 90) {
                 this.fire('viewreset');
             }
-        })
+        });
     });
 
     // Avoid marker longitude change from 180 to -180 while dragging.
@@ -148,7 +147,7 @@ function fixVectorMarkerWorldJump() {
         marker
             .fire('move', e)
             .fire('drag', e);
-    }
+    };
 }
 
-export {wrapLatLngToTarget, fixVectorMarkerWorldJump, wrapLatLngBoundsToTarget}
+export {wrapLatLngToTarget, fixVectorMarkerWorldJump, wrapLatLngBoundsToTarget};

@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {getDeclination} from 'lib/magnetic-declination';
+import {getDeclination} from '~/lib/magnetic-declination';
 import {PrintStaticLayer} from './decorations';
 
 function radians(degrees) {
@@ -8,7 +8,7 @@ function radians(degrees) {
 
 function movePoint(p, angle, dist) {
     angle = radians(angle);
-    return new L.point(p.x + Math.sin(angle) * dist, p.y - Math.cos(angle) * dist);
+    return L.point(p.x + Math.sin(angle) * dist, p.y - Math.cos(angle) * dist);
 }
 
 class MagneticMeridians extends PrintStaticLayer {
@@ -24,8 +24,8 @@ class MagneticMeridians extends PrintStaticLayer {
         const origin = projectedBounds.min;
         return function(pixel) {
             return L.CRS.EPSG3857.pointToLatLng(pixel.scaleBy(scale).add(origin), printOptions.zoom);
-        }
-    };
+        };
+    }
 
     _drawRaster(canvas, printOptions) {
         const toLatLng = this._makeCanvasToLatLngTransformer(printOptions);
@@ -35,7 +35,10 @@ class MagneticMeridians extends PrintStaticLayer {
         ctx.lineWidth = this.lineThicknessMm / 25.4 * printOptions.resolution;
         const intervalPx = this.lineIntervalMm / 25.4 * printOptions.resolution;
         const samplingPx = this.samplingIntervalMm / 25.4 * printOptions.resolution;
-        const pageDiagonal = Math.sqrt(printOptions.destPixelSize.x * printOptions.destPixelSize.x + printOptions.destPixelSize.y * printOptions.destPixelSize.y);
+        const pageDiagonal = Math.sqrt(
+            printOptions.destPixelSize.x * printOptions.destPixelSize.x +
+            printOptions.destPixelSize.y * printOptions.destPixelSize.y
+        );
         const maxSegments = pageDiagonal / 2 / samplingPx;
 
         function drawLine(p, directionDown) {

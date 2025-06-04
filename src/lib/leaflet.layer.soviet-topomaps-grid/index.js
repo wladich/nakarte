@@ -1,10 +1,11 @@
 import L from 'leaflet';
 import './style.css';
-import Contextmenu from 'lib/contextmenu';
-import copyToClipboard from 'lib/clipboardCopy';
+import Contextmenu from '~/lib/contextmenu';
+import copyToClipboard from '~/lib/clipboardCopy';
+import {pulkovo1942ToWgs84} from '~/lib/coordinates-transformations';
 
 function zeroPad(num, size) {
-    var s = num + "";
+    var s = String(num);
     while (s.length < size) {
         s = "0" + s;
     }
@@ -12,6 +13,7 @@ function zeroPad(num, size) {
 }
 
 const bigLetterReplacers = [
+    /* eslint-disable quote-props */
     {
         '1': 'А',
         '2': 'Б',
@@ -24,6 +26,7 @@ const bigLetterReplacers = [
         '3': 'C',
         '4': 'D'
     }
+    /* eslint-enable quote-props */
 ];
 
 var Nomenclature = {
@@ -55,10 +58,7 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
-                    return replacer[s]
-                }
-            );
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => replacer[s]);
             names.push(name1 + name3);
         }
         return names;
@@ -93,20 +93,18 @@ var Nomenclature = {
         }
         const names = [name1 + name2];
         for (let replacer of bigLetterReplacers) {
-            let name3 = name2.replace(/\b[1-4]\b/g, (s) => {
-                    return replacer[s]
-                }
-            );
+            let name3 = name2.replace(/\b[1-4]\b/gu, (s) => replacer[s]);
             names.push(name1 + name3);
         }
         return names;
     },
 
     _getQuads: function(bounds, row_height, column_width, name_factory) {
+        const margin = 0.002;
         bounds = L.latLngBounds(bounds);
         var quads = [];
-        var min_lat = Math.max(bounds.getSouth(), -84);
-        var max_lat = Math.min(bounds.getNorth(), 84);
+        var min_lat = Math.max(bounds.getSouth() - margin, -84);
+        var max_lat = Math.min(bounds.getNorth() + margin, 84);
         var min_row = Math.floor(min_lat / row_height);
         const maxCols = 360 / column_width;
         for (var row = min_row; row * row_height < max_lat; row++) {
@@ -120,8 +118,8 @@ var Nomenclature = {
             } else {
                 joined_quads = 1;
             }
-            var min_lon = bounds.getWest();
-            var max_lon = bounds.getEast();
+            var min_lon = bounds.getWest() - margin;
+            var max_lon = bounds.getEast() + margin;
             var min_column = Math.floor((min_lon + 180) / column_width / joined_quads) * joined_quads -
                 Math.round(180 / column_width);
             for (var column = min_column; column * column_width < max_lon; column += joined_quads) {
@@ -129,9 +127,9 @@ var Nomenclature = {
                 var column_east = column_west + column_width * joined_quads;
                 var quad_bounds = L.latLngBounds([[row_south, column_west], [row_north, column_east]]);
                 // shift column to positive numbers, calc modulo, shift back
-                const wrappedColumn = ((column  + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
+                const wrappedColumn = ((column + maxCols / 2) % maxCols + maxCols) % maxCols - maxCols / 2;
                 var names = name_factory(wrappedColumn, row, joined_quads);
-                quads.push({'names': names, 'bounds': quad_bounds});
+                quads.push({names: names, bounds: quad_bounds});
             }
         }
         return quads;
@@ -153,7 +151,6 @@ var Nomenclature = {
         return this._getQuads(bounds, 4 / 12 / 2, 6 / 12 / 2, this.getQuadName050k.bind(this));
     }
 
-
 };
 
 L.Layer.SovietTopoGrid = L.LayerGroup.extend({
@@ -165,6 +162,7 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             this.renderer = L.svg({padding: 0.5});
             this._quads = {};
             this._updateRenderer = L.Util.throttle(this._updateRenderer, 100, this);
+            this._update = L.Util.throttle(this._update, 100, this);
         },
 
         onAdd: function(map) {
@@ -196,13 +194,26 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 renderer: this.renderer
             };
 
-            var rect = L.rectangle(bounds, rect_options);
+            const quadPoints = [
+                bounds.getSouthWest(),
+                bounds.getSouthEast(),
+                bounds.getNorthEast(),
+                bounds.getNorthWest(),
+            ].map((latlng) => {
+                const latlon = pulkovo1942ToWgs84({lat: latlng.lat, lon: latlng.lng});
+                return L.latLng(latlon.lat, latlon.lon);
+            });
+            if (quadPoints[0].lng > 0 && quadPoints[1].lng < 0) {
+                quadPoints[1] = L.latLng(quadPoints[1].lat, quadPoints[1].lng + 360);
+                quadPoints[2] = L.latLng(quadPoints[2].lat, quadPoints[2].lng + 360);
+            }
+            var rect = L.polygon(quadPoints, rect_options);
             this.addLayer(rect);
             if (layer === 1) {
                 rect.bringToBack();
             }
             var objects = [rect];
-            const title = titles[0].replace(/-/g, ' &ndash; ');
+            const title = titles[0].replace(/-/gu, ' &ndash; ');
             var html = L.Util.template(`<span style="color:{color}">{title}</span>`, {color: color, title: title});
             var icon = L.divIcon({html: html, className: 'leaflet-sovietgrid-quadtitle-' + layer, iconSize: null});
             var marker = L.marker(L.latLngBounds(bounds).getCenter(), {icon: icon});
@@ -220,24 +231,27 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 '050k': '1:50 000'
             }[scale];
             const items = [
-                {'text': scaleString, disabled: true},
-                {'text': 'Click name to copy to clibpoard', disabled: true},
+                {text: scaleString, header: true},
+                {text: 'Click name to copy to clibpoard', header: true},
                 {
-                    'text': titles[0], callback: () => {
-                    copyToClipboard(titles[0], e.originalEvent)
-                }
+                    text: titles[0],
+                    callback: () => {
+                        copyToClipboard(titles[0], e.originalEvent);
+                    }
                 }
             ];
             if (titles.length > 1) {
                 items.push({
-                        'text': titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>', callback: () => {
-                            copyToClipboard(titles[1], e.originalEvent)
+                        text: titles[1] + ' <span class="leaflet-sovietgrid-lang">RUS</span>',
+                        callback: () => {
+                            copyToClipboard(titles[1], e.originalEvent);
                         }
                     }
                 );
                 items.push({
-                        'text': titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>', callback: () => {
-                            copyToClipboard(titles[2], e.originalEvent)
+                        text: titles[2] + ' <span class="leaflet-sovietgrid-lang">LAT</span>',
+                        callback: () => {
+                            copyToClipboard(titles[2], e.originalEvent);
                         }
                     }
                 );
@@ -250,7 +264,6 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
             this._quads[id].forEach(this.removeLayer.bind(this));
             delete this._quads[id];
         },
-
 
         _addQuads: function(quads, scale, color, layer) {
             quads.forEach(function(quad) {
@@ -277,7 +290,6 @@ L.Layer.SovietTopoGrid = L.LayerGroup.extend({
                 layer = (zoom >= 10) ? 2 : 1;
                 this._addQuads(quads, '100k', '#d50', layer);
             }
-
 
             if (zoom >= 6 && zoom < 10) {
                 quads = Nomenclature.getQuads500k(map_bbox);

@@ -1,19 +1,36 @@
+function truncToFixed(x, precision) {
+    let s = x.toString();
+    let point = s.indexOf('.');
+    if (point === -1) {
+        point = s.length;
+        s += '.';
+    }
+    let sliceEnd = point + precision;
+    if (precision > 0) {
+        s = s.padEnd(point + precision + 1, '0');
+        sliceEnd += 1;
+    }
+    s = s.slice(0, sliceEnd);
+    return s;
+}
+
 function formatNumber(value, size, precision = 0) {
     if (value < 0) {
-      return value.toFixed(precision);
+      throw new Error('Negative values not supported');
     }
 
-    if (precision > 0) size++;
-
-    return value.toFixed(precision).padStart(size + precision, '0');
+    if (precision > 0) {
+        size += 1;
+    }
+    return truncToFixed(value, precision).padStart(size + precision, '0');
 }
 
 function coordinatePresentations(coordinate, isLat) {
-    const degrees    = Math.abs(coordinate);
+    const degrees = Math.abs(coordinate);
     const intDegrees = Math.floor(degrees);
-    const minutes    = (degrees - intDegrees) * 60;
+    const minutes = (degrees - intDegrees) * 60;
     const intMinutes = Math.floor(minutes);
-    const seconds    = (minutes - intMinutes) * 60;
+    const seconds = (minutes - intMinutes) * 60;
 
     let direction;
     if (isLat) {
@@ -23,12 +40,12 @@ function coordinatePresentations(coordinate, isLat) {
     }
 
     return {
-        signedDegrees: formatNumber(coordinate, 0, 5),
-        degrees:       formatNumber(degrees, 0, 5),
-        intDegrees:    formatNumber(intDegrees, 0),
-        minutes:       formatNumber(minutes, 2, 3),
-        intMinutes:    formatNumber(intMinutes, 2),
-        seconds:       formatNumber(seconds, 2, 2),
+        signedDegrees: coordinate.toFixed(5),
+        degrees: formatNumber(degrees, 0, 5),
+        intDegrees: formatNumber(intDegrees, 0),
+        minutes: formatNumber(minutes, 2, 3),
+        intMinutes: formatNumber(intMinutes, 2),
+        seconds: formatNumber(seconds, 2, 2),
         direction
     };
 }
@@ -37,7 +54,7 @@ function formatLatLng(latlng, format) {
     return {
         lat: format.formatter(coordinatePresentations(latlng.lat, true)),
         lng: format.formatter(coordinatePresentations(latlng.lng, false))
-    }
+    };
 }
 
 const SIGNED_DEGREES = {
@@ -65,12 +82,13 @@ const DEGREES_AND_MINUTES_AND_SECONDS = {
     code: 'DMS',
     label: 'ddd°mm′ss.s″',
     wrapperClass: 'leaflet-coordinates-wrapper-degrees-and-minutes-and-seconds',
-    formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`};
+    formatter: ({intDegrees, intMinutes, seconds, direction}) => `${direction} ${intDegrees}°${intMinutes}′${seconds}″`
+};
 
-export default {
+export {
     SIGNED_DEGREES,
     DEGREES,
     DEGREES_AND_MINUTES,
     DEGREES_AND_MINUTES_AND_SECONDS,
     formatLatLng
-}
+};

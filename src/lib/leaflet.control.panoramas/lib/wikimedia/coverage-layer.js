@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {TiledDataLoader} from 'lib/tiled-data-loader';
+import {TiledDataLoader} from '~/lib/tiled-data-loader';
 
 const MultiLayer = L.Layer.extend({
     initialize: function(layers) {
@@ -64,9 +64,9 @@ class WikimediaLoader extends TiledDataLoader {
         let z = layerTileCoords.z;
         let z2 = null;
         if (z > this.maxZoom) {
-            z2 = this.maxZoom
+            z2 = this.maxZoom;
         } else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y}
+            return {z, x: layerTileCoords.x, y: layerTileCoords.y};
         }
 
         let multiplier = 1 << (z - z2);
@@ -74,9 +74,8 @@ class WikimediaLoader extends TiledDataLoader {
             x: Math.floor(layerTileCoords.x / multiplier),
             y: Math.floor(layerTileCoords.y / multiplier),
             z: z2
-        }
+        };
     }
-
 
     makeRequestData(dataTileCoords) {
         return {
@@ -86,7 +85,7 @@ class WikimediaLoader extends TiledDataLoader {
                 timeout: 10000,
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
             }
-        }
+        };
     }
 
     async processResponse(xhr, originalDataTileCoords) {
@@ -100,14 +99,13 @@ class WikimediaLoader extends TiledDataLoader {
         return {
             tileData,
             coords: originalDataTileCoords
-        }
+        };
     }
 }
 
 const WikimediaVectorCoverage = L.GridLayer.extend({
         options: {
             tileSize: 256,
-            // updateWhenIdle: true,
             color: '#ff00ff',
         },
 
@@ -124,7 +122,6 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
         onRemove: function(map) {
             L.GridLayer.prototype.onRemove.call(this, map);
             this.off('tileunload', this.onTileUnload, this);
-
         },
 
         onTileUnload: function(e) {
@@ -134,7 +131,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
             delete tile._adjustment;
         },
 
-        drawTile: function(canvas, coords) {
+        drawTile: function(canvas, _unused_coords) {
             if (!this._map) {
                 return;
             }
@@ -163,6 +160,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
             canvas.height = this.options.tileSize;
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
             dataPromise.then((data) => {
+                if (!data.error) {
                     canvas._tileData = data.tileData;
                     canvas._adjustment = data.adjustment || {multiplier: 1, offsetX: 0, offsetY: 0};
                     setTimeout(() => {
@@ -170,7 +168,7 @@ const WikimediaVectorCoverage = L.GridLayer.extend({
                         done(null, canvas);
                     }, 1);
                 }
-            );
+            });
 
             canvas._abortLoading = abortLoading;
             return canvas;

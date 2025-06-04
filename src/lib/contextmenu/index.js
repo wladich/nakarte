@@ -19,8 +19,8 @@ function isDescendant(parent, child) {
         }
         child = child.parentNode;
     }
+    return false;
 }
-
 
 class Contextmenu {
     constructor(items) {
@@ -34,7 +34,7 @@ class Contextmenu {
         if (e.originalEvent) {
             e = e.originalEvent;
         }
-        if (e.preventDefault) {
+        if (e.preventDefault && !e.defaultPrevented) {
             e.preventDefault();
         } else {
             e.returnValue = false;
@@ -88,9 +88,15 @@ class Contextmenu {
             menu_height = this._container.offsetHeight;
         if (x + menu_width >= window_width) {
             x -= menu_width;
+            if (x < 0) {
+               x = 0;
+            }
         }
         if (y + menu_height >= window_height) {
             y -= menu_height;
+            if (y < 0) {
+                y = 0;
+            }
         }
         this._container.style.left = `${x}px`;
         this._container.style.top = `${y}px`;
@@ -122,13 +128,14 @@ class Contextmenu {
         if (itemOptions.header) {
             className += ' header';
         }
-        el.className = className;
         el.innerHTML = itemOptions.text;
 
         const callback = itemOptions.callback;
         if (callback && !itemOptions.disabled) {
+            className += ' action';
             el.addEventListener('click', this.onItemClick.bind(this, callback));
         }
+        el.className = className;
         return el;
     }
 
@@ -147,7 +154,6 @@ class Contextmenu {
         }
         return el;
     }
-
 }
 
 export default Contextmenu;

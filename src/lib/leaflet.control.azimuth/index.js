@@ -1,15 +1,15 @@
 import L from 'leaflet';
 import ko from 'knockout';
-import {makeButtonWithBar} from 'lib/leaflet.control.commons';
+import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
 import layout from './control.html';
-import 'lib/controls-styles/controls-styles.css';
+import '~/lib/controls-styles/controls-styles.css';
 import './style.css';
-import {getDeclination} from 'lib/magnetic-declination';
-import 'vendored/github.com/bbecquet/Leaflet.RotatedMarker/leaflet.rotatedMarker';
+import {getDeclination, magneticModelInfo} from '~/lib/magnetic-declination';
+import 'leaflet-rotatedmarker'; // eslint-disable-line import/no-unassigned-import
 import iconPointer from './pointer.svg';
 import iconPointerStart from './pointer-start.svg';
 import iconPointerEnd from './pointer-end.svg';
-import {ElevationProfile, calcSamplingInterval} from 'lib/leaflet.control.elevation-profile';
+import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
 
 function radians(x) {
     return x / 180 * Math.PI;
@@ -33,7 +33,6 @@ function calcAzimuth(latlng1, latlng2) {
     return brng;
 }
 
-
 function calcAngle(latlng1, latlng2) {
     const p1 = L.Projection.SphericalMercator.project(latlng1);
     const p2 = L.Projection.SphericalMercator.project(latlng2);
@@ -43,7 +42,7 @@ function calcAngle(latlng1, latlng2) {
 }
 
 function roundAzimuth(a) {
-    return (Math.round(a) + 360) % 360
+    return (Math.round(a) + 360) % 360;
 }
 
 L.Control.Azimuth = L.Control.extend({
@@ -58,6 +57,7 @@ L.Control.Azimuth = L.Control.extend({
             this.trueAzimuth = ko.observable(null);
             this.magneticAzimuth = ko.observable(null);
             this.distance = ko.observable(null);
+            this.magneticModelInfo = magneticModelInfo;
             this.points = {
                 start: null,
                 end: null
@@ -113,7 +113,6 @@ L.Control.Azimuth = L.Control.extend({
             }
         },
 
-
         onMarkerDrag: function(e) {
             const marker = e.target;
             this.setPoints({[marker.options.which]: marker.getLatLng()});
@@ -147,7 +146,7 @@ L.Control.Azimuth = L.Control.extend({
         },
 
         isEnabled: function() {
-            return !!this._enabled;
+            return Boolean(this._enabled);
         },
 
         setPoints: function(points) {
@@ -187,13 +186,12 @@ L.Control.Azimuth = L.Control.extend({
                 const azimuth = calcAzimuth(points.start, points.end);
                 this.trueAzimuth(roundAzimuth(azimuth));
                 const declination = getDeclination(points.start.lat, points.start.lng);
-                if (declination !== null) {
-                    this.magneticAzimuth(roundAzimuth(azimuth - declination));
-                } else {
+                if (declination === null) {
                     this.magneticAzimuth(null);
+                } else {
+                    this.magneticAzimuth(roundAzimuth(azimuth - declination));
                 }
                 this.distance(points.start.distanceTo(points.end));
-
             } else {
                 this.distance(null);
                 this.trueAzimuth(null);
@@ -203,12 +201,12 @@ L.Control.Azimuth = L.Control.extend({
 
         onMapClick: function(e) {
             if (!this.points.start && !this.points.end) {
-                this.setPoints({start: e.latlng})
+                this.setPoints({start: e.latlng});
             } else if (this.points.start && !this.points.end) {
-                this.setPoints({end: e.latlng})
+                this.setPoints({end: e.latlng});
             } else if (this.points.start && this.points.end) {
                 this.hideProfile();
-                this.setPoints({start: e.latlng, end: null})
+                this.setPoints({start: e.latlng, end: null});
             }
         },
 
@@ -225,9 +223,10 @@ L.Control.Azimuth = L.Control.extend({
                 samplingInterval: calcSamplingInterval(dist),
                 sightLine: true
             });
-            this.elevationControl.on('remove', () => this.elevationControl = null);
+            this.elevationControl.on('remove', () => {
+                this.elevationControl = null;
+            });
             this.fire('elevation-shown');
-
         },
 
         hideProfile: function() {
@@ -247,7 +246,6 @@ L.Control.Azimuth = L.Control.extend({
                 if (this.elevationControl) {
                     this.showProfile();
                 }
-
             }
         }
 

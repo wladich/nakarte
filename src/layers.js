@@ -1,36 +1,64 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.yandex';
-import 'lib/leaflet.layer.google';
-import {BingLayer} from 'lib/leaflet.layer.bing';
-import {BingDates} from 'lib/leaflet.layer.bing/dates';
+import '~/lib/leaflet.layer.yandex';
+import '~/lib/leaflet.layer.google';
+import {BingLayer} from '~/lib/leaflet.layer.bing';
 import config from './config';
-import 'lib/leaflet.layer.soviet-topomaps-grid';
-import 'lib/leaflet.layer.westraPasses';
-import 'lib/leaflet.layer.nordeskart';
-import 'lib/leaflet.layer.wikimapia';
-import {GeocachingSu} from 'lib/leaflet.layer.geocaching-su';
+import '~/lib/leaflet.layer.soviet-topomaps-grid';
+import '~/lib/leaflet.layer.westraPasses';
+import '~/lib/leaflet.layer.wikimapia';
+import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
 import {OSMPasses} from 'lib/leaflet.layer.osmpasses';
-import {StravaHeatmap} from 'lib/leaflet.layer.strava-heatmap';
+import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
+import '~/lib/leaflet.layer.TileLayer.cutline';
+import {getCutline} from '~/lib/layers-cutlines';
+import {LayerCutlineOverview} from '~/lib/leaflet.layer.LayerCutlineOverview';
 
-export default function getLayers() {
-    const layers = [
+class LayerGroupWithOptions extends L.LayerGroup {
+    constructor(layers, options) {
+        super(layers);
+        L.setOptions(this, options);
+    }
+}
+
+    const layersDefs = [
                 {
                     title: 'OpenStreetMap',
                     description: 'OSM default style',
                     isDefault: true,
-                    layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    layer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {
                             code: 'O',
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'osm'
+                            shortName: 'osm',
+                            attribution: '<a href="https://www.openstreetmap.org/copyright">' +
+                                '&copy; OpenStreetMap contributors</a>',
                         }
                     )
                 },
                 {
-                    title: 'ESRI Sat',
+                    title: 'CyclOSM',
+                    isDefault: true,
+                    layer: L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                        {
+                            code: 'Co',
+                            isOverlay: false,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: true,
+                            shortName: 'cyclosm',
+                            attribution:
+                                '<a href="https://www.openstreetmap.org/copyright">' +
+                                '&copy; OpenStreetMap contributors</a>. ' +
+                                'Tiles style by <a href="https://www.cyclosm.org/">CyclOSM</a>',
+                        }
+                    )
+                },
+                {
+                    title: 'ESRI Satellite',
                     isDefault: true,
                     layer: L.tileLayer(
                         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -41,82 +69,108 @@ export default function getLayers() {
                             maxNativeZoom: 18,
                             print: true,
                             jnx: true,
-                            shortName: 'esri'
+                            shortName: 'esri',
+                            attribution:
+                                '<a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">' +
+                                'ESRI World Imagery for ArcGIS</a>',
                         }
                     )
                 },
                 {
                     title: 'Yandex map',
                     isDefault: true,
-                    layer: new L.Layer.Yandex('map',
+                    layer: new L.Layer.Yandex.Map(
                         {
                             scaleDependent: true,
                             code: 'Y',
                             isOverlay: false,
                             print: true,
                             jnx: true,
-                            shortName: 'yandex'
+                            shortName: 'yandex',
+                            attribution: '<a href="https://yandex.ru/maps/">Yandex</a>',
                         }
                     )
                 },
                 {
                     title: 'Yandex Satellite',
                     isDefault: true,
-                    layer: new L.Layer.Yandex('sat',
+                    layer: new L.Layer.Yandex.Sat(
                         {
                             scaleDependent: false,
                             code: 'S',
                             isOverlay: false,
                             print: true,
                             jnx: true,
-                            shortName: 'yandex_sat'
+                            shortName: 'yandex_sat',
+                            attribution: '<a href="https://yandex.ru/maps/?l=sat">Yandex</a>',
                         }
                     )
                 },
                 {
-                    title: 'Google',
+                    title: 'Google Map',
                     isDefault: true,
-                    layer: new L.Layer.Google('ROADMAP',
+                    layer: new L.Layer.GoogleMap(
                         {
                             code: 'G',
                             isOverlay: false,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
-                            shortName: 'google'
+                            shortName: 'google',
+                            attribution: '<a href="https://www.google.com/maps">Google</a>',
+                        }
+                    )
+                },
+                {
+                    title: 'Google Hybrid',
+                    isDefault: false,
+                    layer: new L.Layer.GoogleHybrid(
+                        {
+                            code: 'Gh',
+                            isOverlay: true,
+                            scaleDependent: true,
+                            print: true,
+                            jnx: false,
+                            shortName: 'google_hybrid',
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
+                                '/data=!3m1!1e3">Google</a>',
                         }
                     )
                 },
                 {
                     title: 'Google Satellite',
                     isDefault: true,
-                    layer: new L.Layer.Google('SATELLITE',
+                    layer: new L.Layer.GoogleSat(
                         {
                             code: 'L',
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'google_sat'
+                            shortName: 'google_sat',
+                            attribution: '<a href="https://www.google.com/maps/@43.0668619,60.5738071,13622628m' +
+                                '/data=!3m1!1e3">Google</a>',
                         }
                     )
                 },
                 {
                     title: 'Google Terrain',
                     isDefault: true,
-                    layer: new L.Layer.Google('TERRAIN',
-                        {
+                    layer: new L.Layer.GoogleTerrain({
                             code: 'P',
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'google_terrain'
+                            shortName: 'google_terrain',
+                            attribution: '<a href="https://www.google.com/maps/@43.1203575,42.1105049,9.58z' +
+                                '/data=!5m1!1e4">Google</a>',
                         }
                     )
                 },
                 {
-                    title: 'Bing Sat',
+                    title: 'Bing Satellite',
                     isDefault: true,
                     layer: new BingLayer(config.bingKey,
                         {
@@ -130,35 +184,23 @@ export default function getLayers() {
                     )
                 },
                 {
-                    title: 'marshruty.ru',
-                    isDefault: true,
-                    layer: L.tileLayer('https://maps.marshruty.ru/ml.ashx?x={x}&y={y}&z={z}&i=1&al=1',
-                        {
-                            code: 'M',
-                            isOverlay: false,
-                            maxNativeZoom: 18,
-                            noCors: true,
-                            scaleDependent: true,
-                            print: true,
-                            jnx: true,
-                            shortName: 'marshruty'
-                        }
-                    )
-                },
-                {
                     title: 'Topomapper 1km',
                     isDefault: true,
                     layer: L.tileLayer(
-                        'http://144.76.234.108/cgi-bin/tapp/tilecache.py/1.0.0/topomapper_v2/{z}/{x}/{y}.jpg',
+                        urlViaCorsProxy(
+                            'http://88.99.52.155/tmg/{z}/{x}/{y}'
+                        ),
                         {
                             code: 'T',
                             isOverlay: false,
                             scaleDependent: false,
                             maxNativeZoom: 13,
-                            noCors: true,
+                            noCors: false,
                             print: true,
                             jnx: true,
-                            shortName: 'topomapper_1k'
+                            shortName: 'topomapper_1k',
+                            attribution: '<a href="https://play.google.com/store/apps/' +
+                                'details?id=com.atlogis.sovietmaps.free&hl=en&gl=US">Russian Topo Maps</a>',
                         }
                     )
                 },
@@ -166,14 +208,14 @@ export default function getLayers() {
                 {
                     title: 'Topo 10km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo001m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo001m/{z}/{x}/{y}",
                         {
                             code: 'D',
                             isOverlay: true,
                             isOverlayTransparent: false,
                             tms: true,
                             scaleDependent: false,
-                            maxNativeZoom: 9,
+                            maxNativeZoom: 10,
                             print: true,
                             jnx: true,
                             shortName: 'topo_10k'
@@ -183,7 +225,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 2 km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc2000/{z}/{x}/{y}",
                         {
                             code: 'N',
                             isOverlay: true,
@@ -200,7 +242,7 @@ export default function getLayers() {
                 {
                     title: 'ArbaletMO',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ArbaletMO/{z}/{x}/{y}",
                         {
                             code: 'A',
                             isOverlay: true,
@@ -210,31 +252,35 @@ export default function getLayers() {
                             maxNativeZoom: 13,
                             print: true,
                             jnx: true,
-                            shortName: 'arbalet'
+                            shortName: 'arbalet',
+                            attribution:
+                                '<a href="http://www.velozona.ru/forums/showmessage.php?id=3370">Arbalet (2004)</a>',
                         }
                     )
                 },
                 {
                     title: 'Slazav mountains',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/map_hr/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://slazav.xyz/tiles/hr/{x}-{y}-{z}.png",
                         {
                             code: 'Q',
                             isOverlay: true,
                             isOverlayTransparent: false,
-                            tms: true,
+                            tms: false,
                             scaleDependent: false,
                             maxNativeZoom: 13,
+                            noCors: true,
                             print: true,
                             jnx: true,
-                            shortName: 'slazav_mountains'
+                            shortName: 'slazav_mountains',
+                            attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
                     )
                 },
                 {
                     title: 'GGC 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc1000/{z}/{x}/{y}",
                         {
                             code: 'J',
                             isOverlay: true,
@@ -251,7 +297,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 1km',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo1000/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo1000/{z}/{x}/{y}",
                         {
                             code: 'C',
                             isOverlay: true,
@@ -268,7 +314,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc500/{z}/{x}/{y}",
                         {
                             code: 'F',
                             isOverlay: true,
@@ -285,7 +331,7 @@ export default function getLayers() {
                 {
                     title: 'Topo 500m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo500/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo500/{z}/{x}/{y}",
                         {
                             code: 'B',
                             isOverlay: true,
@@ -302,7 +348,7 @@ export default function getLayers() {
                 {
                     title: 'GGC 250m',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/ggc250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/ggc250/{z}/{x}/{y}",
                         {
                             code: 'K',
                             isOverlay: true,
@@ -317,26 +363,28 @@ export default function getLayers() {
                     )
                 },
                 {
-                    title: 'Slazav map',
+                    title: 'Slazav Moscow region map',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/map_podm/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://slazav.xyz/tiles/podm/{x}-{y}-{z}.png",
                         {
                             code: 'Z',
                             isOverlay: true,
                             isOverlayTransparent: false,
-                            tms: true,
+                            tms: false,
                             scaleDependent: false,
                             maxNativeZoom: 14,
+                            noCors: true,
                             print: true,
                             jnx: true,
-                            shortName: 'slazav'
+                            shortName: 'slazav',
+                            attribution: '<a href="http://slazav.xyz/maps">Vladislav Zavjalov</a>',
                         }
                     )
                 },
                 {
                     title: 'Races',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/adraces/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/adraces/{z}/{x}/{y}",
                         {
                             code: 'U',
                             isOverlay: true,
@@ -353,7 +401,7 @@ export default function getLayers() {
                 {
                     title: 'O-sport',
                     isDefault: true,
-                    layer: L.tileLayer("https://tiles.nakarte.me/osport/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/osport/{z}/{x}/{y}",
                         {
                             code: 'R',
                             isOverlay: true,
@@ -372,7 +420,9 @@ export default function getLayers() {
                     isDefault: true,
                     layer: new L.Layer.SovietTopoGrid({
                         code: 'Ng',
-                        isOverlay: true
+                        isOverlay: true,
+                        print: false,
+                        jnx: false
                     })
                 },
                 {
@@ -380,7 +430,11 @@ export default function getLayers() {
                     isDefault: true,
                     layer: new L.Wikimapia({
                         code: 'W',
-                        isOverlay: true
+                        isOverlay: true,
+                        print: false,
+                        jnx: false,
+                        attribution: '<a href="https://wikimapia.org/">Wikimapia</a>',
+                        tilesBaseUrl: config.wikimapiaTilesBaseUrl,
                     })
                 },
                 {
@@ -389,6 +443,7 @@ export default function getLayers() {
                     layer: new L.Layer.WestraPasses(config.westraDataBaseUrl, {
                         code: 'Wp',
                         print: true,
+                        jnx: false,
                         scaleDependent: true,
                         isOverlay: true,
                         isOverlayTransparent: true,
@@ -397,7 +452,8 @@ export default function getLayers() {
                             isOverlay: true,
                             isOverlayTransparent: true,
                             shortName: 'passes'
-                        }
+                        },
+                        attribution: '<a href="http://westra.ru/passes/">Westra passes catalog</a>',
                     })
                 },
                 {
@@ -407,12 +463,14 @@ export default function getLayers() {
                         {
                             code: 'Otm',
                             isOverlay: false,
-                            maxNativeZoom: 17,
+                            maxNativeZoom: 15,
                             scaleDependent: true,
                             print: true,
                             jnx: true,
                             noCors: false,
-                            shortName: 'opentopo'
+                            shortName: 'opentopo',
+                            attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
+                            hotkey: 'V',
                         }
                     )
                 },
@@ -420,7 +478,11 @@ export default function getLayers() {
                     title: 'OpenCycleMap',
                     description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png',
+                            'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}@2x.png',
+                        ],
                         {
                             code: 'Ocm',
                             isOverlay: false,
@@ -428,13 +490,18 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             shortName: 'opencyclemap',
+                            attribution: '<a href="https://www.opencyclemap.org/">Thunderforest OpenCycleMap</a>',
                         }
                     )
                 },
                 {
                     title: 'OSM Outdoors',
                     isDefault: false,
-                    layer: L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
+                            'https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}@2x.png',
+                        ],
                         {
                             code: 'Oso',
                             isOverlay: false,
@@ -442,6 +509,8 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             shortName: 'osm_outdoors',
+                            attribution:
+                                '<a href="https://www.thunderforest.com/maps/outdoors/">Thunderforest Outdoors</a>',
                         }
                     )
                 },
@@ -449,7 +518,7 @@ export default function getLayers() {
                     title: 'Eurasia 25km',
                     description: '1975-80',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
                         {
                             code: 'E25m',
                             isOverlay: true,
@@ -466,7 +535,7 @@ export default function getLayers() {
                 {
                     title: 'Caucasus 1km',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/new_gsh_100k/{z}/{x}/{y}",
                         {
                             code: 'NT1',
                             isOverlay: true,
@@ -476,14 +545,15 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            shortName: 'caucasus_1k'
+                            shortName: 'caucasus_1k',
+                            attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (2006)</a>',
                         }
                     )
                 },
                 {
                     title: 'Caucasus 500m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/new_gsh_050k/{z}/{x}/{y}",
                         {
                             code: 'NT5',
                             isOverlay: true,
@@ -493,14 +563,15 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             scaleDependent: false,
-                            shortName: 'caucasus_500'
+                            shortName: 'caucasus_500',
+                            attribution: '<a href="http://genshtab-yuga.narod.ru/">Topo maps (1998 - 2003)</a>',
                         }
                     )
                 },
                 {
                     title: 'Topo 250m',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/topo250/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/topo250/{z}/{x}/{y}",
                         {
                             code: 'T25',
                             isOverlay: true,
@@ -518,7 +589,7 @@ export default function getLayers() {
                     title: 'Montenegro topo 250m',
                     description: '1970-72',
                     isDefault: false,
-                    layer: L.tileLayer("https://tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
                         {
                             code: 'MN25',
                             isOverlay: true,
@@ -534,37 +605,43 @@ export default function getLayers() {
                 },
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
-                    description: 'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
-                    isDefault: false,
-                    layer: L.tileLayer("http://map.g-utka.ru/{z}/{x}/{y}.png",
-                        // FIXME: сделать minZoom=5, когда перейдём на версию leaflet с поддержкой minNativeZoom
+                    description:
+                        'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
+                    isDefault: true,
+                    layer: new LayerGroupWithOptions(
+                        [
+                            L.tileLayer(
+                                urlViaCorsProxy(
+                                    'http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png'
+                                ),
+                                {
+                                    isOverlay: true,
+                                    isOverlayTransparent: false,
+                                    tms: false,
+                                    minZoom: 2,
+                                    maxNativeZoom: 15,
+                                    print: true,
+                                    jnx: true,
+                                    scaleDependent: false,
+                                    noCors: false,
+                                    shortName: 'tsvetkov_mountains',
+                                    cutline: getCutline('tsvetkov_mountains'),
+                                    bounds: [
+                                        [40.66664, 71.00007],
+                                        [45.33338, 81.00001],
+                                    ],
+                                    attribution: '<a href="http://pereval.g-utka.ru/">Aleksey Tsvetkov</a>',
+                                }
+                            ),
+                            new LayerCutlineOverview(getCutline('tsvetkov_mountains'), 6,
+                                'Mountains by Aleksey Tsvetkov'),
+                        ],
                         {
                             code: 'Mt',
                             isOverlay: true,
-                            isOverlayTransparent: false,
-                            tms: false,
-                            minZoom: 2,
-                            maxNativeZoom: 15,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: false,
-                            noCors: true,
-                            shortName: 'tsvetkov_mountains'
+                            isWrapper: true,
                         }
-                    )
-                },
-                {
-                    title: 'Bing imagery acquisition dates',
-                    isDefault: false,
-                    layer: new BingDates({
-                        code: 'Bd',
-                        isOverlay: true,
-                        maxNativeZoom: 18,
-                        print: false,
-                        jnx: false,
-                        scaleDependent: false,
-                        noCors: true
-                    })
+                    ),
                 },
                 {
                     title: 'geocaching.su',
@@ -575,7 +652,8 @@ export default function getLayers() {
                         isOverlayTransparent: true,
                         print: true,
                         jnx: false,
-                        shortName: 'geocaching'
+                        shortName: 'geocaching',
+                        attribution: '<a href="https://geocaching.su/">geocaching.su</a>',
                     })
                 },
                 {
@@ -601,177 +679,149 @@ export default function getLayers() {
                             scaleDependent: true,
                             print: true,
                             jnx: false,
-                            shortName: 'osm_gps_traces'
+                            shortName: 'osm_gps_traces',
+                            attribution: '<a href="https://www.openstreetmap.org/#&layers=G">' +
+                                'OpenStreetMap public GPS traces</a>',
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (all)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/all/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/all/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/all/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sa',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_all',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (run)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/run/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/run/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/run/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sr',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_run',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (ride)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/ride/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/ride/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sb',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
+                            print: true,
                             jnx: false,
                             subdomains: 'abc',
-                            maxNativeZoom: 16,
-                            noCors: true
+                            noCors: true,
+                            shortName: 'strava_ride',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
                 {
                     title: 'Strava heatmap (winter)',
                     isDefault: false,
-                    layer: new StravaHeatmap('https://heatmap-external-{s}.strava.com/tiles-auth/winter/hot/{z}/{x}/{y}.png?px=256',
+                    layer: new RetinaTileLayer(
+                        [
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/winter/hot/{z}/{x}/{y}.png?px=256'
+                            ),
+                            urlViaCorsProxy(
+                                'https://content-a.strava.com/identified/globalheat/winter/hot/{z}/{x}/{y}.png?px=512'
+                            ),
+                        ],
                         {
                             code: 'Sw',
                             isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 16,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (all)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/all/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Sal',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (run)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/run/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Srl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (ride)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/ride/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Sbl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    title: 'Strava heatmap lowres (winter)',
-                    isDefault: false,
-                    layer: L.tileLayer('https://heatmap-external-{s}.strava.com/tiles/winter/hot/{z}/{x}/{y}.png?px=256',
-                        {
-                            code: 'Swl',
-                            isOverlay: true,
-                            scaleDependent: true,
-                            print: false,
-                            jnx: false,
-                            subdomains: 'abc',
-                            maxNativeZoom: 12,
-                            noCors: true
-                        }
-                    )
-                },
-                {
-                    // Вместо 404 отдают 500 для отсутствующих тайлов
-                    title: 'Norway UT map',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/ut_topo_light/{z}/{x}/{y}.jpg",
-                        {
-                            code: 'Nu',
-                            isOverlay: false,
-                            tms: false,
-                            maxNativeZoom: 16,
+                            isOverlayTransparent: true,
+                            scaleDependent: false,
                             print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            noCors: false,
-                            shortName: 'norway_ut'
+                            jnx: false,
+                            subdomains: 'abc',
+                            noCors: true,
+                            shortName: 'strava_winter',
+                            retinaOptionsOverrides: [{maxNativeZoom: 16}, {maxNativeZoom: 15}],
+                            attribution: '<a href="https://www.strava.com/heatmap">Strava Global Heatmap</a>',
+                            opacity: 0.75,
                         }
                     )
                 },
                 {
                     title: 'Norway paper map',
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer(
+                        'https://cache.kartverket.no/v1/wmts/1.0.0/toporaster/default/webmercator/{z}/{y}/{x}.png',
                         {
                             code: 'Np',
                             isOverlay: true,
                             isOverlayTransparent: false,
-                            maxNativeZoom: 16,
                             tms: false,
                             print: true,
                             jnx: true,
                             scaleDependent: true,
-                            shortName: 'norway_paper'
+                            noCors: false,
+                            shortName: 'norway_paper',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            attribution: '<a href="https://kartverket.no/til-lands/kart/turkart">Kartverket</a>',
                         }
                     )
                 },
                 {
-                    title: 'Norway map',
+                    title: 'Norway topo',
                     isDefault: false,
-                    layer: new L.TileLayer.Nordeskart('https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_gmaps?layers=topo4&zoom={z}&x={x}&y={y}&gkt={baatToken}',
+                    layer: new L.TileLayer(
+                        'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
                         {
                             code: 'Nm',
                             isOverlay: true,
@@ -780,41 +830,10 @@ export default function getLayers() {
                             print: true,
                             jnx: true,
                             scaleDependent: true,
-                            shortName: 'norway'
-                        }
-                    )
-                },
-                {
-                    title: 'Norway summer trails',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_sommer/{z}/{x}/{y}.png",
-                        {
-                            code: 'Ns',
-                            isOverlay: true,
-                            isOverlayTransparent: true,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
                             noCors: false,
-                            shortName: 'norway_summer'
-                        }
-                    )
-                },
-                {
-                    title: 'Norway winter trails',
-                    isDefault: false,
-                    layer: L.tileLayer("https://tilesprod.ut.no/tilestache/dnt_vinter/{z}/{x}/{y}.png",
-                        {
-                            code: 'Nw',
-                            isOverlay: true,
-                            isOverlayTransparent: true,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            scaleDependent: true,
-                            noCors: false,
-                            shortName: 'norway_winter'
+                            shortName: 'norway_topo',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            attribution: '<a href="https://kartverket.no/til-lands/kart/turkart">Kartverket</a>',
                         }
                     )
                 },
@@ -826,153 +845,127 @@ export default function getLayers() {
                     layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {
                             code: 'Nr',
-                            isOverlay: false,
+                            isOverlay: true,
+                            isOverlayTransparent: false,
                             tms: false,
                             print: true,
                             jnx: true,
                             scaleDependent: true,
-                            noCors: true,
-                            shortName: 'norway_roads'
+                            noCors: false,
+                            shortName: 'norway_roads',
+                            bounds: [[57.81324, 4.19674], [71.27961, 31.56094]],
+                            cutline: getCutline('norway'),
+                            attribution: '<a href="https://kart.finn.no/">finn.no</a>',
                         }
                     )
                 },
                 {
-                    title: 'Czech base',
-                    isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}",
-                        {
-                            code: 'Czb',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            subdomains: '1234',
-                            scaleDependent: true,
-                            shortName: 'czech'
-                        }
-                    )
-                },
-                {
-                    title: 'Czech tourist',
-                    isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}",
+                    title: 'mapy.cz tourist',
+                    isDefault: true,
+                    layer: new RetinaTileLayer(
+                        [
+                            'https://proxy.nakarte.me/mapy/turist-en/{z}-{x}-{y}',
+                            'https://proxy.nakarte.me/mapy/turist-en/retina/{z}-{x}-{y}',
+                        ],
                         {
                             code: 'Czt',
                             isOverlay: false,
                             tms: false,
                             print: true,
                             jnx: true,
-                            subdomains: '1234',
                             scaleDependent: true,
-                            shortName: 'czech_tourist'
+                            shortName: 'czech_tourist',
+                            hotkey: 'H',
+                            attribution: '<a href="https://mapy.cz/turisticka">mapy.cz outdoor map</a>',
                         }
                     )
                 },
                 {
-                    title: 'Czech summer',
+                    title: 'mapy.cz winter',
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/turist_aquatic-m/{z}-{x}-{y}",
-                        {
-                            code: 'Czs',
-                            isOverlay: false,
+                    layer: new LayerGroupWithOptions([
+                        new L.TileLayer('https://proxy.nakarte.me/mapy/winter-en-down/{z}-{x}-{y}', {
                             tms: false,
                             print: true,
-                            jnx: true,
-                            subdomains: '1234',
-                            scaleDependent: true,
-                            shortName: 'czech_summer'
-                        }
-                    )
-                },
-                {
-                    title: 'Czech winter',
-                    isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/winter-m/{z}-{x}-{y}",
-                        {
-                            code: 'Czw',
                             isOverlay: false,
+                            jnx: true,
+                            scaleDependent: true,
+                            shortName: 'czech_winter',
+                        }),
+                        new L.TileLayer('https://proxy.nakarte.me/mapy/winter-en-up/{z}-{x}-{y}', {
                             tms: false,
                             print: true,
-                            jnx: true,
-                            subdomains: '1234',
+                            jnx: false,
+                            isOverlay: true,
+                            isOverlayTransparent: true,
                             scaleDependent: true,
-                            shortName: 'czech_winter'
-                        }
-                    )
+                        }),
+                    ], {
+                        code: 'Czw',
+                        isOverlay: false,
+                        isWrapper: true,
+                        attribution: '<a href="https://mapy.cz/zimni">mapy.cz winter map</a>',
+                    }),
                 },
                 {
-                    title: 'Czech geographical',
+                    title: 'Finland Topo',
+                    description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
-                    layer: L.tileLayer("https://m{s}.mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}",
+                    layer: L.tileLayer(
+                        "https://proxy.laji.fi/mml_wmts/maasto/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/" +
+                        "{z}/{y}/{x}.png",
                         {
-                            code: 'Czg',
-                            isOverlay: false,
-                            tms: false,
-                            print: true,
-                            jnx: true,
-                            subdomains: '1234',
-                            scaleDependent: true,
-                            shortName: 'czech_geo'
-                        }
-                    )
-                },
-		        {
-		            title: 'Finland Topo',
-                    description: '<a href="https://www.retkikartta.fi/?lang=en">https://www.retkikartta.fi/</a>',
-		            isDefault: false,
-		            layer: L.tileLayer("https://retkikartta.fi/wmts/30c616a00f157e7357721900e8b0415c?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=maastokartta&STYLE=default&TILEMATRIXSET=WGS84_Pseudo-Mercator&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png",
-		                {
-		                    code: 'Fmk',
-		                    isOverlay: false,
-		                    tms: false,
-		                    print: true,
-		                    jnx: true,
-		                    scaleDependent: true,
-		                    shortName: 'finland_topo'
-		                }
-		            )
-		        },
-                {
-                    title: 'France Topo 250m',
-                    isDefault: false,
-                    layer: L.tileLayer("https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR.CV&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
-                        {
-                            minZoom: 6,
-                            maxNativeZoom: 16,
-                            bounds: [[41.29019, -4.94385], [51.23441, 9.82178]],
-                            code: 'Ft',
+                            code: 'Fmk',
                             isOverlay: true,
                             isOverlayTransparent: false,
                             tms: false,
                             print: true,
                             jnx: true,
-                            scaleDependent: false,
-                            shortName: 'france_topo_25k'
+                            scaleDependent: true,
+                            noCors: false,
+                            shortName: 'finland_topo',
+                            bound: [[59.45416, 19.08321], [70.09211, 31.58671]],
+                            cutline: getCutline('finland'),
+                            attribution: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                         }
                     )
                 },
                 {
                     title: 'Great Britain Topo',
                     isDefault: false,
-                    layer: new BingLayer(config.bingKey,
+                    layer: new LayerGroupWithOptions(
+                        [
+                            new BingLayer(config.bingKey, {
+                                type: 'OrdnanceSurvey',
+                                minZoom: 12,
+                                maxNativeZoom: 16,
+                                bounds: [
+                                    [49.83793, -7.75643],
+                                    [60.87164, 1.82356],
+                                ],
+                                isOverlay: true,
+                                isOverlayTransparent: false,
+                                scaleDependent: true,
+                                print: true,
+                                jnx: true,
+                                shortName: 'england_topo',
+                                cutline: getCutline('great_britain'),
+                                attribution: '<a href="https://docs.microsoft.com/en-us/bingmaps/v8-web-control/' +
+                                    'map-control-api/maptypeid-enumeration">Ordnance Survey</a>',
+                            }),
+                            new LayerCutlineOverview(getCutline('great_britain'), 11, 'Great Britain Topo (zoom ≥ 12)'),
+                        ],
                         {
-                            type: 'OrdnanceSurvey',
-                            minZoom: 12,
-                            maxNativeZoom: 16,
-                            bounds: [[49.85171,-7.74708], [60.86949,1.80382]],
                             code: 'Gbt',
                             isOverlay: true,
-                            isOverlayTransparent: false,
-                            scaleDependent: false,
-                            print: true,
-                            jnx: true,
-                            shortName: 'england_topo'
+                            isWrapper: true,
                         }
-                    )
+                    ),
                 },
                 {
                     title: 'Waymarked Cycling Trails',
-                    description: '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
+                    description:
+                        '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
                         {
@@ -983,7 +976,8 @@ export default function getLayers() {
                             jnx: false,
                             scaleDependent: true,
                             shortName: 'cycling_trails',
-                            isOverlayTransparent: true
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://cycling.waymarkedtrails.org/">Waymarked Cycling Trails</a>',
                         })
                 },
                 {
@@ -999,9 +993,146 @@ export default function getLayers() {
                             jnx: false,
                             scaleDependent: true,
                             shortName: 'hiking_trails',
-                            isOverlayTransparent: true
+                            isOverlayTransparent: true,
+                            attribution: '<a href="https://hiking.waymarkedtrails.org/">Waymarked Hiking Trails</a>',
                         })
                 },
+                {
+                    title: 'Slovakia topo',
+                    description: '<a href="https://mapy.hiking.sk">https://mapy.hiking.sk/</a>',
+                    isDefault: false,
+                    layer: new LayerGroupWithOptions(
+                        [
+                            L.tileLayer('https://static.mapy.hiking.sk/topo/{z}/{x}/{y}.png', {
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: true,
+                                shortName: 'slovakia_topo',
+                                isOverlayTransparent: false,
+                                maxNativeZoom: 15,
+                                minZoom: 10,
+                                bounds: [
+                                    [47.5172, 16.74316],
+                                    [49.91343, 22.74837],
+                                ],
+                                noCors: true,
+                                cutline: getCutline('slovakia'),
+                                attribution: '<a href="https://mapy.hiking.sk/">mapy.hiking.sk</a>',
+                            }),
+                            new LayerCutlineOverview(getCutline('slovakia'), 9, 'Slovakia topo (zoom ≥ 10)'),
+                        ],
+                        {
+                            code: 'St',
+                            isOverlay: true,
+                            isWrapper: true,
+                        }
+                    ),
+                },
+                {
+                    title: 'Spain topo',
+                    isDefault: false,
+                    layer: L.tileLayer(
+                            'https://www.ign.es/wmts/mapa-raster?layer=MTN&style=default&' +
+                            'tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&' +
+                            'Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
+                            {
+                                code: 'Sp',
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: true,
+                                shortName: 'spain_topo',
+                                isOverlayTransparent: false,
+                                minZoom: 1,
+                                bounds: [[35.9024, -9.51828], [43.8375, 4.50439]],
+                                noCors: false,
+                                cutline: getCutline('spain'),
+                                attribution: '<a href="https://www.ign.es/iberpix2/visor/">' +
+                                    'IGN (Spain) topographic map</a>'
+                            }
+                    )
+                },
+                {
+                    title: 'Switzerland topo',
+                    isDefault: false,
+                    layer: new RetinaTileLayer(
+                        [
+                            null,
+                            urlViaCorsProxy(
+                                'https:///wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/' +
+                                '3857/{z}/{x}/{y}.jpeg'
+                            ),
+                        ],
+
+                        {
+                                code: 'Si',
+                                isOverlay: true,
+                                tms: false,
+                                print: true,
+                                jnx: true,
+                                scaleDependent: true,
+                                shortName: 'swiss_topo',
+                                isOverlayTransparent: false,
+                                bounds: [[45.80269, 5.87352], [47.86445, 10.6847]],
+                                noCors: false,
+                                maxNativeZoom: 16,
+                                tileSize: 128,
+                                zoomOffset: 1,
+                                cutline: getCutline('switzerland'),
+                                attribution: '<a href="https://map.geo.admin.ch/?topic=swisstopo&lang=en&bgLayer=' +
+                                    'ch.swisstopo.pixelkarte-farbe&E=2586000.76&N=1202020.96&zoom=1">Swisstopo'
+                            }, true
+                    )
+                },
+                {
+                    title: 'Mountains by Alexander Purikov',
+                    isDefault: false,
+                    layer: L.tileLayer("https://{s}.tiles.nakarte.me/purikov/{z}/{x}/{y}",
+                        {
+                            code: 'Pur',
+                            isOverlay: true,
+                            isOverlayTransparent: false,
+                            tms: true,
+                            scaleDependent: false,
+                            maxNativeZoom: 14,
+                            noCors: false,
+                            print: true,
+                            jnx: true,
+                            shortName: 'purikov_mountains',
+                            attribution: '<a href="https://westra.ru/reports/">Alexander Purikov</a>',
+                        }
+                    )
+                },
+                {
+                    title: 'Sweden topo',
+                    isDefault: false,
+                    layer: L.tileLayer(
+                        'https://minkarta.lantmateriet.se/map/topowebbcache' +
+                        '?layer=topowebb&style=default&tilematrixset=3857&Service=WMTS&Request=GetTile&Version=1.0.0' +
+                        '&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}',
+                        {
+                            code: 'Se',
+                            isOverlay: true,
+                            tms: false,
+                            print: true,
+                            jnx: true,
+                            scaleDependent: true,
+                            shortName: 'sweden_topo',
+                            isOverlayTransparent: false,
+                            minZoom: 0,
+                            maxNativeZoom: 17,
+                            bounds: [[55.13493, 10.58876], [69.07200, 24.18365]],
+                            noCors: false,
+                            cutline: getCutline('sweden'),
+                            attribution: '<a href="https://minkarta.lantmateriet.se/">' +
+                                'Lantmäteriet</a>'
+                        }
+                    )
+                },
+
     ];
 
     const groupsDefs = [
@@ -1009,25 +1140,26 @@ export default function getLayers() {
             title: 'Default layers',
             layers: [
                 'OpenStreetMap',
-                'ESRI Sat',
+                'CyclOSM',
+                'ESRI Satellite',
                 'Yandex map',
                 'Yandex Satellite',
-                'Google',
+                'Google Map',
                 'Google Satellite',
                 'Google Terrain',
-                'Bing Sat',
-                'marshruty.ru',
+                'Bing Satellite',
                 'Topomapper 1km',
                 'Topo 10km',
                 'GGC 2 km',
                 'ArbaletMO',
+                'Mountains by Aleksey Tsvetkov',
                 'Slazav mountains',
                 'GGC 1km',
                 'Topo 1km',
                 'GGC 500m',
                 'Topo 500m',
                 'GGC 250m',
-                'Slazav map',
+                'Slazav Moscow region map',
                 'Races',
                 'O-sport',
                 'Soviet topo maps grid',
@@ -1040,7 +1172,11 @@ export default function getLayers() {
             layers: [
                 'OpenTopoMap',
                 'OpenCycleMap',
-                'OSM Outdoors'],
+                'OSM Outdoors',
+                'mapy.cz tourist',
+                'mapy.cz winter',
+
+            ],
         },
         {
             title: 'Topo maps',
@@ -1051,16 +1187,19 @@ export default function getLayers() {
                 'Topo 250m',
                 'Montenegro topo 250m',
                 'Finland Topo',
-                'France Topo 250m',
+                'Sweden topo',
                 'Great Britain Topo',
+                'Slovakia topo',
+                'Spain topo',
+                'Switzerland topo',
             ],
         },
         {
             title: 'Miscellaneous',
             layers: [
-                'Mountains by Aleksey Tsvetkov',
-                'Bing imagery acquisition dates',
-                'geocaching.su',
+                'Mountains by Alexander Purikov',
+                'Google Hybrid',
+                'geocaching.su'
                 'OSM passes',
             ]
         },
@@ -1074,70 +1213,58 @@ export default function getLayers() {
                 'Strava heatmap (run)',
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
-                'Strava heatmap lowres (all)',
-                'Strava heatmap lowres (run)',
-                'Strava heatmap lowres (ride)',
-                'Strava heatmap lowres (winter)'],
+            ],
 
         },
         {
             title: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
             layers: [
-                'Norway UT map',
                 'Norway paper map',
-                'Norway map',
-                'Norway summer trails',
-                'Norway winter trails',
-                'Norway roads'],
-
-        },
-        {
-            title: 'Czech <a href="https://mapy.cz">https://mapy.cz</a>',
-            layers: [
-                'Czech base',
-                'Czech tourist',
-                'Czech summer',
-                'Czech winter',
-                'Czech geographical'],
+                'Norway topo',
+                'Norway roads'
+            ],
 
         },
     ];
 
-
     const titlesByOrder = [
         // common base layers
+        // OSM
         'OpenStreetMap',
+        'CyclOSM',
         'OpenTopoMap',
         'OpenCycleMap',
         'OSM Outdoors',
-        'ESRI Sat',
-        'Yandex map',
+        'mapy.cz tourist',
+        'mapy.cz winter',
+        // Satellite
+        'ESRI Satellite',
         'Yandex Satellite',
-        'Google',
         'Google Satellite',
+        'Bing Satellite',
+        // Commercial maps
+        'Yandex map',
+        'Google Map',
         'Google Terrain',
-        'Bing Sat',
-        'marshruty.ru',
+        // Topo maps
         'Topomapper 1km',
 
         // local base layers
-        'Czech base',
-        'Czech tourist',
-        'Czech summer',
-        'Czech winter',
-        'Czech geographical',
-        'Norway UT map',
-        'Finland Topo',
 
         // map overlays
         '#custom-bottom',
-        'Norway roads',
         'Eurasia 25km',
         'Topo 10km',
         'GGC 2 km',
         'ArbaletMO',
+        'Norway roads',
         'Norway paper map',
-        'Norway map',
+        'Norway topo',
+        'Finland Topo',
+        'Sweden topo',
+        'Slovakia topo',
+        'Spain topo',
+        'Mountains by Alexander Purikov',
         'Mountains by Aleksey Tsvetkov',
         'Slazav mountains',
         'GGC 1km',
@@ -1150,27 +1277,21 @@ export default function getLayers() {
         'GGC 250m',
         'Topo 250m',
         'Montenegro topo 250m',
-        'France Topo 250m',
-        'Slazav map',
+        'Switzerland topo',
+        'Slazav Moscow region map',
         'Races',
         'O-sport',
         '#custom-top',
 
         // line overlays
+        'Google Hybrid',
         'Waymarked Hiking Trails',
         'Waymarked Cycling Trails',
-        'Norway summer trails',
-        'Norway winter trails',
-        'Bing imagery acquisition dates',
         'OpenStreetMap GPS traces',
         'Strava heatmap (all)',
         'Strava heatmap (run)',
         'Strava heatmap (ride)',
         'Strava heatmap (winter)',
-        'Strava heatmap lowres (all)',
-        'Strava heatmap lowres (run)',
-        'Strava heatmap lowres (ride)',
-        'Strava heatmap lowres (winter)',
         'Soviet topo maps grid',
         'Wikimapia',
 
@@ -1180,30 +1301,31 @@ export default function getLayers() {
         'OSM passes',
     ];
 
+function getLayers() {
     // set metadata
-    for (let layer of layers) {
-        layer.layer.meta = {title: layer.title}
+    for (let layer of layersDefs) {
+        layer.layer.meta = {title: layer.title};
     }
 
     // assign order to layers
     const orderByTitle = {};
-    for (let i=0; i < titlesByOrder.length; i++) {
+    for (let i = 0; i < titlesByOrder.length; i++) {
         let title = titlesByOrder[i];
         orderByTitle[title] = i + 1;
     }
 
-    for (let layer of layers) {
+    for (let layer of layersDefs) {
         const title = layer.title;
         layer.order = orderByTitle[title];
         if (!layer.order) {
-            throw new Error(`Layer title not found in titlesByOrder list: ${title}`)
+            throw new Error(`Layer title not found in titlesByOrder list: ${title}`);
         }
     }
 
     // divide layers by groups
     const grouppedLayers = [];
     const layersByTitle = {};
-    for (let layer of layers) {
+    for (let layer of layersDefs) {
         layersByTitle[layer.title] = layer;
     }
     for (let groupDef of groupsDefs) {
@@ -1211,86 +1333,7 @@ export default function getLayers() {
         grouppedLayers.push(group);
         for (let title of groupDef.layers) {
             let layer = layersByTitle[title];
-            if (!layer) {
-                throw new Error(`Unknown layer in groups definitions: ${title}`)
-            }
             group.layers.push(layer);
-        }
-    }
-
-    // TODO: move it to tests
-    const codes = new Set();
-    const titles = new Set();
-    const shortNames = new Set();
-    for (let layer of layers) {
-        const {title, layer: {options}} = layer;
-        if (!options) {
-            throw new Error(`Layer without options: ${layer.title}`);
-        }
-        if (titles.has(title)) {
-            throw new Error(`Duplicate layer title "${title}"`);
-        }
-        titles.add(title);
-        const {
-            code,
-            shortName,
-            print,
-            isOverlay,
-            isOverlayTransparent
-        } = options;
-        if (!code) {
-            throw new Error('Layer without code: ' + layer.title);
-        }
-        if (codes.has(code)) {
-            throw new Error(`Duplicate layer code "${code}"`);
-        }
-        codes.add(code);
-
-        if (print) {
-            if (isOverlay && (isOverlayTransparent === undefined)) {
-                throw new Error('Overlay layer without isOverlayTransparent: ' + layer.title);
-            }
-            if (!shortName) {
-                throw new Error('Layer without shortName: ' + layer.title);
-            }
-            if (shortNames.has(shortName)) {
-                throw new Error(`Duplicate layer shortName: "${shortName}"`);
-            }
-            shortNames.add(shortName);
-        }
-    }
-
-    // check order definition
-    let seenOverlay = false;
-    for (let title of titlesByOrder) {
-        if (title[0] !== '#') {
-            if (!titles.has(title)) {
-                throw new Error(`Unknown layer title in order list: ${title}`);
-            }
-            let isOverlay = layersByTitle[title];
-            if (isOverlay) {
-                seenOverlay = true;
-            } else {
-                if (seenOverlay) {
-                    throw new Error(`Base layer after overlays: ${title}`);
-                }
-            }
-        }
-    }
-    // check groups definitions
-    const seenLayerTitles = new Set();
-    for (let group of groupsDefs) {
-        for (let title of group.layers) {
-            if (seenLayerTitles.has(title)) {
-                throw new Error(`Duplicate layer in groups definition: ${title}`)
-            }
-            seenLayerTitles.add(title);
-        }
-    }
-    // unknown layers in groupsDefs already checked, check only that all layers assigned to groups
-    for (let title of titles) {
-        if (!seenLayerTitles.has(title)) {
-            throw new Error(`Layer not assigned to any group: ${title}`);
         }
     }
 
@@ -1300,6 +1343,8 @@ export default function getLayers() {
             top: orderByTitle['#custom-top'],
             bottom: orderByTitle['#custom-bottom'],
 
-        }};
+        }
+    };
 }
 
+export {getLayers, layersDefs, groupsDefs, titlesByOrder};

@@ -11,8 +11,7 @@ const ZoomWithDisplay = L.Control.Zoom.extend({
         return container;
     },
 
-
-    onRemove: function (map) {
+    onRemove: function(map) {
         L.Control.Zoom.prototype.onRemove.call(this, map);
         map.off('zoomend', this._updateDisplay, this);
     },
@@ -20,7 +19,6 @@ const ZoomWithDisplay = L.Control.Zoom.extend({
     _updateDisplay: function() {
         this._display.innerHTML = this._map.getZoom();
     }
-
 
 });
 

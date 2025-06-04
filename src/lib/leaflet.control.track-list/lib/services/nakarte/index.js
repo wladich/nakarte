@@ -1,17 +1,30 @@
 import BaseService from '../baseService';
 import {parseNktkSequence, parseTrackUrlData, parseNktkFragment} from '../../parsers/nktk';
-import config from 'config';
-import {parseHashParams} from 'lib/leaflet.hashState/hashState';
+import config from '~/config';
+import {parseHashParams} from '~/lib/leaflet.hashState/hashState';
 import loadFromUrl from '../../loadFromUrl';
 import loadTracksFromJson from './loadTracksFromJson';
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 
 function flattenArray(ar) {
-    return ar.reduce((cur, acc) => {
-        acc.push(...cur);
-        return acc;
-    }, []);
+    const res = [];
+    for (const it of ar) {
+        res.push(...it);
+    }
+    return res;
+}
 
+function parsePointFromHashValues(values) {
+    if (values.length < 2) {
+        return [{name: 'Point in url', error: 'CORRUPT'}];
+    }
+    const lat = parseFloat(values[0]);
+    const lng = parseFloat(values[1]);
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        return [{name: 'Point in url', error: 'CORRUPT'}];
+    }
+    const name = ((values[2] || '').trim()) || 'Point';
+    return [{name, points: [{name, lat, lng}]}];
 }
 
 class NakarteTrack extends BaseService {
@@ -57,7 +70,7 @@ class NakarteUrlLoader {
         const requests = values.map((trackId) =>
             fetch(
                 `${config.tracksStorageServer}/track/${trackId}`,
-                {responseType: 'binarystring'}
+                {responseType: 'binarystring', withCredentials: true}
             )
         );
         let responses;
@@ -74,11 +87,11 @@ class NakarteUrlLoader {
     }
 
     async loadFromUrlencodedUrls(values) {
-        return flattenArray(await Promise.all(values.map(loadFromUrl)));
+        return flattenArray(await Promise.all(values.map(decodeURIComponent).map(loadFromUrl)));
     }
 
     async loadPoint(values) {
-        return parsePointFromHashValues(values)
+        return parsePointFromHashValues(values.map(decodeURIComponent));
     }
 }
 
@@ -86,35 +99,17 @@ class NakarteUrl {
     constructor(url) {
         const paramNames = new NakarteUrlLoader().paramNames();
         this._params = Object.entries(parseHashParams(url))
-            .filter(([name, ]) => paramNames.includes(name));
+            .filter(([name]) => paramNames.includes(name));
     }
 
-    isOurUrl(url) {
+    isOurUrl() {
         return this._params.length > 0;
     }
 
     async geoData() {
-        const promises = this._params.map(([paramName, value]) => {
-            return new NakarteUrlLoader().geoData(paramName, value);
-        });
+        const promises = this._params.map(([paramName, value]) => new NakarteUrlLoader().geoData(paramName, value));
         return flattenArray(await Promise.all(promises));
     }
 }
-
-
-function parsePointFromHashValues(values) {
-    if (values.length < 2) {
-        return [{name: 'Point in url', error: 'CORRUPT'}]
-    }
-    const lat = parseFloat(values[0]);
-    const lng = parseFloat(values[1]);
-    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        return [{name: 'Point in url', error: 'CORRUPT'}]
-    }
-    const name = ((values[2] || '').trim()) || 'Point';
-    return [{name, points: [{name, lat, lng}]}];
-
-}
-
 
 export {NakarteTrack, NakarteUrl, NakarteUrlLoader};

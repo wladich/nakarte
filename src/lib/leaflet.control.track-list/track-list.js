@@ -1,56 +1,149 @@
 import L from 'leaflet';
-import ko from 'vendored/knockout';
-import Contextmenu from 'lib/contextmenu';
-import 'lib/knockout.component.progress/progress';
+import ko from 'knockout';
+import Contextmenu from '~/lib/contextmenu';
+import '~/lib/knockout.component.progress/progress';
 import './track-list.css';
-import {selectFiles, readFiles} from 'lib/file-read';
+import {selectFiles, readFiles} from '~/lib/file-read';
 import parseGeoFile from './lib/parseGeoFile';
 import loadFromUrl from './lib/loadFromUrl';
-import geoExporters from './lib/geo_file_exporters';
-import copyToClipboard from 'lib/clipboardCopy';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import 'lib/leaflet.layer.canvasMarkers';
-import 'lib/leaflet.lineutil.simplifyLatLngs';
-import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
-import 'lib/controls-styles/controls-styles.css';
-import {ElevationProfile, calcSamplingInterval} from 'lib/leaflet.control.elevation-profile';
-import 'lib/leaflet.control.commons';
-import {blobFromString} from 'lib/binary-strings';
-import 'lib/leaflet.polyline-edit';
-import 'lib/leaflet.polyline-measure';
-import logging from 'lib/logging';
-import {notify} from 'lib/notifications';
-import {fetch} from 'lib/xhr-promise';
-import config from 'config';
-import md5 from './lib/md5';
-import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import * as geoExporters from './lib/geo_file_exporters';
+import copyToClipboard from '~/lib/clipboardCopy';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import '~/lib/leaflet.layer.canvasMarkers';
+import '~/lib/leaflet.lineutil.simplifyLatLngs';
+import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
+import '~/lib/controls-styles/controls-styles.css';
+import {ElevationProfile, calcSamplingInterval} from '~/lib/leaflet.control.elevation-profile';
+import '~/lib/leaflet.control.commons';
+import {blobFromString} from '~/lib/binary-strings';
+import '~/lib/leaflet.polyline-edit';
+import '~/lib/leaflet.polyline-measure';
+import * as logging from '~/lib/logging';
+import {notify, query} from '~/lib/notifications';
+import {fetch} from '~/lib/xhr-promise';
+import config from '~/config';
+import md5 from 'blueimp-md5';
+import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
+import {createZipFile} from '~/lib/zip-writer';
+import {splitLinesAt180Meridian} from "./lib/meridian180";
+import {ElevationProvider} from '~/lib/elevations';
+import {parseNktkSequence} from './lib/parsers/nktk';
+import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
-
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
 
     options: {
         weight: 6,
-        lineCap: 'butt',
+        lineCap: 'round',
         opacity: 0.5,
 
     }
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+// name: str
+// seen: Set[str]
+// return str[]
+function makeNameUnique(name, seen) {
+    const maxTries = 10_000;
+    let uniqueName = name;
+    let i = 0;
+    while (seen.has(uniqueName)) {
+        i += 1;
+        if (i > maxTries) {
+            throw new Error(`Failed to create unique name for "${name}"`);
+        }
+        uniqueName = `${name}(${i})`;
+    }
+    return uniqueName;
+}
 
+function getLinkToShare(keysToExclude, paramsToAdd) {
+    const {origin, pathname, hash} = window.location;
+
+    const params = new URLSearchParams(hash.substring(1));
+
+    if (keysToExclude) {
+        for (const key of keysToExclude) {
+            params.delete(key);
+        }
+    }
+    if (paramsToAdd) {
+        for (const [key, value] of Object.entries(paramsToAdd)) {
+            params.set(key, value);
+        }
+    }
+    return origin + pathname + '#' + decodeURIComponent(params.toString());
+}
+
+function unwrapLatLngsCrossing180Meridian(latngs) {
+    if (latngs.length === 0) {
+        return [];
+    }
+    const unwrapped = [latngs[0]];
+    let lastUnwrapped;
+    let prevUnwrapped = latngs[0];
+    for (let i = 1; i < latngs.length; i++) {
+        lastUnwrapped = wrapLatLngToTarget(latngs[i], prevUnwrapped);
+        unwrapped.push(lastUnwrapped);
+        prevUnwrapped = lastUnwrapped;
+    }
+    return unwrapped;
+}
+
+function closestPointToLineSegment(latlngs, segmentIndex, point) {
+    const crs = L.CRS.EPSG3857;
+    point = crs.latLngToPoint(point);
+    const segStart = crs.latLngToPoint(latlngs[segmentIndex]);
+    const segEnd = crs.latLngToPoint(latlngs[segmentIndex + 1]);
+    return crs.pointToLatLng(L.LineUtil.closestPointOnSegment(point, segStart, segEnd));
+}
+
+function isPointCloserToStart(latlngs, latlng) {
+    const distToStart = latlng.distanceTo(latlngs[0]);
+    const distToEnd = latlng.distanceTo(latlngs[latlngs.length - 1]);
+    return distToStart < distToEnd;
+}
 
 L.Control.TrackList = L.Control.extend({
-        options: {position: 'bottomright'},
+        options: {
+            position: 'bottomright',
+            lineCursorStyle: {interactive: false, weight: 1.5, opacity: 1, dashArray: '7,7'},
+            lineCursorValidStyle: {color: 'green'},
+            lineCursorInvalidStyle: {color: 'red'},
+            splitExtensions: ['gpx', 'kml', 'geojson', 'kmz', 'wpt', 'rte', 'plt', 'fit', 'tmp', 'jpg', 'crdownload'],
+            splitExtensionsFirstStage: ['xml', 'txt', 'html', 'php', 'tmp', 'gz'],
+            trackHighlightStyle: {
+                color: 'yellow',
+                weight: 15,
+                opacity: 0.5,
+            },
+            trackMarkerHighlightStyle: {
+                color: 'yellow',
+                weight: 20,
+                opacity: 0.6,
+            },
+            trackStartHighlightStyle: {
+                color: 'green',
+                weight: 13,
+                opacity: 0.6,
+            },
+            trackEndHighlightStyle: {
+                color: 'red',
+                weight: 13,
+                opacity: 0.6,
+            },
+            keysToExcludeOnCopyLink: [],
+        },
         includes: L.Mixin.Events,
 
         colors: TRACKLIST_TRACK_COLORS,
 
-
-        initialize: function() {
-            L.Control.prototype.initialize.call(this);
+        initialize: function(options) {
+            L.Control.prototype.initialize.call(this, options);
             this.tracks = ko.observableArray();
             this.url = ko.observable('');
             this.readingFiles = ko.observable(0);
@@ -60,6 +153,7 @@ L.Control.TrackList = L.Control.extend({
             this.trackListHeight = ko.observable(0);
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
+            this.trackAddingSegment = ko.observable(null);
         },
 
         onAdd: function(map) {
@@ -68,23 +162,25 @@ L.Control.TrackList = L.Control.extend({
             var container = this._container = L.DomUtil.create('div', 'leaflet-control leaflet-control-tracklist');
             this._stopContainerEvents();
 
+            /* eslint-disable max-len */
             container.innerHTML = `
-                <div class="leaflet-control-button-toggle" data-bind="click: setExpanded"
+                <div class="leaflet-control-button-toggle"
+                 data-bind="click: setExpanded, class: readingFiles() ? 'icon-spinner-nuclear' : 'icon-tracks'"
                  title="Load, edit and save tracks"></div>
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint"
-                     title="gpx kml Ozi zip YandexMaps GPSies Strava GPSLib Endomondo Movescount OSM">
-                        gpx kml Ozi zip YandexMaps GPSies Strava
+                     title="gpx kml Ozi geojson zip YandexMaps Strava Etomesto GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
+                        gpx kml Ozi geojson zip YandexMaps Strava
                         <span class="formats-hint-more">&hellip;</span>
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
-                    <a class="button add-track" title="New track" data-bind="click: function(){this.addNewTrack()}"></a
+                    <a class="button add-track" title="New track" data-bind="click: onButtonNewTrackClicked"></a
                     ><a class="button open-file" title="Open file" data-bind="click: loadFilesFromDisk"></a
                     ><input type="text" class="input-url" placeholder="Track URL"
-                        data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: onFileInputRightClick}"
+                        data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: defaultEventHandle, mousemove: defaultEventHandle}"
                     ><a class="button download-url" title="Download URL" data-bind="click: loadFilesFromUrl"></a
                     ><a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}" title="Menu"></a>
                 </div>
@@ -107,23 +203,38 @@ L.Control.TrackList = L.Control.extend({
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
-                        <td><div class="button-length" data-bind="text: $parent.formatLength(track.length()), css: {'ticks-enabled': track.measureTicksShown}, click: $parent.switchMeasureTicksVisibility.bind($parent)"></div></td>
-                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.addSegmentAndEdit.bind($parent, track)"></div></td>
-                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
+                        <td>
+                            <div class="button-length" title="Show distance marks" data-bind="
+                                text: $parent.formatLength(track.length()),
+                                css: {'ticks-enabled': track.measureTicksShown},
+                                click: $parent.switchMeasureTicksVisibility.bind($parent)"></div>
+                        </td>
+                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.onButtonAddSegmentClicked.bind($parent, track), css: {active: $parent.trackAddingSegment() === track}"></div></td>
+                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onButtonAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
                 </tbody></table>
                 </div>
                 </div>
             `;
+            /* eslint-enable max-len */
 
             ko.applyBindings(this, container);
             // FIXME: add onRemove method and unsubscribe
             L.DomEvent.addListener(map.getContainer(), 'drop', this.onFileDragDrop, this);
             L.DomEvent.addListener(map.getContainer(), 'dragover', this.onFileDraging, this);
             this.menu = new Contextmenu([
-                    {text: 'Copy all tracks to clipboard', callback: this.copyAllTracksToClipboard.bind(this)},
-                    {text: 'Copy visible tracks to clipboard', callback: this.copyVisibleTracks.bind(this)},
+                    {text: 'Copy link for all tracks', callback: this.copyAllTracksToClipboard.bind(this)},
+                    {text: 'Copy link for visible tracks', callback: this.copyVisibleTracksToClipboard.bind(this)},
+                {
+                    text: 'Create new track from all visible tracks',
+                    callback: this.createNewTrackFromVisibleTracks.bind(this)
+                },
+                    () => ({
+                        text: 'Save all tracks to ZIP file',
+                        callback: this.saveAllTracksToZipFile.bind(this),
+                        disabled: !this.tracks().length
+                    }),
                     '-',
                     {text: 'Delete all tracks', callback: this.deleteAllTracks.bind(this)},
                     {text: 'Delete hidden tracks', callback: this.deleteHiddenTracks.bind(this)}
@@ -143,7 +254,7 @@ L.Control.TrackList = L.Control.extend({
             return container;
         },
 
-        onFileInputRightClick: function(_, e) {
+        defaultEventHandle: function(_, e) {
             L.DomEvent.stopPropagation(e);
             return true;
         },
@@ -151,10 +262,12 @@ L.Control.TrackList = L.Control.extend({
         _setAdaptiveHeight: function() {
             const mapHeight = this._map.getSize().y;
             let maxHeight;
-            maxHeight = (mapHeight
-            - this._container.offsetTop // controls above
-            - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-            - 105); // margin
+            maxHeight =
+                mapHeight -
+                this._container.offsetTop - // controls above
+                // controls below
+                (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) -
+                105; // margin
             this.trackListHeight(maxHeight + 'px');
         },
 
@@ -175,7 +288,7 @@ L.Control.TrackList = L.Control.extend({
         onFileDragDrop: function(e) {
             L.DomEvent.stopPropagation(e);
             L.DomEvent.preventDefault(e);
-            const files  = e.dataTransfer.files;
+            const files = e.dataTransfer.files;
             if (files && files.length) {
                 this.loadFilesFromFilesObject(files);
             }
@@ -185,36 +298,43 @@ L.Control.TrackList = L.Control.extend({
             if (e.keyCode === 13) {
                 this_.loadFilesFromUrl();
                 L.DomEvent.stop(e);
-            } else {
-                return true;
+                return false;
             }
+            return true;
         },
 
         getTrackPolylines: function(track) {
             return track.feature.getLayers().filter(function(layer) {
                     return layer instanceof L.Polyline;
                 }
-            )
+            );
         },
 
         getTrackPoints: function(track) {
             return track.markers;
         },
 
-        addNewTrack: function(name) {
-            if (!name) {
-                name = this.url().slice(0, 50);
-                if (!name.length) {
-                    name = 'New track';
-                } else {
-                    this.url('');
-                }
+        onButtonNewTrackClicked: function() {
+            let name = this.url().trim();
+            if (name.length > 0) {
+                this.url('');
+            } else {
+                name = 'New track';
             }
+            this.addTrackAndEdit(name);
+        },
+
+        addSegmentAndEdit: function(track) {
             this.stopPlacingPoint();
-            var track = this.addTrack({name: name}),
-                line = this.addTrackSegment(track);
-            this.startEditTrackSegement(track, line);
-            line.startDrawingLine();
+            const segment = this.addTrackSegment(track);
+            this.startEditTrackSegement(segment);
+            segment.startDrawingLine();
+            this.trackAddingSegment(track);
+        },
+
+        addTrackAndEdit: function(name) {
+            const track = this.addTrack({name: name});
+            this.addSegmentAndEdit(track);
             return track;
         },
 
@@ -223,23 +343,17 @@ L.Control.TrackList = L.Control.extend({
 
             readFiles(files).then(function(fileDataArray) {
                 const geodataArray = [];
-                const debugFileData = [];
                 for (let fileData of fileDataArray) {
                         geodataArray.push(...parseGeoFile(fileData.filename, fileData.data));
-                        debugFileData.push({
-                            fileName: fileData.filename,
-                            size: fileData.data.length,
-                            content: fileData.data.length <= 7500 ? btoa(fileData.data) : null
-                        });
                 }
                 this.readingFiles(this.readingFiles() - 1);
 
-                this.addTracksFromGeodataArray(geodataArray, debugFileData);
+                this.addTracksFromGeodataArray(geodataArray);
             }.bind(this));
         },
 
         loadFilesFromDisk: function() {
-            logging.captureBreadcrumb({message: 'load track from disk'});
+            logging.captureBreadcrumb('load track from disk');
             selectFiles(true).then(this.loadFilesFromFilesObject.bind(this));
         },
 
@@ -251,7 +365,7 @@ L.Control.TrackList = L.Control.extend({
 
             this.readingFiles(this.readingFiles() + 1);
 
-            logging.captureBreadcrumb({message: 'load track from url', data: {url: url}});
+            logging.captureBreadcrumb('load track from url', {trackUrl: url});
             loadFromUrl(url)
                 .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
@@ -265,7 +379,7 @@ L.Control.TrackList = L.Control.extend({
                 cb();
                 return;
             }
-            const subscription = this.readingFiles.subscribe((value) =>{
+            const subscription = this.readingFiles.subscribe((value) => {
                 if (value === 0) {
                     subscription.dispose();
                     cb();
@@ -273,19 +387,25 @@ L.Control.TrackList = L.Control.extend({
             });
         },
 
-        addTracksFromGeodataArray: function(geodata_array, debugData) {
+        addTracksFromGeodataArray: function(geodata_array, allowEmpty = false) {
             let hasData = false;
             var messages = [];
             if (geodata_array.length === 0) {
                 messages.push('No tracks loaded');
             }
             geodata_array.forEach(function(geodata) {
-                    var data_empty = !((geodata.tracks && geodata.tracks.length) || (geodata.points && geodata.points.length));
+                    var data_empty = !((geodata.tracks && geodata.tracks.length) ||
+                        (geodata.points && geodata.points.length));
 
-                    if (!data_empty) {
+                    if (!data_empty || allowEmpty) {
                         if (geodata.tracks) {
                             geodata.tracks = geodata.tracks.map(function(line) {
-                                    return L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
+                                    line = unwrapLatLngsCrossing180Meridian(line);
+                                    line = L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
+                                    if (line.length === 1) {
+                                        line.push(line[0]);
+                                    }
+                                    return line;
                                 }
                             );
                         }
@@ -293,9 +413,10 @@ L.Control.TrackList = L.Control.extend({
                         this.addTrack(geodata);
                     }
                     var error_messages = {
-                        'CORRUPT': 'File "{name}" is corrupt',
-                        'UNSUPPORTED': 'File "{name}" has unsupported format or is badly corrupt',
-                        'NETWORK': 'Could not download file from url "{name}"'
+                        CORRUPT: 'File "{name}" is corrupt',
+                        UNSUPPORTED: 'File "{name}" has unsupported format or is badly corrupt',
+                        NETWORK: 'Could not download file from url "{name}"',
+                        INVALID_URL: '"{name}"  is not of supported URL type',
                     };
                     var message;
                     if (geodata.error) {
@@ -305,6 +426,10 @@ L.Control.TrackList = L.Control.extend({
                         } else {
                             message += ', loaded data can be invalid or incomplete';
                         }
+                    } else if (data_empty && !allowEmpty) {
+                        message =
+                            'No data could be loaded from file "{name}". ' +
+                            'File is empty or contains only unsupported data.';
                     }
                     if (message) {
                         message = L.Util.template(message, {name: geodata.name});
@@ -313,12 +438,10 @@ L.Control.TrackList = L.Control.extend({
                 }.bind(this)
             );
             if (messages.length) {
-                logging.captureMessage('errors in loaded tracks', {extra: {message: messages.join('\n'), debugData}});
                 notify(messages.join('\n'));
             }
             return hasData;
         },
-
 
         onTrackColorChanged: function(track) {
             var color = this.colors[track.color()];
@@ -329,7 +452,10 @@ L.Control.TrackList = L.Control.extend({
             );
             var markers = this.getTrackPoints(track);
             markers.forEach(this.setMarkerIcon.bind(this));
-            this._markerLayer.updateMarkers(markers);
+            if (track.visible()) {
+                this._markerLayer.updateMarkers(markers);
+            }
+            this.notifyTracksChanged();
         },
 
         onTrackVisibilityChanged: function(track) {
@@ -344,10 +470,18 @@ L.Control.TrackList = L.Control.extend({
                 this._markerLayer.removeMarkers(track.markers);
             }
             this.updateTrackHighlight();
-
+            this.notifyTracksChanged();
         },
 
-        onTrackLengthChanged: function(track) {
+        onTrackSegmentNodesChanged: function(track, segment) {
+            if (segment.getFixedLatLngs().length > 0) {
+                this.trackAddingSegment(null);
+            }
+            this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
+        },
+
+        recalculateTrackLength: function(track) {
             const lines = this.getTrackPolylines(track);
             let length = 0;
             for (let line of lines) {
@@ -370,6 +504,7 @@ L.Control.TrackList = L.Control.extend({
             var visible = track.measureTicksShown(),
                 lines = this.getTrackPolylines(track);
             lines.forEach((line) => line.setMeasureTicksVisible(visible));
+            this.notifyTracksChanged();
         },
 
         switchMeasureTicksVisibility: function(track) {
@@ -425,8 +560,8 @@ L.Control.TrackList = L.Control.extend({
         attachColorSelector: function(track) {
             var items = this.colors.map(function(color, index) {
                     return {
-                        text: '<div style="display: inline-block; vertical-align: middle; width: 50px; height: 0; border-top: 4px solid ' +
-                        color + '"></div>',
+                        text: '<div style="display: inline-block; vertical-align: middle; width: 50px; height: 0; ' +
+                            'border-top: 4px solid ' + color + '"></div>',
                         callback: track.color.bind(null, index)
                     };
                 }
@@ -447,36 +582,37 @@ L.Control.TrackList = L.Control.extend({
                 '-',
                 {text: 'Delete', callback: this.removeTrack.bind(this, track)},
                 '-',
-                {text: 'Save as GPX', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpx, '.gpx')},
-                {text: 'Save as KML', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveKml, '.kml')},
-                {text: 'Copy link to clipboard', callback: this.copyTrackLinkToClipboard.bind(this, track)},
+                {text: 'Save as GPX', callback: () => this.saveTrackAsFile(track, geoExporters.saveGpx, '.gpx')},
+                {text: 'Save as KML', callback: () => this.saveTrackAsFile(track, geoExporters.saveKml, '.kml')},
+                {text: 'Copy link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
+                {text: 'Extra', separator: true},
+                {
+                    text: 'Save as GPX with added elevation (SRTM)',
+                    callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true),
+                },
             ];
             track._actionsMenu = new Contextmenu(items);
         },
 
-        addSegmentAndEdit: function(track) {
+        onButtonAddSegmentClicked: function(track) {
             if (!track.visible()) {
                 return;
             }
-            this.stopPlacingPoint();
-            var polyline = this.addTrackSegment(track, []);
-            this.startEditTrackSegement(track, polyline);
-            polyline.startDrawingLine(1);
+            if (this.trackAddingSegment() === track) {
+                this.trackAddingSegment(null);
+                this.stopEditLine();
+            } else {
+                this.addSegmentAndEdit(track);
+            }
         },
 
         duplicateTrack: function(track) {
-            var segments = [], segment,
-                line,
-                lines = this.getTrackPolylines(track);
-            for (var i = 0; i < lines.length; i++) {
-                segment = [];
-                line = lines[i].getLatLngs();
-                for (var j = 0; j < line.length; j++) {
-                    segment.push([line[j].lat, line[j].lng]);
-                }
-                segments.push(segment);
-            }
-            this.addTrack({name: track.name(), tracks: segments});
+            const segments = this.getTrackPolylines(track).map((line) =>
+                line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
+            );
+            const points = this.getTrackPoints(track)
+                .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label}));
+            this.addTrack({name: track.name(), tracks: segments, points});
         },
 
         reverseTrackSegment: function(trackSegment) {
@@ -491,75 +627,131 @@ L.Control.TrackList = L.Control.extend({
             this.deleteTrackSegment(trackSegment);
             var newTrackSegment = this.addTrackSegment(trackSegment._parentTrack, latlngs);
             if (isEdited) {
-                this.startEditTrackSegement(trackSegment._parentTrack, newTrackSegment);
+                this.startEditTrackSegement(newTrackSegment);
             }
         },
 
         reverseTrack: function(track) {
-            var self = this;
+            var that = this;
             this.getTrackPolylines(track).forEach(function(trackSegment) {
-                    self.reverseTrackSegment(trackSegment);
+                    that.reverseTrackSegment(trackSegment);
                 }
             );
         },
 
-        copyTracksLinkToClipboard: function(tracks, mouseEvent) {
+        serializeTracks: function(tracks) {
+            return tracks.map((track) => this.trackToString(track)).join('/');
+        },
+
+        copyTracksLinkToClipboard: function(tracks, mouseEvent, allowWithoutTracks = false) {
             if (!tracks.length) {
+                if (allowWithoutTracks) {
+                    const url = getLinkToShare(this.options.keysToExcludeOnCopyLink);
+                    copyToClipboard(url, mouseEvent);
+                    return;
+                }
                 notify('No tracks to copy');
                 return;
             }
-            let serialized = tracks.map((track) => this.trackToString(track)).join('/');
+            let serialized = this.serializeTracks(tracks);
             const hashDigest = md5(serialized, null, true);
-            const key = btoa(hashDigest).replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
-            const url = window.location + '&nktl=' + key;
+            const key = btoa(hashDigest).replace(/\//ug, '_').replace(/\+/ug, '-').replace(/=/ug, '');
+            const url = getLinkToShare(this.options.keysToExcludeOnCopyLink, {nktl: key});
             copyToClipboard(url, mouseEvent);
-            fetch(`${config.tracksStorageServer}/track/${key}`, {method: 'POST', data: serialized}).then((xhr) => {
-                },
-                (e) => {
+            fetch(`${config.tracksStorageServer}/track/${key}`, {
+                method: 'POST',
+                data: serialized,
+                withCredentials: true
+            }).then(
+                null, (e) => {
                     let message = e.message || e;
                     if (e.xhr.status === 413) {
                         message = 'track is too big';
                     }
                     logging.captureMessage('Failed to save track to server',
-                        {extra: {status: e.xhr.status, response: e.xhr.responseText}});
+                        {status: e.xhr.status, response: e.xhr.responseText});
                     notify('Error making link: ' + message);
                 }
             );
         },
 
         copyTrackLinkToClipboard: function(track, mouseEvent) {
-            this.stopActiveDraw();
             this.copyTracksLinkToClipboard([track], mouseEvent);
         },
 
-        saveTrackAsFile: function(track, exporter, extension) {
-            this.stopActiveDraw();
+        exportTrackAsFile: async function(track, exporter, extension, addElevations, allowEmpty) {
             var lines = this.getTrackPolylines(track)
                 .map(function(line) {
-                        return line.getLatLngs();
+                        return line.getFixedLatLngs();
                     }
                 );
+            lines = splitLinesAt180Meridian(lines);
             var points = this.getTrackPoints(track);
-            var name = track.name(),
-                i = name.lastIndexOf('.');
-            if (i > -1 && i >= name.length - 5) {
-                name = name.slice(0, i);
+            let name = track.name();
+            // Browser (Chrome) removes leading dots. Also we do not want to create hidden files on Linux
+            name = name.replace(/^\./u, '_');
+            for (let extensions of [this.options.splitExtensionsFirstStage, this.options.splitExtensions]) {
+                let i = name.lastIndexOf('.');
+                if (i > -1 && extensions.includes(name.slice(i + 1).toLowerCase())) {
+                    name = name.slice(0, i);
+                }
+            }
+            if (!allowEmpty && lines.length === 0 && points.length === 0) {
+                return {error: 'Track is empty, nothing to save'};
             }
 
-            if (lines.length === 0 && points.length === 0) {
-                notify('Track is empty, nothing to save');
+            if (addElevations) {
+                const request = [
+                    ...points.map((p) => p.latlng),
+                    ...lines.reduce((acc, cur) => {
+                        acc.push(...cur);
+                        return acc;
+                    }, [])
+                ];
+                let elevations;
+                try {
+                    elevations = await new ElevationProvider().get(request);
+                } catch (e) {
+                    logging.captureException(e, 'error getting elevation for gpx');
+                    notify(`Failed to get elevation data: ${e.message}`);
+                }
+                let n = 0;
+                for (let p of points) {
+                    // we make copy of latlng as we are changing it
+                    p.latlng = L.latLng(p.latlng.lat, p.latlng.lng, elevations[n]);
+                    n += 1;
+                }
+                for (let line of lines) {
+                    for (let p of line) {
+                        // we do not need to create new LatLng since splitLinesAt180Meridian() have already done it
+                        p.alt = elevations[n];
+                        n += 1;
+                    }
+                }
+            }
+
+            return {
+                content: exporter(lines, name, points),
+                filename: name + extension,
+            };
+        },
+
+        saveTrackAsFile: async function(track, exporter, extension, addElevations = false) {
+            const {error, content, filename} = await this.exportTrackAsFile(
+                track, exporter, extension, addElevations, false
+                );
+            if (error) {
+                notify(error);
                 return;
             }
-
-            var fileText = exporter(lines, name, points);
-            var filename = name + extension;
-            saveAs(blobFromString(fileText), filename, true);
+            saveAs(blobFromString(content), filename, true);
         },
 
         renameTrack: function(track) {
-            var newName = prompt('Enter new name', track.name());
+            var newName = query('Enter new name', track.name());
             if (newName && newName.length) {
                 track.name(newName);
+                this.notifyTracksChanged();
             }
         },
 
@@ -571,47 +763,40 @@ L.Control.TrackList = L.Control.extend({
             this.menu.show(e);
         },
 
-        stopActiveDraw: function() {
-            if (this._editedLine) {
-                this._editedLine.stopDrawingLine();
-            }
-        },
-
         stopEditLine: function() {
             if (this._editedLine) {
-                this.stopLineJoinSelection();
                 this._editedLine.stopEdit();
-                this._editedLine = null;
             }
         },
 
-        onTrackSegmentClick: function(track, trackSegment, e) {
+        onTrackSegmentClick: function(e) {
             if (this.isPlacingPoint) {
                 return;
             }
-            if (this._lineJoinCursor) {
+            const trackSegment = e.target;
+            if (this._lineJoinActive) {
                 L.DomEvent.stopPropagation(e);
-                this.joinTrackSegments(trackSegment);
+                this.joinTrackSegments(trackSegment, isPointCloserToStart(e.target.getLatLngs(), e.latlng));
             } else {
-                this.startEditTrackSegement(track, trackSegment);
+                this.startEditTrackSegement(trackSegment);
                 L.DomEvent.stopPropagation(e);
             }
         },
 
-        startEditTrackSegement: function(track, polyline) {
+        startEditTrackSegement: function(polyline) {
             if (this._editedLine && this._editedLine !== polyline) {
                 this.stopEditLine();
             }
             polyline.startEdit();
             this._editedLine = polyline;
-            polyline.once('editend', function(e) {
-                    setTimeout(this.onLineEditEnd.bind(this, e, track, polyline), 0);
-                }.bind(this)
-            );
+            polyline.once('editend', this.onLineEditEnd, this);
             this.fire('startedit');
         },
 
-        onAddPointClicked: function(track) {
+        onButtonAddPointClicked: function(track) {
+            if (!track.visible()) {
+                return;
+            }
             if (this.trackAddingPoint() === track) {
                 this.stopPlacingPoint();
             } else {
@@ -634,6 +819,11 @@ L.Control.TrackList = L.Control.extend({
             this.map.on('click', this.movePoint, this);
         },
 
+        copyPointCoordinatesToClipboard: function(marker, e) {
+            const {lat, lng} = coordFormats.formatLatLng(marker.latlng.wrap(), coordFormats.SIGNED_DEGREES);
+            copyToClipboard(`${lat} ${lng}`, e.originalEvent);
+        },
+
         beginPointCreate: function(track) {
             this._beginPointEdit();
             this.map.on('click', this.createNewPoint, this);
@@ -645,6 +835,18 @@ L.Control.TrackList = L.Control.extend({
             const newLatLng = e.latlng.wrap();
             this._markerLayer.setMarkerPosition(marker, newLatLng);
             this.stopPlacingPoint();
+            this.notifyTracksChanged();
+        },
+
+        getNewPointName: function(track) {
+            let maxNumber = 0;
+            for (let marker of track.markers) {
+                const label = marker.label;
+                if (label.match(/^\d{3}([^\d.]|$)/u)) {
+                    maxNumber = parseInt(label, 10);
+                }
+            }
+            return maxNumber === 999 ? '' : String(maxNumber + 1).padStart(3, '0');
         },
 
         createNewPoint: function(e) {
@@ -652,14 +854,11 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
             const parentTrack = this.trackAddingPoint();
-            parentTrack._pointAutoInc += 1;
-            let name = parentTrack._pointAutoInc.toString();
-            while (name.length < 3) {
-                name = '0' + name;
-            }
+            const name = e.suggested && this._map.suggestedPoint?.title || this.getNewPointName(parentTrack);
             const newLatLng = e.latlng.wrap();
             const marker = this.addPoint(parentTrack, {name: name, lat: newLatLng.lat, lng: newLatLng.lng});
             this._markerLayer.addMarker(marker);
+            this.notifyTracksChanged();
             // we need to show prompt after marker is dispalyed;
             // grid layer is updated in setTimout(..., 0)after adding marker
             // it is better to do it on 'load' event but when it is fired marker is not yet displayed
@@ -684,18 +883,18 @@ L.Control.TrackList = L.Control.extend({
             this.map.off('click', this.movePoint, this);
         },
 
-        joinTrackSegments: function(newSegment) {
-            this.stopLineJoinSelection();
+        joinTrackSegments: function(newSegment, joinToStart) {
+            this.hideLineCursor();
             var originalSegment = this._editedLine;
             var latlngs = originalSegment.getLatLngs(),
                 latngs2 = newSegment.getLatLngs();
-            if (this._lineJoinToStart === this._lineJoinFromStart) {
+            if (joinToStart === this._lineJoinFromStart) {
                 latngs2.reverse();
             }
             if (this._lineJoinFromStart) {
-                latlngs.unshift.apply(latlngs, latngs2);
+                latlngs.unshift(...latngs2);
             } else {
-                latlngs.push.apply(latlngs, latngs2);
+                latlngs.push(...latngs2);
             }
             latlngs = latlngs.map(function(ll) {
                     return [ll.lat, ll.lng];
@@ -706,14 +905,14 @@ L.Control.TrackList = L.Control.extend({
                 this.deleteTrackSegment(newSegment);
             }
             this.addTrackSegment(originalSegment._parentTrack, latlngs);
-
         },
 
-        onLineEditEnd: function(e, track, polyline) {
+        onLineEditEnd: function(e) {
+            const polyline = e.target;
+            const track = polyline._parentTrack;
             if (polyline.getLatLngs().length < 2) {
-                track.feature.removeLayer(polyline);
+                this.deleteTrackSegment(polyline);
             }
-            this.onTrackLengthChanged(track);
             if (this._editedLine === polyline) {
                 this._editedLine = null;
             }
@@ -730,19 +929,21 @@ L.Control.TrackList = L.Control.extend({
             );
             polyline._parentTrack = track;
             polyline.setMeasureTicksVisible(track.measureTicksShown());
-            polyline.on('click', this.onTrackSegmentClick.bind(this, track, polyline));
-            polyline.on('nodeschanged', this.onTrackLengthChanged.bind(this, track));
+            polyline.on('click', this.onTrackSegmentClick, this);
+            polyline.on('nodeschanged', this.onTrackSegmentNodesChanged.bind(this, track, polyline));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
-            polyline.on('mousemove', this.onMouseMoveOnSegmentUpdateLineJoinCursor, this);
             polyline.on('mouseover', () => this.onTrackMouseEnter(track));
             polyline.on('mouseout', () => this.onTrackMouseLeave(track));
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
+            polyline.on('drawend', this.onTrackSegmentDrawEnd, this);
 
-            //polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
-            //polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
+            // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
+            // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
             track.feature.addLayer(polyline);
+            this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
             return polyline;
         },
 
@@ -759,6 +960,7 @@ L.Control.TrackList = L.Control.extend({
                 items.push({text: 'Join', callback: this.startLineJoinSelection.bind(this, e)});
             }
             items.push({text: 'Reverse', callback: this.reverseTrackSegment.bind(this, e.line)});
+            items.push({text: 'Shortcut', callback: this.startShortCutSelection.bind(this, e, true)});
             items.push({text: 'Delete segment', callback: this.deleteTrackSegment.bind(this, e.line)});
             items.push({text: 'New track from segment', callback: this.newTrackFromSegment.bind(this, e.line)});
             items.push({
@@ -769,7 +971,6 @@ L.Control.TrackList = L.Control.extend({
 
             var menu = new Contextmenu(items);
             menu.show(e.mouseEvent);
-
         },
 
         onSegmentRightClickShowMenu: function(e) {
@@ -779,6 +980,7 @@ L.Control.TrackList = L.Control.extend({
                         callback: this.splitTrackSegment.bind(this, e.line, e.nodeIndex, e.mouseEvent.latlng)
                     },
                     {text: 'Reverse', callback: this.reverseTrackSegment.bind(this, e.line)},
+                    {text: 'Shortcut', callback: this.startShortCutSelection.bind(this, e, false)},
                     {text: 'Delete segment', callback: this.deleteTrackSegment.bind(this, e.line)},
                     {text: 'New track from segment', callback: this.newTrackFromSegment.bind(this, e.line)},
                     {
@@ -790,54 +992,196 @@ L.Control.TrackList = L.Control.extend({
             menu.show(e.mouseEvent);
         },
 
-        startLineJoinSelection: function(e) {
-            this.stopLineJoinSelection();
+        showLineCursor: function(start, mousepos) {
+            this.hideLineCursor();
             this._editedLine.stopDrawingLine();
-            this._lineJoinFromStart = (e.nodeIndex === 0);
-            var p = this._editedLine.getLatLngs()[e.nodeIndex];
-            p = [p.lat, p.lng];
-            this._lineJoinCursor = L.polyline([p, e.mouseEvent.latlng], {
-                    interactive: false,
-                    color: 'red',
-                    weight: 1.5,
-                    opacity: 1,
-                    dashArray: '7,7'
-                }
-            )
-                .addTo(this.map);
-            this.map.on('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
-            this.map.on('click', this.stopLineJoinSelection, this);
-            L.DomUtil.addClass(this.map.getContainer(), 'join-line-selecting');
-            L.DomEvent.on(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
-            var self = this;
-            setTimeout(function() {
-                    self._editedLine.preventStopEdit = true;
-                }, 0
+            this._lineCursor = L.polyline([start.clone(), mousepos], {
+                ...this.options.lineCursorStyle,
+                ...this.options.lineCursorInvalidStyle,
+            }).addTo(this._map);
+            this.map.on('mousemove', this.onMouseMoveOnMapForLineCursor, this);
+            this.map.on('click', this.hideLineCursor, this);
+            L.DomEvent.on(document, 'keyup', this.onKeyUpForLineCursor, this);
+            L.DomUtil.addClass(this.map.getContainer(), 'tracklist-line-cursor-shown');
+            this._editedLine.preventStopEdit = true;
+        },
+
+        hideLineCursor: function() {
+            if (this._lineCursor) {
+                this.map.off('mousemove', this.onMouseMoveOnMapForLineCursor, this);
+                this.map.off('click', this.hideLineCursor, this);
+                L.DomUtil.removeClass(this.map.getContainer(), 'tracklist-line-cursor-shown');
+                L.DomEvent.off(document, 'keyup', this.onKeyUpForLineCursor, this);
+                this.map.removeLayer(this._lineCursor);
+                this._lineCursor = null;
+                this.fire('linecursorhide');
+                this._editedLine.preventStopEdit = false;
+            }
+        },
+
+        onMouseMoveOnMapForLineCursor: function(e) {
+            this.updateLineCursor(e.latlng, false);
+        },
+
+        updateLineCursor: function(latlng, isValid) {
+            if (!this._lineCursor) {
+                return;
+            }
+            this._lineCursor.getLatLngs().splice(1, 1, latlng);
+            this._lineCursor.redraw();
+            this._lineCursor.setStyle(
+                isValid ? this.options.lineCursorValidStyle : this.options.lineCursorInvalidStyle
             );
         },
 
-        onMouseMoveUpdateLineJoinCursor: function(e) {
-            if (this._lineJoinCursor) {
-                this._lineJoinCursor.getLatLngs().splice(1, 1, e.latlng);
-                this._lineJoinCursor.redraw();
-                this._lineJoinCursor.setStyle({color: 'red'});
+        onKeyUpForLineCursor: function(e) {
+            if (e.target.tagName.toLowerCase() === 'input') {
+                return;
+            }
+            switch (e.keyCode) {
+                case 27:
+                case 13:
+                    this.hideLineCursor();
+                    L.DomEvent.stop(e);
+                    break;
+                default:
             }
         },
 
-        onMouseMoveOnSegmentUpdateLineJoinCursor: function(e) {
-            if (!this._lineJoinCursor) {
+        startLineJoinSelection: function(e) {
+            this._lineJoinFromStart = (e.nodeIndex === 0);
+            const cursorStart = this._editedLine.getLatLngs()[e.nodeIndex];
+            this.showLineCursor(cursorStart, e.mouseEvent.latlng);
+            this.on('linecursorhide', this.onLineCursorHideForJoin, this);
+            for (let track of this.tracks()) {
+                track.feature.on('mousemove', this.onMouseMoveOnLineForJoin, this);
+            }
+            this._lineJoinActive = true;
+            this._editedLine.disableEditOnLeftClick(true);
+        },
+
+        onMouseMoveOnLineForJoin: function(e) {
+            const latlngs = e.layer.getLatLngs();
+            const lineJoinToStart = isPointCloserToStart(latlngs, e.latlng);
+            const cursorEnd = lineJoinToStart ? latlngs[0] : latlngs[latlngs.length - 1];
+            L.DomEvent.stopPropagation(e);
+            this.updateLineCursor(cursorEnd, true);
+        },
+
+        onLineCursorHideForJoin: function() {
+            for (let track of this.tracks()) {
+                track.feature.off('mousemove', this.onMouseMoveOnLineForJoin, this);
+            }
+            this.off('linecursorhide', this.onLineCursorHideForJoin, this);
+            this._editedLine.disableEditOnLeftClick(false);
+            this._lineJoinActive = false;
+        },
+
+        startShortCutSelection: function(e, startFromNode) {
+            const line = this._editedLine;
+            this._shortCut = {startNodeIndex: e.nodeIndex, startFromNode};
+            let cursorStart;
+            if (startFromNode) {
+                cursorStart = line.getLatLngs()[e.nodeIndex];
+            } else {
+                cursorStart = closestPointToLineSegment(line.getLatLngs(), e.nodeIndex, e.mouseEvent.latlng);
+                this._shortCut.startLatLng = cursorStart;
+            }
+            this.showLineCursor(cursorStart, e.mouseEvent.latlng);
+            line.nodeMarkers.on('mousemove', this.onMouseMoveOnNodeMarkerForShortCut, this);
+            line.segmentOverlays.on('mousemove', this.onMouseMoveOnLineSegmentForShortCut, this);
+            this.map.on('mousemove', this.onMouseMoveOnMapForShortCut, this);
+            line.nodeMarkers.on('click', this.onClickNodeMarkerForShortCut, this);
+            line.segmentOverlays.on('click', this.onClickLineSegmentForShortCut, this);
+            this.on('linecursorhide', this.onLineCursorHideForShortCut, this);
+            line.disableEditOnLeftClick(true);
+        },
+
+        onMouseMoveOnLineSegmentForShortCut: function(e) {
+            this.updateShortCutSelection(e, false);
+        },
+
+        onMouseMoveOnNodeMarkerForShortCut: function(e) {
+            this.updateShortCutSelection(e, true);
+        },
+
+        onMouseMoveOnMapForShortCut: function() {
+            this._editedLine.highlighNodesForDeletion();
+        },
+
+        updateShortCutSelection: function(e, endAtNode) {
+            L.DomEvent.stopPropagation(e);
+            const line = this._editedLine;
+            const {firstNodeToDelete, lastNodeToDelete, rangeValid} = this.getShortCutNodes(e, endAtNode);
+            this.updateLineCursor(e.latlng, rangeValid);
+            if (rangeValid) {
+                line.highlighNodesForDeletion(firstNodeToDelete, lastNodeToDelete);
+            } else {
+                line.highlighNodesForDeletion();
+            }
+        },
+
+        onLineCursorHideForShortCut: function() {
+            const line = this._editedLine;
+            line.highlighNodesForDeletion();
+            line.nodeMarkers.off('mousemove', this.onMouseMoveOnNodeMarkerForShortCut, this);
+            line.segmentOverlays.off('mousemove', this.onMouseMoveOnLineSegmentForShortCut, this);
+            this.map.off('mousemove', this.onMouseMoveOnMapForShortCut, this);
+            line.nodeMarkers.off('click', this.onClickNodeMarkerForShortCut, this);
+            line.segmentOverlays.off('click', this.onClickLineSegmentForShortCut, this);
+            this.off('linecursorhide', this.onLineCursorHideForShortCut, this);
+            line.disableEditOnLeftClick(false);
+            this._shortCut = null;
+        },
+
+        onClickLineSegmentForShortCut: function(e) {
+            this.shortCutSegment(e, false);
+        },
+
+        onClickNodeMarkerForShortCut: function(e) {
+            this.shortCutSegment(e, true);
+        },
+
+        getShortCutNodes: function(e, endAtNode) {
+            const line = this._editedLine;
+            let startFromNode = this._shortCut.startFromNode;
+            let startNodeIndex = this._shortCut.startNodeIndex;
+            let endNodeIndex = line[endAtNode ? 'getMarkerIndex' : 'getSegmentOverlayIndex'](e.layer);
+            const newNodes = [];
+            if (!startFromNode) {
+                newNodes.push(this._shortCut.startLatLng);
+            }
+            if (!endAtNode) {
+                newNodes.push(closestPointToLineSegment(line.getLatLngs(), endNodeIndex, e.latlng));
+            }
+            let firstNodeToDelete, lastNodeToDelete;
+            if (endNodeIndex > startNodeIndex) {
+                firstNodeToDelete = startNodeIndex + 1;
+                lastNodeToDelete = endNodeIndex - 1;
+                if (!endAtNode) {
+                    lastNodeToDelete += 1;
+                }
+            } else {
+                newNodes.reverse();
+                firstNodeToDelete = endNodeIndex + 1;
+                lastNodeToDelete = startNodeIndex - 1;
+                if (!startFromNode) {
+                    lastNodeToDelete += 1;
+                }
+            }
+            return {firstNodeToDelete, lastNodeToDelete, newNodes, rangeValid: lastNodeToDelete >= firstNodeToDelete};
+        },
+
+        shortCutSegment: function(e, endAtNode) {
+            L.DomEvent.stopPropagation(e);
+            const line = this._editedLine;
+            const {firstNodeToDelete, lastNodeToDelete, newNodes, rangeValid} = this.getShortCutNodes(e, endAtNode);
+            if (!rangeValid) {
                 return;
             }
-            var trackSegment = e.target,
-                latlngs = trackSegment.getLatLngs(),
-                distToStart = e.latlng.distanceTo(latlngs[0]),
-                distToEnd = e.latlng.distanceTo(latlngs[latlngs.length - 1]);
-            this._lineJoinToStart = (distToStart < distToEnd);
-            var cursorEnd = this._lineJoinToStart ? latlngs[0] : latlngs[latlngs.length - 1];
-            this._lineJoinCursor.setStyle({color: 'green'});
-            this._lineJoinCursor.getLatLngs().splice(1, 1, cursorEnd);
-            this._lineJoinCursor.redraw();
-            L.DomEvent.stopPropagation(e);
+            this.stopEditLine();
+            line.spliceLatLngs(firstNodeToDelete, lastNodeToDelete - firstNodeToDelete + 1, ...newNodes);
+            this.startEditTrackSegement(line);
         },
 
         onTrackMouseEnter: function(track) {
@@ -854,78 +1198,45 @@ L.Control.TrackList = L.Control.extend({
 
         onTrackEditEnd: function(track) {
             track.isEdited(false);
+            this.hideLineCursor();
+            this._editedLine = null;
         },
 
         onTrackRowMouseEnter: function(track) {
-            this._highlightedTrack = track;
-            this.updateTrackHighlight();
+            track.hover(true);
         },
 
         onTrackRowMouseLeave: function(track) {
-            if (this._highlightedTrack === track){
-                this._highlightedTrack = null;
-                this.updateTrackHighlight();
-            }
+            track.hover(false);
         },
 
-        onEscPressedStopLineJoinSelection: function(e) {
-            if ('input' === e.target.tagName.toLowerCase()) {
-                return;
-            }
-            switch (e.keyCode) {
-                case 27:
-                case 13:
-                    this.stopLineJoinSelection();
-                    L.DomEvent.stop(e);
-                    break;
-                default:
-            }
-        },
-
-        stopLineJoinSelection: function() {
-            if (this._lineJoinCursor) {
-                this.map.off('mousemove', this.onMouseMoveUpdateLineJoinCursor, this);
-                this.map.off('click', this.stopLineJoinSelection, this);
-                L.DomUtil.removeClass(this.map.getContainer(), 'join-line-selecting');
-                L.DomEvent.off(document, 'keyup', this.onEscPressedStopLineJoinSelection, this);
-                this.map.removeLayer(this._lineJoinCursor);
-                this._lineJoinCursor = null;
-                var self = this;
-                setTimeout(function() {
-                        self._editedLine.preventStopEdit = false;
-                    }, 0
-                );
-            }
+        onTrackSegmentDrawEnd: function() {
+            this.trackAddingSegment(null);
         },
 
         splitTrackSegment: function(trackSegment, nodeIndex, latlng) {
             var latlngs = trackSegment.getLatLngs();
-            latlngs = latlngs.map(function(ll) {
-                    return [ll.lat, ll.lng];
-                }
-            );
+            latlngs = latlngs.map((latlng) => latlng.clone());
             var latlngs1 = latlngs.slice(0, nodeIndex + 1),
                 latlngs2 = latlngs.slice(nodeIndex + 1);
             if (latlng) {
-                var p = this.map.project(latlng),
-                    p1 = this.map.project(latlngs[nodeIndex]),
-                    p2 = this.map.project(latlngs[nodeIndex + 1]),
-                    pnew = L.LineUtil.closestPointOnSegment(p, p1, p2);
-                latlng = this.map.unproject(pnew);
-                latlngs1.push(latlng);
-                latlng = [latlng.lat, latlng.lng];
+                latlng = closestPointToLineSegment(latlngs, nodeIndex, latlng);
+                latlngs1.push(latlng.clone());
             } else {
                 latlng = latlngs[nodeIndex];
             }
-            latlngs2.unshift(latlng);
+            latlngs2.unshift(latlng.clone());
             this.deleteTrackSegment(trackSegment);
             var segment1 = this.addTrackSegment(trackSegment._parentTrack, latlngs1);
             this.addTrackSegment(trackSegment._parentTrack, latlngs2);
-            this.startEditTrackSegement(trackSegment._parentTrack, segment1);
+            this.startEditTrackSegement(segment1);
         },
 
         deleteTrackSegment: function(trackSegment) {
-            trackSegment._parentTrack.feature.removeLayer(trackSegment);
+            const track = trackSegment._parentTrack;
+            track.feature.removeLayer(trackSegment);
+            this.recalculateTrackLength(track);
+            this.notifyTracksChanged();
         },
 
         newTrackFromSegment: function(trackSegment) {
@@ -949,10 +1260,9 @@ L.Control.TrackList = L.Control.extend({
                 name: ko.observable(geodata.name),
                 color: ko.observable(color),
                 visible: ko.observable(!geodata.trackHidden),
-                length: ko.observable('empty'),
+                length: ko.observable(0),
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
-                _pointAutoInc: 0,
                 markers: [],
                 hover: ko.observable(false),
                 isEdited: ko.observable(false)
@@ -968,13 +1278,23 @@ L.Control.TrackList = L.Control.extend({
             if (!L.Browser.touch) {
                 track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
             }
+            track.hover.subscribe(this.onTrackHoverChanged.bind(this, track));
 
-            //this.onTrackColorChanged(track);
+            // this.onTrackColorChanged(track);
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
-            this.onTrackLengthChanged(track);
+            this.notifyTracksChanged();
             return track;
+        },
+
+        onTrackHoverChanged: function(track, hover) {
+            if (hover) {
+                this._highlightedTrack = track;
+            } else if (this._highlightedTrack === track) {
+                this._highlightedTrack = null;
+            }
+            this.updateTrackHighlight();
         },
 
         updateTrackHighlight: function() {
@@ -986,19 +1306,30 @@ L.Control.TrackList = L.Control.extend({
                 this._trackHighlight = null;
             }
             if (this._highlightedTrack && this._highlightedTrack.visible()) {
-                const trackHighlight = L.featureGroup([]);
-
-                this._highlightedTrack.feature.eachLayer((line) => {
+                const trackHighlight = L.featureGroup([]).addTo(this._map).bringToBack();
+                for (const line of this._highlightedTrack.feature.getLayers()) {
                     let latlngs = line.getFixedLatLngs();
-                    L.polyline(latlngs).addTo(trackHighlight);
-                });
-
-                trackHighlight.setStyle({
-                    color: 'yellow',
-                    weight: '15',
-                    opacity: 0.5
-                });
-                trackHighlight.addTo(this._map).bringToBack();
+                    if (latlngs.length === 0) {
+                        continue;
+                    }
+                    L.polyline(latlngs, {...this.options.trackHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                    const start = latlngs[0];
+                    const end = latlngs[latlngs.length - 1];
+                    L.polyline([start, start], {...this.options.trackStartHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                    L.polyline([end, end], {...this.options.trackEndHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                }
+                for (const marker of this._highlightedTrack.markers) {
+                    const latlng = marker.latlng.clone();
+                    L.polyline([latlng, latlng], {...this.options.trackMarkerHighlightStyle, interactive: false}).addTo(
+                        trackHighlight
+                    );
+                }
                 this._trackHighlight = trackHighlight;
             }
         },
@@ -1011,11 +1342,6 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerLabel: function(marker, label) {
-            if (label.match(/^\d{3,}/)) {
-                var n = parseInt(label, 10);
-                marker._parentTrack._pointAutoInc =
-                    Math.max(n, marker._parentTrack._pointAutoInc | 0);
-            }
             marker.label = label;
         },
 
@@ -1033,8 +1359,11 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerClick: function(e) {
             new Contextmenu([
+                    {text: e.marker.label, header: true},
+                    '-',
                     {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
                     {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
+                    {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
                 ]
             ).show(e);
@@ -1054,20 +1383,23 @@ L.Control.TrackList = L.Control.extend({
             const markers = marker._parentTrack.markers;
             const i = markers.indexOf(marker);
             markers.splice(i, 1);
+            this.notifyTracksChanged();
         },
 
         renamePoint: function(marker) {
             this.stopPlacingPoint();
-            var newLabel = prompt('New point name', marker.label);
+            var newLabel = query('New point name', marker.label);
             if (newLabel !== null) {
                 this.setMarkerLabel(marker, newLabel);
                 this._markerLayer.updateMarker(marker);
+                this.notifyTracksChanged();
             }
         },
 
         removeTrack: function(track) {
             track.visible(false);
             this.tracks.remove(track);
+            this.notifyTracksChanged();
         },
 
         deleteAllTracks: function() {
@@ -1091,7 +1423,7 @@ L.Control.TrackList = L.Control.extend({
 
         trackToString: function(track, forceVisible) {
             var lines = this.getTrackPolylines(track).map(function(line) {
-                    var points = line.getLatLngs();
+                    var points = line.getFixedLatLngs();
                     points = L.LineUtil.simplifyLatlngs(points, 360 / (1 << 24));
                     return points;
                 }
@@ -1101,48 +1433,82 @@ L.Control.TrackList = L.Control.extend({
             );
         },
 
-        copyAllTracksToClipboard: function(mouseEvent) {
-            this.stopActiveDraw();
-            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent);
+        loadTracksFromString(s, allowEmpty = false) {
+            const geodata = parseNktkSequence(s);
+            this.addTracksFromGeodataArray(geodata, allowEmpty);
         },
 
-        copyVisibleTracks: function(mouseEvent) {
-            this.stopActiveDraw();
+        copyAllTracksToClipboard: function(mouseEvent, allowWithoutTracks = false) {
+            this.copyTracksLinkToClipboard(this.tracks(), mouseEvent, allowWithoutTracks);
+        },
+
+        copyVisibleTracksToClipboard: function(mouseEvent) {
             const tracks = this.tracks().filter((track) => track.visible());
             this.copyTracksLinkToClipboard(tracks, mouseEvent);
         },
 
-        exportTracks: function(minTicksIntervalMeters) {
-            var self = this;
-            return this.tracks()
-                .filter(function(track) {
-                        return self.getTrackPolylines(track).length;
-                    }
-                )
-                .map(function(track) {
-                        var capturedTrack = track.feature.getLayers().map(function(pl) {
-                                return pl.getLatLngs().map(function(ll) {
-                                        return [ll.lat, ll.lng];
-                                    }
-                                );
-                            }
-                        );
-                        var bounds = track.feature.getBounds();
-                        var capturedBounds = [[bounds.getSouth(), bounds.getWest()], [bounds.getNorth(), bounds.getEast()]];
-                        return {
-                            color: track.color(),
-                            visible: track.visible(),
-                            segments: capturedTrack,
-                            bounds: capturedBounds,
-                            measureTicksShown: track.measureTicksShown(),
-                            measureTicks: [].concat.apply([], track.feature.getLayers().map(function(pl) {
-                                    return pl.getTicksPositions(minTicksIntervalMeters);
-                                }
-                                )
-                            )
-                        };
-                    }
+        createNewTrackFromVisibleTracks: function() {
+            const tracks = this.tracks().filter((track) => track.visible());
+            if (tracks.length === 0) {
+                return;
+            }
+            let newTrackName = tracks[0].name();
+            newTrackName = query('New track name', newTrackName);
+            if (newTrackName === null) {
+                return;
+            }
+
+            const newTrackSegments = [];
+            const newTrackPoints = [];
+
+            for (const track of tracks) {
+                for (let segment of this.getTrackPolylines(track)) {
+                    const points = segment.getFixedLatLngs().map(({lat, lng}) => ({lat, lng}));
+                    newTrackSegments.push(points);
+                }
+                const points = this.getTrackPoints(track).map((point) => ({
+                    lat: point.latlng.lat,
+                    lng: point.latlng.lng,
+                    name: point.label
+                }));
+                newTrackPoints.push(...points);
+            }
+
+            this.addTrack({name: newTrackName, tracks: newTrackSegments, points: newTrackPoints});
+        },
+
+        saveAllTracksToZipFile: async function() {
+            const tracks = this.tracks();
+            const trackFilesData = [];
+            const seenNames = new Set();
+            for (const track of tracks) {
+                const {error, content, filename} = await this.exportTrackAsFile(
+                    track, geoExporters.saveGpx, '', false, true
                 );
+                if (error) {
+                    notify(error);
+                    return;
+                }
+                const safeFilename = filename.replaceAll(/[<>:"/\\|?*]/ug, '_');
+                const uniqueFilename = makeNameUnique(safeFilename, seenNames);
+                seenNames.add(uniqueFilename);
+                trackFilesData.push({content, filename: uniqueFilename + '.gpx'});
+            }
+            const zipFile = createZipFile(trackFilesData);
+            const now = new Date();
+            const dateString = [
+                String(now.getDate()).padStart(2, '0'),
+                '.',
+                String(now.getMonth()).padStart(2, '0'),
+                '.',
+                now.getFullYear(),
+                '_',
+                String(now.getHours()).padStart(2, '0'),
+                '.',
+                String(now.getMinutes()).padStart(2, '0'),
+            ].join('');
+            const zipFilename = `nakarte_tracks_${dateString}.zip`;
+            saveAs(new Blob([zipFile], {type: 'application/download'}), zipFilename, true);
         },
 
         showElevationProfileForSegment: function(line) {
@@ -1181,8 +1547,12 @@ L.Control.TrackList = L.Control.extend({
         },
 
         hasTracks: function() {
-            return !!this.tracks().length;
-        }
+            return this.tracks().length > 0;
+        },
+
+        notifyTracksChanged() {
+            this.fire('trackschanged');
+        },
     }
 );
 

@@ -1,39 +1,66 @@
 import L from 'leaflet';
 import {MultiLayer, WikimediaVectorCoverage} from './coverage-layer';
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 import './style.css';
 import '../common/style.css';
-import config from 'config';
-
+import config from '~/config';
+import {CloseButtonMixin, Events} from "../common";
 
 function getCoverageLayer(options) {
     const url = config.wikimediaCommonsCoverageUrl;
     return new MultiLayer([
-        {layer: L.tileLayer(url, L.extend({}, options, {tms: true})),
-         minZoom: 0, maxZoom: 10},
-        {layer: new WikimediaVectorCoverage(url, options),
-         minZoom: 11, maxZoom: 18}
+        {layer: L.tileLayer(url, L.extend({}, options, {tms: true})), minZoom: 0, maxZoom: 10},
+        {layer: new WikimediaVectorCoverage(url, options), minZoom: 11, maxZoom: 18}
     ]);
 }
 
-function parseSearchResponse(resp) {
+function isCoordLikeArtificial(x) {
+    // check if number has less then 2 non-zero digits after decimal point
+    return Number.isInteger(x * 10);
+}
+
+function parseSearchResponse(resp) { // eslint-disable-line complexity
     const images = [];
     if (resp && resp.query && resp.query.pages && resp.query.pages) {
         for (let page of Object.values(resp.query.pages)) {
+            const coordinates = page.coordinates?.[0];
+            const pageTitle = page.title ?? '';
+            const extension = pageTitle.split('.').pop();
+            if (
+                !coordinates ||
+                coordinates.globe !== 'earth' ||
+                (isCoordLikeArtificial(coordinates.lat) && isCoordLikeArtificial(coordinates.lon)) ||
+                coordinates.lat === 0 ||
+                coordinates.lon === 0 ||
+                coordinates.lat === coordinates.lon ||
+                pageTitle.includes('View of Earth') ||
+                extension.toLowerCase() !== 'jpg'
+            ) {
+                continue;
+            }
+
             const iinfo = page.imageinfo[0];
             let imageDescription = iinfo.extmetadata.ImageDescription ? iinfo.extmetadata.ImageDescription.value : null;
             let objectDescription = iinfo.extmetadata.ObjectName ? iinfo.extmetadata.ObjectName.value : null;
-            if (imageDescription && /^<table (.|\n)+<\/table>$/.test(imageDescription)) {
+            if (imageDescription && /^<table (.|\n)+<\/table>$/u.test(imageDescription)) {
                 imageDescription = null;
             }
             if (imageDescription) {
-                imageDescription = imageDescription.replace(/<[^>]+>/g, '');
-                imageDescription = imageDescription.replace(/[\n\r]/g, '');
+                imageDescription = imageDescription.replace(/<[^>]+>/ug, '');
+                imageDescription = imageDescription.replace(/[\n\r]/ug, '');
             }
-            if (imageDescription && objectDescription && objectDescription.toLowerCase().includes(imageDescription.toLowerCase())) {
+            if (
+                imageDescription &&
+                objectDescription &&
+                objectDescription.toLowerCase().includes(imageDescription.toLowerCase())
+            ) {
                 imageDescription = null;
             }
-            if (objectDescription && imageDescription && imageDescription.toLowerCase().includes(objectDescription.toLowerCase())) {
+            if (
+                objectDescription &&
+                imageDescription &&
+                imageDescription.toLowerCase().includes(objectDescription.toLowerCase())
+            ) {
                 objectDescription = null;
             }
             let description = 'Wikimedia commons';
@@ -43,6 +70,7 @@ function parseSearchResponse(resp) {
                     description = objectDescription;
                 }
                 if (imageDescription) {
+                    // eslint-disable-next-line max-depth
                     if (objectDescription) {
                         description += '</br>';
                     }
@@ -51,27 +79,27 @@ function parseSearchResponse(resp) {
             }
 
             let author = iinfo.extmetadata.Artist ? iinfo.extmetadata.Artist.value : null;
-            if (author && /^<table (.|\n)+<\/table>$/.test(author)) {
+            if (author && /^<table (.|\n)+<\/table>$/u.test(author)) {
                 author = `See author info at <a href="${iinfo.descriptionurl}">Wikimedia commons</a>`;
             }
 
             // original images can be rotated, 90 degrees
             // thumbnails are always oriented right
             // so we request thumbnail of original image size
-            let url = iinfo.thumburl.replace('134px', `${iinfo.width}px`);
+            let url = iinfo.thumburl.replace(/\/(134|250)px-/u, `/${iinfo.width}px-`);
             images.push({
                 url,
                 width: iinfo.width,
                 height: iinfo.height,
-                lat: page.coordinates[0].lat,
-                lng: page.coordinates[0].lon,
+                lat: coordinates.lat,
+                lng: coordinates.lon,
                 author: author,
                 timeOriginal: iinfo.extmetadata.DateTimeOriginal ? iinfo.extmetadata.DateTimeOriginal.value : null,
                 time: iinfo.extmetadata.DateTime ? iinfo.extmetadata.DateTime.value : null,
                 description: description,
                 pageUrl: iinfo.descriptionurl,
                 pageId: page.pageid.toString()
-            })
+            });
         }
         if (images.length) {
             return images;
@@ -87,16 +115,17 @@ function isCloser(target, a, b) {
         return -1;
     } else if (d1 === d2) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 
 async function getPanoramaAtPos(latlng, searchRadiusMeters) {
+    latlng = L.latLng(latlng.lat, latlng.lng); // make independent copy
+
     const clusterSize = 10;
     const urlTemplate = 'https://commons.wikimedia.org/w/api.php?' +
                         'origin=*&format=json&action=query&generator=geosearch&' +
-                        'ggsprimary=all&ggsnamespace=6&ggslimit=10&iilimit=1&' +
+                        'ggsprimary=all&ggsnamespace=6&ggslimit=10&iilimit=1&coprimary=all&' +
                         'ggsradius={radius}&ggscoord={lat}|{lng}&' +
                         'iiurlwidth=134&' +
                         'prop=imageinfo|coordinates&' +
@@ -108,41 +137,39 @@ async function getPanoramaAtPos(latlng, searchRadiusMeters) {
     if (searchRadiusMeters > 10000) {
         searchRadiusMeters = 10000;
     }
-    const url = L.Util.template(urlTemplate, {lat: latlng.lat, lng: latlng.lng, radius: searchRadiusMeters});
+    const url = L.Util.template(urlTemplate, {lat: latlng.lat, lng: latlng.lng, radius: Math.ceil(searchRadiusMeters)});
     const resp = await fetch(url, {responseType: 'json', timeout: 10000});
     if (resp.status === 200) {
         let photos = parseSearchResponse(resp.responseJSON);
         if (photos) {
-            latlng = L.latLng(latlng.lat, latlng.lng);
             photos.sort(isCloser.bind(null, latlng));
-            latlng = L.latLng(photos[0].lat, photos[0].lng);
-            photos = photos.filter((photo) => latlng.distanceTo(L.latLng(photo.lat, photo.lng)) <= clusterSize, latlng);
+            const nearestLatlng = L.latLng(photos[0].lat, photos[0].lng);
+            photos = photos.filter((photo) => nearestLatlng.distanceTo(L.latLng(photo.lat, photo.lng)) <= clusterSize);
             return {
                 found: true,
                 data: photos
             };
-        } else {
-            return {found: false};
         }
-        
+        return {found: false};
     }
     return {found: false};
 }
 
 function formatDateTime(dateStr) {
-    const m = /^(\d+)-(\d+)-(\d+)/.exec(dateStr);
+    const m = /^(\d+)-(\d+)-(\d+)/u.exec(dateStr);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     if (m) {
         let [year, month, day] = m.slice(1);
         return `${day} ${months[month - 1]} ${year}`;
-    } else {
-        return dateStr;
     }
+    return dateStr;
 }
 
 const Viewer = L.Evented.extend({
+    includes: [CloseButtonMixin],
     initialize: function(container) {
         container = L.DomUtil.create('div', 'wikimedia-viewer-container', container);
+        this.createCloseButton(container);
         const mapContainer = this.mapContainer = L.DomUtil.create('div', 'wikimedia-viewer-map-container', container);
         this.pageButtonContainer = L.DomUtil.create('div', 'wikimedia-viewer-page-buttons-container', container);
 
@@ -154,11 +181,9 @@ const Viewer = L.Evented.extend({
             zoomSnap: 0,
         });
 
-        this.map.on('zoomend', this.notifyChange, this);
-        this.map.on('moveend', this.notifyChange, this);
+        this.map.on('zoomend moovend', () => this.fire(Events.YawPitchZoomChangeEnd));
 
         this.infoLabel = L.DomUtil.create('div', 'wikimedia-viewer-info-overlay', mapContainer);
-        this.closeButton = L.DomUtil.create('div', 'photo-viewer-button-close', container);
         this.prevPhotoButton = L.DomUtil.create('div', 'wikimedia-viewer-button-prev', mapContainer);
         this.nextPhotoButton = L.DomUtil.create('div', 'wikimedia-viewer-button-next', mapContainer);
         L.DomEvent.on(this.prevPhotoButton, 'click', () => {
@@ -167,7 +192,6 @@ const Viewer = L.Evented.extend({
         L.DomEvent.on(this.nextPhotoButton, 'click', () => {
             this.switchPhoto(this._imageIdx + 1);
         });
-        L.DomEvent.on(this.closeButton, 'click', this.onCloseClick, this);
     },
 
     setupPageButtons: function(count) {
@@ -182,7 +206,7 @@ const Viewer = L.Evented.extend({
 
             for (let i = 0; i < count; i++) {
                 let button = L.DomUtil.create('div', 'wikimedia-viewer-page-button', this.pageButtonContainer);
-                button.innerHTML = '' + (i + 1);
+                button.innerHTML = String(i + 1);
                 this._buttons.push(button);
                 L.DomEvent.on(button, 'click', () => this.switchPhoto(i));
             }
@@ -191,7 +215,7 @@ const Viewer = L.Evented.extend({
         }
     },
 
-    switchPhoto: function(imageIdx, imagePos=null) {
+    switchPhoto: function(imageIdx, imagePos = null) {
         this._imageIdx = imageIdx;
         if (this.imageLayer) {
             this.map.removeLayer(this.imageLayer);
@@ -199,7 +223,7 @@ const Viewer = L.Evented.extend({
         let image = this.images[imageIdx];
         let mapSize = this.map.getSize();
         if (!mapSize.x || !mapSize.y) {
-            mapSize = {x: 500, y: 500}
+            mapSize = {x: 500, y: 500};
         }
         let maxZoom = Math.log2(Math.max(image.width / mapSize.x, image.height / mapSize.y)) + 2;
         if (maxZoom < 1) {
@@ -249,35 +273,24 @@ const Viewer = L.Evented.extend({
         for (let [i, button] of this._buttons.entries()) {
             ((i === imageIdx) ? L.DomUtil.addClass : L.DomUtil.removeClass)(button, 'active');
         }
-        this.notifyChange();
+        this.notifyImageChange();
     },
 
-    notifyChange: function() {
+    notifyImageChange: function() {
         if (this.images && this._active) {
             const image = this.images[this._imageIdx];
-            this.fire('change', {
+            this.fire(Events.ImageChange, {
                     latlng: L.latLng(image.lat, image.lng),
-                    latlngs: this.images.map((image) => {
-                        return L.latLng(image.lat, image.lng);
-                    })
-
+                    latlngs: this.images.map((image) => L.latLng(image.lat, image.lng))
                 }
-            )
+            );
         }
     },
 
-    _showPano: function(images, imageIdx=0, imagePos=null) {
+    showPano: function(images, imageIdx = 0, imagePos = null) {
         this.images = images;
         this.setupPageButtons(images.length);
         this.switchPhoto(imageIdx, imagePos);
-    },
-
-    showPano: function(images) {
-        this._showPano(images);
-    },
-
-    onCloseClick: function() {
-        this.fire('closeclick');
     },
 
     activate: function() {
@@ -299,7 +312,7 @@ const Viewer = L.Evented.extend({
             let imageIdx = -1;
             getPanoramaAtPos({lat, lng}, 0).then((resp) => {
                 if (!resp.found) {
-                    return false;
+                    return;
                 }
                 for (let [i, image] of resp.data.entries()) {
                     if (image.pageId === pageId) {
@@ -308,7 +321,7 @@ const Viewer = L.Evented.extend({
                     }
                 }
                 if (imageIdx > -1) {
-                    this._showPano(resp.data, imageIdx, {center: L.latLng(y, x), zoom});
+                    this.showPano(resp.data, imageIdx, {center: L.latLng(y, x), zoom});
                 }
             });
             return true;
@@ -329,6 +342,10 @@ const Viewer = L.Evented.extend({
             center.lng.toFixed(2),
             this.map.getZoom().toFixed(1)
         ];
+    },
+
+    invalidateSize: function() {
+        this.map.invalidateSize();
     }
 });
 
@@ -336,8 +353,5 @@ function getViewer(container) {
     return new Viewer(container);
 }
 
-export default {
-    getCoverageLayer, 
-    getPanoramaAtPos,
-    getViewer
-};
+const wikimediaProvider = {getCoverageLayer, getPanoramaAtPos, getViewer};
+export default wikimediaProvider;

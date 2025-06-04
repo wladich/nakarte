@@ -1,9 +1,13 @@
 import L from 'leaflet';
-import urlViaCorsProxy from 'lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import {imgFromDataString} from './imgFromDataString';
 
+function noop() {
+    // dummy function
+}
+
 const GridLayerGrabMixin = {
-    tileImagePromiseFromCoords: function(coords) {
+    tileImagePromiseFromCoords: function(_unused_coords) {
         throw new Error('Method not implemented');
     },
 
@@ -36,10 +40,7 @@ const GridLayerGrabMixin = {
                     let {tilePromise, abortLoading} = this.tileImagePromiseFromCoords(
                         this._wrapCoords(coords), printOptions);
                     yield {
-                        tilePromise: tilePromise.then((image) => {
-                                return {image, tilePos, tileSize, latLngBounds};
-                            }
-                        ),
+                        tilePromise: tilePromise.then((image) => ({image, tilePos, tileSize, latLngBounds})),
                         abortLoading
                     };
                 }
@@ -71,38 +72,33 @@ const TileLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
             return {
                 tilePromise: printOptions.rawData ? promise : promise.then(imgFromDataString),
                 abortLoading: () => promise.abort()
-            }
+            };
         }
     }
 );
 
-function noop() {
+// CanvasLayerGrabMixin has been deleted
 
-}
-
-const CanvasLayerGrabMixin = L.Util.extend({}, GridLayerGrabMixin, {
-    getCanvasFromTile: function(tile) {
-        return tile;
+const TileLayerWithCutlineGrabMixin = L.Util.extend({}, TileLayerGrabMixin, {
+    waitTilesReadyToGrab: function() {
+        return TileLayerGrabMixin.waitTilesReadyToGrab.call(this).then(() => this._cutlinePromise);
     },
 
-    tileImagePromiseFromCoords: function(coords) {
-        let tilePromise;
-        if (this.createTile.length < 2) {
-            let tile = this.createTile(coords);
-            tilePromise = Promise.resolve(tile);
-        } else {
-            tilePromise = new Promise((resolve) => {
-                this.createTile(coords, (_, canvas) => resolve(canvas));
+    tileImagePromiseFromCoords: function(coords, printOptions) {
+        const result = TileLayerGrabMixin.tileImagePromiseFromCoords.call(this, coords, printOptions);
+        if (!printOptions.rawData && this._cutlinePromise && this.isCutlineIntersectingTile(coords, true)) {
+            result.tilePromise = result.tilePromise.then((img) => {
+                if (!img) {
+                    return img;
+                }
+                const clipped = document.createElement('canvas');
+                return new Promise((resolve) => {
+                    this._drawTileClippedByCutline(coords, img, clipped, () => resolve(clipped));
+                });
             });
         }
-
-        return {
-            tilePromise: tilePromise.then(this.getCanvasFromTile),
-            abortLoading: noop
-        }
+        return result;
     }
 });
 
-L.TileLayer.include(TileLayerGrabMixin);
-
-export {TileLayerGrabMixin, GridLayerGrabMixin, CanvasLayerGrabMixin};
+L.TileLayer.include(TileLayerWithCutlineGrabMixin);

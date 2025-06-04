@@ -1,0 +1,57 @@
+name: check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+      - cron: '15 3 * * *'
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: cp src/secrets.js.template src/secrets.js
+      - run: yarnpkg
+
+      - run: npm run lint:code
+      - run: npm run lint:style
+      - run: npm run build
+
+  test:
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: FirefoxHeadless
+            firefox-version: '52.9.0esr'
+            os: ubuntu-22.04
+            needs-xvfb: true
+          - browser: FirefoxHeadless
+            firefox-version: 'latest'
+          - browser: ChromeHeadless
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: cp src/secrets.js.template src/secrets.js
+      - run: yarnpkg
+
+      - name: install specific version of Firefox
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: ${{matrix.firefox-version}}
+        if: matrix.firefox-version
+      - run: npm run test -- --browsers ${{matrix.browser}}
+        if: ${{! matrix.needs-xvfb}}
+      - name: run tests with xvfb
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test -- --browsers ${{matrix.browser}}
+        if: matrix.needs-xvfb

@@ -7,8 +7,7 @@ function localStorageWorks() {
     }
 }
 
-
-let storage;
+let storage; // eslint-disable-line import/no-mutable-exports
 
 if (localStorageWorks()) {
     storage = window.localStorage;
@@ -36,7 +35,7 @@ if (localStorageWorks()) {
         clear: function() {
             _storage = {};
         }
-    }
+    };
 }
 
 export default storage;

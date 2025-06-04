@@ -1,9 +1,9 @@
-import urlViaCorsProxy from 'lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import BaseService from './baseService';
-import parseGpx from  '../parsers/gpx';
+import parseGpx from '../parsers/gpx';
 
 class Osm extends BaseService {
-    urlRe = /^https?:\/\/www\.openstreetmap\.org\/user\/(?:.*)\/traces\/(\d+)/;
+    urlRe = /^https?:\/\/(?:www\.)?openstreetmap\.org\/user\/(?:.*)\/traces\/(\d+)/u;
 
     getTrackId() {
         const m = this.urlRe.exec(this.origUrl);
@@ -19,13 +19,14 @@ class Osm extends BaseService {
         return [{
             url: urlViaCorsProxy(`https://www.openstreetmap.org/trace/${trackId}/data`),
             options: {responseType: 'binarystring'}
-        }]
+        }];
     }
 
     parseResponse(responses) {
         const trackId = this.getTrackId();
         const response = responses[0];
-        return parseGpx(response.responseBinaryText, `OSM track ${trackId}`, true);
+        return parseGpx(response.responseBinaryText, `OSM track ${trackId}`, true) ||
+            [{name: name, error: 'UNSUPPORTED'}];
     }
 }
 

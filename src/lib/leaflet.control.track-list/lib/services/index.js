@@ -1,23 +1,28 @@
-import SimpleService from './simpleService'
-import Endomondo from './endomondo';
-import Gpsies from './gpsies';
-import Gpslib from './gpslib';
+import SimpleService from './simpleService';
+import Etomesto from './etomesto';
 import Osm from './osm';
-import Strava from './strava';
+import {Strava, StravaShortUrl} from './strava';
+import Tracedetrail from './tracedetrail';
 import {YandexRuler} from './yandex';
 import {NakarteTrack, NakarteUrl} from './nakarte';
-import {MovescountMove, MovescountRoute} from './movescount';
+import {GarminActivity, GarminRoute} from './garmin';
+import {SportsTrackerActivity} from './sportstracker';
+import Wikiloc from './wikiloc';
 
-export default [
+const services = [
     YandexRuler,
     NakarteTrack,
     NakarteUrl,
-    Endomondo,
-    Gpsies,
-    Gpslib,
+    Etomesto,
     Osm,
+    StravaShortUrl,
     Strava,
-    MovescountMove,
-    MovescountRoute,
+    Tracedetrail,
+    GarminActivity,
+    GarminRoute,
+    SportsTrackerActivity,
+    Wikiloc,
     SimpleService
-]
+];
+
+export default services;

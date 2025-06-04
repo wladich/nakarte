@@ -5,7 +5,15 @@
             <td data-bind="text: trueAzimuth() !== null ? Math.round(trueAzimuth()) + '&deg;' : '--'"></td>
         </tr>
         <tr>
-            <td>Magnetic azimuth</td>
+            <td>
+                Magnetic azimuth
+<!--                <div class="icon-info" data-bind="attr: {title: magneticModelInfoText}"></div>-->
+                <div class="icon-info" data-bind="attr: {title:
+                    `Magnetic model: ${magneticModelInfo.modelName}\n`
+                    + `Date: ${magneticModelInfo.dateYMD[2]}.${magneticModelInfo.dateYMD[1]}.${magneticModelInfo.dateYMD[0]}\n`
+                    + `Horizontal resolution: ${magneticModelInfo.horizontalResolution}&deg;\n`
+                    + `Magnetic declination resolution: ${magneticModelInfo.valueResolution}&deg;`}"></div>
+            </td>
             <td data-bind="text: magneticAzimuth() !== null ? magneticAzimuth() + '&deg;' : '--'"></td>
         </tr>
         <tr>

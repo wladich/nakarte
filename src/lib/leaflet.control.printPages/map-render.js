@@ -1,7 +1,6 @@
 import L from 'leaflet';
-import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
-import {XHRQueue} from 'lib/xhr-promise';
-
+import {getTempMap, disposeMap} from '~/lib/leaflet.layer.rasterize';
+import {XHRQueue} from '~/lib/xhr-promise';
 
 function getLayersForPrint(map, xhrQueue) {
     function getZIndex(el) {
@@ -17,23 +16,18 @@ function getLayersForPrint(map, xhrQueue) {
         return 0;
     }
 
-    function compareLayersOrder(layer1, layer2) {
-        return compareArrays(getLayerZOrder(layer1), getLayerZOrder(layer2));
-    }
-
     function getLayerZOrder(layer) {
         let el = layer._container || layer._path;
         if (!el) {
-            throw TypeError('Unsupported layer type');
+            throw new TypeError('Unsupported layer type');
         }
         const order = [];
         while (el !== layer._map._container) {
             order.push(getZIndex(el));
             el = el.parentNode;
         }
-        return order.reverse()
+        return order.reverse();
     }
-
 
     function compareArrays(ar1, ar2) {
         const len = Math.min(ar1.length, ar2.length);
@@ -46,12 +40,16 @@ function getLayersForPrint(map, xhrQueue) {
         return compare(ar1.length, ar2.length);
     }
 
+    function compareLayersOrder(layer1, layer2) {
+        return compareArrays(getLayerZOrder(layer1), getLayerZOrder(layer2));
+    }
+
     let layers = [];
     map.eachLayer((layer) => {
             if (layer.options.print) {
                 layers.push(layer);
             } else {
-                if (layer.meta && layer.options.isOverlay === false) {
+                if (layer.meta && layer.options.isOverlay === false && !layer.options.isWrapper) {
                     throw new Error(`Print disabled for layer ${layer.meta.title}`);
                 }
             }
@@ -107,6 +105,7 @@ class PageComposer {
         this.projectedBounds = pixelBoundsAtZoom24;
         this.currentCanvas = null;
         this.currentZoom = null;
+        this.currentTileScale = null;
         this.targetCanvas = this.createCanvas(destSize);
     }
 
@@ -127,20 +126,26 @@ class PageComposer {
         } else {
             zoom = tileInfo.zoom;
         }
-        if (zoom !== this.currentZoom) {
+        if (zoom !== this.currentZoom || tileInfo.tileScale !== this.currentTileScale) {
             this.mergeCurrentCanvas();
-            this.setupCurrentCanvas(zoom);
+            this.setupCurrentCanvas(zoom, tileInfo.tileScale);
         }
         if (tileInfo.isOverlay) {
             tileInfo.draw(this.currentCanvas);
         } else {
             const ctx = this.currentCanvas.getContext('2d');
             const {tilePos, tileSize} = tileInfo;
-            ctx.drawImage(tileInfo.image, tilePos.x, tilePos.y, tileSize.x, tileSize.y);
+            ctx.drawImage(
+                tileInfo.image,
+                tilePos.x * tileInfo.tileScale,
+                tilePos.y * tileInfo.tileScale,
+                tileSize.x * tileInfo.tileScale,
+                tileSize.y * tileInfo.tileScale
+            );
         }
     }
 
-    setupCurrentCanvas(zoom) {
+    setupCurrentCanvas(zoom, tileScale) {
         let size;
         if (zoom === 'overlay' || zoom === 'solidOverlay') {
             size = this.destSize;
@@ -149,10 +154,11 @@ class PageComposer {
             const
                 topLeft = this.projectedBounds.min.divideBy(q).round(),
                 bottomRight = this.projectedBounds.max.divideBy(q).round();
-            size = bottomRight.subtract(topLeft);
+            size = bottomRight.subtract(topLeft).multiplyBy(tileScale);
         }
         this.currentCanvas = this.createCanvas(size);
         this.currentZoom = zoom;
+        this.currentTileScale = tileScale;
     }
 
     mergeCurrentCanvas() {
@@ -181,7 +187,16 @@ class PageComposer {
     }
 }
 
-async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resolution, scale, zooms, pageLabel, pagesCount) {
+async function* iterateLayersTiles(
+    layers,
+    latLngBounds,
+    destPixelSize,
+    resolution,
+    scale,
+    zooms,
+    pageLabel,
+    pagesCount
+) {
     const defaultXHROptions = {
         responseType: 'blob',
         timeout: 20000,
@@ -204,7 +219,7 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
             map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
             map.addLayer(layer);
         }
-        let {iterateTilePromises, count} = await layer.getTilesInfo({
+        let {iterateTilePromises, count, tileScale = 1} = await layer.getTilesInfo({
                 xhrOptions: defaultXHROptions,
                 pixelBounds,
                 latLngBounds,
@@ -220,8 +235,13 @@ async function* iterateLayersTiles(layers, latLngBounds, destPixelSize, resoluti
         for (let tilePromise of iterateTilePromises()) {
             layerPromises.push(tilePromise.tilePromise);
             let progressInc = (layer._printProgressWeight || 1) / count;
-            tilePromise.tilePromise =
-                tilePromise.tilePromise.then((tileInfo) => Object.assign({zoom, progressInc, layer}, tileInfo));
+            tilePromise.tilePromise = tilePromise.tilePromise.then((tileInfo) => ({
+                zoom,
+                progressInc,
+                layer,
+                tileScale,
+                ...tileInfo,
+            }));
             doStop = yield tilePromise;
             if (doStop) {
                 tilePromise.abortLoading();
@@ -268,7 +288,6 @@ async function* promiseQueueBuffer(source, maxActive) {
         }
     }
 }
-
 
 async function renderPages({map, pages, zooms, resolution, scale, progressCallback, decorationLayers}) {
     const xhrQueue = new XHRQueue();
@@ -323,6 +342,5 @@ async function renderPages({map, pages, zooms, resolution, scale, progressCallba
     }
     return {images: pageImagesInfo, renderedLayers};
 }
-
 
 export {renderPages};

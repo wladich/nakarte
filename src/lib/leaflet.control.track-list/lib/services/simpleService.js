@@ -1,10 +1,10 @@
 import BaseService from './baseService';
 import parseGeoFile from '../parseGeoFile';
-import urlViaCorsProxy from 'lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 
 class SimpleService extends BaseService {
     isOurUrl() {
-        return true;
+        return Boolean(this.origUrl.match(/^https?:\/\/.+/u));
     }
 
     requestOptions() {

@@ -10,14 +10,13 @@ function imgFromDataString(xhr) {
                 image.onerror = () => {
                     reject(new Error('Image corrupt'));
                     window.URL.revokeObjectURL(blobUrl);
-                }
+                };
             }
         );
         image.src = blobUrl;
         return promise;
-    } else {
-        return null;
     }
+    return null;
 }
 
-export {imgFromDataString}
+export {imgFromDataString};

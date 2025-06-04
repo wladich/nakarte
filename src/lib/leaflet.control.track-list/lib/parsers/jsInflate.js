@@ -1,5 +1,5 @@
 import tynyInflate from 'tiny-inflate';
-import {stringToArrayBuffer, arrayBufferToString} from 'lib/binary-strings';
+import {stringToArrayBuffer, arrayBufferToString} from '~/lib/binary-strings';
 
 function jsInflate(compressed, originalSize) {
     if (originalSize === 0) {

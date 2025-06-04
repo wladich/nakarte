@@ -1,0 +1,59 @@
+<!-- ko if: minimizeToButton -->
+<div class="leaflet-search-button leaflet-bar leaflet-control-single-button"
+     data-bind="attr: {title: inputPlaceholder}">
+    <a href="#" data-bind="click: onButtonClick">
+        <div class="icon-search"></div>
+    </a>
+</div>
+<!-- /ko -->
+<!-- ko ifnot: minimizeToButton -->
+<div class="leaflet-search-placeholder"></div>
+<div class="leaflet-search"
+    tabindex="-1"
+    data-bind="
+        css: {hasresults: showResults() || showError() || showWarningTooShort()},
+        hasFocusNested: controlOrChildHasFocus,
+        event: {keydown: onKeyDown}">
+    <div class="leaflet-search-input-wrapper">
+        <input
+            tabindex="-1"
+            type="search"
+            maxlength="4096"
+            class="leaflet-search-input"
+            data-bind="
+                textInput: query,
+                event: {
+                    contextmenu: defaultEventHandle,
+                    mousemove: defaultEventHandle
+                },
+                hasFocus: inputHasFocus,
+                attr: {
+                    placeholder: inputPlaceholder,
+                    title: helpText,
+                },
+            ">
+        <div class="leaflet-search-clear-button" data-bind="visible: query, click: onClearClick"></div>
+    </div>
+    <ul class="leaflet-search-results" data-bind="visible: showResults">
+        <!-- ko foreach: {data: items} -->
+        <li data-bind="
+            event: {mouseover: $root.onItemMouseOver},
+            click: $root.onItemClick,
+            css: {highlighted: $index() === $root.highlightedIndex()}">
+            <p><span class="title" data-bind="text: title"></span>&nbsp;&nbsp;<img class="icon" data-bind="visible: icon, attr: {src: icon}"><span class="category" data-bind="text: category"></span></p>
+            <p class="address" data-bind="text: address"></p>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: attribution -->
+        <li class="search-provider-attribution">
+            Search powered by <a data-bind="
+                text: attribution().text,
+                attr: {href: attribution().url},
+                event: {contextmenu: defaultEventHandle}"></a>
+        </li>
+        <!-- /ko -->
+    </ul>
+    <div class="leaflet-search-error" data-bind="visible: showError, text: error"></div>
+    <div class="leaflet-search-error" data-bind="visible: showWarningTooShort">Query too short</div>
+</div>
+<!-- /ko -->

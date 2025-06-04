@@ -2,11 +2,9 @@ function header() {
     return '%PDF-1.3';
 }
 
-
 function eof() {
     return '%%EOF\n';
 }
-
 
 function recCatalog() {
     return (
@@ -16,7 +14,6 @@ function recCatalog() {
 >>
 endobj`);
 }
-
 
 function recPages(count) {
     let kidsIds = [];
@@ -32,7 +29,6 @@ function recPages(count) {
 >>
 endobj`);
 }
-
 
 function recPage(serialNum, width, height) {
     const pageRecId = serialNum * 3 + 3;
@@ -53,7 +49,6 @@ function recPage(serialNum, width, height) {
 endobj`);
 }
 
-
 function recContent(serialNum, width, height) {
     const pageRecId = serialNum * 3 + 3;
     const contentRecId = pageRecId + 1;
@@ -72,7 +67,6 @@ ${contents}
 endstream
 endobj`);
 }
-
 
 function recImage(serialNum, widthPixels, heightPixels, data) {
     const pageRecId = serialNum * 3 + 3;
@@ -96,7 +90,6 @@ endstream
 endobj`);
 }
 
-
 function recTrailer(recOffsets, currentOffset) {
     const trailer = [];
     trailer.push(
@@ -119,7 +112,6 @@ startxref
 ${currentOffset}`);
     return trailer.join('\n');
 }
-
 
 function makePdf(imagesInfo, resolution) {
     let offset = 0;
@@ -150,7 +142,6 @@ function makePdf(imagesInfo, resolution) {
     pdf = pdf.join('\n');
     return pdf;
 }
-
 
 export {makePdf};
 

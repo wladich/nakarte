@@ -1,13 +1,13 @@
 import L from 'leaflet';
-import ko from 'vendored/knockout';
+import ko from 'knockout';
 import './style.css';
-import 'lib/leaflet.control.commons';
+import '~/lib/leaflet.control.commons';
 import {RectangleSelect} from './selector';
-import Contextmenu from 'lib/contextmenu';
+import Contextmenu from '~/lib/contextmenu';
 import {makeJnxFromLayer, minZoom} from './jnx-maker';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import {notify} from '~/lib/notifications';
+import * as logging from '~/lib/logging';
 
 L.Control.JNX = L.Control.extend({
         includes: L.Mixin.Events,
@@ -22,23 +22,29 @@ L.Control.JNX = L.Control.extend({
         },
 
         getLayerForJnx: function() {
-            let selectedLayer = {};
-            for (let layerRec of this._layersControl._layers) {
+            for (let layerRec of this._layersControl._layers.slice().reverse()) {
                 let layer = layerRec.layer;
-                if (this._map.hasLayer(layer) && layer.options && layer.options.jnx) {
-                    selectedLayer = {
-                        layer,
-                        layerName: layerRec.name
+                if (!this._map.hasLayer(layer) || !layer.options) {
+                    continue;
+                }
+                if (layer.options.isWrapper) {
+                    const layerName = layerRec.name;
+                    for (const subLayer of layer.getLayers().slice().reverse()) {
+                        if (subLayer.options?.jnx) {
+                            return {layer: subLayer, layerName};
+                        }
                     }
+                } else if (layer.options.jnx) {
+                    return {layer, layerName: layerRec.name};
                 }
             }
-            return selectedLayer;
+            return {};
         },
 
         estimateTilesCount: function(maxZoom) {
             let tilesCount = 0;
             const bounds = this._selector.getBounds();
-            for (let zoom=minZoom(maxZoom); zoom <= maxZoom; zoom++) {
+            for (let zoom = minZoom(maxZoom); zoom <= maxZoom; zoom++) {
                 const topLeftTile = this._map.project(bounds.getNorthWest(), zoom).divideBy(256).floor();
                 const bottomRightTile = this._map.project(bounds.getSouthEast(), zoom).divideBy(256).ceil();
                 tilesCount += Math.ceil((bottomRightTile.x - topLeftTile.x) * (bottomRightTile.y - topLeftTile.y));
@@ -52,11 +58,14 @@ L.Control.JNX = L.Control.extend({
                 return [{text: 'No supported layers'}];
             }
             const maxLevel = layer.options.maxNativeZoom || layer.options.maxZoom || 18;
-            const minLevel = Math.max(0, maxLevel - 6);
+            let minLevel = Math.max(0, maxLevel - 6);
+            if (layer.options.minZoom) {
+                minLevel = Math.max(minLevel, layer.options.minZoom);
+            }
 
             const equatorLength = 40075016;
             const lat = this._selector.getBounds().getCenter().lat;
-            let metersPerPixel = equatorLength / Math.pow(2, maxLevel) / 256 * Math.cos(lat / 180 * Math.PI);
+            let metersPerPixel = equatorLength / 2 ** maxLevel / 256 * Math.cos(lat / 180 * Math.PI);
 
             const items = [{text: layerName, header: true}];
             for (let zoom = maxLevel; zoom >= minLevel; zoom -= 1) {
@@ -66,7 +75,7 @@ L.Control.JNX = L.Control.extend({
                 let resolutionString = metersPerPixel.toFixed(2);
                 let sizeString = fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1);
                 let item = {
-                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`,
+                    text: `<span class="${itemClass}">Zoom ${zoom} (${resolutionString} m/pixel) &mdash; ${tilesCount} tiles (~${sizeString} Mb)</span>`, // eslint-disable-line max-len
                     callback: () => this.makeJnx(layer, layerName, zoom),
                     disabled: this.makingJnx()
                 };
@@ -82,26 +91,34 @@ L.Control.JNX = L.Control.extend({
         },
 
         makeJnx: function(layer, layerName, zoom) {
-            logging.captureBreadcrumbWithUrl({message: 'start making jnx'});
+            logging.captureBreadcrumb('start making jnx');
             this.makingJnx(true);
             this.downloadProgressDone(0);
 
             const bounds = this._selector.getBounds();
-            const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/, '_');
+            const sanitizedLayerName = layerName.toLowerCase().replace(/[ ()]+/u, '_');
             const fileName = `nakarte.me_${sanitizedLayerName}_z${zoom}.jnx`;
             const eventId = logging.randId();
-            logging.logEvent('jnx start', {eventId, layerName, zoom, bounds});
+            this.fire('tileExportStart', {
+                eventId,
+                layer,
+                zoom,
+                bounds,
+            });
             makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
                 .then((fileData) => {
                     saveAs(fileData, fileName, true);
-                    logging.logEvent('jnx end', {eventId, success: true});
+                    this.fire('tileExportEnd', {eventId, success: true});
                 })
                 .catch((e) => {
-                        logging.captureException(e);
-                        logging.logEvent('jnx end', {eventId, success: false, error: e.stack});
-                        notify(`Failed to create JNX: ${e.message}`);
-                    }
-                )
+                    logging.captureException(e, 'Failed to create JNX');
+                    this.fire('tileExportEnd', {
+                        eventId,
+                        success: false,
+                        error: e
+                    });
+                    notify(`Failed to create JNX: ${e.message}`);
+                })
                 .then(() => this.makingJnx(false));
         },
 
@@ -139,11 +156,10 @@ L.Control.JNX = L.Control.extend({
                 .on('change', () => this.fire('selectionchange'))
                 .on('click contextmenu', (e) => {
                     L.DomEvent.stop(e);
-                    this.contextMenu.show(e)
+                    this.contextMenu.show(e);
                 });
             this.fire('selectionchange');
         },
-
 
         onButtonClicked: function() {
             if (this._selector) {
@@ -153,7 +169,6 @@ L.Control.JNX = L.Control.extend({
                     this.removeSelector();
                     this.addSelector();
                 }
-
             } else {
                 this.addSelector();
             }

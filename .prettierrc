@@ -1,0 +1,11 @@
+{
+    "printWidth": 120,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "quoteProps": "consistent",
+    "trailingComma": "es5",
+    "bracketSpacing": false,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "overrides": []
+}

@@ -1,5 +1,5 @@
 import L from "leaflet";
-import 'lib/leaflet.layer.canvasMarkers'
+import '~/lib/leaflet.layer.canvasMarkers';
 
 L.Layer.CanvasMarkers.include({
         _printProgressWeight: 0.1,
@@ -9,7 +9,7 @@ L.Layer.CanvasMarkers.include({
                 latlng: {lat: marker.latlng.lat, lng: marker.latlng.lng},
                 label: marker.label,
                 icon: marker.icon
-            }
+            };
         },
 
         cloneMarkers: function() {
@@ -25,7 +25,6 @@ L.Layer.CanvasMarkers.include({
                 options.iconsOpacity = options.printIconsOpacity;
             }
             return new L.Layer.CanvasMarkers(this.cloneMarkers(), options);
-
         },
 
         getTilesInfo: async function(printOptions) {
@@ -62,8 +61,9 @@ L.Layer.CanvasMarkers.include({
                             }
                         ),
                         abortLoading: () => {
+                            // no actions needed
                         }
-                    }
+                    };
                 }).bind(this),
                 count: 1
             };

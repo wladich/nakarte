@@ -1,5 +1,6 @@
 function decode866(s) {
-    var c, i, s2 = [];
+    var c, i,
+        s2 = [];
     for (i = 0; i < s.length; i++) {
         c = s.charCodeAt(i);
         if (c >= 128 && c <= 175) {
@@ -17,7 +18,8 @@ function decode866(s) {
 }
 
 function decodeCP1251(s) {
-    var c, i, s2 = [];
+    var c, i,
+        s2 = [];
     for (i = 0; i < s.length; i++) {
         c = s.charCodeAt(i);
         if (c >= 192 && c <= 255) {

@@ -1,6 +1,7 @@
 function arrayItemsEqual(l1, l2) {
-    if (l1.length !== l2.length)
+    if (l1.length !== l2.length) {
         return false;
+    }
     for (var i = 0; i < l1.length; i++) {
         if (l1[i] !== l2[i]) {
             return false;
@@ -9,7 +10,6 @@ function arrayItemsEqual(l1, l2) {
     return true;
 }
 
-
 function parseHashParams(s) {
     const args = {},
         i = s.indexOf('#');
@@ -17,12 +17,11 @@ function parseHashParams(s) {
         s = s.substr(i + 1).trim();
         let m, key, value;
         for (let pair of s.split('&')) {
-            m = /^([^=]+?)(?:=(.*))?$/.exec(pair);
+            m = /^([^=]+?)(?:=(.*))?$/u.exec(pair);
             if (m) {
                 [, key, value] = m;
                 if (value) {
                     value = value.split('/');
-                    value = value.map(decodeURIComponent);
                 } else {
                     value = [];
                 }
@@ -44,16 +43,6 @@ const hashState = {
             }
         }
         this._listeners.push([key, callback]);
-    },
-
-    removeEventListener: function(key, callback) {
-        this._listeners.forEach(([k, c], i) => {
-                if (k === key && c === callback) {
-                    this._listeners.splice(i, 1);
-                    return;
-                }
-            }
-        );
     },
 
     updateState: function(key, values) {
@@ -88,10 +77,11 @@ const hashState = {
         const hash = stateItems.join('&');
         const href = `${location.origin}${location.pathname}${location.search}#${hash}`;
         this._ignoreChanges = true;
-        location.replace(href);
+        if (href !== location.href) {
+            location.replace(href);
+        }
         this._ignoreChanges = false;
     },
-
 
     onHashChanged: function() {
         if (this._ignoreChanges) {
@@ -100,13 +90,13 @@ const hashState = {
         const newState = parseHashParams(location.hash);
         const changedKeys = {};
         for (let key of Object.keys(newState)) {
-            if (!(key in this._state)  || !arrayItemsEqual(newState[key], this._state[key])) {
+            if (!(key in this._state) || !arrayItemsEqual(newState[key], this._state[key])) {
                 changedKeys[key] = 1;
             }
         }
 
         for (let key of Object.keys(this._state)) {
-            if (! (key in newState)) {
+            if (!(key in newState)) {
                 changedKeys[key] = 1;
             }
         }
@@ -120,19 +110,19 @@ const hashState = {
     }
 };
 
-
-function bindHashStateReadOnly(key, target) {
+function bindHashStateReadOnly(key, target, once) {
     function onChange() {
         target(hashState.getState(key));
         hashState.updateState(key, null);
     }
-    hashState.addEventListener(key, onChange);
+    if (!once) {
+        hashState.addEventListener(key, onChange);
+    }
     onChange();
 }
 
 window.addEventListener('hashchange', hashState.onHashChanged.bind(hashState));
 hashState.onHashChanged();
-
 
 export {hashState, bindHashStateReadOnly, parseHashParams};
 

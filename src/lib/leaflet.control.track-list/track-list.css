@@ -14,6 +14,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 3px 0 0;
+    margin-top: 3px;
 }
 
 .leaflet-control-tracklist .hint {
@@ -39,15 +40,10 @@
     vertical-align: middle;
 }
 
-.leaflet-control-tracklist .button:hover,
-.leaflet-control-tracklist .button-length:hover,
-.leaflet-control-tracklist .button-add-track:hover,
-.leaflet-control-tracklist .button-add-point:hover {
-    background-color: #f4f4f4;
-}
-
-.leaflet-control-tracklist .button-add-point.active {
-    background-color: #ccc;
+.leaflet-control-tracklist .button-add-point.active,
+.leaflet-control-tracklist .button-add-track.active {
+    background-color: #bbb;
+    border-color: #333;
 }
 
 .leaflet-control-tracklist .input-url {
@@ -167,6 +163,19 @@
 
 }
 
+.leaflet-control-tracklist .button-length,
+.leaflet-control-tracklist .button-add-track,
+.leaflet-control-tracklist .button-add-point {
+    background-color: #fff;
+}
+
+.leaflet-control-tracklist .button:hover,
+.leaflet-control-tracklist .button-length:hover,
+.leaflet-control-tracklist .button-add-track:hover:not(.active),
+.leaflet-control-tracklist .button-add-point:hover:not(.active) {
+    background-color: #ddd;
+}
+
 .leaflet-control-tracklist .ticks-enabled {
     color: #333;
     border-color: #333;
@@ -180,13 +189,12 @@
 }
 
 .leaflet-control-tracklist .tracks-rows td {
-    padding-top: 0;
+    padding: 3px 0;
 }
 
 .leaflet-control-tracklist .tracks-rows {
     border-collapse: collapse;
     width: 100%;
-    line-height: 20px;
 }
 
 .track-waypoint {
@@ -250,20 +258,16 @@
     height: 18px;
 }
 
-.leaflet-control-tracklist .leaflet-control-button-toggle {
+.icon-tracks {
     background-image: url("images/route.svg");
  }
 
-.join-line-selecting {
+.tracklist-line-cursor-shown {
     cursor: default;
 }
 
-.tracks-rows-wrapper {
-    margin-top: 2px;
-}
 
-.leaflet-control-tracklist .hover,
-.leaflet-control-tracklist tr:hover {
+.leaflet-control-tracklist .hover {
     background-color: rgb(93%, 93%, 93%);
 }
 

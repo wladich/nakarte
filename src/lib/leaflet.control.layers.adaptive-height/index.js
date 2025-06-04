@@ -24,10 +24,11 @@ function enableAdaptiveHeight(control) {
             __setAdaptiveHeight: function() {
                 const mapHeight = this._map.getSize().y;
                 let maxHeight;
-                    maxHeight = (mapHeight
-                    - this._container.offsetTop // controls above
-                    - (this._container.parentNode.offsetHeight - this._container.offsetTop - this._container.offsetHeight) //controls below
-                    - 70); // margin
+                    maxHeight = (mapHeight -
+                        this._container.offsetTop - // controls above
+                        (this._container.parentNode.offsetHeight - this._container.offsetTop -
+                            this._container.offsetHeight) - // controls below
+                        70); // margin
                 this._form.style.maxHeight = maxHeight + 'px';
             }
         }
@@ -37,8 +38,6 @@ function enableAdaptiveHeight(control) {
         control.__setupResizeEventsHandler();
         setTimeout(() => control.__setAdaptiveHeight(), 0);
     }
-
-    return control;
 }
 
 export default enableAdaptiveHeight;

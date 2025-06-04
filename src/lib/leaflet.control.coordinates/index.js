@@ -1,12 +1,13 @@
-import L from 'leaflet'
-import ko from 'vendored/knockout';
+import L from 'leaflet';
+import ko from 'knockout';
 import './coordinates.css';
-import copyToClipboard from 'lib/clipboardCopy';
-import Contextmenu from 'lib/contextmenu';
-import {makeButtonWithBar} from 'lib/leaflet.control.commons';
-import safeLocalStorage from 'lib/safe-localstorage';
-import 'lib/controls-styles/controls-styles.css';
-import formats from './formats';
+import copyToClipboard from '~/lib/clipboardCopy';
+import Contextmenu from '~/lib/contextmenu';
+import {makeButtonWithBar} from '~/lib/leaflet.control.commons';
+import safeLocalStorage from '~/lib/safe-localstorage';
+import '~/lib/controls-styles/controls-styles.css';
+import {ElevationLayer} from '~/lib/leaflet.layer.elevation-display';
+import * as formats from './formats';
 
 const DEFAULT_FORMAT = formats.DEGREES;
 const UNKNOWN_COORDINATES = {
@@ -19,6 +20,8 @@ L.Control.Coordinates = L.Control.extend({
             position: 'bottomleft'
         },
 
+        includes: L.Mixin.Events,
+
         formats: [
             formats.SIGNED_DEGREES,
             formats.DEGREES,
@@ -26,8 +29,10 @@ L.Control.Coordinates = L.Control.extend({
             formats.DEGREES_AND_MINUTES_AND_SECONDS
         ],
 
-        initialize: function(options) {
+        initialize: function(elevationTilesUrl, options) {
             L.Control.prototype.initialize.call(this, options);
+
+            this.elevationDisplayLayer = new ElevationLayer(elevationTilesUrl);
 
             this.latlng = ko.observable();
             this.format = ko.observable(DEFAULT_FORMAT);
@@ -37,7 +42,7 @@ L.Control.Coordinates = L.Control.extend({
                     for (let format of this.formats) {
                         if (value === format.code) {
                             this.format(format);
-                            break
+                            break;
                         }
                     }
                 }
@@ -50,13 +55,9 @@ L.Control.Coordinates = L.Control.extend({
                 return UNKNOWN_COORDINATES;
             }, this);
 
-            this.wrapperClass = ko.pureComputed(() => {
-                return this.format().wrapperClass;
-            }, this);
+            this.wrapperClass = ko.pureComputed(() => this.format().wrapperClass, this);
 
-            this.formatCode.subscribe((_) => {
-                this.saveStateToStorage();
-            }, this);
+            this.formatCode.subscribe(this.saveStateToStorage, this);
         },
 
         onAdd: function(map) {
@@ -80,7 +81,8 @@ L.Control.Coordinates = L.Control.extend({
                     <div data-bind="foreach: formats">
                         <div>
                             <label title="">
-                                <input type="radio" data-bind="checked: $parent.formatCode, value: code" class="leaflet-coordinates-format-radio"/>
+                                <input type="radio" data-bind="checked: $parent.formatCode, value: code" 
+                                       class="leaflet-coordinates-format-radio"/>
                                 <span data-bind="html: label"></span>
                             </label>
                         </div>
@@ -119,7 +121,7 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         setEnabled: function(enabled) {
-            if (!!enabled === this.isEnabled()) {
+            if (Boolean(enabled) === this.isEnabled()) {
                 return;
             }
             const classFunc = enabled ? 'addClass' : 'removeClass';
@@ -129,38 +131,66 @@ L.Control.Coordinates = L.Control.extend({
             L.DomUtil[classFunc](this._map._container, 'coordinates-control-active');
             this._map[eventFunc]('mousemove', this.onMouseMove, this);
             this._map[eventFunc]('contextmenu', this.onMapRightClick, this);
-            this._isEnabled = !!enabled;
+            this._map[enabled ? 'addLayer' : 'removeLayer'](this.elevationDisplayLayer);
+            this._isEnabled = Boolean(enabled);
             this.latlng(null);
         },
 
         onMapRightClick: function(e) {
             L.DomEvent.stop(e);
-
-            const createItem = (format, options = {}) => {
+            function createItem(format, elevation, overrides = {}) {
                 const {lat, lng} = formats.formatLatLng(e.latlng.wrap(), format);
-                const coordinates = `${lat} ${lng}`;
+                let text = `${lat} ${lng}`;
+                if (elevation !== null) {
+                    text += ` H=${elevation} m`;
+                }
 
-                return Object.assign({
-                    text: `${coordinates} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
-                    callback: () => copyToClipboard(coordinates, e.originalEvent)
-                }, options);
-            };
+                return {text: `${text} <span class="leaflet-coordinates-menu-fmt">${format.label}</span>`,
+                    callback: () => copyToClipboard(text, e.originalEvent),
+                    ...overrides};
+            }
 
-            const header = createItem(this.format(), {
-                text: '<b>Copy coordinates to clipboard</b>',
-                header: true,
-            });
-            const items = this.formats.map((format) => createItem(format));
-            items.unshift(header, '-');
-
+            const items = [
+                createItem(
+                    this.format(),
+                    null,
+                    {
+                        text: '<b>Copy coordinates to clipboard</b>',
+                        header: true,
+                    },
+                ),
+                ...this.formats.map((format) => createItem(format, null)),
+            ];
+            const elevationResult = this.elevationDisplayLayer.getElevation(e.latlng);
+            if (elevationResult.ready && !elevationResult.error && elevationResult.elevation !== null) {
+                const elevation = elevationResult.elevation;
+                items.push(
+                    '-',
+                    {
+                        text: `Copy elevation to clipboard: ${elevation}`,
+                        header: true,
+                        callback: () => copyToClipboard(elevation, e.originalEvent),
+                    },
+                    '-',
+                    createItem(
+                        this.format(),
+                        elevation,
+                        {
+                            text: '<b>Copy coordinates with elevation to clipboard</b>',
+                            header: true,
+                        },
+                    ),
+                    ...this.formats.map((format) => createItem(format, elevation)),
+                );
+            }
             new Contextmenu(items).show(e);
         },
 
         isEnabled: function() {
-            return !!this._isEnabled;
+            return Boolean(this._isEnabled);
         },
 
-        onClick: function(e) {
+        onClick: function() {
             this.setEnabled(!this.isEnabled());
             this.saveStateToStorage();
         }

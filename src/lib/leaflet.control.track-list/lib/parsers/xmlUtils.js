@@ -7,6 +7,7 @@ function xmlGetNodeText(node) {
             )
             .join('');
     }
+    return null;
 }
 
-export {xmlGetNodeText}
+export {xmlGetNodeText};

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2013-05-08T15:04:13Z</time>
+    </metadata>
+    <trk>
+        <name>2013-05-04 08:33:07 Auto</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Magenta</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="67.8470695484" lon="33.2546321210">
+                <ele>143.37</ele>
+                <time>2013-05-04T04:36:28Z</time>
+            </trkpt>
+            <trkpt lat="67.8470342606" lon="33.2547028642">
+                <ele>144.34</ele>
+                <time>2013-05-04T04:36:32Z</time>
+            </trkpt>
+            <trkpt lat="67.8469997272" lon="33.2548151817">
+                <ele>145.30</ele>
+                <time>2013-05-04T04:36:38Z</time>
+            </trkpt>
+            <trkpt lat="67.8469089512" lon="33.2550239749">
+                <ele>146.26</ele>
+                <time>2013-05-04T04:36:49Z</time>
+            </trkpt>
+            <trkpt lat="67.8468593303" lon="33.2551527210">
+                <ele>145.30</ele>
+                <time>2013-05-04T04:36:55Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

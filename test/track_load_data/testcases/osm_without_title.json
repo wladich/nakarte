@@ -1,0 +1,17 @@
+{
+    "query": ["https://www.openstreetmap.org/user/Wladich/traces/3376094"],
+    "geodata": [
+        {
+            "name": "OSM track 3376094",
+            "tracks": [
+                [
+                    {"lat": 39.1489488725, "lng": 68.2987869903},
+                    {"lat": 39.1489512194, "lng": 68.2988182548},
+                    {"lat": 39.1494263895, "lng": 68.298722785},
+                    {"lat": 39.1496936046, "lng": 68.2985061966}
+                ]
+            ],
+            "points": []
+        }
+    ]
+}

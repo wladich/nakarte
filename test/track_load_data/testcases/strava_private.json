@@ -1,0 +1,4 @@
+{
+    "query": ["https://www.strava.com/activities/3875236492", "https://www.strava.com/activities/3875227310"],
+    "geodata": [{"error": "Requested Strava activity marked as private"}]
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="GPSMAP 78s" version="1.1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+    <metadata>
+        <link href="http://www.garmin.com">
+            <text>Garmin International</text>
+        </link>
+        <time>2012-07-13T11:18:37Z</time>
+    </metadata>
+    <wpt lat="56.526300" lon="28.96245">
+        <ele>90.747414</ele>
+        <time>2012-05-09T13:09:20Z</time>
+        <name>Point 1</name>
+        <sym>Bar</sym>
+    </wpt>
+    <wpt lat="56.526400" lon="28.96246">
+        <ele>90.747414</ele>
+        <time>2012-05-09T13:09:40Z</time>
+        <name>Точка 2</name>
+        <sym>Bar</sym>
+    </wpt>
+    <trk>
+        <name>Test - Тест - Zkouška</name>
+        <extensions>
+            <gpxx:TrackExtension>
+                <gpxx:DisplayColor>Magenta</gpxx:DisplayColor>
+            </gpxx:TrackExtension>
+        </extensions>
+        <trkseg>
+            <trkpt lat="56.5269457083" lon="28.9624827169">
+                <ele>70.79</ele>
+                <time>2012-05-09T13:09:20Z</time>
+            </trkpt>
+            <trkpt lat="56.5269602928" lon="28.9624775201">
+                <ele>69.35</ele>
+                <time>2012-05-09T13:09:21Z</time>
+            </trkpt>
+            <trkpt lat="56.5270105843" lon="28.9624504466">
+                <ele>67.91</ele>
+                <time>2012-05-09T13:09:26Z</time>
+            </trkpt>
+        </trkseg>
+        <trkseg>
+            <trkpt lat="56.5270208102" lon="28.9624960441">
+                <ele>65.51</ele>
+                <time>2012-05-09T13:09:32Z</time>
+            </trkpt>
+            <trkpt lat="56.5270130988" lon="28.9625022467">
+                <ele>64.55</ele>
+                <time>2012-05-09T13:09:34Z</time>
+            </trkpt>
+            <trkpt lat="56.5270016156" lon="28.9624936972">
+                <ele>64.55</ele>
+                <time>2012-05-09T13:09:42Z</time>
+            </trkpt>
+            <trkpt lat="56.5270193852" lon="28.9625258837">
+                <ele>64.55</ele>
+                <time>2012-05-09T13:10:00Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>
+

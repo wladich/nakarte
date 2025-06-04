@@ -2,16 +2,6 @@ import L from 'leaflet';
 import './style.css';
 import {fixVectorMarkerWorldJump} from './fixWorldCopyJump';
 
-function fixAll() {
-    fixPanAnimationBug();
-    fixTouchDetection();
-    fixMapKeypressEvent();
-    fixVectorDrawWhileAnimation();
-    fixVectorMarkerWorldJump();
-    allowControlHorizontalStacking();
-    addTooltipDelay();
-}
-
 // https://github.com/Leaflet/Leaflet/issues/3575
 function fixPanAnimationBug() {
     if (!L.Browser.chrome) {
@@ -29,7 +19,7 @@ function fixPanAnimationBug() {
 }
 
 function fixTouchDetection() {
-    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie)|| navigator.maxTouchPoints)
+    L.Browser.touch &= ((navigator.pointerEnabled && !L.Browser.ie) || navigator.maxTouchPoints);
 }
 
 function fixMapKeypressEvent() {
@@ -40,7 +30,7 @@ function fixMapKeypressEvent() {
         } else {
             originalHandleDOMEvent.call(this, e);
         }
-    }
+    };
 }
 
 function fixVectorDrawWhileAnimation() {
@@ -52,7 +42,7 @@ function fixVectorDrawWhileAnimation() {
 
     const originalGetEvents = L.Renderer.prototype.getEvents;
 
-    const onZoom = function() {
+    function onZoom() {
         const now = Date.now();
         if (!this._lastReset || (now - this._lastReset > resetInterval)) {
             this._reset();
@@ -60,23 +50,22 @@ function fixVectorDrawWhileAnimation() {
         } else {
             L.Renderer.prototype._onZoom.call(this);
         }
+    }
 
-    };
-
-    const onMove = function() {
+    function onMove() {
         const now = Date.now();
         if (!this._lastReset || (now - this._lastReset > resetInterval)) {
             this._reset();
             this._lastReset = now;
         }
-    };
+    }
 
-    const getEvents = function() {
+    function getEvents() {
         const result = originalGetEvents.call(this);
         result.move = onMove;
         result.zoom = onZoom;
         return result;
-    };
+    }
 
     L.Renderer.prototype.getEvents = getEvents;
     L.Renderer.__animationFixed = true;
@@ -90,15 +79,15 @@ function allowControlHorizontalStacking() {
             L.DomUtil.addClass(this._container, 'leaflet-control-horizontal-stack');
         }
         return result;
-    }
+    };
 }
 
 function addTooltipDelay() {
     const origOpenTooltip = L.Layer.prototype._openTooltip;
     L.Layer.prototype._openTooltip = function(e) {
         if (this._tooltip.options.delay) {
-            const self = this;
-            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(self, e), this._tooltip.options.delay);
+            const that = this;
+            this._pendingTooltip = setTimeout(() => origOpenTooltip.call(that, e), this._tooltip.options.delay);
         } else {
             origOpenTooltip.call(this, e);
         }
@@ -108,7 +97,27 @@ function addTooltipDelay() {
     L.Layer.prototype.closeTooltip = function() {
         clearInterval(this._pendingTooltip);
         origCloseTooltip.call(this);
-    }
+    };
 }
 
-export {fixAll}
+// Should become obsolete when https://github.com/Leaflet/Leaflet/issues/4696 is done
+function fixDoubleZoomOnMouseWheel() {
+    const origGetWheelDelta = L.DomEvent.getWheelDelta;
+    L.DomEvent.getWheelDelta = function(e) {
+        const delta = origGetWheelDelta(e);
+        return Math.sign(delta) * Math.min(Math.abs(delta), 60);
+    };
+}
+
+function fixAll() {
+    fixPanAnimationBug();
+    fixTouchDetection();
+    fixMapKeypressEvent();
+    fixVectorDrawWhileAnimation();
+    fixVectorMarkerWorldJump();
+    allowControlHorizontalStacking();
+    addTooltipDelay();
+    fixDoubleZoomOnMouseWheel();
+}
+
+export {fixAll};

@@ -1,8 +1,7 @@
 import L from 'leaflet';
 import './track-list';
 import './ruler.css';
-import './track-list';
-import {makeButton} from 'lib/leaflet.control.commons';
+import {makeButton} from '~/lib/leaflet.control.commons';
 
 L.Control.TrackList.Ruler = L.Control.extend({
     options: {
@@ -24,7 +23,7 @@ L.Control.TrackList.Ruler = L.Control.extend({
 
     onClick: function() {
         this._trackList.setExpanded();
-        this._trackList.addNewTrack('Ruler').measureTicksShown(true);
+        this._trackList.addTrackAndEdit('Ruler').measureTicksShown(true);
     }
 
 });

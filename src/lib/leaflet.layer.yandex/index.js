@@ -1,25 +1,12 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import './style.css';
 
 const yandexCrs = L.CRS.EPSG3395;
 
 L.Layer.Yandex = L.TileLayer.extend({
         options: {
-            subdomains: '1234',
             className: L.Browser.retina ? '' : 'yandex-tile-layer',
             yandexScale: L.Browser.retina ? 2 : 1
-        },
-
-        initialize: function(mapType, options) {
-            let url;
-            this._mapType = mapType;
-            if (mapType === 'sat') {
-                url = 'https://sat0{s}.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}';
-            } else {
-                url = 'https://vec0{s}.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}';
-            }
-
-            L.TileLayer.prototype.initialize.call(this, url, options);
         },
 
         _getTilePos: function(coords) {
@@ -40,7 +27,7 @@ L.Layer.Yandex = L.TileLayer.extend({
             const coordsBelow = L.point(coords).add([0, 1]);
             coordsBelow.z = coords.z;
             tile._adjustHeight = this._getTilePos(coordsBelow).y - this._getTilePos(coords).y;
-            return tile
+            return tile;
         },
 
         _initTile: function(tile) {
@@ -49,3 +36,34 @@ L.Layer.Yandex = L.TileLayer.extend({
         }
     }
 );
+
+L.Layer.Yandex.Map = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        let url = 'https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale={yandexScale}';
+        if (navigator.language) {
+            url += `&lang=${navigator.language}`;
+        }
+        L.Layer.Yandex.prototype.initialize.call(this, url, options);
+    },
+});
+
+L.Layer.Yandex.Sat = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        L.Layer.Yandex.prototype.initialize.call(
+            this,
+            'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}',
+            options
+        );
+    },
+});
+
+L.Layer.Yandex.Tracks = L.Layer.Yandex.extend({
+    initialize: function(options) {
+        options = {minZoom: 10, maxNativeZoom: 16, ...options};
+        L.Layer.Yandex.prototype.initialize.call(
+            this,
+            'https://core-gpstiles.maps.yandex.net/tiles?style=point&x={x}&y={y}&z={z}',
+            options
+        );
+    },
+});

@@ -2,35 +2,42 @@ import './App.css';
 import './leaflet-fixes.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'lib/leaflet.control.printPages/control'
-import 'lib/leaflet.control.caption'
-import config from './config'
-import 'lib/leaflet.control.coordinates';
-import enableLayersControlHotKeys from 'lib/leaflet.control.layers.hotkeys';
-import 'lib/leaflet.hashState/Leaflet.Map';
-import 'lib/leaflet.hashState/Leaflet.Control.Layers';
-import {fixAll} from 'lib/leaflet.fixes'
+import {MapWithSidebars} from '~/lib/leaflet.map.sidebars';
+import '~/lib/leaflet.control.printPages/control';
+import '~/lib/leaflet.control.caption';
+import config from './config';
+import '~/lib/leaflet.control.coordinates';
+import enableLayersControlHotKeys from '~/lib/leaflet.control.layers.hotkeys';
+import '~/lib/leaflet.hashState/Leaflet.Map';
+import '~/lib/leaflet.hashState/Leaflet.Control.Layers';
+import {fixAll} from '~/lib/leaflet.fixes';
 import './adaptive.css';
-import 'lib/leaflet.control.panoramas';
-import 'lib/leaflet.control.track-list/track-list';
-import 'lib/leaflet.control.track-list/control-ruler';
-import 'lib/leaflet.control.track-list/track-list.hash-state';
-import 'lib/leaflet.control.track-list/track-list.localstorage';
-import enableLayersControlAdaptiveHeight from 'lib/leaflet.control.layers.adaptive-height';
-import enableLayersMinimize from 'lib/leaflet.control.layers.minimize';
-import enableLayersConfig from 'lib/leaflet.control.layers.configure';
-import raiseControlsOnFocus from 'lib/leaflet.controls.raise-on-focus';
-import getLayers from 'layers';
-import 'lib/leaflet.control.layers.events';
-import 'lib/leaflet.control.jnx';
-import 'lib/leaflet.control.jnx/hash-state';
-import 'lib/leaflet.control.azimuth';
-import {hashState, bindHashStateReadOnly} from 'lib/leaflet.hashState/hashState';
-import {LocateControl} from 'lib/leaflet.control.locate';
-import {notify} from 'lib/notifications';
-import ZoomDisplay from 'lib/leaflet.control.zoom-display';
-import logging from 'lib/logging';
-import safeLocalStorage from 'lib/safe-localstorage';
+import '~/lib/leaflet.control.panoramas';
+import '~/lib/leaflet.control.track-list/track-list';
+import '~/lib/leaflet.control.track-list/control-ruler';
+import '~/lib/leaflet.control.track-list/track-list.hash-state';
+import enableLayersControlAdaptiveHeight from '~/lib/leaflet.control.layers.adaptive-height';
+import enableLayersMinimize from '~/lib/leaflet.control.layers.minimize';
+import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
+import raiseControlsOnFocus from '~/lib/leaflet.controls.raise-on-focus';
+import {getLayers} from './layers';
+import '~/lib/leaflet.control.layers.events';
+import '~/lib/leaflet.control.jnx';
+import '~/lib/leaflet.control.jnx/hash-state';
+import '~/lib/leaflet.control.azimuth';
+import {SessionsControl} from '~/lib/leaflet.control.sessions';
+import {hashState, bindHashStateReadOnly} from '~/lib/leaflet.hashState/hashState';
+import {LocateControl} from '~/lib/leaflet.control.locate';
+import {notify} from '~/lib/notifications';
+import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
+import * as logging from '~/lib/logging';
+import safeLocalStorage from '~/lib/safe-localstorage';
+import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
+import {SearchControl} from '~/lib/leaflet.control.search';
+import '~/lib/leaflet.placemark';
+import '~/vendored/mapbbcode/FunctionButton';
+import Contextmenu from '~/lib/contextmenu';
+import iconMenu from './images/menu.png';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -38,7 +45,16 @@ const locationErrorMessage = {
     2: 'Failed to acquire position for unknown reason.',
 };
 
-function setUp() {
+const minimizeStateAuto = 0;
+const minimizeStateMinimized = 1;
+const minimizeStateExpanded = 2;
+
+function isInIframe() {
+    // Check if the window is not the top window
+    return window.self !== window.top;
+}
+
+function setUp() { // eslint-disable-line complexity
     const startInfo = {
         href: window.location.href,
         localStorageKeys: Object.keys(safeLocalStorage),
@@ -46,7 +62,22 @@ function setUp() {
     };
     fixAll();
 
-    const map = L.map('map', {
+    function validateMinimizeState(state) {
+        state = Number(state);
+        if (state === minimizeStateMinimized || state === minimizeStateExpanded) {
+            return state;
+        }
+        return minimizeStateAuto;
+    }
+    const minimizeState = hashState.getState('min') ?? [];
+    const minimizeControls = {
+        tracks: validateMinimizeState(minimizeState[0]),
+        layers: validateMinimizeState(minimizeState[1]),
+        print: validateMinimizeState(minimizeState[2]),
+        search: validateMinimizeState(minimizeState[3]),
+    };
+
+    const map = new MapWithSidebars('map', {
             zoomControl: false,
             fadeAnimation: false,
             attributionControl: false,
@@ -56,17 +87,35 @@ function setUp() {
         }
     );
 
-    const tracklist = new L.Control.TrackList();
+    const tracklist = new L.Control.TrackList({
+        keysToExcludeOnCopyLink: ['q', 'r']
+    });
 
-    /////////// controls top-left corner
+    /* controls top-left corner */
 
     new L.Control.Caption(config.caption, {
             position: 'topleft'
         }
     ).addTo(map);
 
-
     new ZoomDisplay().addTo(map);
+
+    const searchOptions = {
+        position: 'topleft',
+        stackHorizontally: true,
+        maxMapWidthToMinimize: 620,
+    };
+    if (minimizeControls.search === minimizeStateMinimized) {
+        searchOptions.maxMapHeightToMinimize = Infinity;
+        searchOptions.maxMapWidthToMinimize = Infinity;
+    } else if (minimizeControls.search === minimizeStateExpanded) {
+        searchOptions.maxMapHeightToMinimize = 0;
+        searchOptions.maxMapWidthToMinimize = 0;
+    }
+    const searchControl = new SearchControl(searchOptions)
+        .addTo(map)
+        .enableHashState('q');
+    map.getPlacemarkHashStateInterface().enableHashState('r');
 
     new L.Control.Scale({
         imperial: false,
@@ -74,14 +123,47 @@ function setUp() {
         stackHorizontally: true
     }).addTo(map);
 
+    let sessionsControl;
+    if (!isInIframe()) {
+        sessionsControl = new SessionsControl(tracklist, {noButton: true}).addTo(map);
+        const size = L.Browser.touch ? 30 : 26;
+        const offset = L.Browser.touch ? 7 : 5;
+        const menuButton = L.functionButtons(
+            [
+                {
+                    content: iconMenu,
+                    title: 'Menu',
+                    bgPos: [-offset, -offset],
+                    imageSize: size,
+                },
+            ],
+            {position: 'topleft'}
+        );
+        menuButton.addTo(map);
+        menuButton.on('clicked', (e) => {
+            new Contextmenu([
+                {
+                    text: 'Recent sessions',
+                    callback: () => sessionsControl.showSessionListWindow(),
+                },
+                {
+                    text: 'Copy share link',
+                    callback: () => tracklist.copyAllTracksToClipboard(e, true),
+                },
+            ]).show(e);
+        });
+    }
+
+    new ExternalMaps({position: 'topleft'}).addTo(map);
+
     new L.Control.TrackList.Ruler(tracklist).addTo(map);
 
-    const panoramas = new L.Control.Panoramas(document.getElementById('street-view'))
+     const panoramas = new L.Control.Panoramas()
         .addTo(map)
         .enableHashState('n2');
     L.Control.Panoramas.hashStateUpgrader(panoramas).enableHashState('n');
 
-    new L.Control.Coordinates({position: 'topleft'}).addTo(map);
+    new L.Control.Coordinates(config.elevationTileUrl, {position: 'topleft'}).addTo(map);
 
     const azimuthControl = new L.Control.Azimuth({position: 'topleft'}).addTo(map);
 
@@ -95,42 +177,56 @@ function setUp() {
             notify(customMessage);
         }
     }).addTo(map);
+    let {valid: validPositionInHash} = map.validateState(hashState.getState('m'));
+    map.enableHashState('m', [config.defaultZoom, ...config.defaultLocation]);
 
-    const defaultLocation = L.latLng(55.75185, 37.61856);
-    const defaultZoom = 10;
-
-    let {lat, lng, zoom, valid: validPositionInHash} = map.validateState(hashState.getState('m'));
-    locateControl.moveMapToCurrentLocation(defaultZoom, defaultLocation,
-        validPositionInHash ? L.latLng(lat, lng) : null, validPositionInHash ? zoom : null);
-    map.enableHashState('m');
-    /////////// controls top-right corner
+    /* controls top-right corner */
 
     const layersControl = L.control.layers(null, null, {collapsed: false})
         .addTo(map);
-    enableLayersControlHotKeys (layersControl);
+    enableLayersControlHotKeys(layersControl);
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
     enableLayersConfig(layersControl, getLayers());
     layersControl.enableHashState('l');
 
-    /////////// controls bottom-left corner
+    /* controls bottom-left corner */
+
+    const attribution = L.control.attribution({
+        position: 'bottomleft',
+        prefix: false,
+    });
+    map.on('resize', function() {
+        if (map.getSize().y > 567) {
+            map.addControl(attribution);
+            // Hack to keep control at the bottom of the map
+            const container = attribution._container;
+            const parent = container.parentElement;
+            parent.appendChild(container);
+        } else {
+            map.removeControl(attribution);
+        }
+    });
+    if (map.getSize().y > 567) {
+        map.addControl(attribution);
+    }
 
     const printControl = new L.Control.PrintPages({position: 'bottomleft'})
         .addTo(map)
         .enableHashState('p');
-    if (!printControl.hasPages()) {
+    if (
+        minimizeControls.print === minimizeStateMinimized ||
+        (minimizeControls.print === minimizeStateAuto && !printControl.hasPages())
+    ) {
         printControl.setMinimized();
     }
 
-    new L.Control.JNX(layersControl, {position: 'bottomleft'})
+    const jnxControl = new L.Control.JNX(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
 
-    /////////// controls bottom-right corner
+    /* controls bottom-right corner */
 
-    function trackNames() {
-        return tracklist.tracks().map((track) => track.name());
-    }
     tracklist.addTo(map);
     const tracksHashParams = tracklist.hashParams();
 
@@ -141,59 +237,74 @@ function setUp() {
             break;
         }
     }
-    if (!hasTrackParamsInHash) {
-        tracklist.loadTracksFromStorage();
-    }
-    startInfo.tracksAfterLoadFromStorage = trackNames();
 
-    for (let param of tracksHashParams ) {
+    if (sessionsControl) {
+        (async() => {
+            await sessionsControl.loadSession();
+            await sessionsControl.consumeSessionFromHash();
+            if (await sessionsControl.importOldSessions() && !hasTrackParamsInHash) {
+                notify(
+                    'If some tracks disappeared from the tracks list, ' +
+                    'you can find them in the new list of recent sessions in the upper left corner.'
+                );
+            }
+        })();
+    }
+
+    if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
+        tracklist.once('loadedTracksFromParam', () => {
+            const track = tracklist.tracks()[0];
+            if (track) {
+                tracklist.showElevationProfileForTrack(track);
+            }
+        });
+    }
+
+    // This is not quite correct: minimizeControls should have effect only during loading, but the way it is
+    // implemented, it will affect expanding when loading track from hash param during session.
+    // But as parameter is expected to be found only when site is embedded using iframe,
+    // the latter scenario is not very probable.
+    if (minimizeControls.tracks !== minimizeStateMinimized) {
+        tracklist.on('loadedTracksFromParam', () => tracklist.setExpanded());
+    }
+
+    for (let param of tracksHashParams) {
         bindHashStateReadOnly(param, tracklist.loadTrackFromParam.bind(tracklist, param));
     }
-    startInfo.tracksAfterLoadFromHash = trackNames();
+
+    /* set map position */
 
     if (!validPositionInHash) {
-        tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
-    }
-
-
-    ////////// adaptive layout
-
-    if (L.Browser.mobile) {
-        layersControl.setMinimized();
-        if (!tracklist.hasTracks()) {
-            tracklist.setMinimized();
+        if (hasTrackParamsInHash) {
+            tracklist.whenLoadDone(() => tracklist.setViewToAllTracks(true));
+        } else {
+            locateControl.moveMapToCurrentLocation(config.defaultZoom);
         }
     }
 
+    /* adaptive layout */
+
+    if (
+        minimizeControls.layers === minimizeStateAuto && L.Browser.mobile ||
+        minimizeControls.layers === minimizeStateMinimized
+    ) {
+        layersControl.setMinimized();
+    }
+
     if (L.Browser.mobile) {
-        map.on('mousedown dragstart', () => layersControl.setMinimized())
+        map.on('mousedown dragstart', () => layersControl.setMinimized());
+    }
+
+    if (
+        minimizeControls.tracks === minimizeStateAuto && L.Browser.mobile && !tracklist.hasTracks() ||
+        minimizeControls.tracks === minimizeStateMinimized
+    ) {
+        tracklist.setMinimized();
     }
 
     raiseControlsOnFocus(map);
 
-    //////////// save state at unload
-
-    L.DomEvent.on(window, 'beforeunload', () => {
-        logging.logEvent('saveTracksToStorage begin', {
-            localStorageKeys: Object.keys(safeLocalStorage),
-            trackNames: trackNames(),
-        });
-        const t = Date.now();
-        let localStorageKeys;
-        try {
-            tracklist.saveTracksToStorage();
-            localStorageKeys = Object.keys(safeLocalStorage);
-        } catch (e) {
-            logging.logEvent('saveTracksToStorage failed', {error: e});
-            return;
-        }
-        logging.logEvent('saveTracksToStorage done', {
-            time: Date.now() - t,
-            localStorageKeys
-        });
-    });
-
-    ////////// track list and azimuth measure interaction
+    /* track list and azimuth measure interaction */
 
     tracklist.on('startedit', () => azimuthControl.disableControl());
     tracklist.on('elevation-shown', () => azimuthControl.hideProfile());
@@ -201,7 +312,122 @@ function setUp() {
         tracklist.stopEditLine();
     });
     azimuthControl.on('elevation-shown', () => tracklist.hideElevationProfile());
+
+    /* setup events logging */
+
+    function getLayerLoggingInfo(layer) {
+        if (layer.meta) {
+            return {title: layer.meta.title};
+        } else if (layer.__customLayer) {
+            return {custom: true, title: layer.__customLayer.title, url: layer._url};
+        }
+        return null;
+    }
+
+    function getLatLngBoundsLoggingInfo(latLngBounds) {
+        return {
+            west: latLngBounds.getWest(),
+            south: latLngBounds.getSouth(),
+            east: latLngBounds.getEast(),
+            north: latLngBounds.getNorth(),
+        };
+    }
+
+    function getErrorLoggingInfo(error) {
+        return error
+            ? {
+                  name: error.name,
+                  message: error.message,
+                  stack: error.stack,
+              }
+            : null;
+    }
+
+    function logUsedMaps() {
+        const layers = [];
+        map.eachLayer((layer) => {
+            const layerInfo = getLayerLoggingInfo(layer);
+            if (layerInfo) {
+                layers.push(layerInfo);
+            }
+        });
+        const bounds = map.getBounds();
+        logging.logEvent('activeLayers', {
+            layers,
+            view: getLatLngBoundsLoggingInfo(bounds),
+        });
+    }
+
+    L.DomEvent.on(document, 'mousemove click touchend', L.Util.throttle(logUsedMaps, 30000));
+
+    printControl.on('mapRenderEnd', function(e) {
+        logging.logEvent('mapRenderEnd', {
+            eventId: e.eventId,
+            success: e.success,
+            error: getErrorLoggingInfo(e.error),
+        });
+    });
+
+    printControl.on('mapRenderStart', function(e) {
+        const layers = [];
+        map.eachLayer((layer) => {
+            const layerInfo = getLayerLoggingInfo(layer);
+            if (layer.options?.print && layerInfo) {
+                layers.push({
+                    ...getLayerLoggingInfo(layer),
+                    scaleDependent: layer.options.scaleDependent
+                });
+            }
+        });
+        logging.logEvent('mapRenderStart', {
+            eventId: e.eventId,
+            action: e.action,
+            scale: e.scale,
+            resolution: e.resolution,
+            pages: e.pages.map((page) => getLatLngBoundsLoggingInfo(page.latLngBounds)),
+            zooms: e.zooms,
+            layers
+        });
+    });
+
+    jnxControl.on('tileExportStart', function(e) {
+        logging.logEvent('tileExportStart', {
+            eventId: e.eventId,
+            layer: getLayerLoggingInfo(e.layer),
+            zoom: e.zoom,
+            bounds: getLatLngBoundsLoggingInfo(e.bounds),
+        });
+    });
+
+    jnxControl.on('tileExportEnd', function(e) {
+        logging.logEvent('tileExportEnd', {
+            eventId: e.eventId,
+            success: e.success,
+            error: getErrorLoggingInfo(e.error),
+        });
+    });
+
+    searchControl.on('resultreceived', function(e) {
+        logging.logEvent('SearchProviderSelected', {
+            provider: e.provider,
+            query: e.query,
+        });
+        if (e.provider === 'Links' && e.result.error) {
+            logging.logEvent('SearchLinkError', {
+                query: e.query,
+                result: e.result,
+            });
+        }
+        if (e.provider === 'Coordinates') {
+            logging.logEvent('SearchCoordinates', {
+                query: e.query,
+                result: e.result,
+            });
+        }
+    });
+
     logging.logEvent('start', startInfo);
+    logUsedMaps();
 }
 
-export default {setUp};
+export {setUp};

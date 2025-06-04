@@ -1,26 +1,26 @@
-import L from 'leaflet'
-import ko from 'vendored/knockout';
-import 'lib/knockout.component.progress/progress';
-import 'lib/controls-styles/controls-styles.css';
+import L from 'leaflet';
+import ko from 'knockout';
+import '~/lib/knockout.component.progress/progress';
+import '~/lib/controls-styles/controls-styles.css';
 import './control.css';
 import PageFeature from './pageFeature';
-import Contextmenu from 'lib/contextmenu';
-import {renderPages} from './map-render'
+import Contextmenu from '~/lib/contextmenu';
+import {renderPages} from './map-render';
 import formHtml from './form.html';
-import {notify} from 'lib/notifications';
+import {notify} from '~/lib/notifications';
 import {makePdf} from './pdf';
-import {saveAs} from 'vendored/github.com/eligrey/FileSaver';
-import {blobFromString} from 'lib/binary-strings';
-import 'lib/leaflet.hashState/leaflet.hashState';
-import 'lib/leaflet.control.commons';
-import logging from 'lib/logging';
-import  {MagneticMeridians} from './decoration.magnetic-meridians';
+import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import {blobFromString} from '~/lib/binary-strings';
+import '~/lib/leaflet.hashState/leaflet.hashState';
+import '~/lib/leaflet.control.commons';
+import * as logging from '~/lib/logging';
+import {MagneticMeridians} from './decoration.magnetic-meridians';
 import {OverlayScale} from './decoration.scale';
 import {Grid} from './decoration.grid';
 
 ko.extenders.checkNumberRange = function(target, range) {
     return ko.pureComputed({
-            read: target,  //always return the original observables value
+            read: target,  // always return the original observables value
             write: function(newValue) {
                 newValue = parseFloat(newValue);
                 if (newValue >= range[0] && newValue <= range[1]) {
@@ -44,19 +44,24 @@ function savePageJpg(page, fileName) {
 }
 
 L.Control.PrintPages = L.Control.extend({
-        options: {position: 'bottomleft'},
+        options: {
+            position: 'bottomleft',
+            defaultMargin: 7,
+        },
 
         includes: [L.Mixin.Events, L.Mixin.HashState],
 
         stateChangeEvents: ['change'],
 
         pageSizes: [
-            {'name': 'A1', width: 594, height: 841},
-            {'name': 'A2', width: 420, height: 594},
-            {'name': 'A3', width: 297, height: 420},
-            {'name': 'A4', width: 210, height: 297},
-            {'name': 'A5', width: 148, height: 210}
+            {name: 'A1', width: 594, height: 841},
+            {name: 'A2', width: 420, height: 594},
+            {name: 'A3', width: 297, height: 420},
+            {name: 'A4', width: 210, height: 297},
+            {name: 'A5', width: 148, height: 210}
         ],
+
+        zoomLevels: ['auto', 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
 
         initialize: function(options) {
             L.Control.prototype.initialize.call(this, options);
@@ -70,10 +75,10 @@ L.Control.PrintPages = L.Control.extend({
             this.makingPdf = ko.observable(false);
             this.downloadProgressRange = ko.observable();
             this.downloadProgressDone = ko.observable();
-            this.marginLeft = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginRight = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginTop = ko.observable(3).extend({checkNumberRange: [0, 99]});
-            this.marginBottom = ko.observable(3).extend({checkNumberRange: [0, 99]});
+            this.marginLeft = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginRight = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginTop = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
+            this.marginBottom = ko.observable(this.options.defaultMargin).extend({checkNumberRange: [0, 99]});
             this.autoZoomLevels = ko.observable({});
             this.printSize = ko.pureComputed(this._printSize, this);
             this.printSize.subscribe(this.onPageSizeChanged, this);
@@ -85,7 +90,7 @@ L.Control.PrintPages = L.Control.extend({
             this.gridOn = ko.observable(false);
             this.magneticMeridiansOn = ko.observable(false);
 
-            //hash state notifications
+            // hash state notifications
             this.scale.subscribe(this.notifyChange, this);
             this.printSize.subscribe(this.notifyChange, this);
             this.resolution.subscribe(this.notifyChange, this);
@@ -137,7 +142,7 @@ L.Control.PrintPages = L.Control.extend({
             page.on('moveend', this.notifyChange, this);
             this.updateFormZooms();
             this.notifyChange();
-            return page
+            return page;
         },
 
         addLandscapePage: function() {
@@ -157,7 +162,7 @@ L.Control.PrintPages = L.Control.extend({
                 this.pages[i].setLabel((i + 1).toString());
             }
             this.notifyChange();
-            this.updateFormZooms()
+            this.updateFormZooms();
         },
 
         removePages: function() {
@@ -179,9 +184,9 @@ L.Control.PrintPages = L.Control.extend({
         zoomForPrint: function() {
             let zoom = this.zoomLevel();
             if (zoom === 'auto') {
-                zoom = this.suggestZooms()
+                zoom = this.suggestZooms();
             } else {
-                zoom = {mapZoom: zoom, satZoom: zoom}
+                zoom = {mapZoom: zoom, satZoom: zoom};
             }
             return zoom;
         },
@@ -192,21 +197,18 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         savePdf: function() {
-            logging.captureBreadcrumbWithUrl({message: 'start save pdf'});
+            logging.captureBreadcrumb('start save pdf');
             if (!this._map) {
                 return;
             }
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
-            const pages = this.pages.map((page) => {
-                    return {
+            const pages = this.pages.map((page) => ({
                         latLngBounds: page.getLatLngBounds(),
                         printSize: page.getPrintSize(),
                         label: page.getLabel()
-                    }
-                }
-            );
+            }));
             const resolution = this.resolution();
             const decorationLayers = [];
             if (this.gridOn()) {
@@ -220,11 +222,19 @@ L.Control.PrintPages = L.Control.extend({
             const width = this.pageWidth();
             const height = this.pageHeight();
             const eventId = logging.randId();
-            logging.logEvent('print pdf start', {eventId});
+            const zooms = this.zoomForPrint();
+            this.fire('mapRenderStart', {
+                action: 'pdf',
+                eventId,
+                scale,
+                resolution,
+                pages,
+                zooms
+            });
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
+                    zooms,
                     resolution,
                     scale,
                     decorationLayers,
@@ -240,19 +250,19 @@ L.Control.PrintPages = L.Control.extend({
                             extension: 'pdf'
                         });
                         savePagesPdf(images, resolution, fileName);
-                        logging.logEvent('print pdf end', {eventId, success: true});
+                        this.fire('mapRenderEnd', {eventId, success: true});
                     }
                 }
             ).catch((e) => {
-                    logging.captureException(e);
-                    logging.logEvent('print pdf end', {eventId, success: false, error: e.stack});
+                    logging.captureException(e, 'raster creation failed');
+                    this.fire('mapRenderEnd', {eventId, success: false, error: e});
                     notify(`Failed to create PDF: ${e.message}`);
                 }
             ).then(() => this.makingPdf(false));
         },
 
         savePageJpg: function(page) {
-            logging.captureBreadcrumbWithUrl({message: 'start save page jpg', data: {pageNumber: page.getLabel()}});
+            logging.captureBreadcrumb('start save page jpg', {pageNumber: page.getLabel()});
             const pages = [{
                 latLngBounds: page.getLatLngBounds(),
                 printSize: page.getPrintSize(),
@@ -269,16 +279,25 @@ L.Control.PrintPages = L.Control.extend({
             this.downloadProgressRange(1000);
             this.downloadProgressDone(undefined);
             this.makingPdf(true);
+            const resolution = this.resolution();
             const scale = this.scale();
             const width = this.pageWidth();
             const height = this.pageHeight();
             const eventId = logging.randId();
-            logging.logEvent('print jpg start', {eventId});
+            const zooms = this.zoomForPrint();
+            this.fire('mapRenderStart', {
+                action: 'jpg',
+                eventId,
+                scale,
+                resolution,
+                pages,
+                zooms
+            });
             renderPages({
                     map: this._map,
                     pages,
-                    zooms: this.zoomForPrint(),
-                    resolution: this.resolution(),
+                    zooms,
+                    resolution,
                     scale,
                     decorationLayers,
                     progressCallback: this.incrementProgress.bind(this)
@@ -293,11 +312,11 @@ L.Control.PrintPages = L.Control.extend({
                         extension: 'jpg'
                     });
                     savePageJpg(images[0], fileName);
-                    logging.logEvent('print jpg end', {eventId, success: true});
+                    this.fire('mapRenderEnd', {eventId, success: true});
                 })
                 .catch((e) => {
-                        logging.captureException(e);
-                        logging.logEvent('print jpg end', {eventId, success: false, error: e.stack});
+                        logging.captureException(e, 'raster creation failed');
+                        this.fire('mapRenderEnd', {eventId, success: false, error: e});
                         notify(`Failed to create JPEG from page: ${e.message}`);
                     }
                 ).then(() => this.makingPdf(false));
@@ -314,6 +333,16 @@ L.Control.PrintPages = L.Control.extend({
                 }
             );
             this.updateFormZooms();
+        },
+
+        onPagesNumLabelClick: function() {
+            if (this.pages.length > 0) {
+                const bounds = L.latLngBounds([]);
+                for (let page of this.pages) {
+                    bounds.extend(page.latLngBounds);
+                }
+                this._map.fitBounds(bounds.pad(0.2));
+            }
         },
 
         makePageContexmenuItems: function(page) {
@@ -366,10 +395,7 @@ L.Control.PrintPages = L.Control.extend({
                 resolution = this.resolution();
             let referenceLat;
             if (this.pages.length > 0) {
-                let absLats = this.pages.map((page) => {
-                        return Math.abs(page.getLatLngBounds().getCenter().lat);
-                    }
-                );
+                let absLats = this.pages.map((page) => Math.abs(page.getLatLngBounds().getCenter().lat));
                 referenceLat = Math.min(...absLats);
             } else {
                 if (!this._map) {
@@ -411,7 +437,7 @@ L.Control.PrintPages = L.Control.extend({
         },
 
         hasPages: function() {
-            return !!this.pages.length
+            return this.pages.length > 0;
         },
 
         _pagesNumLabel: function() {
@@ -453,7 +479,6 @@ L.Control.PrintPages = L.Control.extend({
                     (this.magneticMeridiansOn() ? 1 : 0) |
                     (this.gridOn() ? 2 : 0);
                 state.push(flags.toString());
-
             }
             return state;
         },
@@ -481,13 +506,13 @@ L.Control.PrintPages = L.Control.extend({
                 if (isNaN(lat) || isNaN(lng) || lat < -85 || lat > 85 || lng < -180 || lng > 180) {
                     break;
                 }
-                this.addPage(!!rotated, L.latLng(lat, lng));
+                this.addPage(Boolean(rotated), L.latLng(lat, lng));
             }
             if (state.length) {
                 const flags = parseInt(state.shift(), 10);
-                if (flags >= 0  && flags <= 3) {
-                    this.magneticMeridiansOn(!!(flags & 1));
-                    this.gridOn(!!(flags & 2));
+                if (flags >= 0 && flags <= 3) {
+                    this.magneticMeridiansOn(Boolean(flags & 1));
+                    this.gridOn(Boolean(flags & 2));
                 }
             }
             return true;
@@ -499,7 +524,7 @@ L.Control.PrintPages = L.Control.extend({
             let opaqueLayer;
             const transparentOverlayLayers = [];
 
-            renderedLayers.forEach(layer => {
+            renderedLayers.forEach((layer) => {
                 const {
                     options: {
                         isOverlay,
@@ -523,9 +548,9 @@ L.Control.PrintPages = L.Control.extend({
                 }
             });
 
-            const appendLayerShortName = (layer) => {
+            function appendLayerShortName(layer) {
                 fileName += `${layer.options.shortName}_`;
-            };
+            }
             if (opaqueLayer) {
                 appendLayerShortName(opaqueLayer);
             }
@@ -533,9 +558,9 @@ L.Control.PrintPages = L.Control.extend({
 
             fileName += `${scale}m`;
 
-            const currentPageSize = this.pageSizes.find((pageSize) => {
-                return (width === pageSize.width) && (height === pageSize.height);
-            });
+            const currentPageSize = this.pageSizes.find(
+                (pageSize) => width === pageSize.width && height === pageSize.height
+            );
 
             if (currentPageSize) {
                 fileName += `_${currentPageSize.name}`;

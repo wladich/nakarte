@@ -1,6 +1,6 @@
 import {decode as utf8_decode} from 'utf8';
 import {xmlGetNodeText} from './xmlUtils';
-import stripBom from 'lib/stripBom';
+import stripBom from '~/lib/stripBom';
 
 function parseGpx(txt, name, preferNameFromFile) {
     var error;
@@ -21,7 +21,7 @@ function parseGpx(txt, name, preferNameFromFile) {
         return points;
     }
 
-    var getTrackSegments = function(xml) {
+    function getTrackSegments(xml) {
         var segments = [];
         var segments_elements = xml.getElementsByTagName('trkseg');
         for (var i = 0; i < segments_elements.length; i++) {
@@ -31,7 +31,7 @@ function parseGpx(txt, name, preferNameFromFile) {
             }
         }
         return segments;
-    };
+    }
 
     function getRoutePoints(rte_element) {
         var points_elements = rte_element.getElementsByTagName('rtept');
@@ -49,7 +49,7 @@ function parseGpx(txt, name, preferNameFromFile) {
         return points;
     }
 
-    var getRoutes = function(xml) {
+    function getRoutes(xml) {
         var routes = [];
         var rte_elements = xml.getElementsByTagName('rte');
         for (var i = 0; i < rte_elements.length; i++) {
@@ -59,9 +59,9 @@ function parseGpx(txt, name, preferNameFromFile) {
             }
         }
         return routes;
-    };
+    }
 
-    var getWaypoints = function(xml) {
+    function getWaypoints(xml) {
         var waypoint_elements = xml.getElementsByTagName('wpt');
         var waypoints = [];
         for (var i = 0; i < waypoint_elements.length; i++) {
@@ -76,7 +76,7 @@ function parseGpx(txt, name, preferNameFromFile) {
             let wptName = xmlGetNodeText(waypoint_element.getElementsByTagName('name')[0]) || '';
             try {
                 wptName = utf8_decode((wptName));
-            }  catch (e) {
+            } catch (e) {
                 error = 'CORRUPT';
                 wptName = '__invalid point name__';
             }
@@ -85,13 +85,14 @@ function parseGpx(txt, name, preferNameFromFile) {
             waypoints.push(waypoint);
         }
         return waypoints;
-    };
+    }
 
     txt = stripBom(txt);
     // remove namespaces
-    txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    txt = txt.replace(/<([^ >]+):([^ >]+)/ug, '<$1_$2');
+    let dom;
     try {
-        var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+        dom = (new DOMParser()).parseFromString(txt, "text/xml");
     } catch (e) {
         return null;
     }

@@ -1,4 +1,6 @@
-import urlSafeBase64 from '../../parsers/urlSafeBase64';
+import utf8 from 'utf8';
+
+import * as urlSafeBase64 from '../../parsers/urlSafeBase64';
 import {TRACKLIST_TRACK_COLORS} from '../../../track-list';
 import loadFromUrl from '../../loadFromUrl';
 
@@ -8,12 +10,12 @@ function parseWaypoint(rawPoint) {
     let lng = Number(rawPoint.ln);
     if (typeof name !== 'string' || !name || isNaN(lat) || isNaN(lng) ||
         lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        return {valid: false}
+        return {valid: false};
     }
     return {
         valid: true,
         point: {lat, lng, name}
-    }
+    };
 }
 
 function parseTrack(rawTrack) {
@@ -39,16 +41,19 @@ function parseTrack(rawTrack) {
         track.push(segment);
     }
     return {valid: true, track};
-
 }
 
-async function loadTracksFromJson(value) {
+async function loadTracksFromJson(value) { // eslint-disable-line complexity
     const errCorrupt = [{name: 'Track in url', error: 'CORRUPT'}];
-
-    const jsonString = urlSafeBase64.decode(value);
+    let jsonString = urlSafeBase64.decode(value);
+    try {
+        jsonString = utf8.decode(jsonString);
+    } catch (e) {
+        // so it was not encoded in utf-8, leave it as it is
+    }
     let data;
     try {
-        data = JSON.parse(jsonString)
+        data = JSON.parse(jsonString);
     } catch (e) {
         return errCorrupt;
     }
@@ -71,7 +76,7 @@ async function loadTracksFromJson(value) {
             }
         } else {
             geodata = {};
-            geodata.name = el.name || 'Track';
+            geodata.name = el.n || 'Track';
             if (el.t) {
                 const res = parseTrack(el.t);
                 if (!res.valid) {
@@ -83,6 +88,7 @@ async function loadTracksFromJson(value) {
                 geodata.points = [];
                 for (let rawPoint of el.p) {
                     let res = parseWaypoint(rawPoint);
+                    // eslint-disable-next-line max-depth
                     if (!res.valid) {
                         return errCorrupt;
                     }
@@ -103,10 +109,10 @@ async function loadTracksFromJson(value) {
             viewProps.trackHidden = !el.v;
         }
         if ('m' in el) {
-            viewProps.measureTicksShown = !!el.m;
+            viewProps.measureTicksShown = Boolean(el.m);
         }
         geodata.forEach((el) => Object.assign(el, viewProps));
-        geoDataArray.push(...geodata)
+        geoDataArray.push(...geodata);
     }
     return geoDataArray;
 }

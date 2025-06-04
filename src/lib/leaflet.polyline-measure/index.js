@@ -2,12 +2,11 @@ import L from 'leaflet';
 import './measured_line.css';
 
 function pointOnSegmentAtDistance(p1, p2, dist) {
-    //FIXME: we should place markers along projected line to avoid transformation distortions
+    // FIXME: we should place markers along projected line to avoid transformation distortions
     var q = dist / p1.distanceTo(p2),
         x = p1.lng + (p2.lng - p1.lng) * q,
         y = p1.lat + (p2.lat - p1.lat) * q;
     return L.latLng(y, x);
-
 }
 
 function sinCosFromLatLonSegment(segment) {
@@ -65,7 +64,8 @@ L.MeasuredLine = L.Polyline.extend({
                 var labelText = Math.round((tick.distanceValue / 10)) / 100 + ' km',
                     icon = L.divIcon(
                         {
-                            html: '<div class="measure-tick-icon-text" style="transform:' + transformMatrixString + '">' +
+                            html: '<div class="measure-tick-icon-text" style="transform:' +
+                                transformMatrixString + '">' +
                             labelText + '</div>',
                             className: 'measure-tick-icon'
                         }
@@ -90,11 +90,11 @@ L.MeasuredLine = L.Polyline.extend({
             var steps = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000];
             var ticks = [];
 
-            const self = this;
+            const that = this;
             function addTick(position, segment, distanceValue) {
                 if (bounds) {
                     // create markers only in visible part of map
-                    const normalizedBounds = self._map.wrapLatLngBounds(bounds);
+                    const normalizedBounds = that._map.wrapLatLngBounds(bounds);
                     const normalizedPosition = position.wrap();
                     // account for worldCopyJump
                     const positionMinus360 = L.latLng(normalizedPosition.lat, normalizedPosition.lng - 360);
@@ -109,7 +109,8 @@ L.MeasuredLine = L.Polyline.extend({
                 }
 
                 var sinCos = sinCosFromLatLonSegment(segment),
-                    sin = sinCos[0], cos = sinCos[1],
+                    sin = sinCos[0],
+                    cos = sinCos[1],
                     transformMatrix;
 
                 if (sin > 0) {
@@ -152,10 +153,15 @@ L.MeasuredLine = L.Polyline.extend({
                 }
                 lastPointMeasure = nextPointMeasure;
             }
+            // remove last mark if it is close to track end
+            if (lastPointMeasure - lastTickMeasure < minTicksIntervalMeters / 2) {
+                ticks.pop();
+            }
+            // special case: if track is versy short, do not add starting mark
             if (lastPointMeasure > minTicksIntervalMeters / 2) {
                 addTick(points[0], [points[0], points[1]], 0);
-                addTick(points[points_n - 1], [points[points_n - 2], points[points_n - 1]], lastPointMeasure);
             }
+            addTick(points[points_n - 1], [points[points_n - 2], points[points_n - 1]], lastPointMeasure);
             return ticks;
         },
 
@@ -201,7 +207,6 @@ L.MeasuredLine = L.Polyline.extend({
         }
     }
 );
-
 
 L.measuredLine = function(latlngs, options) {
     return new L.MeasuredLine(latlngs, options);

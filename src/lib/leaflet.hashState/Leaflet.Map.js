@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import './leaflet.hashState'
+import './leaflet.hashState';
 
 L.Map.include(L.Mixin.HashState);
 

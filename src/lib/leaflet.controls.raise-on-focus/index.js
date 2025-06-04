@@ -2,8 +2,12 @@ import './style.css';
 import L from 'leaflet';
 
 function raiseControlsOnFocus(map) {
-    const selectors = ['.leaflet-top.leaflet-right', '.leaflet-bottom.leaflet-right', '.leaflet-top.leaflet-left',
-        '.leaflet-bottom.leaflet-left'];
+    const selectors = [
+        '.leaflet-top.leaflet-right',
+        '.leaflet-bottom.leaflet-right',
+        '.leaflet-top.leaflet-left',
+        '.leaflet-bottom.leaflet-left'
+    ];
     let elements = map._container.querySelectorAll(selectors.join(','));
 
     function raise(target) {

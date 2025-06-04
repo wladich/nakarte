@@ -1,5 +1,5 @@
 import declination from './declination.json';
-import {stringToArrayBuffer} from 'lib/binary-strings';
+import {stringToArrayBuffer} from '~/lib/binary-strings';
 
 let data;
 
@@ -19,7 +19,7 @@ function loadData() {
 }
 
 function getArrayValue(row, col) {
-    if (row < 0 || col < 0 || col >= declination.colsCount || row >= declination.rowsCount ) {
+    if (row < 0 || col < 0 || col >= declination.colsCount || row >= declination.rowsCount) {
         throw new Error(`Invalid col/row value col=${col} row=${row}`);
     }
     const ind = row * declination.colsCount + col;
@@ -41,7 +41,7 @@ function getDeclination(lat, lon) {
     let col2 = col1 + 1;
     const dlon = (lon - (col1 * declination.step - 180)) / declination.step;
     col1 %= declination.colsCount;
-    col2 %=  declination.colsCount;
+    col2 %= declination.colsCount;
     let a1 = getArrayValue(row1, col1);
     let a2 = getArrayValue(row1, col2);
     const v1 = a1 * (1 - dlon) + a2 * dlon;
@@ -57,4 +57,11 @@ function getDeclination(lat, lon) {
 
 data = loadData();
 
-export {getDeclination}
+const magneticModelInfo = {
+    modelName: declination.model,
+    dateYMD: declination.dateYMD,
+    horizontalResolution: declination.step,
+    valueResolution: 1 / declination.valueScale,
+};
+
+export {getDeclination, magneticModelInfo};

@@ -1,8 +1,10 @@
 import L from 'leaflet';
+import escapeHtml from 'escape-html';
+
 import './canvasMarkers.css';
-import rbush from 'rbush';
+import RBush from 'rbush';
 import loadImage from 'image-promise';
-import {wrapLatLngToTarget} from 'lib/leaflet.fixes/fixWorldCopyJump';
+import {wrapLatLngToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 
 /*
  Marker definition:
@@ -31,6 +33,27 @@ function calcIntersectionSum(rect, rects) {
     return sum;
 }
 
+class MarkerRBush extends RBush {
+    toBBox(marker) {
+        const x = marker.latlng.lng;
+        const y = marker.latlng.lat;
+        return {
+            minX: x,
+            minY: y,
+            maxX: x,
+            maxY: y
+        };
+    }
+
+    compareMinX(a, b) {
+        return a.latlng.lng - b.latlng.lng;
+    }
+
+    compareMinY(a, b) {
+        return a.latlng.lat - b.latlng.lat;
+    }
+}
+
 L.Layer.CanvasMarkers = L.GridLayer.extend({
         options: {
             async: true,
@@ -39,13 +62,14 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             iconScale: 1,
             pane: 'rasterMarker',
             updateWhenZooming: !L.Browser.mobile,
-            iconsOpacity: 1
+            iconsOpacity: 1,
+            labelShadowWidth: 1,
         },
 
         initialize: function(markers, options) {
             L.GridLayer.prototype.initialize.call(this, options);
-            this.rtree = rbush(9, ['.latlng.lng', '.latlng.lat', '.latlng.lng', '.latlng.lat']);
-            this._regions = rbush();
+            this.rtree = new MarkerRBush(9);
+            this._regions = new RBush();
             this._iconPositions = {};
             this._labelPositions = {};
             this._labelPositionsZoom = null;
@@ -107,13 +131,13 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 xPositions = [iconCenter[0] + iconSize[0] / 2 + 2, iconCenter[0] - iconSize[0] / 2 - textWidth - 2],
                 yPositions = [
                     iconCenter[1] - textHeight / 2 + verticalPadding,
-                    iconCenter[1] - textHeight * .75 - iconSize[1] / 4 + verticalPadding,
+                    iconCenter[1] - textHeight * 0.75 - iconSize[1] / 4 + verticalPadding,
                     iconCenter[1] - textHeight / 4 + iconSize[1] / 4 + verticalPadding,
                     iconCenter[1] - textHeight - iconSize[1] / 2 + verticalPadding,
                     iconCenter[1] + iconSize[1] / 2 + verticalPadding
                 ];
 
-            let minIntersectionSum = +Infinity;
+            let minIntersectionSum = Infinity;
             let bestX = xPositions[0],
                 bestY = yPositions[0];
             for (let x of xPositions) {
@@ -136,7 +160,6 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                 if (minIntersectionSum === 0) {
                     break;
                 }
-
             }
             return [bestX, bestY];
         },
@@ -149,10 +172,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                             this._images[image.src] = image;
                         }
                     }
-                )
-            } else {
-                return Promise.resolve();
+                );
             }
+            return Promise.resolve();
         },
 
         createTile: function(coords, done) {
@@ -173,7 +195,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             }
             const
                 iconsHorPad = withoutPadding ? 0 : 520,
-                iconsVertPad = withoutPadding ? 0 :  50,
+                iconsVertPad = withoutPadding ? 0 : 50,
                 labelsHorPad = withoutPadding ? 0 : 256,
                 labelsVertPad = withoutPadding ? 0 : 20;
             const
@@ -238,7 +260,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             }
             const ctx = canvas.getContext('2d');
             ctx.font = L.Util.template('bold {size}px {name}',
-                {'name': this.options.labelFontName, 'size': this.options.labelFontSize * this.options.iconScale}
+                {name: this.options.labelFontName, size: this.options.labelFontSize * this.options.iconScale}
             );
             for (let [markerId, job] of Object.entries(markerJobs)) {
                 let img = this._images[job.icon.url];
@@ -252,10 +274,13 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     y = Math.round(y);
                     this._iconPositions[markerId] = [x, y];
                     this._regions.insert({
-                            minX: x, minY: y, maxX: x + imgW, maxY: y + imgH,
-                            marker: job.marker, isLabel: false
-                        }
-                    );
+                        minX: x,
+                        minY: y,
+                        maxX: x + imgW,
+                        maxY: y + imgH,
+                        marker: job.marker,
+                        isLabel: false
+                    });
                 }
                 let [x, y] = this._iconPositions[markerId];
                 job.iconCenter = [x + imgW / 2, y + imgH / 2];
@@ -277,11 +302,13 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                         this._labelPositions[markerId] = p;
                         let [x, y] = p;
                         this._regions.insert({
-                                minX: x, minY: y, maxX: x + textWidth, maxY: y + textHeight,
-                                marker: job.marker, isLabel: true
-                            }
-                        );
-
+                            minX: x,
+                            minY: y,
+                            maxX: x + textWidth,
+                            maxY: y + textHeight,
+                            marker: job.marker,
+                            isLabel: true
+                        });
                     }
                 } else {
                     this._labelPositions[markerId] = null;
@@ -292,7 +319,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             // draw labels
             for (let region of regionsInTile) {
                 if (region.isLabel) {
-                    //TODO: set font name ant size in options
+                    // TODO: set font name ant size in options
                     const markerId = L.stamp(region.marker);
                     const job = markerJobs[markerId];
                     const p = this._labelPositions[markerId];
@@ -303,7 +330,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     ctx.strokeStyle = '#fff';
                     ctx.fillStyle = '#000';
                     ctx.lineWidth = 1.2 * this.options.iconScale;
-                    ctx.shadowBlur = 1 * this.options.iconScale;
+                    ctx.shadowBlur = this.options.labelShadowWidth * this.options.iconScale;
                     ctx.strokeText(job.label, x, y + textHeight);
                     ctx.shadowBlur = 0;
                     ctx.fillText(job.label, x, y + textHeight);
@@ -384,7 +411,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     return;
                 }
             }
-            this.toolTip.innerHTML = text;
+            this.toolTip.innerHTML = escapeHtml(text);
             const p = this._map.latLngToLayerPoint(e.marker.latlng);
             L.DomUtil.setPosition(this.toolTip, p);
             L.DomUtil.addClass(this.toolTip, 'canvas-marker-tooltip-on');
@@ -393,7 +420,6 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
         onMarkerEnter: function(e) {
             this._map._container.style.cursor = 'pointer';
             this.showTooltip(e);
-
         },
 
         onMarkerLeave: function() {
@@ -447,7 +473,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             this._map.off('contextmenu', this.onRightClick, this);
             if (this._hoverMarker) {
                 this._hoverMarker = null;
-                this.fire('markerleave', {marker: this._hoverMarker})
+                this.fire('markerleave', {marker: this._hoverMarker});
             }
             this._map.getPanes().markerPane.removeChild(this.toolTip);
             L.GridLayer.prototype.onRemove.call(this, map);

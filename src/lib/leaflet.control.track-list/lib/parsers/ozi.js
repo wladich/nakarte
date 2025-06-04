@@ -1,15 +1,16 @@
 import {decodeCP1251} from './codePages';
-import stripBom from 'lib/stripBom';
+import stripBom from '~/lib/stripBom';
 
 function parseOziRte(txt, name) {
-    let error, segments = [];
+    let error,
+        segments = [];
     txt = stripBom(txt);
     const lines = txt.split('\n');
     if (lines[0].indexOf('OziExplorer Route File') !== 0) {
         return null;
     }
     let currentSegment = [];
-    for (let i=4; i < lines.length; i++) {
+    for (let i = 4; i < lines.length; i++) {
         let line = lines[i].trim();
         if (!line) {
             continue;
@@ -30,7 +31,7 @@ function parseOziRte(txt, name) {
             currentSegment.push({lat, lng});
         } else {
             error = 'CORRUPT';
-            break
+            break;
         }
     }
     if (currentSegment.length) {
@@ -77,7 +78,6 @@ function parseOziPlt(txt, name) {
     }
     return [{name: name, tracks: segments, error: error}];
 }
-
 
 function parseOziWpt(txt, name) {
     var points = [],

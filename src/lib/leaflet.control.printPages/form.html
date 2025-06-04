@@ -9,7 +9,7 @@
            data-bind="click: addPortraitPage"></a>
         <a title="Add page in landscape orientation" class="button-add-page-horiz image-button"
            data-bind="click: addLandscapePage"></a>
-        <span class="pages-num" data-bind="text: pagesNumLabel"></span>
+        <span class="pages-num" data-bind="text: pagesNumLabel, click: onPagesNumLabelClick, css: {'pages-not-null': pagesNum() > 0}"></span>
         <a title="Remove all pages" class="button-remove-pages image-button"
            data-bind="click: removePages"></a>
     </td></tr>
@@ -18,6 +18,7 @@
         <td>
             <div class="preset-values" >
                 <a data-bind="click: function() {scale(100)}, css: {selected: scale() === 100}">100 m</a>
+                <a data-bind="click: function() {scale(250)}, css: {selected: scale() === 250}">250 m</a>
                 <a data-bind="click: function() {scale(500)}, css: {selected: scale() === 500}">500 m</a>
                 <a data-bind="click: function() {scale(1000)}, css: {selected: scale() === 1000}">1 km</a>
             </div>
@@ -61,7 +62,7 @@
         <td class="label">Source zoom<br />level</td>
         <td>
             <select name="srczoom"
-                    data-bind="options: ['auto', 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], value: zoomLevel">
+                    data-bind="options: zoomLevels, value: zoomLevel">
             </select>
         </td>
     </tr>

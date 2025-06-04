@@ -1,15 +1,15 @@
 import {decode as utf8_decode} from 'utf8';
 import {xmlGetNodeText} from './xmlUtils';
-import stripBom from 'lib/stripBom';
-import JSUnzip from 'vendored/github.com/augustl/js-unzip/js-unzip';
+import stripBom from '~/lib/stripBom';
+import JSUnzip from '~/vendored/github.com/augustl/js-unzip/js-unzip';
 import jsInflate from './jsInflate';
 
 function parseKml(txt, name) {
     var error;
-    var getSegmentPoints = function(coordinates_element) {
+    function getLinestringPoints(coordinates_element) {
         // convert multiline text value of tag to single line
         var coordinates_string = xmlGetNodeText(coordinates_element);
-        var points_strings = coordinates_string.split(/\s+/);
+        var points_strings = coordinates_string.split(/\s+/u);
         var points = [];
         for (var i = 0; i < points_strings.length; i++) {
             if (points_strings[i].length) {
@@ -24,22 +24,22 @@ function parseKml(txt, name) {
             }
         }
         return points;
-    };
+    }
 
-    var getTrackSegments = function(xml) {
+    function getLinestrings(xml) {
         var segments_elements = xml.getElementsByTagName('LineString');
         var segments = [];
         for (var i = 0; i < segments_elements.length; i++) {
             var coordinates_element = segments_elements[i].getElementsByTagName('coordinates');
             if (coordinates_element.length) {
-                var segment_points = getSegmentPoints(coordinates_element[0]);
+                var segment_points = getLinestringPoints(coordinates_element[0]);
                 if (segment_points.length) {
                     segments.push(segment_points);
                 }
             }
         }
         return segments;
-    };
+    }
 
     function getPoints(dom) {
         var points = [],
@@ -48,7 +48,7 @@ function parseKml(txt, name) {
         for (i = 0; i < placemarks.length; i++) {
             pointObjs = placemarks[i].getElementsByTagName('Point');
             if (pointObjs.length === 0) {
-                continue
+                continue;
             } else if (pointObjs.length > 1) {
                 error = 'CORRUPT';
                 break;
@@ -66,16 +66,15 @@ function parseKml(txt, name) {
                 error = 'CORRUPT';
                 break;
             }
-            name = placemarks[i].getElementsByTagName('name');
-            if (name.length !== 1) {
-                error = 'CORRUPT';
-                break;
-            }
-            try {
-                name = utf8_decode(xmlGetNodeText(name[0])).trim();
-            } catch (e) {
-                error = 'CORRUPT';
-                break;
+            name = '';
+            const nameTags = placemarks[i].getElementsByTagName('name');
+            if (nameTags[0]) {
+                try {
+                    name = xmlGetNodeText(nameTags[0]);
+                    name = utf8_decode(name);
+                } catch (e) {
+                    error = 'CORRUPT';
+                }
             }
             points.push({
                     name: name,
@@ -87,10 +86,30 @@ function parseKml(txt, name) {
         return points;
     }
 
+    function getTracks(dom) {
+        const segments = [];
+        for (const track of dom.getElementsByTagName('gx_Track')) {
+            const points = [];
+            for (const coord of track.getElementsByTagName('gx_coord')) {
+                const [lng, lat] = (xmlGetNodeText(coord) ?? '').split(/\s+/u).map(Number);
+                if (isNaN(lat) || isNaN(lng)) {
+                    error = 'CORRUPT';
+                    break;
+                }
+                points.push({lat, lng});
+            }
+            if (points.length > 0) {
+                segments.push(points);
+            }
+        }
+        return segments;
+    }
+
     txt = stripBom(txt);
-    txt = txt.replace(/<([^ >]+):([^ >]+)/g, '<$1_$2');
+    txt = txt.replace(/<([^ >]+):([^ >]+)/ug, '<$1_$2');
+    let dom;
     try {
-        var dom = (new DOMParser()).parseFromString(txt, "text/xml");
+        dom = (new DOMParser()).parseFromString(txt, "text/xml");
     } catch (e) {
         return null;
     }
@@ -101,13 +120,14 @@ function parseKml(txt, name) {
         return null;
     }
 
-    return [{name: name, tracks: getTrackSegments(dom), points: getPoints(dom), error: error}];
+    return [{name: name, tracks: [...getLinestrings(dom), ...getTracks(dom)], points: getPoints(dom), error: error}];
 }
 
 function parseKmz(txt, name) {
     var uncompressed;
+    let unzipper;
     try {
-        var unzipper = new JSUnzip(txt);
+        unzipper = new JSUnzip(txt);
     } catch (e) {
         return null;
     }
@@ -138,7 +158,7 @@ function parseKmz(txt, name) {
 
     for (i = 0; i < unzipper.entries.length; i++) {
         entry = unzipper.entries[i];
-        if (entry.fileName.match(/\.kml$/i)) {
+        if (entry.fileName.match(/\.kml$/iu)) {
             if (entry.compressionMethod === 0) {
                 uncompressed = entry.data;
             } else if (entry.compressionMethod === 8) {
@@ -149,8 +169,8 @@ function parseKmz(txt, name) {
             geodata = parseKml(uncompressed, 'dummmy');
             if (geodata) {
                 error = error || geodata[0].error;
-                tracks.push.apply(tracks, geodata[0].tracks);
-                points.push.apply(points, geodata[0].points);
+                tracks.push(...geodata[0].tracks);
+                points.push(...geodata[0].points);
             }
         }
     }
@@ -159,4 +179,4 @@ function parseKmz(txt, name) {
     return geodata;
 }
 
-export {parseKml, parseKmz}
+export {parseKml, parseKmz};

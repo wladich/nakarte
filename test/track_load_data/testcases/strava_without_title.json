@@ -1,0 +1,19 @@
+{
+    "query": [
+        "https://www.strava.com/activities/3873768093",
+        "https://strava.app.link/a2LqU4JPUPb"
+    ],
+    "geodata": [
+        {
+            "name": "я угу - Дневной забег 5 July 2014",
+            "tracks": [
+                [
+                    {"lat": 39.148949, "lng": 68.298787},
+                    {"lat": 39.148951, "lng": 68.298818},
+                    {"lat": 39.149426, "lng": 68.298723},
+                    {"lat": 39.149694, "lng": 68.298506}
+                ]
+            ]
+        }
+    ]
+}

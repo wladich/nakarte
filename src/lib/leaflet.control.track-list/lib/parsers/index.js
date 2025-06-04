@@ -2,8 +2,9 @@ import parseGpx from './gpx';
 import parseZip from './zip';
 import {parseKmz, parseKml} from './kml';
 import {parseOziPlt, parseOziRte, parseOziWpt} from './ozi';
+import {parseGeojson} from './geojson';
 
-export default [
+const parsers = [
     parseKmz,
     parseZip,
     parseGpx,
@@ -11,4 +12,7 @@ export default [
     parseOziPlt,
     parseOziWpt,
     parseKml,
-]
+    parseGeojson,
+];
+
+export default parsers;

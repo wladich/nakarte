@@ -1,8 +1,8 @@
 import L from 'leaflet';
 import {JnxWriter} from './jnx-encoder';
-import {getTempMap, disposeMap} from 'lib/leaflet.layer.rasterize';
-import {XHRQueue} from 'lib/xhr-promise';
-import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
+import {getTempMap, disposeMap} from '~/lib/leaflet.layer.rasterize';
+import {XHRQueue} from '~/lib/xhr-promise';
+import {arrayBufferToString, stringToArrayBuffer} from '~/lib/binary-strings';
 
 const defaultXHROptions = {
     responseType: 'arraybuffer',
@@ -22,7 +22,7 @@ function imageFromarrayBuffer(arr) {
             image.onerror = () => reject(new Error('Tile image corrupt'));
             image.src = dataUrl;
         }
-    )
+    );
 }
 
 async function convertToJpeg(image) {
@@ -37,7 +37,7 @@ async function convertToJpeg(image) {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(image, 0, 0);
     const dataURL = canvas.toDataURL("image/jpeg");
-    const s = atob(dataURL.replace(/^data:image\/jpeg;base64,/, ""));
+    const s = atob(dataURL.replace(/^data:image\/jpeg;base64,/u, ""));
     return stringToArrayBuffer(s);
 }
 
@@ -47,13 +47,12 @@ function ensureImageJpg(image) {
     }
     if (arrayBufferToString(image.slice(0, 4)) === '\x89PNG' &&
         arrayBufferToString(image.slice(-8)) === 'IEND\xae\x42\x60\x82') {
-        return convertToJpeg(image)
+        return convertToJpeg(image);
     } else if (arrayBufferToString(image.slice(0, 2)) === '\xff\xd8' &&
         arrayBufferToString(image.slice(-2)) === '\xff\xd9') {
         return Promise.resolve(image);
-    } else {
-        return null;
     }
+    return null;
 }
 
 async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
@@ -117,6 +116,5 @@ async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds,
 
     return writer.getJnx();
 }
-
 
 export {makeJnxFromLayer, minZoom};

@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L from 'leaflet';
 import './page-feature.css';
 
 const PageFeature = L.Marker.extend({
@@ -35,10 +35,10 @@ const PageFeature = L.Marker.extend({
         },
 
         _getLatLngBounds: function() {
-
             const centerLatLng = this.getLatLng();
             const centerMerc = L.Projection.SphericalMercator.project(centerLatLng);
-            const mercatorScale = Math.cos(centerLatLng.lat * Math.PI / 180) * L.CRS.Earth.R / L.Projection.SphericalMercator.R;
+            const mercatorScale =
+                (Math.cos((centerLatLng.lat * Math.PI) / 180) * L.CRS.Earth.R) / L.Projection.SphericalMercator.R;
             const mercatorPageSize = L.point(...this.paperSize).multiplyBy(this.scale / 10 / mercatorScale);
             let sw = centerMerc.subtract(mercatorPageSize.divideBy(2));
             let ne = centerMerc.add(mercatorPageSize.divideBy(2));
@@ -93,7 +93,7 @@ const PageFeature = L.Marker.extend({
             return L.point(...this.paperSize);
         },
 
-        rotate: function(e) {
+        rotate: function() {
             this.paperSize = [this.paperSize[1], this.paperSize[0]];
             this.updateView();
         }

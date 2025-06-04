@@ -7,8 +7,7 @@ L.Control.Layers.include({
         stateChangeEvents: ['baselayerchange', 'overlayadd', 'overlayremove'],
         stateChangeEventsSource: '_map',
 
-        serializeState: function(e) {
-
+        serializeState: function() {
             const keys = [];
             this._map.eachLayer((layer) => {
                     let key = layer.options.code;
@@ -40,10 +39,13 @@ L.Control.Layers.include({
             }
 
             for (let layer of this._layers) {
+                if (layer.layer.options && !values.includes(layer.layer.options.code)) {
+                    this._map.removeLayer(layer.layer);
+                }
+            }
+            for (let layer of this._layers) {
                 if (layer.layer.options && values.includes(layer.layer.options.code)) {
                     this._map.addLayer(layer.layer);
-                } else {
-                    this._map.removeLayer(layer.layer);
                 }
             }
             return true;

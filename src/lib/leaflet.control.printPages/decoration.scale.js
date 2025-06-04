@@ -1,6 +1,5 @@
 import {PrintStaticLayer} from './decorations';
 
-
 function pageScaleRange(printOptions) {
     const pageSize = printOptions.destPixelSize.divideBy(printOptions.resolution / 25.4);
     const bounds = printOptions.latLngBounds;
@@ -11,34 +10,35 @@ function pageScaleRange(printOptions) {
     return {
         min: Math.min(nScale, sScale, printOptions.scale),
         max: Math.max(nScale, sScale, printOptions.scale)
-    }
+    };
 }
 
 function formatScale(nominalScale, scaleRange) {
     const threshold = 0.05;
-    if (Math.abs(nominalScale - scaleRange.min) / nominalScale > threshold || Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold) {
+    if (
+        Math.abs(nominalScale - scaleRange.min) / nominalScale > threshold ||
+        Math.abs(nominalScale - scaleRange.max) / nominalScale > threshold
+    ) {
         let unit;
-        scaleRange = Object.assign({}, scaleRange);
+        scaleRange = {...scaleRange};
         if (scaleRange.min >= 1000) {
             scaleRange.min /= 1000;
             scaleRange.max /= 1000;
-            unit = 'km'
-        } else {
-            unit = 'm'
-        }
-        return `${scaleRange.min} – ${scaleRange.max} ${unit} in 1 cm`;
-    } else {
-        let unit;
-        if (nominalScale >= 1000) {
-            nominalScale /= 1000;
             unit = 'km';
         } else {
             unit = 'm';
         }
-        return `${nominalScale} ${unit} in 1 cm`;
+        return `${scaleRange.min} – ${scaleRange.max} ${unit} in 1 cm`;
     }
+    let unit;
+    if (nominalScale >= 1000) {
+        nominalScale /= 1000;
+        unit = 'km';
+    } else {
+        unit = 'm';
+    }
+    return `${nominalScale} ${unit} in 1 cm`;
 }
-
 
 class OverlayScale extends PrintStaticLayer {
     fontSizeMm = 3;

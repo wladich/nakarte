@@ -4,7 +4,7 @@ class PrintStaticLayer {
 
     cloneForPrint() {
         return this;
-    };
+    }
 
     // printOptions = {
     //     xhrOptions,
@@ -26,15 +26,16 @@ class PrintStaticLayer {
                         }
                     ),
                     abortLoading: () => {
+                        // no actions needed
                     }
-                }
+                };
             }).bind(this),
             count: 1
         };
     }
 
-    _drawRaster(canvas, printOptions) {
-        return;
+    _drawRaster(_unused_canvas, _unused_printOptions) {
+        throw new Error("Method not implemented");
     }
 }
 

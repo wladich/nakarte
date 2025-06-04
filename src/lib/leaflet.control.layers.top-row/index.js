@@ -7,9 +7,6 @@ function enableTopRow(control) {
         return;
     }
 
-
-
-
     L.Util.extend(control, {
         _topRowEnabled: true,
 
@@ -26,10 +23,8 @@ function enableTopRow(control) {
 
     });
     if (control._map) {
-        control.__injectTopRow()
+        control.__injectTopRow();
     }
-
-
 }
 
 export default enableTopRow;

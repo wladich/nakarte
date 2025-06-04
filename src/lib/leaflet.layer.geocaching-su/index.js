@@ -1,12 +1,11 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise';
-import 'lib/leaflet.layer.canvasMarkers';
-import logging from 'lib/logging';
-import {notify} from 'lib/notifications';
+import {fetch} from '~/lib/xhr-promise';
+import '~/lib/leaflet.layer.canvasMarkers';
+import * as logging from '~/lib/logging';
+import {notify} from '~/lib/notifications';
 import './style.css';
-import iconFromBackgroundImage from 'lib/iconFromBackgroundImage';
-import {openPopupWindow} from 'lib/popup-window';
-
+import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
+import {openPopupWindow} from '~/lib/popup-window';
 
 const GeocachingSu = L.Layer.CanvasMarkers.extend({
     options: {
@@ -34,15 +33,8 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
                 (xhr) => this._loadMarkers(xhr.response),
                 (e) => {
                     this._downloadStarted = false;
-                    logging.captureException(e, {
-                            extra: {
-                                description: 'failed to get geocaching kml',
-                                url: this.url,
-                                status: e.xhr.status
-                            }
-                        }
-                    );
-                    notify('Failed to get Westra passes data');
+                    logging.captureException(e, 'failed to get geocaching kml');
+                    notify('Failed to get geocaching data');
                 }
             );
     },
@@ -53,34 +45,32 @@ const GeocachingSu = L.Layer.CanvasMarkers.extend({
             label: marker.label,
             icon: marker.icon,
             _label: marker._label
-        }
+        };
     },
 
     _loadMarkers: function(data) {
         const icon = iconFromBackgroundImage('geocaching-icon');
 
-        const getLabel = function(marker, zoom) {
+        function getLabel(marker, zoom) {
             return zoom >= 10 ? marker._label : null;
-        };
+        }
 
-        const markers = data.map(([label, cacheId, lat, lng]) => {
-            return {
+        const markers = data.map(([label, cacheId, lat, lng]) => ({
                 latlng: {lat, lng},
                 _label: label,
                 label: getLabel,
-                icon, cacheId
-            }
-        });
+                icon,
+                cacheId
+        }));
         this.addMarkers(markers);
         this._dataLoaded = true;
         this.fire('data-loaded');
     },
 
     openCachePage: function(e) {
-        const url = `https://geocaching.su/?pn=101&cid=${e.marker.cacheId}`
+        const url = `https://geocaching.su/cache/${e.marker.cacheId}`;
         openPopupWindow(url, 900, 'geocaching_su');
     }
 });
 
-
-export {GeocachingSu}
+export {GeocachingSu};

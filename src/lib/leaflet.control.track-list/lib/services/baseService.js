@@ -1,4 +1,4 @@
-import {fetch} from 'lib/xhr-promise';
+import {fetch} from '~/lib/xhr-promise';
 
 class BaseService {
     constructor(url) {
@@ -18,7 +18,7 @@ class BaseService {
     }
 
     async geoData() {
-        if (!this.isOurUrl) {
+        if (!this.isOurUrl()) {
             throw new Error('Unsupported url');
         }
         const requests = this.requestOptions().map((it) => fetch(it.url, it.options));
@@ -36,12 +36,13 @@ class BaseService {
         try {
             url = decodeURIComponent(url);
         } catch (e) {
+            // leave url as is
         }
 
         return url
             .split('#')[0]
             .split('?')[0]
-            .replace(/\/*$/, '')
+            .replace(/\/*$/u, '')
             .split('/')
             .pop();
     }

@@ -1,45 +1,62 @@
 import L from 'leaflet';
 import './westraPasses.css';
-import 'lib/leaflet.layer.geojson-ajax';
+import '~/lib/leaflet.layer.geojson-ajax';
 import {WestraPassesMarkers} from './westraPassesMarkers';
 
 L.Layer.WestraPasses = L.Layer.extend({
         options: {
-            fileRegions1: 'westra_regions_geo1.json',
-            fileRegions2: 'westra_regions_geo2.json',
-            scaleDependent: true
+            fileCoverage: 'westra_coverage.json',
+            fileLabels1: 'westra_regions_labels1.json',
+            fileLabels2: 'westra_regions_labels2.json',
+            scaleDependent: true,
+            labels2Zoom: 6,
+            markersZoom: 10,
+            labels1Zoom: 2
+
         },
 
         initialize: function(baseUrl, options) {
             L.setOptions(this, options);
             this.markers = new WestraPassesMarkers(baseUrl, options.markersOptions);
-            this.regions1 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileRegions1, {
-                    className: 'westra-region-polygon',
-                    onEachFeature: this._setRegionLabel.bind(this, 'regions1')
-                }
-            );
-            this.regions2 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileRegions2, {
-                    className: 'westra-region-polygon',
-                    onEachFeature: this._setRegionLabel.bind(this, 'regions2')
-                }
-            );
+            this.coverage = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileCoverage, {
+                className: 'westra-coverage-polygon',
+                onEachFeature: this._setEventsForRegion.bind(this)
+            });
+            this.labels1 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileLabels1, {
+                pointToLayer: this._makeMarker,
+                onEachFeature: this._setEventsForRegion.bind(this)
+            });
+            this.labels2 = new L.Layer.GeoJSONAjax(baseUrl + this.options.fileLabels2, {
+                pointToLayer: this._makeMarker,
+                onEachFeature: this._setEventsForRegion.bind(this)
+            });
         },
 
-        _setRegionLabel: function(layerName, feature, layer) {
-            var latlon = layer.getBounds().getCenter();
-            var icon = L.divIcon({
+        _setEventsForRegion: function(feature, layer) {
+            layer.on('click', this._onRegionClick, this);
+        },
+
+        _makeMarker: function(geojsonPoint, latlng) {
+            const icon = L.divIcon({
                     className: 'westra-region-label',
-                    html: '<span>' + feature.properties.name + '</span>'
+                    html: '<span>' + geojsonPoint.properties.name + '</span>'
                 }
             );
-            var labelMarker = L.marker(latlon, {icon: icon});
-            this[layerName].addLayer(labelMarker);
-            function zoomToRegion() {
-                this._map.fitBounds(layer.getBounds());
-            }
+            const marker = L.marker(latlng, {icon: icon});
+            return marker;
+        },
 
-            layer.on('click', zoomToRegion, this);
-            labelMarker.on('click', zoomToRegion, this);
+        _onRegionClick: function(e) {
+            const layer = e.target;
+            const latlng = layer.getLatLng ? layer.getLatLng() : e.latlng;
+            const zoom = this._map.getZoom();
+            let newZoom;
+            if (zoom < this.options.labels2Zoom) {
+                newZoom = this.options.labels2Zoom;
+            } else {
+                newZoom = this.options.markersZoom;
+            }
+            this._map.setView(latlng, newZoom);
         },
 
         setLayersVisibility: function(e) {
@@ -53,33 +70,37 @@ L.Layer.WestraPasses = L.Layer.extend({
             } else {
                 newZoom = this._map.getZoom();
             }
-            if (newZoom < 2) {
+            if (newZoom < this.options.labels1Zoom) {
                 this._map.removeLayer(this.markers);
-                this._map.removeLayer(this.regions1);
-                this._map.removeLayer(this.regions2);
-            } else if (newZoom < 7) {
+                this._map.addLayer(this.coverage);
+                this._map.removeLayer(this.labels1);
+                this._map.removeLayer(this.labels2);
+            } else if (newZoom < this.options.labels2Zoom) {
                 this._map.removeLayer(this.markers);
-                this._map.addLayer(this.regions1);
-                this._map.removeLayer(this.regions2);
-            }
-            else if (newZoom < 10) {
-                this._map.removeLayer(this.regions1);
-                this._map.addLayer(this.regions2);
+                this._map.addLayer(this.coverage);
+                this._map.addLayer(this.labels1);
+                this._map.removeLayer(this.labels2);
+            } else if (newZoom < this.options.markersZoom) {
                 this._map.removeLayer(this.markers);
+                this._map.addLayer(this.coverage);
+                this._map.removeLayer(this.labels1);
+                this._map.addLayer(this.labels2);
             } else {
                 if (zoomFinished) {
                     this._map.addLayer(this.markers);
                 }
-                this._map.removeLayer(this.regions1);
-                this._map.removeLayer(this.regions2);
+                this._map.removeLayer(this.coverage);
+                this._map.removeLayer(this.labels1);
+                this._map.removeLayer(this.labels2);
             }
         },
 
         onAdd: function(map) {
             this._map = map;
             this.markers.loadData();
-            this.regions1.loadData();
-            this.regions2.loadData();
+            this.coverage.loadData();
+            this.labels1.loadData();
+            this.labels2.loadData();
             this.setLayersVisibility();
             map.on('zoomend', this.setLayersVisibility, this);
             map.on('zoomanim', this.setLayersVisibility, this);
@@ -87,13 +108,13 @@ L.Layer.WestraPasses = L.Layer.extend({
 
         onRemove: function() {
             this._map.removeLayer(this.markers);
-            this._map.removeLayer(this.regions1);
-            this._map.removeLayer(this.regions2);
+            this._map.removeLayer(this.coverage);
+            this._map.removeLayer(this.labels1);
+            this._map.removeLayer(this.labels2);
             this._map.off('zoomend', this.setLayersVisibility, this);
             this._map.off('zoomanim', this.setLayersVisibility, this);
             this._map = null;
         }
     }
 );
-
 

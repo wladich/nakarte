@@ -1,10 +1,11 @@
 import L from 'leaflet';
 import './style.css';
-import enableTopRow from 'lib/leaflet.control.layers.top-row';
-import ko from 'vendored/knockout';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
-import safeLocalStorage from 'lib/safe-localstorage';
+import enableTopRow from '~/lib/leaflet.control.layers.top-row';
+import ko from 'knockout';
+import {notify} from '~/lib/notifications';
+import * as logging from '~/lib/logging';
+import safeLocalStorage from '~/lib/safe-localstorage';
+import './customLayer';
 
 function enableConfig(control, {layers, customLayersOrder}) {
     const originalOnAdd = control.onAdd;
@@ -18,7 +19,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
     L.Util.extend(control, {
             _configEnabled: true,
             _allLayersGroups: layers,
-            _allLayers: [].concat(...layers.map(group => group.layers)),
+            _allLayers: [].concat(...layers.map((group) => group.layers)),
             _customLayers: ko.observableArray(),
 
             onAdd: function(map) {
@@ -46,9 +47,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     try {
                         storedLayersEnabled = JSON.parse(serialized);
                     } catch (e) {
-                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json',{
-                            extra: {"localstorage.layersEnabled": serialized.slice(0, 1000)}
-                        })
+                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json', {
+                            "localstorage.layersEnabled": serialized.slice(0, 1000)
+                        });
                     }
                 }
                 // restore custom layers;
@@ -74,7 +75,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             _onConfigButtonClick: function() {
-                this.showLayersSelectWindow()
+                this.showLayersSelectWindow();
             },
 
             _initLayersSelectWindow: function() {
@@ -124,7 +125,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (this._configWindowVisible || this._customLayerWindow) {
                     return;
                 }
-                [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.enabled));
+                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.enabled));
                 this._initLayersSelectWindow();
                 this._map._controlContainer.appendChild(this._configWindow);
                 this._configWindowVisible = true;
@@ -146,7 +147,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (!this._configWindow) {
                     return;
                 }
-                [...this._allLayers, ...this._customLayers()].forEach(layer => layer.checked(layer.isDefault));
+                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.isDefault));
             },
 
             onSelectWindowOkClicked: function() {
@@ -166,14 +167,18 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             onCustomLayerCreateClicked: function() {
-                this.showCustomLayerForm([
+                this.showCustomLayerForm(
+                    [
                         {
                             caption: 'Add layer',
                             callback: (fieldValues) => this.onCustomLayerAddClicked(fieldValues)
-                        }, {
+                        },
+                        {
                             caption: 'Cancel',
                             callback: () => this.onCustomLayerCancelClicked()
-                        }], {
+                        }
+                    ],
+                    {
                         name: 'Custom layer',
                         url: '',
                         tms: false,
@@ -186,17 +191,21 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             updateEnabledLayers: function(addedLayers) {
-                const disabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => !l.enabled);
+                const disabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
 
                 let hasBaselayerOnMap = false;
-                const enabledLayers = [...this._allLayers, ...this._customLayers()].filter(l => l.enabled);
+                const enabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => l.enabled);
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
-                        const { layer: { options: { isOverlay } } } = l;
-                        isOverlay ? this.addOverlay(l.layer, l.title) : this.addBaseLayer(l.layer, l.title);
+                        const {layer: {options: {isOverlay}}} = l;
+                        if (isOverlay) {
+                            this.addOverlay(l.layer, l.title);
+                        } else {
+                            this.addBaseLayer(l.layer, l.title);
+                        }
                         if (!isOverlay && this._map.hasLayer(l.layer)) {
                               hasBaselayerOnMap = true;
                         }
@@ -265,6 +274,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     maxZoom: ko.observable(fieldValues.maxZoom),
                     isOverlay: ko.observable(fieldValues.isOverlay),
                     isTop: ko.observable(fieldValues.isTop),
+                    buttons: buttons,
                     buttonClicked: function buttonClicked(callbackN) {
                         const fieldValues = {
                             name: dialogModel.name().trim(),
@@ -279,10 +289,13 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                 };
 
-                const formHtml = [`
-<p><a href="http://leafletjs.com/reference-1.0.2.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
-<label>Layer name<br/><input data-bind="value: name"/></label><br/>
-<label>Tile url template<br/><textarea data-bind="value: url" style="width: 100%"></textarea></label><br/>
+/* eslint-disable max-len */
+                const formHtml = `
+<p><a class="doc-link" href="https://leafletjs.com/reference-1.0.3.html#tilelayer" target="_blank">See Leaflet TileLayer documentation for url format</a></p>
+<label>Layer name<br/>
+<span class="hint">Maximum 40 characters</span><br/>
+<input maxlength="40" class="layer-name" data-bind="value: name"/></label><br/>
+<label>Tile url template<br/><textarea data-bind="value: url" class="layer-url"></textarea></label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: false">Base layer</label><br/>
 <label><input type="radio" name="overlay" data-bind="checked: isOverlay, checkedValue: true">Overlay</label><br/>
 <hr/>
@@ -296,12 +309,11 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
 <label>Max zoom<br>
 <select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label>
-<br />`];
-                for (let [i, button] of buttons.entries()) {
-                    formHtml.push(`<a class="button" data-bind="click: buttonClicked.bind(null, ${i})">${button.caption}</a>`);
-                }
-
-                form.innerHTML = formHtml.join('');
+<div data-bind="foreach: buttons">
+    <a class="button" data-bind="click: $root.buttonClicked.bind(null, $index()), text: caption"></a>
+</div>`;
+/* eslint-enable max-len */
+                form.innerHTML = formHtml;
                 ko.applyBindings(dialogModel, form);
             },
 
@@ -310,7 +322,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 if (obj.layer.__customLayer) {
                     const editButton = L.DomUtil.create('div', 'custom-layer-edit-button icon-edit', label.children[0]);
                     editButton.title = 'Edit layer';
-                    L.DomEvent.on(editButton, 'click', (e) => this.onCustomLayerEditClicked(obj.layer.__customLayer, e));
+                    L.DomEvent.on(editButton, 'click', (e) =>
+                        this.onCustomLayerEditClicked(obj.layer.__customLayer, e)
+                    );
                 }
                 if (obj.layer._justAdded) {
                     L.DomUtil.addClass(label, 'leaflet-layers-configure-just-added-1');
@@ -323,7 +337,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             serializeCustomLayer: function(fieldValues) {
                 let s = JSON.stringify(fieldValues);
-                s = s.replace(/[\u007f-\uffff]/g,
+                s = s.replace(/[\u007f-\uffff]/ug,
                     function(c) {
                         return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
                     }
@@ -331,8 +345,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 function encodeUrlSafeBase64(s) {
                     return btoa(s)
-                        .replace(/\+/g, '-')
-                        .replace(/\//g, '_');
+                        .replace(/\+/ug, '-')
+                        .replace(/\//ug, '_');
                 }
 
                 return '-cs' + encodeUrlSafeBase64(s);
@@ -350,10 +364,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             checkCustomLayerValues: function(fieldValues) {
                 if (!fieldValues.url) {
-                    return {'error': 'Url is empty'}
+                    return {error: 'Url is empty'};
                 }
                 if (!fieldValues.name) {
-                    return {'error': 'Name is empty'}
+                    return {error: 'Name is empty'};
                 }
                 return {};
             },
@@ -385,7 +399,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             createCustomLayer: function(fieldValues) {
                 const serialized = this.serializeCustomLayer(fieldValues);
-                const tileLayer = L.tileLayer(fieldValues.url, {
+                const tileLayer = new L.Layer.CustomLayer(fieldValues.url, {
                         isOverlay: fieldValues.isOverlay,
                         tms: fieldValues.tms,
                         maxNativeZoom: fieldValues.maxZoom,
@@ -404,7 +418,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     isCustom: true,
                     serialized: serialized,
                     layer: tileLayer,
-                    order: (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
+                    order:
+                        (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
                     fieldValues: fieldValues,
                     enabled: true,
                     checked: ko.observable(true)
@@ -428,8 +443,11 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onCustomLayerEditClicked: function(layer, e) {
                 L.DomEvent.stop(e);
                 this.showCustomLayerForm([
-                        {caption: 'Save', callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues)},
-                        {caption: 'Delete', callback: (fieldValues) => this.onCustomLayerDeletelClicked(layer)},
+                    {
+                        caption: 'Save',
+                        callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues),
+                    },
+                    {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
                         {caption: 'Cancel', callback: () => this.onCustomLayerCancelClicked()}
                     ], layer.fieldValues
                 );
@@ -456,11 +474,19 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const newLayer = this.createCustomLayer(newFieldValues);
                 this._customLayers.splice(layerPos, 0, newLayer);
-                if (this._map.hasLayer(layer.layer) && (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)) {
+                const newLayerVisible = (
+                    this._map.hasLayer(layer.layer) &&
+                    // turn off layer if changing from overlay to baselayer
+                    (!layer.layer.options.isOverlay || newLayer.layer.options.isOverlay)
+                );
+                if (newLayerVisible) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);
                 this.updateEnabledLayers();
+                if (newLayerVisible) {
+                    newLayer.layer.fire('add');
+                }
                 this.hideCustomLayerForm();
             },
 
@@ -473,13 +499,14 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             loadCustomLayerFromString: function(s) {
                 let fieldValues;
-                const m = s.match(/^-cs(.+)$/);
+                const m = s.match(/^-cs(.+)$/u);
                 if (m) {
-                    s = m[1].replace(/-/g, '+').replace(/_/g, '/');
+                    s = m[1].replace(/-/ug, '+').replace(/_/ug, '/');
                     try {
                         s = atob(s);
                         fieldValues = JSON.parse(s);
                     } catch (e) {
+                        // ignore malformed data
                     }
 
                     if (fieldValues) {
@@ -492,18 +519,16 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         }
                         return this.serializeCustomLayer(fieldValues);
                     }
-
                 }
+                return null;
             }
-
 
         }
     );
     if (control._map) {
-        control.__injectConfigButton()
+        control.__injectConfigButton();
     }
     control._initializeLayersState();
 }
-
 
 export default enableConfig;

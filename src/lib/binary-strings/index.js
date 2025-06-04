@@ -21,9 +21,9 @@ function stringToArrayBuffer(s) {
     return buf;
 }
 
-function blobFromString(s) {
+function blobFromString(s, mimeType = 'application/download') {
     const arr = stringToArrayBuffer(s);
-    return new Blob([arr]);
+    return new Blob([arr], {type: mimeType});
 }
 
 export {arrayBufferToString, blobFromString, stringToArrayBuffer};

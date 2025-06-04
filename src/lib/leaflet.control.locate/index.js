@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import {makeButton} from 'lib/leaflet.control.commons';
+import {makeButton} from '~/lib/leaflet.control.commons';
 import './style.css';
-import localStorage from 'lib/safe-localstorage';
+import localStorage from '~/lib/safe-localstorage';
 
 const STATE_DISABLED = 'disabled';
 const STATE_LOCATING = 'locating';
@@ -49,7 +49,6 @@ const PositionMarker = L.LayerGroup.extend({
             }),
         };
         this.addLayer(this._elements.accuracyCircle);
-
     },
 
     onAdd: function(map) {
@@ -77,7 +76,6 @@ const PositionMarker = L.LayerGroup.extend({
                 this._elements.accuracyCircle.setStyle({opacity: 0.8, fillOpacity: 0.4});
                 this.removeLayer(this._elements.markerPoint);
                 this.removeLayer(this._elements.markerCircle);
-
             }
             this._precise = precise;
         }
@@ -92,7 +90,7 @@ const PositionMarker = L.LayerGroup.extend({
         this._updatePrecisionState();
     },
 
-    _onZoom: function(e) {
+    _onZoom: function() {
         this._updatePrecisionState();
     }
 
@@ -103,7 +101,7 @@ const LocateControl = L.Control.extend({
         // if button turned off -- turn on, maps follows marker
         // if button turned on
         //     if map is following marker -- turn off
-        //     if map not following marker -- center map at marker, start following   
+        //     if map not following marker -- center map at marker, start following
 
         options: {
             locationAcquireTimeoutMS: Infinity,
@@ -130,8 +128,8 @@ const LocateControl = L.Control.extend({
             return container;
         },
 
-        moveMapToCurrentLocation: function(zoom, fallbackLatLng, forceLatLng, forceZoom) {
-            let storedPosition;
+        moveMapToCurrentLocation: function(zoom) {
+            let storedPosition = null;
             try {
                 storedPosition = JSON.parse(localStorage.getItem(LOCALSTORAGE_POSITION));
                 let {lat, lon} = storedPosition;
@@ -140,20 +138,21 @@ const LocateControl = L.Control.extend({
                 } else {
                     storedPosition = null;
                 }
-            } catch (e) {}
+            } catch (e) {
+                // ignore invalid data from localstorage
+            }
 
             if (storedPosition) {
-                this._map.setView(forceLatLng ? forceLatLng : storedPosition, forceZoom ? forceZoom : zoom, {animate: false});
+                this._map.setView(storedPosition, zoom, {animate: false});
                 if (!('geolocation' in navigator)) {
                     return;
                 }
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
                         this._storePositionToLocalStorage(pos);
-                        if (!forceLatLng) {
-                            // TODO: check if map has not moved
-                            this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {animate: false});
-                        }
+                        this._map.setView(L.latLng(pos.coords.latitude, pos.coords.longitude), zoom, {
+                            animate: false,
+                        });
                     },
                     (e) => {
                         if (e.code === 1) {
@@ -164,11 +163,7 @@ const LocateControl = L.Control.extend({
                     timeout: 500,
                     maximumAge: 0
                 });
-            } else {
-                this._map.setView(forceLatLng ? forceLatLng : fallbackLatLng, forceZoom ? forceZoom : zoom,
-                    {animate: false});
             }
-
         },
 
         _startLocating: function() {
@@ -177,7 +172,7 @@ const LocateControl = L.Control.extend({
                 setTimeout(() => {
                         this._onLocationError(error);
                     }, 0
-                )
+                );
             }
             this._watchID = navigator.geolocation.watchPosition(
                 this._onLocationSuccess.bind(this), this._onLocationError.bind(this),
@@ -230,14 +225,15 @@ const LocateControl = L.Control.extend({
             if (!this._map || !this._latlng) {
                 return;
             }
-           
+
             // autoZoom -- to fit accuracy cirlce on screen, but not more then options.maxAutoZoom (17)
             // if current zoom more then options.minAutoZoomDeltaForAuto less then autoZoom, set autoZoom
             // if map center far from geolocation, set autoZoom
             // if map center not far from geolocation
-            //      if accuracy circle does not fit at current zoom, zoom out to fit 
-            //      if  current zoom is less then minAutoZoomDeltaForAuto less then autoZoom or >= autoZoom and circle fits screen, keep current zoom
-           
+            //      if accuracy circle does not fit at current zoom, zoom out to fit
+            //      if  current zoom is less then minAutoZoomDeltaForAuto less then autoZoom
+            //          or >= autoZoom and circle fits screen, keep current zoom
+
             const currentZoom = this._map.getZoom();
             let zoomFitAccuracy = this._map.getBoundsZoom(this._latlng.toBounds(this._accuracy * 2));
             let autoZoom = zoomFitAccuracy;
@@ -252,7 +248,7 @@ const LocateControl = L.Control.extend({
                 const screenSize = this._map.getSize();
                 const averageScreenSize = (screenSize.x + screenSize.y) / 2;
                 if (p1.distanceTo(p2) > averageScreenSize * this.options.minDistForAutoZoom) {
-                    newZoom = autoZoom
+                    newZoom = autoZoom;
                 } else {
                     newZoom = currentZoom > zoomFitAccuracy ? zoomFitAccuracy : currentZoom;
                 }
@@ -261,14 +257,14 @@ const LocateControl = L.Control.extend({
         },
 
         _onMapMove: function() {
-            this._handleEvent(EVENT_MAP_MOVE)
+            this._handleEvent(EVENT_MAP_MOVE);
         },
 
         _onMapMoveEnd: function() {
             const ll = this._map.getCenter();
             setTimeout(() => {
                     if (this._map.getCenter().equals(ll)) {
-                        this._handleEvent(EVENT_MAP_MOVE_END)
+                        this._handleEvent(EVENT_MAP_MOVE_END);
                     }
                 }, 100
             );
@@ -319,7 +315,7 @@ const LocateControl = L.Control.extend({
             }
         },
 
-        _processEvent: function({event, data}) {
+        _processEvent: function({event, data}) { // eslint-disable-line complexity
             // console.log('PROCESS EVENT', event);
             const state = this._state;
             switch (event) {
@@ -349,12 +345,12 @@ const LocateControl = L.Control.extend({
                         this._setViewToLocation();
                     } else if (this._state === STATE_ENABLED_FOLLOWING || state === STATE_UPDATING_FOLLOWING) {
                         this._updateMapPositionWhileFollowing();
-                        this._setState(STATE_UPDATING_FOLLOWING)
+                        this._setState(STATE_UPDATING_FOLLOWING);
                     }
                     break;
                 case EVENT_LOCATION_ERROR:
                     if (state === STATE_DISABLED) {
-                        return
+                        return;
                     }
                     this.options.showError(data);
                     this._setState(STATE_DISABLED);
@@ -404,7 +400,7 @@ const LocateControl = L.Control.extend({
                     this._updateButtonClasses([], ['active', 'highlight', 'following', 'requesting']);
                     break;
                 case STATE_ENABLED:
-                    this._updateButtonClasses(['active', 'highlight',], ['following', 'requesting']);
+                    this._updateButtonClasses(['active', 'highlight'], ['following', 'requesting']);
                     break;
                 case STATE_MOVING_TO_FOLLOWING_FIRST:
                     this._marker.addTo(this._map);

@@ -1,11 +1,11 @@
-import Raven from 'raven-js';
+import * as Sentry from '@sentry/browser';
 import './index.css';
-import App from './App'
+import * as App from './App';
 import config from './config';
 
 function getUid() {
     const cookie = document.cookie;
-    const cookieUid = cookie.match(/\buid=([^;]+)/)[1];
+    const cookieUid = cookie.match(/\buid=([^;]+)/u)[1];
     const uidRaw = atob(cookieUid);
     const l = [];
     for (let i = 0; i < uidRaw.length; i++) {
@@ -20,44 +20,42 @@ function getUid() {
     return uid;
 }
 
-/* eslint-disable no-undef */
-if (NODE_ENV === 'production') {
-    Raven.config(config.sentryDSN, {release: RELEASE_VER}).install();
-/* eslint-enable no-undef */
+function preconnect(url) {
+    const preconnectLink = document.createElement('link');
+    preconnectLink.rel = 'preconnect';
+    preconnectLink.href = url;
+    document.head.appendChild(preconnectLink);
+
+    const dnsPrefetchLink = document.createElement('link');
+    dnsPrefetchLink.rel = 'dns-prefetch';
+    dnsPrefetchLink.href = url;
+    document.head.appendChild(dnsPrefetchLink);
 }
 
-const oldOnunhandledrejection = window.onunhandledrejection;
+preconnect(config.elevationsServer);
+preconnect(config.CORSProxyUrl);
+preconnect(config.tracksStorageServer);
 
-// Not using addEventListener due to https://github.com/zloirock/core-js/issues/205
-window.onunhandledrejection = (e) => {
-    let result = true;
-    if (oldOnunhandledrejection) {
-         result = oldOnunhandledrejection(e);
-    }
-    console.error('Uncaught in promise:', e.reason);
-    const err = e.reason;
-    if (err && err.name) {
-        err.name = 'Uncaught in promise: ' + err.name;
-    }
-    Raven.captureException(err);
-    return result;
-};
+if (NODE_ENV === 'production') {
+    Sentry.init({
+        dsn: config.sentryDSN,
+        release: RELEASE_VER
+    });
+}
 
-/* eslint-disable no-undef */
-console.log('Version:', RELEASE_VER);
-/* eslint-enable no-undef */
+console.log('Version:', RELEASE_VER); // eslint-disable-line no-console
 
 let uid;
-try {uid = getUid()} catch (e) {}
-console.log('UID:', uid);
+try {
+    uid = getUid();
+} catch (e) {
+    // ignore error
+}
+console.log('UID:', uid); // eslint-disable-line no-console
 
-Raven.setUserContext({
-        uid: uid,
-        cookie: document.cookie
-    }
-);
-
-Raven.context(function() {
-    App.setUp();
+Sentry.configureScope(function(scope) {
+    scope.setUser({id: uid});
 });
+
+App.setUp();
 

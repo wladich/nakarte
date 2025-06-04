@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import './style.css';
 
-
 function stopContainerEvents(container) {
     L.DomEvent.disableClickPropagation(container);
     L.DomEvent.disableScrollPropagation(container);
@@ -45,7 +44,7 @@ function makeButtonWithBar(containerClass, title, iconClass) {
 
     const barContainer = L.DomUtil.create('div', 'leaflet-bar bar', container);
     stopContainerEvents(barContainer);
-    return {container, buttonContainer, link, icon, barContainer}
+    return {container, buttonContainer, link, icon, barContainer};
 }
 
 export {stopContainerEvents, makeButton, makeButtonWithBar};

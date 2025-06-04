@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import {BinStream} from './binary-stream';
+import {BinStream} from '~/lib/binary-stream';
 
 function jnxCoordinates(extents) {
     function toJnx(x) {
@@ -31,7 +31,7 @@ const JnxWriter = L.Class.extend({
         },
 
         getJnx: function() {
-            const  HEADER_SIZE = 52,
+            const HEADER_SIZE = 52,
                 LEVEL_INFO_SIZE = 17,
                 TILE_INFO_SIZE = 28;
 
@@ -61,7 +61,7 @@ const JnxWriter = L.Class.extend({
                     south = (south < tile.extents.south) ? south : tile.extents.south;
                 }
             }
-            const  stream = new BinStream(1024, true);
+            const stream = new BinStream(true);
             // header
             stream.writeInt32(4); // version
             stream.writeInt32(0); // device id
@@ -71,7 +71,7 @@ const JnxWriter = L.Class.extend({
             stream.writeInt32(extents[2]); // south
             stream.writeInt32(extents[3]); // east
             stream.writeInt32(levels_n); // number of zoom levels
-            stream.writeInt32(0); //expiration date
+            stream.writeInt32(0); // expiration date
             stream.writeInt32(this.productId);
             stream.writeInt32(0); // tiles CRC32
             stream.writeInt32(0); // signature version
@@ -95,14 +95,14 @@ const JnxWriter = L.Class.extend({
             }
             let tileDescriptorOffset = stream.tell();
             // level info
-            let  jnxScale;
+            let jnxScale;
             stream.seek(HEADER_SIZE);
             for (level of Object.keys(this.tiles)) {
                 level = parseInt(level, 10);
                 stream.writeInt32(this.tiles[level].length);
                 stream.writeUint32(tileDescriptorOffset);
-                //jnxScale = JnxScales[level + 3];
-                jnxScale = 34115555 / (Math.pow(2, level)) * Math.cos((north + south) / 2 / 180 * Math.PI) / 1.1;
+                // jnxScale = JnxScales[level + 3];
+                jnxScale = 34115555 / (2 ** level) * Math.cos((north + south) / 2 / 180 * Math.PI) / 1.1;
                 stream.writeInt32(jnxScale);
                 stream.writeInt32(2);
                 stream.writeUint8(0);
@@ -128,7 +128,7 @@ const JnxWriter = L.Class.extend({
                 }
             }
 
-            const  blob = [];
+            const blob = [];
             blob.push(stream.getBuffer());
             for (level of Object.keys(this.tiles)) {
                 tiles = this.tiles[level];

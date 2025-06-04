@@ -1,6 +1,5 @@
 import L from 'leaflet';
-import  '../leaflet.control.layers.hotkeys/index';
-import 'lib/leaflet.hashState/leaflet.hashState';
+import '~/lib/leaflet.hashState/leaflet.hashState';
 
 L.Control.JNX.include(L.Mixin.HashState);
 L.Control.JNX.include({
@@ -14,14 +13,14 @@ L.Control.JNX.include({
                     bounds.getSouth().toFixed(5),
                     bounds.getWest().toFixed(5),
                     bounds.getNorth().toFixed(5),
-                    bounds.getEast().toFixed(5)];
+                    bounds.getEast().toFixed(5)
+                ];
             }
             return state;
         },
 
         unserializeState: function(values) {
-
-            function validateFloat(value, min, max) {
+            function validateFloat(value) {
                 value = parseFloat(value);
                 if (isNaN(value)) {
                     throw new Error('INVALID VALUE');
@@ -35,14 +34,14 @@ L.Control.JNX.include({
                     throw new Error('INVALID VALUE');
                 }
                 return value;
-
             }
 
             if (values && values.length === 4) {
+                let south, west, north, east;
                 try {
-                    var south = validateFloatRange(values[0], -86, 86),
-                        west = validateFloat(values[1]),
-                        north = validateFloatRange(values[2], -86, 86),
+                        south = validateFloatRange(values[0], -86, 86);
+                        west = validateFloat(values[1]);
+                        north = validateFloatRange(values[2], -86, 86);
                         east = validateFloat(values[3]);
                 } catch (e) {
                     if (e.message === 'INVALID VALUE') {
@@ -53,9 +52,8 @@ L.Control.JNX.include({
                 this.removeSelector();
                 this.addSelector([[south, west], [north, east]]);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 );

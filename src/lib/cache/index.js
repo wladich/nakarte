@@ -12,7 +12,7 @@ class Cache {
             this._store[key] = value;
             return {value, found: true};
         }
-        return {found: false}
+        return {found: false};
     }
 
     put(key, value) {
@@ -29,4 +29,4 @@ class Cache {
     }
 }
 
-export {Cache}
+export {Cache};

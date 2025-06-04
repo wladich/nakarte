@@ -1,8 +1,8 @@
 import Pbf from 'pbf';
 import {TrackView} from './nktk_pb';
-import {arrayBufferToString, stringToArrayBuffer} from 'lib/binary-strings';
+import {arrayBufferToString, stringToArrayBuffer} from '~/lib/binary-strings';
 import utf8 from 'utf8';
-import urlSafeBase64 from './urlSafeBase64';
+import * as urlSafeBase64 from './urlSafeBase64';
 
 const arcUnit = ((1 << 24) - 1) / 360;
 
@@ -10,18 +10,6 @@ function PackedStreamReader(s) {
     this._string = s;
     this.position = 0;
 }
-
-PackedStreamReader.prototype.readNumber = function() {
-    var n = unpackNumber(this._string, this.position);
-    this.position += n[1];
-    return n[0];
-};
-
-PackedStreamReader.prototype.readString = function(size) {
-    var s = this._string.slice(this.position, this.position + size);
-    this.position += size;
-    return s;
-};
 
 function unpackNumber(s, position) {
     var x,
@@ -63,6 +51,18 @@ function unpackNumber(s, position) {
     n -= 268435456;
     return [n, 4];
 }
+
+PackedStreamReader.prototype.readNumber = function() {
+    var n = unpackNumber(this._string, this.position);
+    this.position += n[1];
+    return n[0];
+};
+
+PackedStreamReader.prototype.readString = function(size) {
+    var s = this._string.slice(this.position, this.position + size);
+    this.position += size;
+    return s;
+};
 
 function deltaEncodeSegment(points) {
     let deltaLats = [],
@@ -144,14 +144,6 @@ function saveNktk(segments, name, color, measureTicksShown, waypoints, trackHidd
     return urlSafeBase64.encode(s);
 }
 
-function parseTrackUrlData(s) {
-    s = urlSafeBase64.decode(s);
-    if (!s) {
-        return [{name: 'Text encoded track', error: ['CORRUPT']}];
-    }
-    return parseNktkOld(s, 0);
-}
-
 function parseNktkOld(s, version) {
     var name,
         n,
@@ -161,20 +153,22 @@ function parseNktkOld(s, version) {
         pointsCount,
         arcUnit = ((1 << 24) - 1) / 360,
         x, y,
-        error, midX, midY, /*symbol,*/ waypointName,
-        wayPoints = [], color, measureTicksShown, trackHidden = false;
+        error, midX, midY, /* symbol,*/ waypointName,
+        wayPoints = [],
+        color, measureTicksShown,
+        trackHidden = false;
     s = new PackedStreamReader(s);
     try {
         n = s.readNumber();
         name = s.readString(n);
         name = utf8.decode(name);
         segmentsCount = s.readNumber();
-        for (; segmentsCount--;) {
+        for (let i = 0; i < segmentsCount; i++) {
             segment = [];
             pointsCount = s.readNumber();
             x = 0;
             y = 0;
-            for (; pointsCount--;) {
+            for (let j = 0; j < pointsCount; j++) {
                 x += s.readNumber();
                 y += s.readNumber();
                 segment.push({lng: x / arcUnit, lat: y / arcUnit});
@@ -208,7 +202,7 @@ function parseNktkOld(s, version) {
     }
     if (version >= 3) {
         try {
-            trackHidden = !!(s.readNumber())
+            trackHidden = Boolean(s.readNumber());
         } catch (e) {
             if (e.message.match('Unexpected end of line while unpacking number')) {
                 error = ['CORRUPT'];
@@ -224,7 +218,7 @@ function parseNktkOld(s, version) {
                 midX = s.readNumber();
                 midY = s.readNumber();
             }
-            for (; pointsCount--;) {
+            for (let i = 0; i < pointsCount; i++) {
                 n = s.readNumber();
                 waypointName = s.readString(n);
                 waypointName = utf8.decode(waypointName);
@@ -262,6 +256,14 @@ function parseNktkOld(s, version) {
     return [geoData];
 }
 
+function parseTrackUrlData(s) {
+    s = urlSafeBase64.decode(s);
+    if (!s) {
+        return [{name: 'Text encoded track', error: ['CORRUPT']}];
+    }
+    return parseNktkOld(s, 0);
+}
+
 function parseNktkProtobuf(s) {
     const pbf = new Pbf(stringToArrayBuffer(s));
     let trackView;
@@ -291,7 +293,6 @@ function parseNktkProtobuf(s) {
         }
     }
     return [geoData];
-
 }
 
 function parseNktkFragment(s) {
@@ -305,9 +306,8 @@ function parseNktkFragment(s) {
         return parseNktkOld(s.substring(reader.position), version);
     } else if (version === 4) {
         return parseNktkProtobuf(s.substring(reader.position));
-    } else {
-        return [{name: 'Text encoded track', error: ['CORRUPT']}];
     }
+    return [{name: 'Text encoded track', error: ['CORRUPT']}];
 }
 
 function parseNktkSequence(s) {

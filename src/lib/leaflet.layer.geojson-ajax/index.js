@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import {fetch} from 'lib/xhr-promise';
-import {notify} from 'lib/notifications';
-import logging from 'lib/logging';
+import {fetch} from '~/lib/xhr-promise';
+import {notify} from '~/lib/notifications';
+import * as logging from '~/lib/logging';
 
 L.Layer.GeoJSONAjax = L.GeoJSON.extend({
         options: {
@@ -12,7 +12,6 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
             L.GeoJSON.prototype.initialize.call(this, null, options);
             this.url = url;
         },
-
 
         // Promise can be rejected if json invalid or addData fails
         loadData: function() {
@@ -26,14 +25,10 @@ L.Layer.GeoJSONAjax = L.GeoJSON.extend({
                         this.addData(JSON.parse(xhr.response));
                     },
                     (e) => {
-                        logging.captureException(e, {extra: {
-                            description: 'failed to get geojson',
-                            url: this.url,
-                            status: e.xhr.status
-                        }});
+                        logging.captureException(e, 'failed to get geojson');
                         notify(`Failed to get GeoJSON data from ${this.url}: ${e.message}`);
                     }
-                )
+                );
         },
 
         onAdd: function(map) {

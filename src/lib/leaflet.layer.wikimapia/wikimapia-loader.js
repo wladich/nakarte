@@ -1,20 +1,19 @@
-import {TiledDataLoader} from 'lib/tiled-data-loader';
-import wmUtils from './wm-utils'
-import urlViaCorsProxy from 'lib/CORSProxy';
+import {TiledDataLoader} from '~/lib/tiled-data-loader';
+import * as wmUtils from './wm-utils';
 
 class WikimapiaLoader extends TiledDataLoader {
     maxZoom = 15;
     minZoom = 1;
     tileSize = 1024;
 
-    constructor(projectObj) {
+    constructor(tilesBaseUrl, projectObj) {
         super();
         this._projectObj = projectObj;
-
+        this.tilesBaseUrl = tilesBaseUrl;
     }
 
     getFromCache(dataTileCoords) {
-        dataTileCoords = Object.assign({}, dataTileCoords);
+        dataTileCoords = {...dataTileCoords};
         let exactMatch = true;
         while (dataTileCoords.z >= 0) {
             let key = this.makeTileKey(dataTileCoords);
@@ -43,41 +42,33 @@ class WikimapiaLoader extends TiledDataLoader {
                 x: Math.floor(layerTileCoords.x / multiplier),
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
-            }
-        }
-        else if (z < this.minZoom) {
+            };
+        } else if (z < this.minZoom) {
             let z2 = this.minZoom,
                 multiplier = 1 / (1 << (z2 - z));
             return {
                 x: Math.floor(layerTileCoords.x / multiplier),
                 y: Math.floor(layerTileCoords.y / multiplier),
                 z: z2
-            }
+            };
         }
-        else {
-            return {z, x: layerTileCoords.x, y: layerTileCoords.y}
-        }
+        return {z, x: layerTileCoords.x, y: layerTileCoords.y};
     }
 
     makeRequestData(dataTileCoords) {
-        let url = wmUtils.makeTileUrl(dataTileCoords);
-        url = urlViaCorsProxy(url);
+        let url = this.tilesBaseUrl + wmUtils.makeTilePath(dataTileCoords);
         return {
             url,
             options: {timeout: 20000}
-        }
+        };
     }
 
-    processResponse(xhr) {
-        return wmUtils.parseTile(xhr.response, this._projectObj)
-            .then((tileData) => {
-                    return {
+    processResponse(xhr, requestedCoords) {
+        return wmUtils.parseTile(xhr.response, this._projectObj, requestedCoords)
+            .then((tileData) => ({
                         tileData,
                         coords: tileData.coords
-                    }
-                }
-            );
-
+            }));
     }
 
     calcAdjustment(layerTileCoords, dataTileCoords) {

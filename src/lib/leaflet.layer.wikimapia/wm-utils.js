@@ -9,16 +9,16 @@ function getTileId({x, y, z}) {
         id.push((x & 1) + (y & 1) * 2);
         x >>= 1;
         y >>= 1;
-        z--;
+        z -= 1;
     }
     return id.reverse().join('');
 }
 
-function makeTileUrl(coords) {
+function makeTilePath(coords) {
     const
         tileId = getTileId(coords),
-        urlPath = tileId.replace(/(\d{3})(?!$)/g, '$1/'); // "033331022" -> "033/331/022"
-    return `http://wikimapia.org/z1/itiles/${urlPath}.xy?342342`;
+        urlPath = tileId.replace(/(\d{3})(?!$)/gu, '$1/'); // "033331022" -> "033/331/022"
+    return `z1/itiles/${urlPath}.xy?342342`;
 }
 
 function tileIdToCoords(tileId) {
@@ -50,7 +50,6 @@ function getWikimapiaTileCoords(coords, viewTileSize) {
     return {x, y, z};
 }
 
-
 function decodeTitles(s) {
     const titles = {};
     for (let title of s.split('\x1f')) {
@@ -60,6 +59,14 @@ function decodeTitles(s) {
         }
     }
     return titles;
+}
+
+function tileCoordsEqual(tile1, tile2) {
+    return (
+        tile1.x === tile2.x &&
+        tile1.y === tile2.y &&
+        tile1.z === tile2.z
+    );
 }
 
 function chooseTitle(titles) {
@@ -72,6 +79,7 @@ function chooseTitle(titles) {
     for (let langCode of Object.keys(titles)) {
         return titles[langCode];
     }
+    return "";
 }
 
 function decodePolygon(s) {
@@ -80,10 +88,11 @@ function decodePolygon(s) {
         lat = 0,
         lng = 0;
     while (i < s.length) {
-        var p, l = 0,
+        var p,
+            l = 0,
             c = 0;
         do {
-            p = s.charCodeAt(i++) - 63;
+            p = s.charCodeAt(i++) - 63; // eslint-disable-line no-plusplus
             c |= (p & 31) << l;
             l += 5;
         } while (p >= 32);
@@ -91,7 +100,7 @@ function decodePolygon(s) {
         l = 0;
         c = 0;
         do {
-            p = s.charCodeAt(i++) - 63;
+            p = s.charCodeAt(i++) - 63; // eslint-disable-line no-plusplus
             c |= (p & 31) << l;
             l += 5;
         } while (p >= 32);
@@ -142,10 +151,10 @@ function simplifyPolygon(latlngs, tileCoords, tileHasChildren, projectObj) {
         let p = points[i];
         latlngs.push([p.x, p.y]);
     }
-    return latlngs
+    return latlngs;
 }
 
-async function parseTile(s, projectObj) {
+async function parseTile(s, projectObj, requestedCoords) {
     const tile = {};
     const places = tile.places = [];
     const lines = s.split('\n');
@@ -154,14 +163,14 @@ async function parseTile(s, projectObj) {
     }
     const fields = lines[0].split('|');
     const tileId = fields[0];
-    if (!tileId || !tileId.match(/^[0-3]+$/)) {
+    if (!tileId || !tileId.match(/^[0-3]+$/u)) {
         throw new Error('Invalid tile header');
     }
     tile.tileId = tileId;
     tile.coords = tileIdToCoords(tileId);
-    tile.hasChildren = fields[1] === '1';
+    tile.hasChildren = tileCoordsEqual(requestedCoords, tile.coords);
 
-    //FIXME: ignore some errors
+    // FIXME: ignore some errors
     let prevTime = Date.now();
     for (let line of lines.slice(2)) {
         let curTime = Date.now();
@@ -175,7 +184,7 @@ async function parseTile(s, projectObj) {
             continue;
         }
         let placeId = fields[0];
-        if (!placeId.match(/^\d+$/)) {
+        if (!placeId.match(/^\d+$/u)) {
             // throw new Error('Invalid place id');
             continue;
         }
@@ -185,14 +194,11 @@ async function parseTile(s, projectObj) {
             throw new Error(`Unknown wikimapia polygon encoding type: "${fields[6]}"`);
         }
 
-        let bounds = fields[2].match(/^([-\d]+),([-\d]+),([-\d]+),([-\d]+)$/);
+        let bounds = fields[2].match(/^([-\d]+),([-\d]+),([-\d]+),([-\d]+)$/u);
         if (!bounds) {
             throw new Error('Invalid place bounds');
         }
-        place.boundsWESN = bounds.slice(1).map((x) => {
-                return parseInt(x, 10) / 1e7
-            }
-        );
+        place.boundsWESN = bounds.slice(1).map((x) => parseInt(x, 10) / 1e7);
 
         let coords = fields.slice(7).join('|');
 
@@ -264,4 +270,4 @@ async function parseTile(s, projectObj) {
 //     }
 // },
 
-export default {getTileId, getWikimapiaTileCoords, parseTile, makeTileUrl}
+export {getTileId, getWikimapiaTileCoords, parseTile, makeTilePath};

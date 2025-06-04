@@ -1,0 +1,34 @@
+.leaflet-map-sidebars-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.leaflet-map-sidebar-left,
+.leaflet-map-sidebar-right,
+.leaflet-map-sidebar-top,
+.leaflet-map-sidebar-bottom {
+    display: flex;
+}
+
+.leaflet-map-sidebar-mid-column {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.leaflet-map-container-with-sidebars {
+    flex-grow: 1;
+}
+
+.leaflet-map-sidebar-left {
+    flex-direction: row-reverse;
+}
+
+.leaflet-map-sidebar-right {
+    flex-direction: row;
+}
+
+.leaflet-map-sidebar-top {
+    flex-direction: column-reverse;
+}

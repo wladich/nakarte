@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.control.commons';
+import '~/lib/leaflet.control.commons';
 
 const originalLayerOnAdd = L.Control.Layers.prototype.onAdd;
 
@@ -8,7 +8,6 @@ L.Control.Layers.include({
         const container = originalLayerOnAdd.call(this, map);
         this._stopContainerEvents();
         return container;
-
     }
 });
 
@@ -20,6 +19,5 @@ L.Control.Zoom.include({
         this._container = container;
         this._stopContainerEvents();
         return container;
-
     }
 });

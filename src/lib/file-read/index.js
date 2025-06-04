@@ -1,4 +1,4 @@
-import {arrayBufferToString} from 'lib/binary-strings';
+import {arrayBufferToString} from '~/lib/binary-strings';
 
 const selectFiles = (() => {
     let fileInput;
@@ -9,7 +9,7 @@ const selectFiles = (() => {
         fileInput = document.createElement('input');
         document.body.appendChild(fileInput);
         fileInput.type = 'file';
-        fileInput.multiple = !!multiple;
+        fileInput.multiple = Boolean(multiple);
         fileInput.style.display = 'none';
 
         const result = new Promise(function(resolve) {
@@ -21,7 +21,7 @@ const selectFiles = (() => {
         );
         fileInput.click();
         return result;
-    }
+    };
 })();
 
 function readFile(file) {
@@ -44,5 +44,4 @@ function readFiles(files) {
     return Promise.all(files.map(readFile));
 }
 
-
-export {selectFiles, readFile, readFiles};
+export {selectFiles, readFiles};

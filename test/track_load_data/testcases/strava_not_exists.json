@@ -1,0 +1,4 @@
+{
+    "query": ["https://www.strava.com/activities/3873704997123"],
+    "geodata": [{"error": "Requested Strava activity could not be found"}]
+}

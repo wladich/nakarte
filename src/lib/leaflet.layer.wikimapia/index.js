@@ -1,8 +1,7 @@
 import L from 'leaflet';
 import {WikimapiaLoader} from './wikimapia-loader';
 import './style.css';
-import {openPopupWindow} from 'lib/popup-window';
-
+import {openPopupWindow} from '~/lib/popup-window';
 
 function isPointInPolygon(polygon, p) {
     var inside = false;
@@ -24,7 +23,8 @@ function isPointInPolygon(polygon, p) {
 L.Wikimapia = L.GridLayer.extend({
         options: {
             tileSize: 1024,
-            updateWhenIdle: true
+            updateWhenIdle: true,
+            tilesBaseUrl: 'http://wikimapia.org/',
         },
 
         initialize: function(options) {
@@ -34,12 +34,15 @@ L.Wikimapia = L.GridLayer.extend({
 
         onAdd: function(map) {
             if (!this.loader) {
-                this.loader = new WikimapiaLoader(map);
+                this.loader = new WikimapiaLoader(this.options.tilesBaseUrl, map);
             }
             L.GridLayer.prototype.onAdd.call(this, map);
             this.on('tileunload', this.onTileUnload, this);
+            this.on('tileload', this.onTileLoad, this);
             map.on('mousemove', this.onMouseMove, this);
             map.on('click', this.onClick, this);
+            map.on('zoomend', this.onZoomEnd, this);
+            map.on('zoomstart', this.onZoomStart, this);
         },
 
         onRemove: function(map) {
@@ -52,7 +55,9 @@ L.Wikimapia = L.GridLayer.extend({
             }
             L.TileLayer.prototype.onRemove.call(this, map);
             this.off('tileunload', this.onTileUnload, this);
-
+            this.off('tileload', this.onTileLoad, this);
+            map.off('zoomend', this.onZoomEnd, this);
+            map.off('zoomstart', this.onZoomStart, this);
         },
 
         drawTile: function(canvas) {
@@ -97,7 +102,6 @@ L.Wikimapia = L.GridLayer.extend({
                 canvasCtx.lineTo(polygon[0].x, polygon[0].y);
             }
             canvasCtx.stroke();
-
         },
 
         createTile: function(coords, done) {
@@ -106,12 +110,13 @@ L.Wikimapia = L.GridLayer.extend({
             canvas.height = this.options.tileSize;
             let {dataPromise, abortLoading} = this.loader.requestTileData(coords);
             dataPromise.then((data) => {
+                if (!data.error) {
                     canvas._tileData = data.tileData;
                     canvas._adjustment = data.adjustment;
                     this.drawTile(canvas);
-                    this._tileOnLoad(done, canvas)
+                    this._tileOnLoad(done, canvas);
                 }
-            );
+            });
 
             canvas._abortLoading = abortLoading;
             return canvas;
@@ -133,8 +138,19 @@ L.Wikimapia = L.GridLayer.extend({
             delete tile._adjustment;
         },
 
-        _tileCoordsFromEvent: function(e) {
-            const layerPoint = this._map.getPixelOrigin().add(e.layerPoint);
+        onTileLoad: function() {
+            if (!this.lastMousePos) {
+                return;
+            }
+            if (this.mapZooming) {
+                return;
+            }
+            this.updateHighlight();
+        },
+
+        _tileCoordsFromLatlng: function(latlng) {
+            let layerPoint = this._map.latLngToLayerPoint(latlng);
+            layerPoint = layerPoint.add(this._map.getPixelOrigin());
             const tileSize = this.options.tileSize;
             let coords = {
                 x: Math.floor(layerPoint.x / tileSize),
@@ -145,8 +161,9 @@ L.Wikimapia = L.GridLayer.extend({
             return coords;
         },
 
-        getPlaceAtMousePos: function(e) {
-            const tileCoords = this._tileCoordsFromEvent(e);
+        getPlaceAtLatlng: function(latlng) {
+            latlng = latlng.wrap();
+            const tileCoords = this._tileCoordsFromLatlng(latlng);
             let tile = this._tiles[this._tileCoordsToKey(tileCoords)];
             if (!tile) {
                 return null;
@@ -155,11 +172,39 @@ L.Wikimapia = L.GridLayer.extend({
             if (!tileData) {
                 return null;
             }
-            return this.getPlaceAtLatlng(e.latlng.wrap(), tileData.places);
+
+            const places = tileData.places;
+            const {lat, lng} = latlng;
+            let bounds, place;
+            for (let i = places.length - 1; i >= 0; i--) {
+                place = places[i];
+                bounds = place.boundsWESN;
+                if (lng >= bounds[0] && lng <= bounds[1] && lat >= bounds[2] && lat <= bounds[3] &&
+                    isPointInPolygon(place.polygon, [lat, lng])) {
+                    return place;
+                }
+            }
+            return null;
         },
 
         onMouseMove: function(e) {
-            const place = this.getPlaceAtMousePos(e);
+            this.lastMousePos = e.latlng;
+            this.updateHighlight();
+        },
+
+        onZoomEnd: function() {
+            this.mapZooming = false;
+            this.updateHighlight();
+        },
+        onZoomStart: function() {
+            this.mapZooming = true;
+        },
+
+        updateHighlight: function() {
+            if (!this.lastMousePos) {
+                return;
+            }
+            const place = this.getPlaceAtLatlng(this.lastMousePos);
             if (this.highlightedPlace && (!place || this.highlightedPlace.id !== place.id)) {
                 this._map.removeLayer(this.highlightedPlace.polygon);
                 this._map.removeLayer(this.highlightedPlace.label);
@@ -176,13 +221,13 @@ L.Wikimapia = L.GridLayer.extend({
                     ),
                     label: L.tooltip({className: 'wikimapia-tooltip-wrapper'}, null)
                 };
-                this.highlightedPlace.label.setLatLng(e.latlng);
+                this.highlightedPlace.label.setLatLng(this.lastMousePos);
                 this.highlightedPlace.polygon.addTo(this._map).bringToBack();
                 this.highlightedPlace.label.setContent(`<div class="wikimapia-tooltip">${place.title}</div>`);
                 this._map.addLayer(this.highlightedPlace.label);
             }
             if (this.highlightedPlace) {
-                this.highlightedPlace.label.setLatLng(e.latlng);
+                this.highlightedPlace.label.setLatLng(this.lastMousePos);
             }
         },
 
@@ -190,25 +235,11 @@ L.Wikimapia = L.GridLayer.extend({
             if (this._map.clickLocked) {
                 return;
             }
-            const place = this.getPlaceAtMousePos(e);
+            const place = this.getPlaceAtLatlng(e.latlng);
             if (place) {
                 const url = `http://wikimapia.org/${place.id}/ru/`;
                 openPopupWindow(url, 564, 'wikimapia-details');
             }
         },
-
-        getPlaceAtLatlng: function(latlng, places) {
-            let {lat, lng} = latlng,
-                bounds, place;
-            for (let i = places.length - 1; i >= 0; i--) {
-                place = places[i];
-                bounds = place.boundsWESN;
-                if (lng >= bounds[0] && lng <= bounds[1] && lat >= bounds[2] && lat <= bounds[3] &&
-                    isPointInPolygon(place.polygon, [lat, lng])) {
-                    return place;
-                }
-            }
-        }
-
     }
 );

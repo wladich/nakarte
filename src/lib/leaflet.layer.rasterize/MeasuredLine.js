@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import 'lib/leaflet.polyline-measure';
+import '~/lib/leaflet.polyline-measure';
 
 L.Polyline.include({
         _printProgressWeight: 0.1,
@@ -20,7 +20,7 @@ L.Polyline.include({
                     .subtract(origin)
                     .add(L.point([shift, 0]))
                     .unscaleBy(scale);
-            }
+            };
         },
 
         _shift: function(targetBounds, zoom) {
@@ -32,7 +32,7 @@ L.Polyline.include({
                 const targetCenter = targetBounds.getCenter();
 
                 if (polylineCenter.lng < targetCenter.lng - 180) {
-                    shift = 1
+                    shift = 1;
                 } else if (polylineCenter.lng > targetCenter.lng + 180) {
                     shift = -1;
                 } else {
@@ -46,17 +46,21 @@ L.Polyline.include({
             const latlngs = this.getLatLngs();
             const shift = this._shift(printOptions.latLngBounds, printOptions.zoom);
             const lineBounds = this.getBounds();
+            if (latlngs.length < 2) {
+                return false;
+            }
             const shiftedLineBounds = L.latLngBounds([
                 [lineBounds.getNorth(), lineBounds.getWest() + shift.lng],
                 [lineBounds.getSouth(), lineBounds.getEast() + shift.lng]
             ]);
-            if (!latlngs.length || !shiftedLineBounds.intersects(printOptions.latLngBounds)) {
-                return;
+            if (!shiftedLineBounds.intersects(printOptions.latLngBounds)) {
+                return false;
             }
 
             const ctx = canvas.getContext('2d');
             ctx.lineWidth = this.printWidthMm / 25.4 * printOptions.resolution;
             ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
             ctx.strokeStyle = this.options.color;
             const transform = this._makelatLngToCanvasPixelTransformer(printOptions, shift.projected);
             let point;
@@ -72,7 +76,6 @@ L.Polyline.include({
             return true;
         },
 
-
         getTilesInfo: async function(printOptions) {
             return {
                 iterateTilePromises: (function*() {
@@ -83,8 +86,9 @@ L.Polyline.include({
                             }
                         ),
                         abortLoading: () => {
+                            // no actions needed
                         }
-                    }
+                    };
                 }).bind(this),
                 count: 1
             };

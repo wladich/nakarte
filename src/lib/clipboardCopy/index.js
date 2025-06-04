@@ -1,5 +1,6 @@
 import './style.css';
-import logging from 'lib/logging';
+import * as logging from '~/lib/logging';
+import {query} from '~/lib/notifications';
 
 function showNotification(message, mouseEvent) {
     var el = document.createElement('div');
@@ -11,23 +12,23 @@ function showNotification(message, mouseEvent) {
         x = mouseEvent.clientX - w - 8,
         y = mouseEvent.clientY - h / 2;
     if (x < 0) {
-        x = 0
+        x = 0;
     }
     if (y < 0) {
-        y = 0
+        y = 0;
     }
     el.style.top = y + 'px';
     el.style.left = x + 'px';
     setTimeout(function() {
         document.body.removeChild(el);
     }, 1000);
-
 }
 
 function copyToClipboard(s, mouseEvent) {
     let success = false;
+    let ta;
     try {
-        var ta = document.createElement('textarea');
+        ta = document.createElement('textarea');
         ta.value = s;
         document.body.appendChild(ta);
         ta.select();
@@ -36,12 +37,12 @@ function copyToClipboard(s, mouseEvent) {
             showNotification('Copied', mouseEvent);
         }
     } catch (e) {
-        logging.captureException(e, {extra: {description: 'clipborad to copy failed'}});
+        logging.captureException(e, 'clipborad to copy failed');
     } finally {
         document.body.removeChild(ta);
     }
     if (!success) {
-        prompt("Copy to clipboard: Ctrl+C, Enter", s);
+        query("Copy to clipboard: Ctrl+C, Enter", s);
     }
 }
 
