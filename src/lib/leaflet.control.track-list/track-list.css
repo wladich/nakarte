@@ -287,3 +287,23 @@
 .track-tooltip-area-calc-error {
     color: #bbbbbb;
 }
+
+.tracks-show-hide-all-wrapper {
+    margin-top: 3px;
+    display: inline-block;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.tracks-show-all, .tracks-hide-all {
+    display: inline-block;
+    border-bottom: 1px dashed #999;
+    font-weight: bold;
+    font-size: 11px;
+    color: #333;
+    cursor: pointer;
+}
+
+.tracks-hide-all {
+    margin-left: 10px;
+}

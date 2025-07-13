@@ -194,6 +194,12 @@ L.Control.TrackList = L.Control.extend({
                         },
                         visible: readingFiles"></div>
                 </div>
+                 <!-- ko if: tracks().length >= 2 -->
+                <div class="tracks-show-hide-all-wrapper">
+                    <div class="tracks-show-all" data-bind="click: showAllTracks">Show all</div>
+                    <div class="tracks-hide-all" data-bind="click: hideAllTracks">Hide all</div>
+                </div>
+                <!-- /ko -->
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
                     <tr data-bind="event: {
@@ -202,7 +208,7 @@ L.Control.TrackList = L.Control.extend({
                                        mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
                                    },
                                    css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
-                        <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible"></td>
+                        <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible, click: $parent.onTrackCheckboxClicked.bind($parent)"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
                         <td>
@@ -1621,6 +1627,23 @@ L.Control.TrackList = L.Control.extend({
         notifyTracksChanged() {
             this.fire('trackschanged');
         },
+
+        showAllTracks: function() {
+            this.tracks().forEach((track) => track.visible(true));
+        },
+
+        hideAllTracks: function() {
+            this.tracks().forEach((track) => track.visible(false));
+        },
+
+        onTrackCheckboxClicked: function(clickedTrack, event) {
+            if (event.shiftKey) {
+                this.tracks().forEach((track) => {
+                    track.visible(track === clickedTrack);
+                });
+            }
+            return true;
+        }
     }
 );
 
