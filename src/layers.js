@@ -1,7 +1,7 @@
 import L from "leaflet";
 import '~/lib/leaflet.layer.yandex';
 import '~/lib/leaflet.layer.google';
-import {BingLayer} from '~/lib/leaflet.layer.bing';
+import {BingSatLayer, BingOrdnanceSurveyLayer} from '~/lib/leaflet.layer.bing';
 import config from './config';
 import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
@@ -171,14 +171,15 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 {
                     title: 'Bing Satellite',
                     isDefault: true,
-                    layer: new BingLayer(config.bingKey,
+                    layer: new BingSatLayer(
                         {
                             code: 'I',
                             isOverlay: false,
                             scaleDependent: false,
                             print: true,
                             jnx: true,
-                            shortName: 'bing_sat'
+                            shortName: 'bing_sat',
+                            attribution: '<a href="https://www.bing.com/maps?style=h">Microsoft</a>',
                         }
                     )
                 },
@@ -922,8 +923,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: false,
                     layer: new LayerGroupWithOptions(
                         [
-                            new BingLayer(config.bingKey, {
-                                type: 'OrdnanceSurvey',
+                            new BingOrdnanceSurveyLayer({
                                 minZoom: 12,
                                 maxNativeZoom: 16,
                                 bounds: [

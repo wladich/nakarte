@@ -1,7 +1,7 @@
 import L from 'leaflet';
-import {BingLayer} from '~/lib/leaflet.layer.bing';
+import {BingBaseLayerWithDynamicUrl} from '~/lib/leaflet.layer.bing';
 
-BingLayer.include({
+BingBaseLayerWithDynamicUrl.include({
         waitTilesReadyToGrab: function() {
             if (this._url) {
                 return Promise.resolve();
@@ -19,7 +19,7 @@ BingLayer.include({
         },
 
         cloneForPrint: function(options) {
-            return new BingLayer(this._key, L.Util.extend({}, this.options, options));
+            return new this.constructor(L.Util.extend({}, this.options, options));
         },
     }
 );

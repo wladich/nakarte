@@ -1,10 +1,12 @@
 import L from 'leaflet';
 
+import {fetch} from '~/lib/xhr-promise';
+
 function tile2quad(x, y, z) {
-    var quad = '';
-    for (var i = z; i > 0; i--) {
-        var digit = 0;
-        var mask = 1 << (i - 1);
+    let quad = '';
+    for (let i = z; i > 0; i--) {
+        let digit = 0;
+        const mask = 1 << (i - 1);
         if ((x & mask) !== 0) {
             digit += 1;
         }
@@ -16,128 +18,71 @@ function tile2quad(x, y, z) {
     return quad;
 }
 
-const BingLayer = L.TileLayer.extend({
-    options: {
-        subdomains: [0, 1, 2, 3],
-        type: 'Aerial',
-        attribution: 'Bing',
-        culture: ''
-    },
-
-    initialize: function(key, options) {
-        L.Util.setOptions(this, options);
-
-        this._key = key;
-        this._url = null;
-        this._providers = [];
-        this.metaRequested = false;
-    },
-
-    getTileUrl: function(tilePoint) {
-        var zoom = this._getZoomForUrl();
-        var subdomains = this.options.subdomains,
-            s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
-        return this._url.replace('{subdomain}', s)
-            .replace('{quadkey}', tile2quad(tilePoint.x, tilePoint.y, zoom))
-            .replace('{culture}', this.options.culture);
-    },
-
-    loadMetadata: function() {
-        if (this.metaRequested) {
-            return;
-        }
-        this.metaRequested = true;
-        var that = this;
-        var cbid = '_bing_metadata_' + L.Util.stamp(this);
-        window[cbid] = function(meta) {
-            window[cbid] = undefined;
-            var e = document.getElementById(cbid);
-            e.parentNode.removeChild(e);
-            if (meta.errorDetails) {
-                throw new Error(meta.errorDetails);
-            }
-            that.initMetadata(meta);
+const BingBaseLayer = L.TileLayer.extend({
+    getTileUrl: function (tilePoint) {
+        const data = {
+            quadkey: tile2quad(tilePoint.x, tilePoint.y, this._getZoomForUrl()),
         };
-        var urlScheme = 'https';
-        var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' +
-            this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
-            '&key=' + this._key + '&UriScheme=' + urlScheme;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-        script.id = cbid;
-        document.getElementsByTagName('head')[0].appendChild(script);
+        return L.Util.template(this._url, L.extend(data, this.options));
+    },
+});
+
+const BingBaseLayerWithDynamicUrl = BingBaseLayer.extend({
+    initialize: function (options) {
+        BingBaseLayer.prototype.initialize.call(this, null, options);
+        this.layerInfoRequested = false;
     },
 
-    initMetadata: function(meta) {
-        var r = meta.resourceSets[0].resources[0];
-        this.options.subdomains = r.imageUrlSubdomains;
-        this._url = r.imageUrl;
-        if (r.imageryProviders) {
-            for (var i = 0; i < r.imageryProviders.length; i++) {
-                var p = r.imageryProviders[i];
-                for (var j = 0; j < p.coverageAreas.length; j++) {
-                    var c = p.coverageAreas[j];
-                    var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-                    var bounds = new L.LatLngBounds(
-                        new L.LatLng(c.bbox[0] + 0.01, c.bbox[1] + 0.01),
-                        new L.LatLng(c.bbox[2] - 0.01, c.bbox[3] - 0.01)
-                    );
-                    coverage.bounds = bounds;
-                    coverage.attrib = p.attribution;
-                    this._providers.push(coverage);
-                }
-            }
-        }
-        this._update();
-    },
-
-    _update: function() {
-        if (this._url === null || !this._map) {
-            return;
-        }
-        this._update_attribution();
-        L.TileLayer.prototype._update.apply(this, []);
-    },
-
-    _update_attribution: function() {
-        var bounds = L.latLngBounds(
-            this._map.getBounds().getSouthWest().wrap(),
-            this._map.getBounds().getNorthEast().wrap()
-        );
-        var zoom = this._map.getZoom();
-        for (var i = 0; i < this._providers.length; i++) {
-            var p = this._providers[i];
-            if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
-                bounds.intersects(p.bounds)) {
-                if (!p.active && this._map.attributionControl) {
-                    this._map.attributionControl.addAttribution(p.attrib);
-                }
-                p.active = true;
-            } else {
-                if (p.active && this._map.attributionControl) {
-                    this._map.attributionControl.removeAttribution(p.attrib);
-                }
-                p.active = false;
-            }
-        }
-    },
-
-    onAdd: function(map) {
-        this.loadMetadata();
+    onAdd: function (map) {
+        this.loadLayerInfo();
         L.TileLayer.prototype.onAdd.apply(this, [map]);
     },
 
-    onRemove: function(map) {
-        for (var i = 0; i < this._providers.length; i++) {
-            var p = this._providers[i];
-            if (p.active && this._map.attributionControl) {
-                this._map.attributionControl.removeAttribution(p.attrib);
-                p.active = false;
-            }
+    _update: function () {
+        if (this._url === null || !this._map) {
+            return;
         }
-        L.TileLayer.prototype.onRemove.apply(this, [map]);
-    }
+        L.TileLayer.prototype._update.apply(this);
+    },
+
+    getLayerUrl: async function () {
+        throw new Error('Not implemented');
+    },
+
+    loadLayerInfo: async function () {
+        if (this.layerInfoRequested) {
+            return;
+        }
+        this.layerInfoRequested = true;
+        this._url = await this.getLayerUrl();
+        this._update();
+    },
 });
 
-export {BingLayer};
+const BingSatLayer = BingBaseLayerWithDynamicUrl.extend({
+    getLayerUrl: async function () {
+        const xhr = await fetch('https://www.bing.com/maps/style?styleid=aerial', {
+            responseType: 'json',
+            timeout: 5000,
+        });
+        return xhr.response['sources']['bing-aerial']['tiles'][0].replace(/^raster/u, 'https');
+    },
+});
+
+const BingOrdnanceSurveyLayer = BingBaseLayerWithDynamicUrl.extend({
+    options: {
+        credentials: 'Auy875gcaw3RCFzVQSxi8Ytzw_K67r4Dw8DpGHavRZW_ciCBHLhQJAhCiXSdnzwH',
+    },
+
+    getLayerUrl: async function () {
+        const xhr = await fetch('https://www.bing.com/maps/style?styleid=ordnancesurvey', {
+            responseType: 'json',
+            headers: [['accept-language', 'en-GB']],
+            timeout: 5000,
+        });
+        return xhr.response['sources']['osMaps1']['tiles'][0].replace(/^raster/u, 'https');
+    },
+});
+
+// eslint-disable-next-line import/no-unused-modules
+export {BingSatLayer, BingOrdnanceSurveyLayer, BingBaseLayerWithDynamicUrl};
