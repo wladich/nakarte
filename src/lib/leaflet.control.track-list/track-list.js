@@ -29,6 +29,8 @@ import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
 import {parseNktkSequence} from './lib/parsers/nktk';
 import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
+import {polygonArea} from '~/lib/polygon-area';
+import {polylineHasSelfIntersections} from '~/lib/polyline-selfintersects';
 
 const TRACKLIST_TRACK_COLORS = ['#77f', '#f95', '#0ff', '#f77', '#f7f', '#ee5'];
 
@@ -500,6 +502,27 @@ L.Control.TrackList = L.Control.extend({
             return (x / 1000).toFixed(digits) + ' km';
         },
 
+        formatArea: function(sqMeters) {
+            let value, units;
+            if (sqMeters < 100_000) {
+                value = sqMeters;
+                units = 'm²';
+            } else {
+                value = sqMeters / 1_000_000;
+                units = 'km²';
+            }
+            let options;
+            if (value < 10) {
+                options = {maximumFractionDigits: 2, minimumFractionDigits: 2};
+            } else if (value < 100) {
+                options = {maximumFractionDigits: 1, minimumFractionDigits: 1};
+            } else {
+                options = {maximumSignificantDigits: 3};
+            }
+            const formattedValue = value.toLocaleString('ru-RU', options);
+            return `${formattedValue} ${units}`;
+        },
+
         setTrackMeasureTicksVisibility: function(track) {
             var visible = track.measureTicksShown(),
                 lines = this.getTrackPolylines(track);
@@ -921,6 +944,50 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
+        formatSegmentTooltip: function(segment) {
+            const track = segment._parentTrack;
+            const trackSegments = this.getTrackPolylines(track);
+            const trackSegmentsCount = trackSegments.length;
+            const segmentOrdinalNumber = trackSegments.indexOf(segment) + 1;
+
+            // avoid slow calculation of self-intersections due to brute-force algorithm
+            const MAX_POINTS_FOR_INTERSECTIONS_CALCULATION = 1000;
+            // avoid noticeable errors in area calculations due to usage of approximate algorithm
+            const MAX_EXTENT_WIDTH = 10;
+            const MAX_EXTENT_HEIGHT = 5;
+
+            let segmentArea;
+            let points = segment.getLatLngs();
+            if (points.length > 1 && points[0].equals(points.at(-1))) {
+                points = points.slice(0, -1);
+            }
+            if (points.length > MAX_POINTS_FOR_INTERSECTIONS_CALCULATION) {
+                segmentArea = '-- <span class="track-tooltip-area-calc-error">(too many points)</span>';
+            }
+            if (!segmentArea) {
+                const bounds = L.latLngBounds(points);
+                if (
+                    bounds.getEast() - bounds.getWest() > MAX_EXTENT_WIDTH ||
+                    bounds.getNorth() - bounds.getSouth() > MAX_EXTENT_HEIGHT
+                ) {
+                    segmentArea = '-- <span class="track-tooltip-area-calc-error">(too big extent)</span>';
+                }
+            }
+            if (!segmentArea && polylineHasSelfIntersections(points)) {
+                segmentArea = '-- <span class="track-tooltip-area-calc-error">(self-intersection)</span>';
+            }
+            if (!segmentArea) {
+                segmentArea = this.formatArea(polygonArea(points));
+            }
+            return `
+                <b>${track.name()}</b><br>
+                <br>
+                Segment number: ${segmentOrdinalNumber} / ${trackSegmentsCount}<br>
+                Segment length: ${this.formatLength(segment.getLength())}<br>
+                Segment area: ${segmentArea}
+            `;
+        },
+
         addTrackSegment: function(track, sourcePoints) {
             var polyline = new TrackSegment(sourcePoints || [], {
                     color: this.colors[track.color()],
@@ -938,6 +1005,10 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
             polyline.on('drawend', this.onTrackSegmentDrawEnd, this);
+
+            if (!L.Browser.touch) {
+                polyline.bindTooltip(() => this.formatSegmentTooltip(polyline), {sticky: true, delay: 500});
+            }
 
             // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -1275,9 +1346,6 @@ L.Control.TrackList = L.Control.extend({
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
-            if (!L.Browser.touch) {
-                track.feature.bindTooltip(() => track.name(), {sticky: true, delay: 500});
-            }
             track.hover.subscribe(this.onTrackHoverChanged.bind(this, track));
 
             // this.onTrackColorChanged(track);
