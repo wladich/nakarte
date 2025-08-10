@@ -607,7 +607,7 @@ const ElevationProfile = L.Class.extend({
                     '-1': '<span class="arrow">&darr;</span>',
                     '1': '<span class="arrow">&uarr;</span>',
                     }[Math.sign(angle)];
-                angleStr = `${angleDir}${Math.abs(angle)}&deg`;
+                angleStr = `${angleDir} ${Math.abs(angle)}&deg`;
             } else {
                 angleStr = '-';
             }
