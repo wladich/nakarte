@@ -162,3 +162,8 @@
     cursor: pointer;
 }
 
+.elevation-profile-cursor-label .arrow,
+.elevation-profile-marker-label .arrow {
+    font-size: 18px;
+}
+
