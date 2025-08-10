@@ -596,12 +596,18 @@ const ElevationProfile = L.Class.extend({
             const samplingInterval = this.options.samplingInterval;
             const distanceKm = samplingInterval * ind / 1000;
             const distanceStr = `${distanceKm.toFixed(2)} km`;
-            const sample1 = this.values[Math.ceil(ind)];
-            const sample2 = this.values[Math.floor(ind)];
+            const sample1 = this.values[Math.floor(ind)];
+            const sample2 = this.values[Math.ceil(ind)];
             let angleStr;
             if (sample1 !== null && sample2 !== null) {
                 const gradient = (sample2 - sample1) / samplingInterval;
-                angleStr = `${Math.round(Math.atan(gradient) * 180 / Math.PI)}&deg`;
+                const angle = gradientToAngle(gradient);
+                const angleDir = {
+                    '0': '',
+                    '-1': '<span class="arrow">&darr;</span>',
+                    '1': '<span class="arrow">&uarr;</span>',
+                    }[Math.sign(angle)];
+                angleStr = `${angleDir}${Math.abs(angle)}&deg`;
             } else {
                 angleStr = '-';
             }
