@@ -11,6 +11,9 @@ class DataTileStatus {
     static STATUS_OK = 'OK';
 }
 
+const radToDeg = 180 / Math.PI;
+const degToRad = 1 / radToDeg;
+
 function decodeElevations(arrBuf) {
     const array = new Int16Array(arrBuf);
     for (let i = 1; i < array.length; i++) {
@@ -26,7 +29,6 @@ function mod(x, n) {
 const ElevationLayer = L.TileLayer.extend({
     options: {
         maxNativeZoom: 11,
-        tileSize: 256,
         noDataValue: -512,
     },
 
@@ -173,8 +175,16 @@ const ElevationLayer = L.TileLayer.extend({
         return q1 * (1 - dy) + q2 * dy;
     },
 
+    bilinearGradient: function (values, dx, dy) {
+        const [v1, v2, v3, v4] = values;
+        return {
+            gradX: (v2 - v1) * (1 - dy) + (v4 - v3) * dy,
+            gradY: (v3 - v1) * (1 - dx) + (v4 - v2) * dx,
+        };
+    },
+
     getElevation: function (latlng) {
-        const zoom = this._map.getZoom();
+        const zoom = this._tileZoom;
 
         let layerPoint = this._map.latLngToLayerPoint(latlng).add(this._map.getPixelOrigin());
         if (zoom <= this.options.maxNativeZoom) {
@@ -199,9 +209,22 @@ const ElevationLayer = L.TileLayer.extend({
         }
         const dx = (mod(layerPoint.x, tileSize.x) / coordsScale) % 1;
         const dy = (mod(layerPoint.y, tileSize.y) / coordsScale) % 1;
+        const {gradX, gradY} = this.bilinearGradient(elevations, dx, dy);
+        const slopeAzimuth = Math.atan2(-gradY, -gradX) * radToDeg + 90;
+        // prettier-ignore
+        const cellSizeInMeters = (
+            2 * Math.PI * L.Projection.SphericalMercator.R / // Earth equator length
+            (2 ** zoom  * this.options.tileSize / coordsScale) * // number of pixels on actual data zoom level
+            Math.cos(latlng.lat * degToRad) // account for latitude
+        );
+        const slopeGradient = Math.sqrt(gradX * gradX + gradY * gradY) / cellSizeInMeters;
+        const slopeAngle = Math.atan(slopeGradient) * radToDeg;
+
         return {
             ready: true,
             elevation: Math.round(this.bilinearInterpolate(elevations, dx, dy)),
+            slopeAzimuth,
+            slopeAngle,
         };
     },
 
@@ -239,7 +262,18 @@ const ElevationLayer = L.TileLayer.extend({
         if (elevationResult.elevation === null) {
             return 'No data';
         }
-        return elevationResult.elevation.toString();
+        const {elevation, slopeAzimuth, slopeAngle} = elevationResult;
+        let text = `${elevation} m`;
+        // if not null or undefined
+        // eslint-disable-next-line no-eq-null,eqeqeq
+        if (slopeAzimuth != null) {
+            let directionChar = '<div class="arrow">●</div>';
+            if (slopeAngle > 1) {
+                directionChar = `<div class="arrow" style="rotate: ${slopeAzimuth + 180}deg">↧</div>`;
+            }
+            text += `<br>${directionChar} &ang; ${Math.round(slopeAngle)}&deg;`;
+        }
+        return text;
     },
 });
 
