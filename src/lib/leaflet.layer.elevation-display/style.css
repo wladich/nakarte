@@ -16,3 +16,8 @@
 .elevation-display-label:before {
     border: none;
 }
+
+.elevation-display-label .arrow {
+    display: inline-block;
+    font-size: 16px;
+}
