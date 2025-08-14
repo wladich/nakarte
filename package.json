@@ -81,7 +81,7 @@
     "core-js": "^3.30.1",
     "escape-html": "^1.0.3",
     "idb": "^8.0.1",
-    "image-promise": "^7.0.1",
+    "image-promise": "^8.0.0",
     "knockout": "^3.4.0",
     "leaflet": "1.0.3",
     "leaflet-rotatedmarker": "^0.2.0",

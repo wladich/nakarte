@@ -4161,10 +4161,10 @@ ignore@^5.2.0, ignore@^5.2.4:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.4.tgz#a291c0c6178ff1b960befe47fcdec301674a6324"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
 
-image-promise@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-7.0.1.tgz#97134ff205de927af01c57b7daba2f6f7f6b2501"
-  integrity sha512-399HJHce1d3aEz4EYXLU4MUgUjX0gO0Bewu8mY4iLYItpNpBWLSQkevbYRPDViyISsL6K2bJiLadhxGCctRIOg==
+image-promise@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/image-promise/-/image-promise-8.0.0.tgz#e1a784cc2eeb894449f5f99b81c840444c286f0d"
+  integrity sha512-+9zK7GB3C5RDdRBTs9NGkYc2L70pEI7oRlJjWCN5VDEOje3gRt+BqaQ/bdZA9uFpagiDJisTZMhwK9BnYJKoiw==
 
 import-cwd@^2.0.0:
   version "2.1.0"
