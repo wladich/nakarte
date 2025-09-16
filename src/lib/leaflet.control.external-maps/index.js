@@ -73,6 +73,12 @@ const ExternalMaps = L.Control.extend({
                 title: 'Wikimapia',
                 externalMap: new ExternalMap('https://wikimapia.org/#lat={lat}&lon={lng}&z={zoom}', 3, 22),
             },
+            {
+                title: 'Meteoblue',
+                // As of now Meteoblue produces and accepts coordinates with sign and fixed characters N and E for
+                // all hemispheres
+                externalMap: new ExternalMap('https://www.meteoblue.com/en/weather/week/{lat}N{lng}E', 0, 18),
+            },
         ],
     },
 
