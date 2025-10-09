@@ -188,7 +188,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     isDefault: true,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'http://88.99.52.155/tmg/{z}/{x}/{y}'
+                            'http://88.99.52.156/tmg/{z}/{x}/{y}'
                         ),
                         {
                             code: 'T',
