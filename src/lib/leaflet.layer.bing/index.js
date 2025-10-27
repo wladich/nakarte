@@ -71,7 +71,7 @@ const BingSatLayer = BingBaseLayerWithDynamicUrl.extend({
 
 const BingOrdnanceSurveyLayer = BingBaseLayerWithDynamicUrl.extend({
     options: {
-        credentials: 'Auy875gcaw3RCFzVQSxi8Ytzw_K67r4Dw8DpGHavRZW_ciCBHLhQJAhCiXSdnzwH',
+        credentials: 'AuVxPHY_dRlWTHjKmQ-pjqsKKN3RQ8KjF7sPqpFzS-4A-W1-7JxLorxHoJxpLz8o',
     },
 
     getLayerUrl: async function () {

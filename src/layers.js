@@ -919,8 +919,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'Great Britain Topo (out of order)',
-                    disabled: true,
+                    title: 'Great Britain Topo',
                     isDefault: false,
                     layer: new LayerGroupWithOptions(
                         [
@@ -947,7 +946,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             code: 'Gbt',
                             isOverlay: true,
                             isWrapper: true,
-                            maxZoom: -1,
                         }
                     ),
                 },
@@ -1177,7 +1175,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Montenegro topo 250m',
                 'Finland Topo',
                 'Sweden topo',
-                'Great Britain Topo (out of order)',
+                'Great Britain Topo',
                 'Slovakia topo',
                 'Spain topo',
                 'Switzerland topo',
@@ -1258,7 +1256,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'GGC 1km',
         'Topo 1km',
         'Caucasus 1km',
-        'Great Britain Topo (out of order)',
+        'Great Britain Topo',
         'GGC 500m',
         'Topo 500m',
         'Caucasus 500m',
