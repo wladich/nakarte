@@ -2,6 +2,8 @@ import L from 'leaflet';
 
 import {fetch} from '~/lib/xhr-promise';
 
+import {urlViaCorsProxy} from '../CORSProxy';
+
 function tile2quad(x, y, z) {
     let quad = '';
     for (let i = z; i > 0; i--) {
@@ -70,17 +72,27 @@ const BingSatLayer = BingBaseLayerWithDynamicUrl.extend({
 });
 
 const BingOrdnanceSurveyLayer = BingBaseLayerWithDynamicUrl.extend({
-    options: {
-        credentials: 'AuVxPHY_dRlWTHjKmQ-pjqsKKN3RQ8KjF7sPqpFzS-4A-W1-7JxLorxHoJxpLz8o',
+    getSessionKey: async function () {
+        const xhr = await fetch(urlViaCorsProxy('https://www.bing.com/maps/'), {timeout: 5000});
+        const match = xhr.responseText.match(/"sessionKey"\s*:\s*"([^"]+)"/u);
+        if (!match || !match[1]) {
+            throw new Error('Bing session key not found');
+        }
+        return match[1];
     },
 
-    getLayerUrl: async function () {
+    getLayerUrlWithoutKey: async function () {
         const xhr = await fetch('https://www.bing.com/maps/style?styleid=ordnancesurvey', {
             responseType: 'json',
             headers: [['accept-language', 'en-GB']],
             timeout: 5000,
         });
         return xhr.response['sources']['osMaps1']['tiles'][0].replace(/^raster/u, 'https');
+    },
+
+    getLayerUrl: async function () {
+        const [url, key] = await Promise.all([this.getLayerUrlWithoutKey(), this.getSessionKey()]);
+        return url.replace('{credentials}', key);
     },
 });
 
