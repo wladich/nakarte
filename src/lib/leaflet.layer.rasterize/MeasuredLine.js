@@ -112,7 +112,7 @@ L.MeasuredLine.include({
             if (!this.options.measureTicksShown) {
                 return;
             }
-            const minTicksIntervalMeters = printOptions.scale * 1.5;
+            const minTicksIntervalMeters = printOptions.scale * 1.3;
             const ctx = canvas.getContext('2d');
             const ticks = this.getTicksPositions(minTicksIntervalMeters);
             const ticksPixelSize = this.tickFontSizeMm / 25.4 * printOptions.resolution;
