@@ -104,7 +104,7 @@ L.Control.Coordinates = L.Control.extend({
             this.loadStateFromStorage();
             ko.applyBindings(this, container);
             L.DomEvent.on(link, 'click', this.onClick, this);
-
+            this.setEnabled(false);
             return container;
         },
 
@@ -113,17 +113,11 @@ L.Control.Coordinates = L.Control.extend({
         },
 
         loadStateFromStorage: function() {
-            const active = safeLocalStorage.leafletCoordinatesActive === '1';
             const code = safeLocalStorage.leafletCoordinatesFmt || DEFAULT_FORMAT.code;
             const elevationDisplayed = (safeLocalStorage.leafletCoordinatesDisplayElevation ?? '1') === '1';
 
             this.formatCode(code);
             this.displayElevation(elevationDisplayed);
-            this.setEnabled(active);
-        },
-
-        saveEnabledStateToStorage: function() {
-            safeLocalStorage.leafletCoordinatesActive = this.isEnabled() ? '1' : '0';
         },
 
         saveFormatStateToStorage: function() {
@@ -210,7 +204,6 @@ L.Control.Coordinates = L.Control.extend({
 
         onClick: function() {
             this.setEnabled(!this.isEnabled());
-            this.saveEnabledStateToStorage();
         },
 
         onDisplayElevationChange: function(on) {
