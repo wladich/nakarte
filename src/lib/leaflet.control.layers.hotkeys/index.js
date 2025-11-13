@@ -1,20 +1,6 @@
 import L from 'leaflet';
 import './style.css';
-
-function getLayerHotkey(layer) {
-    if (!layer || !layer.options) {
-        return null;
-    }
-    let hotkey = layer.options.hotkey;
-    if (hotkey) {
-        return hotkey;
-    }
-    hotkey = layer.options.code;
-    if (hotkey && hotkey.length === 1) {
-        return hotkey;
-    }
-    return null;
-}
+import {getLayerFromKeyEvent, getLayerHotkey} from "../leaflet.control.layers.configure";
 
 function extendLayerName(name, layer) {
     if (layer.options) {
@@ -48,7 +34,7 @@ function enableHotKeys(control) {
 
             onAdd: function(map) {
                 var result = originalOnAdd.call(this, map);
-                this._addHotketEvents();
+                this._addHotkeyEvents();
                 return result;
             },
 
@@ -58,7 +44,7 @@ function enableHotKeys(control) {
                 originalOnRemove.call(this, map);
             },
 
-            _addHotKetEvents: function() {
+            _addHotkeyEvents: function() {
                 L.DomEvent.on(document, 'keyup', this._onHotkeyUp, this);
                 L.DomEvent.on(document, 'keydown', this.onKeyDown, this);
             },
@@ -81,19 +67,15 @@ function enableHotKeys(control) {
                 ) {
                     return;
                 }
-                const key = String.fromCharCode(e.keyCode);
-                for (let layer of this._layers) {
+                const layer = getLayerFromKeyEvent(this._layers, e);
+                if (layer) {
                     let layerId = L.stamp(layer.layer);
-                    const layerHotkey = getLayerHotkey(layer.layer);
-                    if (layerHotkey === key) {
-                        const inputs = this._form.getElementsByTagName('input');
-                        for (let input of [...inputs]) {
-                            if (input.layerId === layerId) {
-                                input.click();
-                                break;
-                            }
+                    const inputs = this._form.getElementsByTagName('input');
+                    for (let input of [...inputs]) {
+                        if (input.layerId === layerId) {
+                            input.click();
+                            break;
                         }
-                        break;
                     }
                 }
             }
@@ -102,10 +84,9 @@ function enableHotKeys(control) {
     for (let layer of control._layers) {
         layer.name = extendLayerName(layer.name, layer.layer);
     }
-    control._addHotKetEvents();
+    control._addHotkeyEvents();
     control._update();
     return control;
 }
 
 export default enableHotKeys;
-
