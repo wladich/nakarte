@@ -470,7 +470,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             shortName: 'opentopo',
                             attribution: '<a href="https://opentopomap.org/">OpenTopoMap</a>',
-                            hotkey: 'V',
                         }
                     )
                 },
@@ -863,7 +862,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             jnx: true,
                             scaleDependent: true,
                             shortName: 'czech_tourist',
-                            hotkey: 'H',
                             attribution: '<a href="https://mapy.cz/turisticka">mapy.cz outdoor map</a>',
                         }
                     )
