@@ -612,7 +612,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                         [
                             L.tileLayer(
                                 urlViaCorsProxy(
-                                    'http://nakartetiles.s3-website.eu-central-1.amazonaws.com/{z}/{x}/{y}.png'
+                                    'https://maptiles.website.yandexcloud.net/{z}/{x}/{y}.png'
                                 ),
                                 {
                                     isOverlay: true,
