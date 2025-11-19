@@ -395,14 +395,13 @@ const ElevationProfile = L.Class.extend({
                         ),
                     ascent: Math.round(stats.ascent),
                     descent: Math.round(stats.descent),
-                    dist: (stats.distance / 1000).toFixed(1),
                     startApprox: stats.dataLostAtStart > 0.02 ? '~ ' : '',
                     endApprox: stats.dataLostAtEnd > 0.02 ? '~ ' : '',
                     approx: stats.dataLost > 0.02 ? '~ ' : '',
                     incomplete: stats.dataLost > 0.02 ? 'Some elevation data missing' : '',
                 };
             }
-            d.dist = (stats.distance / 1000).toFixed(1);
+            d.dist = (stats.distance / 1000).toFixed(2);
 
             this.propsContainer.innerHTML = `
                 <table>
