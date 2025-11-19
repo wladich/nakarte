@@ -9,17 +9,17 @@ import {DragEvents} from '~/lib/leaflet.events.drag';
 function calcSamplingInterval(length) {
     var targetPointsN = 2000;
     var maxPointsN = 9999;
-    var samplingIntgerval = length / targetPointsN;
-    if (samplingIntgerval < 10) {
-        samplingIntgerval = 10;
+    var samplingInterval = length / targetPointsN;
+    if (samplingInterval < 10) {
+        samplingInterval = 10;
     }
-    if (samplingIntgerval > 50) {
-        samplingIntgerval = 50;
+    if (samplingInterval > 50) {
+        samplingInterval = 50;
     }
-    if (length / samplingIntgerval > maxPointsN) {
-        samplingIntgerval = length / maxPointsN;
+    if (length / samplingInterval > maxPointsN) {
+        samplingInterval = length / maxPointsN;
     }
-    return samplingIntgerval;
+    return samplingInterval;
 }
 
 function createSvg(tagName, attributes, parent) {
