@@ -1,10 +1,41 @@
-import BaseService from './baseService';
 import {urlViaCorsProxy} from '~/lib/CORSProxy';
+import {fetch} from '~/lib/xhr-promise';
+
+import BaseService from './baseService';
 
 class GarminBase extends BaseService {
+    urlRe = /NOT IMPLEMENTED/u;
+
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
     }
+
+    async prepare() {
+        let response;
+        try {
+            response = await fetch(urlViaCorsProxy(this.origUrl + '?' + Date.now()), {
+                isResponseSuccess: (xhr) => xhr.status === 200,
+            });
+        } catch {
+            return 'NETWORK';
+        }
+        let dom;
+        try {
+            dom = new DOMParser().parseFromString(response.response, 'text/html');
+        } catch {
+            return 'NETWORK';
+        }
+        const token = dom.querySelector('meta[name="csrf-token"]')?.content;
+        if (!token) {
+            return 'NETWORK';
+        }
+        this.token = token;
+        return null;
+    }
+}
+
+function isResponseSuccess(xhr) {
+    return xhr.status === 200 || xhr.status === 403 || xhr.status === 404;
 }
 
 class GarminRoute extends GarminBase {
@@ -12,14 +43,18 @@ class GarminRoute extends GarminBase {
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
-        const trackId = this.trackId = m[1];
-        return [{
-            url: urlViaCorsProxy(`https://connect.garmin.com/course-service/course/${trackId}`),
-            options: {
-                responseType: 'json',
-                isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
+        const trackId = m[1];
+        this.trackId = trackId;
+        return [
+            {
+                url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/course-service/course/${trackId}`),
+                options: {
+                    responseType: 'json',
+                    headers: [['connect-csrf-token', this.token]],
+                    isResponseSuccess,
+                },
             },
-        }];
+        ];
     }
 
     parseResponse(responses) {
@@ -30,10 +65,10 @@ class GarminRoute extends GarminBase {
         if (response.status === 404) {
             return [{error: 'Garmin Connect route does not exist'}];
         }
-        let name = `Garmin Connect route ${this.trackId}`;
+        let trackName = `Garmin Connect route ${this.trackId}`;
         const data = response.responseJSON;
         if (!data) {
-            return [{name, error: 'UNSUPPORTED'}];
+            return [{name: trackName, error: 'UNSUPPORTED'}];
         }
         let points = null;
         let tracks = [];
@@ -45,14 +80,16 @@ class GarminRoute extends GarminBase {
                 tracks = [data.geoPoints.map((obj) => ({lat: obj.latitude, lng: obj.longitude}))];
             }
         } catch {
-            return [{name, error: 'UNSUPPORTED'}];
+            return [{name: trackName, error: 'UNSUPPORTED'}];
         }
-        name = data.courseName ? data.courseName : name;
-        return [{
-            name,
-            points,
-            tracks: tracks,
-        }];
+        trackName = data.courseName ? data.courseName : trackName;
+        return [
+            {
+                name: trackName,
+                points,
+                tracks,
+            },
+        ];
     }
 }
 
@@ -61,43 +98,54 @@ class GarminActivity extends GarminBase {
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
-        const trackId = this.trackId = m[1];
+        const trackId = m[1];
+        this.trackId = trackId;
         return [
             {
-                url: urlViaCorsProxy(
-                    `https://connect.garmin.com/activity-service/activity/${trackId}/details`),
+                url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/activity-service/activity/${trackId}`),
                 options: {
                     responseType: 'json',
-                    isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 403 || xhr.status === 404
-                }
-            }
+                    headers: [['connect-csrf-token', this.token]],
+                    isResponseSuccess,
+                },
+            },
+            {
+                url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/activity-service/activity/${trackId}/details`),
+                options: {
+                    responseType: 'json',
+                    headers: [['connect-csrf-token', this.token]],
+                    isResponseSuccess,
+                },
+            },
         ];
     }
 
     parseResponse(responses) {
-        const response = responses[0];
-        if (response.status === 403) {
+        const [infoResponse, detailsResponse] = responses;
+        if (infoResponse.status === 403) {
             return [{error: 'Garmin Connect user disabled viewing this activity'}];
         }
-        if (response.status === 404) {
+        if (infoResponse.status === 404) {
             return [{error: 'Garmin Connect activity does not exist'}];
         }
-        let name = `Garmin Connect activity ${this.trackId}`;
-        const data = response.responseJSON;
-        if (!data) {
-            return [{name, error: 'UNSUPPORTED'}];
+        let trackName = `Garmin Connect activity ${this.trackId}`;
+        if (!infoResponse.responseJSON) {
+            return [{name: trackName, error: 'UNSUPPORTED'}];
         }
+        trackName = infoResponse.responseJSON.activityName || trackName;
         let track;
         try {
-            track = data.geoPolylineDTO.polyline.map((obj) => ({lat: obj.lat, lng: obj.lon}));
+            track = detailsResponse.responseJSON.geoPolylineDTO.polyline.map((obj) => ({lat: obj.lat, lng: obj.lon}));
         } catch {
-            return [{name, error: 'UNSUPPORTED'}];
+            return [{name: trackName, error: 'UNSUPPORTED'}];
         }
 
-        return [{
-            name,
-            tracks: [track]
-        }];
+        return [
+            {
+                name: trackName,
+                tracks: [track],
+            },
+        ];
     }
 }
 

@@ -74,7 +74,6 @@ module.exports = [
     'src/lib/leaflet.control.track-list/lib/services/strava.js',
     'src/lib/leaflet.control.track-list/lib/services/endomondo.js',
     'src/lib/leaflet.control.track-list/lib/services/index.js',
-    'src/lib/leaflet.control.track-list/lib/services/garmin.js',
     'src/lib/leaflet.control.track-list/lib/services/tracedetrail.js',
     'src/lib/leaflet.control.track-list/lib/services/gpslib.js',
     'src/lib/leaflet.control.track-list/lib/services/openstreetmapRu.js',
