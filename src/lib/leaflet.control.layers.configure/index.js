@@ -6,6 +6,11 @@ import {notify} from '~/lib/notifications';
 import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
+import {
+    getLayerHotkey,
+    clearHotkeyValue,
+    saveLayerHotkeysToStorage
+} from "../leaflet.control.layers.hotkeys";
 
 function enableConfig(control, {layers, customLayersOrder}) {
     const originalOnAdd = control.onAdd;
@@ -69,9 +74,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                     layer.enabled = enabled;
                     layer.checked = ko.observable(enabled);
+                    layer.hotkey = layer.hotkey ?? getLayerHotkey(layer.layer);
                     layer.description = layer.description || '';
                 }
-                this.updateEnabledLayers();
+                this.updateLayers();
             },
 
             _onConfigButtonClick: function() {
@@ -94,20 +100,26 @@ function enableConfig(control, {layers, customLayersOrder}) {
         <!-- ko foreach: _allLayersGroups -->
             <div class="section-header" data-bind="html: group"></div>
             <!-- ko foreach: layers -->
-                <label>
-                    <input type="checkbox" data-bind="checked: checked"/>
-                    <span data-bind="text: title">
-                    </span><!--  ko if: description -->
-                    <span data-bind="html: description || ''"></span>
+                <label class="label">
+                    <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
+                    <span data-bind="text: title"></span>
+                    <input type="text" class="hotkey-input" size="1" maxlength="1"
+                        data-bind="value: hotkey, event: {keypress: (layer, event) => 
+                            $root.validateHotkeyAndDisplayError(event, layer, hotkey)}"/>
+                    <!--  ko if: description -->
+                    <span class="description" data-bind="html: description || ''"></span>
                     <!-- /ko -->
                 </label>
             <!-- /ko -->
         <!-- /ko -->
         <div data-bind="if: _customLayers().length" class="section-header">Custom layers</div>
         <!-- ko foreach: _customLayers -->
-                <label>
-                    <input type="checkbox" data-bind="checked: checked"/>
+                <label class="label">
+                    <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title"></span>
+                    <input type="text" class="hotkey-input" size="1" maxlength="1"
+                        data-bind="value: hotkey, event: {keypress: (layer, event) =>
+                            $root.validateHotkeyAndDisplayError(event, layer, hotkey)}" />
                 </label>
         <!-- /ko -->
     </form>
@@ -129,6 +141,17 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 this._initLayersSelectWindow();
                 this._map._controlContainer.appendChild(this._configWindow);
                 this._configWindowVisible = true;
+            },
+
+            saveHotkeys: function() {
+                const layersHotkeys = {};
+                [...this._allLayers, ...this._customLayers()].forEach((layer) => {
+                    const hotkey = layer.hotkey ?? getLayerHotkey(layer.layer);
+                    if (hotkey) {
+                        layersHotkeys[layer.layer.options.code] = hotkey;
+                    }
+                });
+                saveLayerHotkeysToStorage(layersHotkeys);
             },
 
             hideSelectWindow: function() {
@@ -153,6 +176,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onSelectWindowOkClicked: function() {
                 const newEnabledLayers = [];
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
+                    layer.hotkey = layer.hotkey ?? getLayerHotkey(layer.layer);
                     if (layer.checked()) {
                         if (!layer.enabled) {
                             newEnabledLayers.push(layer);
@@ -162,8 +186,59 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         layer.enabled = false;
                     }
                 }
-                this.updateEnabledLayers(newEnabledLayers);
+                this.saveHotkeys();
+                this.updateLayers(newEnabledLayers);
                 this.hideSelectWindow();
+            },
+
+            validateHotkeyAndDisplayError: function(e, layer, hotkey) {
+                const isValid = this.validateHotkey(e, layer, hotkey);
+
+                e.target.setAttribute('data-error', !isValid);
+
+                return isValid;
+            },
+
+            validateHotkey: function(e, layer, hotkey) {
+                const layers = [...this._allLayers, ...this._customLayers()];
+                const hotkeys = layers.map((layer) => layer.hotkey).filter((layer) => layer);
+
+                const value = e.key;
+
+                if (value === 'Enter' || value === ' ') {
+                    return false;
+                }
+
+                const normalizedValue = clearHotkeyValue(value);
+
+                // console.log(">>>", [value, normalizedValue], [e, layer, hotkey], hotkeys);
+
+                // ключ невалиден
+                if (!normalizedValue.length) {
+                    return false;
+                }
+
+                // в слое был определен ключ, ключ подходит, но уже определен в этом слое
+                if (hotkey && normalizedValue === hotkey && hotkeys.includes(normalizedValue)) {
+                    return true;
+                }
+
+                // в слое был определен ключ, ключ подходит, но он уже определен в другом слое
+                if (hotkey && normalizedValue !== hotkey && hotkeys.includes(normalizedValue)) {
+                    return false;
+                }
+
+                // ключа в поле не было, ключ подходит, но он уже определен в другом слое
+                if (hotkey === null && normalizedValue === value && hotkeys.includes(normalizedValue)) {
+                    return false;
+                }
+
+                // ключа в поле не было, ключ подходит
+                if (hotkey === null && normalizedValue === value) {
+                    return true;
+                }
+
+                return true;
             },
 
             onCustomLayerCreateClicked: function() {
@@ -190,7 +265,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 );
             },
 
-            updateEnabledLayers: function(addedLayers) {
+            updateLayers: function(addedLayers) {
                 const disabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
@@ -245,7 +320,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                             layer.enabled = true;
                         }
                     }
-                    this.updateEnabledLayers();
+                    this.updateLayers();
                 }
                 this.storeEnabledLayers();
                 return originalUnserializeState.call(this, values);
@@ -394,7 +469,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 layer.checked = ko.observable(true);
                 this._customLayers.push(layer);
                 this.hideCustomLayerForm();
-                this.updateEnabledLayers();
+                this.updateLayers();
             },
 
             createCustomLayer: function(fieldValues) {
@@ -422,6 +497,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
                     fieldValues: fieldValues,
                     enabled: true,
+                    hotkey: null,
                     checked: ko.observable(true)
                 };
                 tileLayer.__customLayer = customLayer;
@@ -447,7 +523,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         caption: 'Save',
                         callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues),
                     },
-                    {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
+                    {caption: 'Delete', callback: () => this.onCustomLayerDeleteClicked(layer)},
                         {caption: 'Cancel', callback: () => this.onCustomLayerCancelClicked()}
                     ], layer.fieldValues
                 );
@@ -471,8 +547,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const layerPos = this._customLayers.indexOf(layer);
                 this._customLayers.remove(layer);
-
                 const newLayer = this.createCustomLayer(newFieldValues);
+                newLayer.hotkey = layer.hotkey;
                 this._customLayers.splice(layerPos, 0, newLayer);
                 const newLayerVisible = (
                     this._map.hasLayer(layer.layer) &&
@@ -483,17 +559,19 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);
-                this.updateEnabledLayers();
+                this.saveHotkeys();
+                this.updateLayers();
                 if (newLayerVisible) {
                     newLayer.layer.fire('add');
                 }
                 this.hideCustomLayerForm();
             },
 
-            onCustomLayerDeletelClicked: function(layer) {
+            onCustomLayerDeleteClicked: function(layer) {
                 this._map.removeLayer(layer.layer);
                 this._customLayers.remove(layer);
-                this.updateEnabledLayers();
+                this.saveHotkeys();
+                this.updateLayers();
                 this.hideCustomLayerForm();
             },
 
