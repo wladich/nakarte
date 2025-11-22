@@ -19,6 +19,7 @@ function hotkeyAlreadyDefinedInStorage(hotkey) {
 }
 
 function clearHotkeyValue(value) {
+    // eslint-disable-next-line require-unicode-regexp
     return value.replace(/[^A-Z0-9]/g, '');
 }
 

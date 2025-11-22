@@ -104,7 +104,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title"></span>
                     <input type="text" class="hotkey-input" size="1" maxlength="1"
-                        data-bind="value: hotkey, event: {keypress: (layer, event) => $root.validateHotkeyAndDisplayError(event, layer, hotkey)}"/>
+                        data-bind="value: hotkey, event: {keypress: (layer, event) => 
+                            $root.validateHotkeyAndDisplayError(event, layer, hotkey)}"/>
                     <!--  ko if: description -->
                     <span class="description" data-bind="html: description || ''"></span>
                     <!-- /ko -->
@@ -117,7 +118,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title"></span>
                     <input type="text" class="hotkey-input" size="1" maxlength="1"
-                        data-bind="value: hotkey, event: {keypress: (layer, event) => $root.validateHotkeyAndDisplayError(event, layer, hotkey)}" />
+                        data-bind="value: hotkey, event: {keypress: (layer, event) =>
+                            $root.validateHotkeyAndDisplayError(event, layer, hotkey)}" />
                 </label>
         <!-- /ko -->
     </form>
@@ -199,7 +201,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             validateHotkey: function(e, layer, hotkey) {
                 const layers = [...this._allLayers, ...this._customLayers()];
-                const hotkeys = layers.map(layer => layer.hotkey).filter(layer => layer);
+                const hotkeys = layers.map((layer) => layer.hotkey).filter((layer) => layer);
 
                 const value = e.key;
 
