@@ -8,6 +8,7 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 import {
     getLayerHotkey,
+    clearHotkeyValue,
     saveLayerHotkeysToStorage
 } from "../leaflet.control.layers.hotkeys";
 
@@ -102,7 +103,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 <label class="label">
                     <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title"></span>
-                    <input type="text" class="hotkey-input" size="1" maxlength="1" data-bind="value: hotkey" />
+                    <input type="text" class="hotkey-input" size="1" maxlength="1"
+                        data-bind="value: hotkey, event: {keypress: (layer, event) => $root.validateHotkeyAndDisplayError(event, layer, hotkey)}"/>
                     <!--  ko if: description -->
                     <span class="description" data-bind="html: description || ''"></span>
                     <!-- /ko -->
@@ -114,7 +116,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 <label class="label">
                     <input class="checkbox" type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title"></span>
-                    <input type="text" class="hotkey-input" size="1" maxlength="1" data-bind="value: hotkey" />
+                    <input type="text" class="hotkey-input" size="1" maxlength="1"
+                        data-bind="value: hotkey, event: {keypress: (layer, event) => $root.validateHotkeyAndDisplayError(event, layer, hotkey)}" />
                 </label>
         <!-- /ko -->
     </form>
@@ -184,6 +187,56 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 this.saveHotkeys();
                 this.updateLayers(newEnabledLayers);
                 this.hideSelectWindow();
+            },
+
+            validateHotkeyAndDisplayError: function(e, layer, hotkey) {
+                const isValid = this.validateHotkey(e, layer, hotkey);
+
+                e.target.setAttribute('data-error', !isValid);
+
+                return isValid;
+            },
+
+            validateHotkey: function(e, layer, hotkey) {
+                const layers = [...this._allLayers, ...this._customLayers()];
+                const hotkeys = layers.map(layer => layer.hotkey).filter(layer => layer);
+
+                const value = e.key;
+
+                if (value === 'Enter' || value === ' ') {
+                    return false;
+                }
+
+                const normalizedValue = clearHotkeyValue(value);
+
+                // console.log(">>>", [value, normalizedValue], [e, layer, hotkey], hotkeys);
+
+                // ключ невалиден
+                if (!normalizedValue.length) {
+                    return false;
+                }
+
+                // в слое был определен ключ, ключ подходит, но уже определен в этом слое
+                if (hotkey && normalizedValue === hotkey && hotkeys.includes(normalizedValue)) {
+                    return true;
+                }
+
+                // в слое был определен ключ, ключ подходит, но он уже определен в другом слое
+                if (hotkey && normalizedValue !== hotkey && hotkeys.includes(normalizedValue)) {
+                    return false;
+                }
+
+                // ключа в поле не было, ключ подходит, но он уже определен в другом слое
+                if (hotkey === null && normalizedValue === value && hotkeys.includes(normalizedValue)) {
+                    return false;
+                }
+
+                // ключа в поле не было, ключ подходит
+                if (hotkey === null && normalizedValue === value) {
+                    return true;
+                }
+
+                return true;
             },
 
             onCustomLayerCreateClicked: function() {

@@ -11,11 +11,15 @@ function saveLayerHotkeysToStorage(layersHotkeys) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function existsHotkey(hotkey) {
+function hotkeyAlreadyDefinedInStorage(hotkey) {
     const layersHotkeysSaved = getLayerHotkeysFromStorage();
     const hotkeys = Object.values(layersHotkeysSaved);
 
     return hotkeys.indexOf(hotkey) !== -1;
+}
+
+function clearHotkeyValue(value) {
+    return value.replace(/[^A-Z0-9]/g, '');
 }
 
 function getLayerHotkeyFromStorage(code) {
@@ -149,5 +153,6 @@ export default enableHotKeys;
 export {
     getLayerHotkey,
     saveLayerHotkeysToStorage,
+    clearHotkeyValue,
 };
 

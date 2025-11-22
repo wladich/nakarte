@@ -196,3 +196,8 @@
 .leaflet-layers-select-window .label:hover .hotkey-input {
     border-color: #999;
 }
+
+.leaflet-layers-select-window .hotkey-input:focus[data-error=true] {
+    border-color: red !important;
+    transition: border-color 2s 0s;
+}
