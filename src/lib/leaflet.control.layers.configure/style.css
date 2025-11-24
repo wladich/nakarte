@@ -167,3 +167,37 @@
     font-size: 10px;
     color: #777;
 }
+
+
+.leaflet-layers-select-window .section-header:not(:first-child) {
+    margin-top: 10px;
+}
+
+.leaflet-layers-select-window .label {
+    padding-left: 24px;
+}
+
+.leaflet-layers-select-window .checkbox {
+    margin-left: -20px;
+}
+
+.leaflet-layers-select-window .description {
+    display: block;
+    font-size: 10px;
+}
+
+.leaflet-layers-select-window .hotkey-input {
+    color: #999;
+    border: 1px solid transparent;
+    font-size: 9px;
+}
+
+.leaflet-layers-select-window .hotkey-input:focus,
+.leaflet-layers-select-window .label:hover .hotkey-input {
+    border-color: #999;
+}
+
+.leaflet-layers-select-window .hotkey-input:focus[data-error=true] {
+    border-color: red !important;
+    transition: border-color 2s 0s;
+}
