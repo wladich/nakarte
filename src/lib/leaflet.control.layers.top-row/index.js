@@ -2,17 +2,18 @@ import L from 'leaflet';
 import './style.css';
 
 function enableTopRow(control) {
-    const originalOnAdd = control.onAdd;
     if (control._topRowEnabled) {
         return;
     }
+
+    const originalOnAdd = control.onAdd;
 
     L.Util.extend(control, {
         _topRowEnabled: true,
 
         onAdd: function(map) {
             const container = originalOnAdd.call(this, map);
-            setTimeout(() => this.__injectTopRow(), 0);
+            this.__injectTopRow();
             return container;
         },
 
@@ -22,9 +23,6 @@ function enableTopRow(control) {
         }
 
     });
-    if (control._map) {
-        control.__injectTopRow();
-    }
 }
 
 export default enableTopRow;

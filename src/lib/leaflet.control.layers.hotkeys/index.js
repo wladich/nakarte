@@ -27,13 +27,13 @@ function extendLayerName(name, layer) {
 }
 
 function enableHotkeys(control) {
-    const originalOnAdd = control.onAdd;
-    const originalOnRemove = control.onRemove;
-    const originalAddItem = control._addItem;
-
     if (control._hotkeysEnabled) {
         return control;
     }
+
+    const originalOnAdd = control.onAdd;
+    const originalOnRemove = control.onRemove;
+    const originalAddItem = control._addItem;
 
     L.Util.extend(control, {
             _hotkeysEnabled: true,

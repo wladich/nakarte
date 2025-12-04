@@ -8,13 +8,15 @@ import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 
 function enableConfig(control, {layers, customLayersOrder}) {
-    const originalOnAdd = control.onAdd;
-    const originalUnserializeState = control.unserializeState;
-    const originalAddItem = control._addItem;
     if (control._configEnabled) {
         return;
     }
+
     enableTopRow(control);
+
+    const originalOnAdd = control.onAdd;
+    const originalUnserializeState = control.unserializeState;
+    const originalAddItem = control._addItem;
 
     L.Util.extend(control, {
             _configEnabled: true,
@@ -25,6 +27,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onAdd: function(map) {
                 const container = originalOnAdd.call(this, map);
                 this.__injectConfigButton();
+                this._initializeLayersState();
                 return container;
             },
 
@@ -525,10 +528,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
         }
     );
-    if (control._map) {
-        control.__injectConfigButton();
-    }
-    control._initializeLayersState();
 }
 
 export default enableConfig;

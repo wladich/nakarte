@@ -4,18 +4,20 @@ import '~/lib/controls-styles/controls-styles.css';
 import enableTopRow from '~/lib/leaflet.control.layers.top-row';
 
 function enableMinimize(control) {
-    const originalOnAdd = control.onAdd;
     if (control._minimizeEnabled) {
         return;
     }
+
     enableTopRow(control);
+
+    const originalOnAdd = control.onAdd;
 
     L.Util.extend(control, {
             _minimizeEnabled: true,
 
             onAdd: function(map) {
                 const container = originalOnAdd.call(this, map);
-                setTimeout(() => this.__injectMinimizeButtons(), 0);
+                this.__injectMinimizeButtons();
                 return container;
             },
 
@@ -43,9 +45,6 @@ function enableMinimize(control) {
             }
         }
     );
-    if (control._map) {
-        control.__injectMinimizeButtons();
-    }
 }
 
 export default enableMinimize;
