@@ -33,11 +33,6 @@ function enableAdaptiveHeight(control) {
             }
         }
     );
-
-    if (control._map) {
-        control.__setupResizeEventsHandler();
-        setTimeout(() => control.__setAdaptiveHeight(), 0);
-    }
 }
 
 export default enableAdaptiveHeight;
