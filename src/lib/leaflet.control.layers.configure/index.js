@@ -72,7 +72,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                     layer.enabled = enabled;
                     layer.checked = ko.observable(enabled);
-                    layer.description = layer.description || '';
                 }
                 this.updateEnabledLayers();
             },
@@ -100,9 +99,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 <label>
                     <input type="checkbox" data-bind="checked: checked"/>
                     <span data-bind="text: title">
-                    </span><!--  ko if: description -->
-                    <span data-bind="html: description || ''"></span>
-                    <!-- /ko -->
+                    </span>
                 </label>
             <!-- /ko -->
         <!-- /ko -->

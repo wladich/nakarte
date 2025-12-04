@@ -23,7 +23,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
     const layersDefs = [
                 {
                     title: 'OpenStreetMap',
-                    description: 'OSM default style',
                     isDefault: true,
                     layer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         {
@@ -476,7 +475,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'OpenCycleMap',
-                    description: '<a href="https://www.opencyclemap.org/docs/">(Info and key)</a>',
                     isDefault: false,
                     layer: new RetinaTileLayer(
                         [
@@ -516,7 +514,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Eurasia 25km',
-                    description: '1975-80',
+                    // description: '1975-80',
                     isDefault: false,
                     layer: L.tileLayer("https://{s}.tiles.nakarte.me/eurasia25km/{z}/{x}/{y}",
                         {
@@ -587,7 +585,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Montenegro topo 250m',
-                    description: '1970-72',
+                    // description: '1970-72',
                     isDefault: false,
                     layer: L.tileLayer("https://{s}.tiles.nakarte.me/montenegro250m/{z}/{x}/{y}",
                         {
@@ -605,8 +603,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Mountains by Aleksey Tsvetkov',
-                    description:
-                        'Tian Shan, Dzungaria, <a href="http://pereval.g-utka.ru/">http://pereval.g-utka.ru/</a>',
                     isDefault: true,
                     layer: new LayerGroupWithOptions(
                         [
@@ -828,7 +824,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 {
                     // Вместо 404 отдают 500 для отсутствующих тайлов
                     title: 'Norway roads',
-                    description: '<a href="https://kart.finn.no/">https://kart.finn.no/</a>',
                     isDefault: false,
                     layer: L.tileLayer("https://maptiles1.finncdn.no/tileService/1.0.3/normap/{z}/{x}/{y}.png",
                         {
@@ -897,7 +892,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Finland Topo',
-                    description: '<a href="https://laji.fi/en/map/">LAJI.FI</a>',
                     isDefault: false,
                     layer: L.tileLayer(
                         "https://proxy.laji.fi/mml_wmts/maasto/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/" +
@@ -951,8 +945,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Waymarked Cycling Trails',
-                    description:
-                        '<a href="https://cycling.waymarkedtrails.org/">https://cycling.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
                         {
@@ -969,7 +961,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Waymarked Hiking Trails',
-                    description: '<a href="https://hiking.waymarkedtrails.org/">https://hiking.waymarkedtrails.org</a>',
                     isDefault: false,
                     layer: L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
                         {
@@ -986,7 +977,6 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 },
                 {
                     title: 'Slovakia topo',
-                    description: '<a href="https://mapy.hiking.sk">https://mapy.hiking.sk/</a>',
                     isDefault: false,
                     layer: new LayerGroupWithOptions(
                         [
@@ -1203,7 +1193,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
 
         },
         {
-            title: 'Norway <a href="https://www.ut.no/kart/">https://www.ut.no/kart/</a>',
+            title: 'Norway',
             layers: [
                 'Norway paper map',
                 'Norway topo',
