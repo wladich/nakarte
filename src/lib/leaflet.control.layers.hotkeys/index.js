@@ -26,17 +26,17 @@ function extendLayerName(name, layer) {
     return name;
 }
 
-function enableHotKeys(control) {
+function enableHotkeys(control) {
     const originalOnAdd = control.onAdd;
     const originalOnRemove = control.onRemove;
     const originalAddItem = control._addItem;
 
-    if (control._hotKeysEnabled) {
+    if (control._hotkeysEnabled) {
         return control;
     }
 
     L.Util.extend(control, {
-            _hotKeysEnabled: true,
+            _hotkeysEnabled: true,
 
             _addItem: function(obj) {
                 if (!L.Browser.touch || !L.Browser.mobile) {
@@ -48,7 +48,7 @@ function enableHotKeys(control) {
 
             onAdd: function(map) {
                 var result = originalOnAdd.call(this, map);
-                this._addHotketEvents();
+                this._addHotkeyEvents();
                 return result;
             },
 
@@ -58,7 +58,7 @@ function enableHotKeys(control) {
                 originalOnRemove.call(this, map);
             },
 
-            _addHotKetEvents: function() {
+            _addHotkeyEvents: function() {
                 L.DomEvent.on(document, 'keyup', this._onHotkeyUp, this);
                 L.DomEvent.on(document, 'keydown', this.onKeyDown, this);
             },
@@ -102,10 +102,10 @@ function enableHotKeys(control) {
     for (let layer of control._layers) {
         layer.name = extendLayerName(layer.name, layer.layer);
     }
-    control._addHotKetEvents();
+    control._addHotkeyEvents();
     control._update();
     return control;
 }
 
-export default enableHotKeys;
+export default enableHotkeys;
 

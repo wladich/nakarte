@@ -7,7 +7,7 @@ import '~/lib/leaflet.control.printPages/control';
 import '~/lib/leaflet.control.caption';
 import config from './config';
 import '~/lib/leaflet.control.coordinates';
-import enableLayersControlHotKeys from '~/lib/leaflet.control.layers.hotkeys';
+import enableLayersControlHotkeys from '~/lib/leaflet.control.layers.hotkeys';
 import '~/lib/leaflet.hashState/Leaflet.Map';
 import '~/lib/leaflet.hashState/Leaflet.Control.Layers';
 import {fixAll} from '~/lib/leaflet.fixes';
@@ -184,7 +184,7 @@ function setUp() { // eslint-disable-line complexity
 
     const layersControl = L.control.layers(null, null, {collapsed: false})
         .addTo(map);
-    enableLayersControlHotKeys(layersControl);
+    enableLayersControlHotkeys(layersControl);
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
     enableLayersConfig(layersControl, getLayers());
