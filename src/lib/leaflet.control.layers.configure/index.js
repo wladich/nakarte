@@ -118,7 +118,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     layer.enabled = enabled;
                     layer.checked = ko.observable(enabled);
                 }
-                this.updateEnabledLayers();
+                this.updateLayers();
             },
 
             _onConfigButtonClick: function() {
@@ -207,7 +207,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         layer.enabled = false;
                     }
                 }
-                this.updateEnabledLayers(newEnabledLayers);
+                this.updateLayers(newEnabledLayers);
                 this.hideSelectWindow();
             },
 
@@ -235,7 +235,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 );
             },
 
-            updateEnabledLayers: function(addedLayers) {
+            updateLayersListControl: function(addedLayers) {
                 const disabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
@@ -252,7 +252,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                             this.addBaseLayer(l.layer, l.title);
                         }
                         if (!isOverlay && this._map.hasLayer(l.layer)) {
-                              hasBaselayerOnMap = true;
+                            hasBaselayerOnMap = true;
                         }
                     }
                 );
@@ -265,6 +265,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         }
                     }
                 }
+            },
+
+            updateLayers: function(addedLayers) {
+                this.updateLayersListControl(addedLayers);
                 this.saveSettings();
             },
 
@@ -293,9 +297,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
                             layer.enabled = true;
                         }
                     }
-                    this.updateEnabledLayers();
+                    this.updateLayers();
                 }
-                this.saveSettings();
                 return originalUnserializeState.call(this, values);
             },
 
@@ -442,7 +445,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 layer.checked = ko.observable(true);
                 this._customLayers.push(layer);
                 this.hideCustomLayerForm();
-                this.updateEnabledLayers();
+                this.updateLayers();
             },
 
             createCustomLayer: function(fieldValues) {
@@ -531,7 +534,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     this._map.addLayer(newLayer.layer);
                 }
                 this._map.removeLayer(layer.layer);
-                this.updateEnabledLayers();
+                this.updateLayers();
                 if (newLayerVisible) {
                     newLayer.layer.fire('add');
                 }
@@ -541,7 +544,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onCustomLayerDeletelClicked: function(layer) {
                 this._map.removeLayer(layer.layer);
                 this._customLayers.remove(layer);
-                this.updateEnabledLayers();
+                this.updateLayers();
                 this.hideCustomLayerForm();
             },
 
