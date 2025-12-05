@@ -19,6 +19,13 @@ class LayersConfigDialog {
         this.initWindow();
     }
 
+    allLayers() {
+        return [
+            ...([].concat(...this.builtInLayers.map((group) => group.layers))),
+            ...this.customLayers
+        ];
+    }
+
     initWindow() {
         const container = this.window =
             L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper');
@@ -32,10 +39,12 @@ class LayersConfigDialog {
         <!-- ko foreach: layerGroups -->
             <div class="section-header" data-bind="html: group"></div>
             <!-- ko foreach: layers -->
-                <label>
+                <label class="layer-label">
                     <input type="checkbox" data-bind="checked: enabled"/>
                     <span data-bind="text: title">
                     </span>
+                    <input type="text" class="hotkey-input" size="1" maxlength="1"
+                        data-bind="value: hotkey, event: {keypress: $root.validateHotkeyAndDisplayError.bind($root, event, hotkey)}"/>
                 </label>
             <!-- /ko -->
         <!-- /ko -->
@@ -68,6 +77,7 @@ class LayersConfigDialog {
                     group.layers.map((l) => ({
                         title: l.title,
                         enabled: ko.observable(l.enabled),
+                        hotkey: ko.observable(l.layer.hotkey),
                         origLayer: l,
                     }))
                 ),
@@ -80,6 +90,7 @@ class LayersConfigDialog {
                     this.customLayers.map((l) => ({
                         title: l.title,
                         enabled: ko.observable(l.enabled),
+                        hotkey: ko.observable(l.layer.hotkey),
                         origLayer: l,
                     }))
                 ),
@@ -91,6 +102,7 @@ class LayersConfigDialog {
         for (const group of this.layerGroups()) {
             for (const layer of group.layers()) {
                 layer.origLayer.enabled = layer.enabled();
+                layer.origLayer.layer.hotkey = layer.hotkey();
             }
         }
     }
@@ -124,6 +136,46 @@ class LayersConfigDialog {
                 layer.enabled(layer.origLayer.isDefault);
             }
         }
+    }
+
+    validateHotkeyAndDisplayError(e, hotkey) {
+        const isValid = this.validateHotkey(e, hotkey);
+
+        if (!isValid) {
+            setTimeout(() => {
+                e.target.value = '';
+            }, 0);
+        }
+
+        e.target.setAttribute('data-error', !isValid);
+
+        return isValid;
+    }
+
+    validateHotkey(e, hotkey) {
+        const hotkeys = this.allLayers().map((layer) => layer.layer.hotkey).filter((layer) => layer);
+
+        const codeRegexp = /^Key|Digit/u;
+
+        if (!codeRegexp.test(e.code)) {
+            return false;
+        }
+
+        let value = e.code.replace(codeRegexp, '');
+
+        setTimeout(() => {
+            e.target.value = value;
+        }, 0);
+
+        if (hotkey && hotkeys.includes(value)) {
+            return value === hotkey;
+        }
+
+        if (!hotkey) {
+            return !hotkeys.includes(value);
+        }
+
+        return true;
     }
 }
 
@@ -198,7 +250,21 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 safeLocalStorage.setItem('leafletLayersSettings', JSON.stringify(settings));
             },
 
-            loadSettings: function() {
+        getLayerDefaultHotkey: function(layer) {
+            const layerOptions = layer?.layer.options;
+            if (!layerOptions) {
+                return null;
+            }
+            if (layerOptions.hotkey) {
+                return layerOptions.hotkey;
+            }
+            if (layerOptions.code?.length === 1) {
+                return layerOptions.code;
+            }
+            return null;
+        },
+
+        loadSettings: function() {
                 this.migrateSetting();
                 // load settings from storage
                 const serialized = safeLocalStorage.getItem('leafletLayersSettings');
@@ -240,6 +306,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
                     layer.enabled = layerSettings.enabled ?? layer.isDefault;
+                    layer.layer.hotkey = layerSettings.hotkey || this.getLayerDefaultHotkey(layer);
                 }
                 this.updateLayers();
             },
@@ -331,6 +398,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         code: layer.layer.options.code,
                         isCustom: layer.isCustom,
                         enabled: layer.enabled,
+                        hotkey: layer.layer.hotkey,
                     });
                 }
                 const settings = {layers: layersSettings};
@@ -548,7 +616,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         caption: 'Save',
                         callback: (fieldValues) => this.onCustomLayerChangeClicked(layer, fieldValues),
                     },
-                    {caption: 'Delete', callback: () => this.onCustomLayerDeletelClicked(layer)},
+                    {caption: 'Delete', callback: () => this.onCustomLayerDeleteClicked(layer)},
                         {caption: 'Cancel', callback: () => this.onCustomLayerCancelClicked()}
                     ], layer.fieldValues
                 );
@@ -572,8 +640,8 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const layerPos = this._customLayers.indexOf(layer);
                 this._customLayers.remove(layer);
-
                 const newLayer = this.createCustomLayer(newFieldValues);
+                newLayer.layer.hotkey = layer.layer.hotkey;
                 this._customLayers.splice(layerPos, 0, newLayer);
                 const newLayerVisible = (
                     this._map.hasLayer(layer.layer) &&
@@ -591,7 +659,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 this.hideCustomLayerForm();
             },
 
-            onCustomLayerDeletelClicked: function(layer) {
+            onCustomLayerDeleteClicked: function(layer) {
                 this._map.removeLayer(layer.layer);
                 this._customLayers.remove(layer);
                 this.updateLayers();
