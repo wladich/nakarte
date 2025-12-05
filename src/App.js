@@ -183,10 +183,13 @@ function setUp() { // eslint-disable-line complexity
     /* controls top-right corner */
 
     const layersControl = L.control.layers(null, null, {collapsed: false});
-    enableLayersControlHotkeys(layersControl);
+    const areHotkeysEnabled = !L.Browser.touch || !L.Browser.mobile;
+    if (areHotkeysEnabled) {
+        enableLayersControlHotkeys(layersControl);
+    }
     enableLayersControlAdaptiveHeight(layersControl);
     enableLayersMinimize(layersControl);
-    enableLayersConfig(layersControl, getLayers());
+    enableLayersConfig(layersControl, getLayers(), {withHotkeys: areHotkeysEnabled});
     layersControl.addTo(map);
     layersControl.enableHashState('l');
 
