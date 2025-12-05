@@ -2,16 +2,20 @@ import L from 'leaflet';
 import './style.css';
 
 function getLayerHotkey(layer) {
-    if (!layer || !layer.options) {
+    if (!layer) {
         return null;
     }
-    let hotkey = layer.options.hotkey;
-    if (hotkey) {
-        return hotkey;
+    if (layer.hotkey) {
+        return layer.hotkey;
     }
-    hotkey = layer.options.code;
-    if (hotkey && hotkey.length === 1) {
-        return hotkey;
+    if (!layer.options) {
+        return null;
+    }
+    if (layer.options.hotkey) {
+        return layer.options.hotkey;
+    }
+    if (layer.options.code?.length === 1) {
+        return layer.options.code;
     }
     return null;
 }
