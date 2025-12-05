@@ -7,6 +7,20 @@ import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 
+function getLayerDefaultHotkey(layer) {
+    const layerOptions = layer?.layer.options;
+    if (!layerOptions) {
+        return null;
+    }
+    if (layerOptions.hotkey) {
+        return layerOptions.hotkey;
+    }
+    if (layerOptions.code?.length === 1) {
+        return layerOptions.code;
+    }
+    return null;
+}
+
 class LayersConfigDialog {
     constructor(builtInLayers, customLayers, cbOk) {
         this.builtInLayers = builtInLayers;
@@ -148,6 +162,7 @@ class LayersConfigDialog {
     onResetClicked() {
         for (const layer of this.allLayerModels()) {
             layer.enabled(layer.origLayer.isDefault);
+            layer.hotkey(getLayerDefaultHotkey(layer.origLayer));
         }
     }
 
@@ -253,20 +268,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 safeLocalStorage.setItem('leafletLayersSettings', JSON.stringify(settings));
             },
 
-        getLayerDefaultHotkey: function(layer) {
-            const layerOptions = layer?.layer.options;
-            if (!layerOptions) {
-                return null;
-            }
-            if (layerOptions.hotkey) {
-                return layerOptions.hotkey;
-            }
-            if (layerOptions.code?.length === 1) {
-                return layerOptions.code;
-            }
-            return null;
-        },
-
         loadSettings: function() {
                 this.migrateSetting();
                 // load settings from storage
@@ -309,7 +310,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
                     layer.enabled = layerSettings.enabled ?? layer.isDefault;
-                    layer.layer.hotkey = layerSettings.hotkey || this.getLayerDefaultHotkey(layer);
+                    layer.layer.hotkey = layerSettings.hotkey || getLayerDefaultHotkey(layer);
                 }
                 this.updateLayers();
             },
