@@ -26,6 +26,10 @@ class LayersConfigDialog {
         ];
     }
 
+    allLayerModels() {
+        return [].concat(...this.layerGroups().map((group) => group.layers()));
+    }
+
     initWindow() {
         const container = this.window =
             L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper');
@@ -40,11 +44,24 @@ class LayersConfigDialog {
             <div class="section-header" data-bind="html: group"></div>
             <!-- ko foreach: layers -->
                 <label class="layer-label">
-                    <input type="checkbox" data-bind="checked: enabled"/>
-                    <span data-bind="text: title">
-                    </span>
-                    <input type="text" class="hotkey-input" size="1" maxlength="1"
-                        data-bind="value: hotkey, event: {keypress: $root.validateHotkeyAndDisplayError.bind($root, event, hotkey)}"/>
+                    <input type="checkbox" class="layer-enabled-checkbox" data-bind="checked: enabled"/>
+                    <span data-bind="text: title"></span>
+                    <div class="hotkey-input"
+                        title="Change hotkey"
+                        tabindex="0"
+                        data-bind="
+                            text: hotkey,
+                            event: {
+                                keyup: $root.onHotkeyInput.bind($root),
+                                keypress: function() {},
+                                click: function(_, e) {e.target.focus()},
+                                blur: function() {error(null)},
+                            },
+                            clickBubble: false,
+                            keypressBubble: false,
+                            keyupBubble: false">
+                    ></div>
+                    <div class="error" data-bind="text: error, visible: error"></div>
                 </label>
             <!-- /ko -->
         <!-- /ko -->
@@ -79,6 +96,7 @@ class LayersConfigDialog {
                         enabled: ko.observable(l.enabled),
                         hotkey: ko.observable(l.layer.hotkey),
                         origLayer: l,
+                        error: ko.observable(null),
                     }))
                 ),
             });
@@ -92,6 +110,7 @@ class LayersConfigDialog {
                         enabled: ko.observable(l.enabled),
                         hotkey: ko.observable(l.layer.hotkey),
                         origLayer: l,
+                        error: ko.observable(null),
                     }))
                 ),
             });
@@ -99,21 +118,17 @@ class LayersConfigDialog {
     }
 
     updateLayersFromModel() {
-        for (const group of this.layerGroups()) {
-            for (const layer of group.layers()) {
-                layer.origLayer.enabled = layer.enabled();
-                layer.origLayer.layer.hotkey = layer.hotkey();
-            }
+        for (const layer of this.allLayerModels()) {
+            layer.origLayer.enabled = layer.enabled();
+            layer.origLayer.layer.hotkey = layer.hotkey();
         }
     }
 
     getLayersEnabledOnlyInModel() {
         const newLayers = [];
-        for (const group of this.layerGroups()) {
-            for (const layer of group.layers()) {
-                if (layer.enabled() && !layer.origLayer.enabled) {
-                    newLayers.push(layer.origLayer);
-                }
+        for (const layer of this.allLayerModels()) {
+            if (layer.enabled() && !layer.origLayer.enabled) {
+                newLayers.push(layer.origLayer);
             }
         }
         return newLayers;
@@ -131,51 +146,39 @@ class LayersConfigDialog {
     }
 
     onResetClicked() {
-        for (const group of this.layerGroups()) {
-            for (const layer of group.layers()) {
-                layer.enabled(layer.origLayer.isDefault);
+        for (const layer of this.allLayerModels()) {
+            layer.enabled(layer.origLayer.isDefault);
+        }
+    }
+
+    onHotkeyInput(layerModel, event) {
+        layerModel.error(null);
+        if (['Delete', 'Backspace', 'Space'].includes(event.code)) {
+            layerModel.hotkey(null);
+            return;
+        }
+
+        if (/Enter|Escape/u.test(event.code)) {
+            event.target.blur();
+            return;
+        }
+
+        if (/Alt|Shift|Control|Tab|Lock|Meta|ContextMenu|Lang|Arrow/u.test(event.code)) {
+            return;
+        }
+        const match = /^(Key|Digit)(.)/u.exec(event.code);
+        if (!match) {
+            layerModel.error('Only keys A-Z and 0-9 can be used for hotkeys.');
+            return;
+        }
+        const newHotkey = match[2];
+        for (const layer of this.allLayerModels()) {
+            if (layer !== layerModel && layer.hotkey() === newHotkey) {
+                layerModel.error(`Hotkey "${newHotkey}" is already used by layer "${layer.title}"`);
+                return;
             }
         }
-    }
-
-    validateHotkeyAndDisplayError(e, hotkey) {
-        const isValid = this.validateHotkey(e, hotkey);
-
-        if (!isValid) {
-            setTimeout(() => {
-                e.target.value = '';
-            }, 0);
-        }
-
-        e.target.setAttribute('data-error', !isValid);
-
-        return isValid;
-    }
-
-    validateHotkey(e, hotkey) {
-        const hotkeys = this.allLayers().map((layer) => layer.layer.hotkey).filter((layer) => layer);
-
-        const codeRegexp = /^Key|Digit/u;
-
-        if (!codeRegexp.test(e.code)) {
-            return false;
-        }
-
-        let value = e.code.replace(codeRegexp, '');
-
-        setTimeout(() => {
-            e.target.value = value;
-        }, 0);
-
-        if (hotkey && hotkeys.includes(value)) {
-            return value === hotkey;
-        }
-
-        if (!hotkey) {
-            return !hotkeys.includes(value);
-        }
-
-        return true;
+        layerModel.hotkey(newHotkey);
     }
 }
 
@@ -638,11 +641,9 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     return;
                 }
 
-                const layerPos = this._customLayers.indexOf(layer);
-                this._customLayers.remove(layer);
                 const newLayer = this.createCustomLayer(newFieldValues);
                 newLayer.layer.hotkey = layer.layer.hotkey;
-                this._customLayers.splice(layerPos, 0, newLayer);
+                this._customLayers.splice(this._customLayers.indexOf(layer), 1, newLayer);
                 const newLayerVisible = (
                     this._map.hasLayer(layer.layer) &&
                     // turn off layer if changing from overlay to baselayer
@@ -661,7 +662,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             onCustomLayerDeleteClicked: function(layer) {
                 this._map.removeLayer(layer.layer);
-                this._customLayers.remove(layer);
+                this._customLayers.splice(this._customLayers.indexOf(layer), 1);
                 this.updateLayers();
                 this.hideCustomLayerForm();
             },
