@@ -68,6 +68,8 @@
 
 .leaflet-layers-config-window .layer-label {
     display: block;
+    position: relative;
+    vertical-align: bottom;
 }
 
 .leaflet-layers-config-window .button,
@@ -164,18 +166,38 @@
     color: #777;
 }
 
+.leaflet-layers-config-window .layer-enabled-checkbox {
+    vertical-align: bottom;
+}
+
 .leaflet-layers-config-window .hotkey-input {
-    color: #999;
+    display: inline-block;
+    text-align: center;
+    vertical-align: bottom;
+    color: hsl(0, 0%, 50%);
     border: 1px solid transparent;
-    font-size: 9px;
+    font-size: 10px;
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
 }
 
-.leaflet-layers-config-window .hotkey-input:focus,
+.leaflet-layers-config-window .error {
+    color: hsl(0, 60%, 50%);
+    background-color: hsl(0, 0%, 97%);
+    border-radius: 4px;
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    z-index: 10000;
+    padding: 4px;
+}
+
+.leaflet-layers-config-window .hotkey-input:focus {
+    border-color: hsl(0, 0%, 20%) !important;
+    color: hsl(0, 0%, 10%) !important;
+}
+
 .leaflet-layers-config-window .layer-label:hover .hotkey-input {
-    border-color: #999;
-}
-
-.leaflet-layers-config-window .hotkey-input:focus[data-error=true] {
-    border-color: red !important;
-    transition: border-color 2s 0s;
+    border-color: hsl(0, 0%, 80%);
 }
