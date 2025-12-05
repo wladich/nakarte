@@ -152,6 +152,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 return container;
             },
 
+            allLayers: function() {
+                return [...this._builtinLayers, ...this._customLayers];
+            },
+
             __injectConfigButton: function() {
                 const configButton = L.DomUtil.create('div', 'button icon-settings');
                 configButton.title = 'Configure layers';
@@ -231,7 +235,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     layersSettingsByCode[it.code] = it;
                 });
 
-                for (let layer of [...this._builtinLayers, ...this._customLayers]) {
+                for (let layer of this.allLayers()) {
                     const layerSettings = layersSettingsByCode[layer.layer.options.code] ?? {};
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
@@ -283,12 +287,12 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             updateLayersListControl: function(addedLayers) {
-                const disabledLayers = [...this._builtinLayers, ...this._customLayers].filter((l) => !l.enabled);
+                const disabledLayers = this.allLayers().filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
 
                 let hasBaselayerOnMap = false;
-                const enabledLayers = [...this._builtinLayers, ...this._customLayers].filter((l) => l.enabled);
+                const enabledLayers = this.allLayers().filter((l) => l.enabled);
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
@@ -322,7 +326,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             saveSettings: function() {
                 const layersSettings = [];
 
-                for (let layer of [...this._builtinLayers, ...this._customLayers]) {
+                for (let layer of this.allLayers()) {
                     layersSettings.push({
                         code: layer.layer.options.code,
                         isCustom: layer.isCustom,
@@ -339,7 +343,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         let newCode = this.loadCustomLayerFromString(code);
                         return newCode || code;
                     });
-                    for (let layer of [...this._builtinLayers, ...this._customLayers]) {
+                    for (let layer of this.allLayers()) {
                         if (layer.layer.options && values.includes(layer.layer.options.code)) {
                             layer.enabled = true;
                         }
