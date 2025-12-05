@@ -27,7 +27,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             onAdd: function(map) {
                 const container = originalOnAdd.call(this, map);
                 this.__injectConfigButton();
-                this._initializeLayersState();
+                this.loadSettings();
                 return container;
             },
 
@@ -43,33 +43,78 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 L.DomEvent.on(newCustomLayerButton, 'click', this.onCustomLayerCreateClicked, this);
             },
 
-            _initializeLayersState: function() {
-                let storedLayersEnabled = {};
-                const serialized = safeLocalStorage.getItem('layersEnabled');
+            migrateSetting: function() {
+                let oldSettings;
+                let newSettings;
+                try {
+                    oldSettings = JSON.parse(safeLocalStorage.getItem('layersEnabled'));
+                } catch {
+                    // consider empty
+                }
+                try {
+                    newSettings = JSON.parse(safeLocalStorage.getItem('leafletLayersSettings'));
+                } catch {
+                    // consider empty
+                }
+
+                if (!oldSettings || newSettings) {
+                    return;
+                }
+
+                const layersSettings = [];
+                for (let [code, isEnabled] of Object.entries(oldSettings)) {
+                    layersSettings.push({
+                        code,
+                        isCustom: Boolean(code.match(/^-cs(.+)$/u)),
+                        enabled: isEnabled,
+                    });
+                }
+                const settings = {layers: layersSettings};
+                safeLocalStorage.setItem('leafletLayersSettings', JSON.stringify(settings));
+            },
+
+            loadSettings: function() {
+                this.migrateSetting();
+                // load settings from storage
+                const serialized = safeLocalStorage.getItem('leafletLayersSettings');
+                let settings = {};
                 if (serialized) {
                     try {
-                        storedLayersEnabled = JSON.parse(serialized);
+                        settings = JSON.parse(serialized);
                     } catch (e) {
-                        logging.captureMessage('Failed to load enabled layers from localstorage - invalid json', {
-                            "localstorage.layersEnabled": serialized.slice(0, 1000)
+                        logging.captureMessage('Failed to load layers settings from localstorage - invalid json', {
+                            "localstorage.leafletLayersSettings": serialized.slice(0, 1000)
                         });
                     }
                 }
-                // restore custom layers;
-                // custom layers can be upgraded in loadCustomLayerFromString and their code will change
-                const storedLayersEnabled2 = {};
-                for (let [code, isEnabled] of Object.entries(storedLayersEnabled)) {
-                    let newCode = this.loadCustomLayerFromString(code) || code;
-                    storedLayersEnabled2[newCode] = isEnabled;
+                const layersSettings = settings.layers ?? [];
+
+                // load custom layers;
+                for (const layerSettings of layersSettings) {
+                    if (layerSettings.isCustom) {
+                        // custom layers can be upgraded in loadCustomLayerFromString and their code will change
+                        const newCode = this.loadCustomLayerFromString(String(layerSettings.code));
+                        if (newCode) {
+                            layerSettings.code = newCode;
+                        } else {
+                            logging.captureMessage(
+                                `Failed to load custom layer from local storage record: "${layerSettings.code}"`
+                            );
+                        }
+                    }
                 }
 
+                // apply settings to layers
+                const layersSettingsByCode = {};
+                layersSettings.forEach((it) => {
+                    layersSettingsByCode[it.code] = it;
+                });
+
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
-                    let enabled = storedLayersEnabled2[layer.layer.options.code];
+                    const layerSettings = layersSettingsByCode[layer.layer.options.code] ?? {};
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
-                    if (typeof enabled === 'undefined') {
-                        enabled = layer.isDefault;
-                    }
+                    let enabled = layerSettings.enabled ?? layer.isDefault;
                     layer.enabled = enabled;
                     layer.checked = ko.observable(enabled);
                 }
@@ -220,18 +265,21 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         }
                     }
                 }
-                this.storeEnabledLayers();
+                this.saveSettings();
             },
 
-            storeEnabledLayers: function() {
-                const layersState = {};
+            saveSettings: function() {
+                const layersSettings = [];
+
                 for (let layer of [...this._allLayers, ...this._customLayers()]) {
-                    if (layer.isDefault || layer.enabled || layer.isCustom) {
-                        layersState[layer.layer.options.code] = layer.enabled;
-                    }
+                    layersSettings.push({
+                        code: layer.layer.options.code,
+                        isCustom: layer.isCustom,
+                        enabled: layer.enabled,
+                    });
                 }
-                const serialized = JSON.stringify(layersState);
-                safeLocalStorage.setItem('layersEnabled', serialized);
+                const settings = {layers: layersSettings};
+                safeLocalStorage.setItem('leafletLayersSettings', JSON.stringify(settings));
             },
 
             unserializeState: function(values) {
@@ -247,7 +295,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     }
                     this.updateEnabledLayers();
                 }
-                this.storeEnabledLayers();
+                this.saveSettings();
                 return originalUnserializeState.call(this, values);
             },
 
