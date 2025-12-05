@@ -43,10 +43,8 @@ function enableHotkeys(control) {
             _hotkeysEnabled: true,
 
             _addItem: function(obj) {
-                if (!L.Browser.touch || !L.Browser.mobile) {
-                    obj = L.Util.extend({}, obj);
-                    obj.name = extendLayerName(obj.name, obj.layer);
-                }
+                obj = L.Util.extend({}, obj);
+                obj.name = extendLayerName(obj.name, obj.layer);
                 return originalAddItem.call(this, obj);
             },
 

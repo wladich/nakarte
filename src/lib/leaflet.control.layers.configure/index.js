@@ -22,9 +22,10 @@ function getLayerDefaultHotkey(layer) {
 }
 
 class LayersConfigDialog {
-    constructor(builtInLayers, customLayers, cbOk) {
+    constructor(builtInLayers, customLayers, withHotkeys, cbOk) {
         this.builtInLayers = builtInLayers;
         this.customLayers = customLayers;
+        this.withHotkeys = withHotkeys;
         this.cbOk = cbOk;
 
         this.visible = ko.observable(false);
@@ -60,6 +61,7 @@ class LayersConfigDialog {
                 <label class="layer-label">
                     <input type="checkbox" class="layer-enabled-checkbox" data-bind="checked: enabled"/>
                     <span data-bind="text: title"></span>
+                    <!-- ko if: $root.withHotkeys -->
                     <div class="hotkey-input"
                         title="Change hotkey"
                         tabindex="0"
@@ -76,6 +78,7 @@ class LayersConfigDialog {
                             keyupBubble: false">
                     ></div>
                     <div class="error" data-bind="text: error, visible: error"></div>
+                    <!-- /ko -->
                 </label>
             <!-- /ko -->
         <!-- /ko -->
@@ -197,7 +200,7 @@ class LayersConfigDialog {
     }
 }
 
-function enableConfig(control, {layers, customLayersOrder}) {
+function enableConfig(control, {layers, customLayersOrder}, options = {withHotkeys: true}) {
     if (control._configEnabled) {
         return;
     }
@@ -213,6 +216,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             _builtinLayersByGroup: layers,
             _builtinLayers: [].concat(...layers.map((group) => group.layers)),
             _customLayers: [],
+            _withHotkeys: options.withHotkeys,
 
             onAdd: function(map) {
                 const container = originalOnAdd.call(this, map);
@@ -324,7 +328,10 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             initLayersConfigWindow: function() {
                 this._layersConfigDialog = new LayersConfigDialog(
-                    this._builtinLayersByGroup, this._customLayers, this.onConfigDialogOkClicked.bind(this)
+                    this._builtinLayersByGroup,
+                    this._customLayers,
+                    this._withHotkeys,
+                    this.onConfigDialogOkClicked.bind(this),
                 );
                 this._map._controlContainer.appendChild(this._layersConfigDialog.getWindow());
             },
@@ -693,7 +700,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
                 }
                 return null;
             }
-
         }
     );
 }
