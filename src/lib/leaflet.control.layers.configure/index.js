@@ -7,6 +7,126 @@ import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import './customLayer';
 
+class LayersConfigDialog {
+    constructor(builtInLayers, customLayers, cbOk) {
+        this.builtInLayers = builtInLayers;
+        this.customLayers = customLayers;
+        this.cbOk = cbOk;
+
+        this.visible = ko.observable(false);
+        this.layerGroups = ko.observableArray([]);
+
+        this.initWindow();
+    }
+
+    initWindow() {
+        const container = this.window =
+            L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper');
+        L.DomEvent
+            .disableClickPropagation(container)
+            .disableScrollPropagation(container);
+        container.setAttribute('data-bind', "visible: visible");
+        container.innerHTML = `
+<div class="leaflet-layers-config-window">
+    <form>
+        <!-- ko foreach: layerGroups -->
+            <div class="section-header" data-bind="html: group"></div>
+            <!-- ko foreach: layers -->
+                <label>
+                    <input type="checkbox" data-bind="checked: enabled"/>
+                    <span data-bind="text: title">
+                    </span>
+                </label>
+            <!-- /ko -->
+        <!-- /ko -->
+    </form>
+    <div class="buttons-row">
+        <div href="#" class="button" data-bind="click: onOkClicked">Ok</div>
+        <div href="#" class="button" data-bind="click: onCancelClicked">Cancel</div>
+        <div href="#" class="button" data-bind="click: onResetClicked">Reset</div>
+    </div>
+</div>
+                `;
+        ko.applyBindings(this, container);
+    }
+
+    getWindow() {
+        return this.window;
+    }
+
+    showDialog() {
+        this.updateModelFromLayers();
+        this.visible(true);
+    }
+
+    updateModelFromLayers() {
+        this.layerGroups.removeAll();
+        for (const group of this.builtInLayers) {
+            this.layerGroups.push({
+                group: group.group,
+                layers: ko.observableArray(
+                    group.layers.map((l) => ({
+                        title: l.title,
+                        enabled: ko.observable(l.enabled),
+                        origLayer: l,
+                    }))
+                ),
+            });
+        }
+        if (this.customLayers.length) {
+            this.layerGroups.push({
+                group: 'Custom layers',
+                layers: ko.observableArray(
+                    this.customLayers.map((l) => ({
+                        title: l.title,
+                        enabled: ko.observable(l.enabled),
+                        origLayer: l,
+                    }))
+                ),
+            });
+        }
+    }
+
+    updateLayersFromModel() {
+        for (const group of this.layerGroups()) {
+            for (const layer of group.layers()) {
+                layer.origLayer.enabled = layer.enabled();
+            }
+        }
+    }
+
+    getLayersEnabledOnlyInModel() {
+        const newLayers = [];
+        for (const group of this.layerGroups()) {
+            for (const layer of group.layers()) {
+                if (layer.enabled() && !layer.origLayer.enabled) {
+                    newLayers.push(layer.origLayer);
+                }
+            }
+        }
+        return newLayers;
+    }
+
+    onOkClicked() {
+        const newEnabledLayers = this.getLayersEnabledOnlyInModel();
+        this.updateLayersFromModel();
+        this.visible(false);
+        this.cbOk(newEnabledLayers);
+    }
+
+    onCancelClicked() {
+        this.visible(false);
+    }
+
+    onResetClicked() {
+        for (const group of this.layerGroups()) {
+            for (const layer of group.layers()) {
+                layer.enabled(layer.origLayer.isDefault);
+            }
+        }
+    }
+}
+
 function enableConfig(control, {layers, customLayersOrder}) {
     if (control._configEnabled) {
         return;
@@ -20,13 +140,14 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
     L.Util.extend(control, {
             _configEnabled: true,
-            _allLayersGroups: layers,
-            _allLayers: [].concat(...layers.map((group) => group.layers)),
-            _customLayers: ko.observableArray(),
+            _builtinLayersByGroup: layers,
+            _builtinLayers: [].concat(...layers.map((group) => group.layers)),
+            _customLayers: [],
 
             onAdd: function(map) {
                 const container = originalOnAdd.call(this, map);
                 this.__injectConfigButton();
+                this.initLayersConfigWindow();
                 this.loadSettings();
                 return container;
             },
@@ -110,105 +231,31 @@ function enableConfig(control, {layers, customLayersOrder}) {
                     layersSettingsByCode[it.code] = it;
                 });
 
-                for (let layer of [...this._allLayers, ...this._customLayers()]) {
+                for (let layer of [...this._builtinLayers, ...this._customLayers]) {
                     const layerSettings = layersSettingsByCode[layer.layer.options.code] ?? {};
                     // if storage is empty enable only default layers
                     // if new default layer appears it will be enabled
-                    let enabled = layerSettings.enabled ?? layer.isDefault;
-                    layer.enabled = enabled;
-                    layer.checked = ko.observable(enabled);
+                    layer.enabled = layerSettings.enabled ?? layer.isDefault;
                 }
                 this.updateLayers();
             },
 
             _onConfigButtonClick: function() {
-                this.showLayersSelectWindow();
-            },
-
-            _initLayersSelectWindow: function() {
-                if (this._configWindow) {
+                if (this._layersConfigDialog.visible() || this._customLayerWindow) {
                     return;
                 }
-
-                const container = this._configWindow =
-                    L.DomUtil.create('div', 'leaflet-layers-dialog-wrapper');
-                L.DomEvent
-                    .disableClickPropagation(container)
-                    .disableScrollPropagation(container);
-                container.innerHTML = `
-<div class="leaflet-layers-select-window">
-    <form>
-        <!-- ko foreach: _allLayersGroups -->
-            <div class="section-header" data-bind="html: group"></div>
-            <!-- ko foreach: layers -->
-                <label>
-                    <input type="checkbox" data-bind="checked: checked"/>
-                    <span data-bind="text: title">
-                    </span>
-                </label>
-            <!-- /ko -->
-        <!-- /ko -->
-        <div data-bind="if: _customLayers().length" class="section-header">Custom layers</div>
-        <!-- ko foreach: _customLayers -->
-                <label>
-                    <input type="checkbox" data-bind="checked: checked"/>
-                    <span data-bind="text: title"></span>
-                </label>
-        <!-- /ko -->
-    </form>
-    <div class="buttons-row">
-        <div href="#" class="button" data-bind="click: onSelectWindowOkClicked">Ok</div>
-        <div href="#" class="button" data-bind="click: onSelectWindowCancelClicked">Cancel</div>
-        <div href="#" class="button" data-bind="click: onSelectWindowResetClicked">Reset</div>
-    </div>            
-</div>
-                `;
-                ko.applyBindings(this, container);
+                this._layersConfigDialog.showDialog();
             },
 
-            showLayersSelectWindow: function() {
-                if (this._configWindowVisible || this._customLayerWindow) {
-                    return;
-                }
-                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.enabled));
-                this._initLayersSelectWindow();
-                this._map._controlContainer.appendChild(this._configWindow);
-                this._configWindowVisible = true;
+            initLayersConfigWindow: function() {
+                this._layersConfigDialog = new LayersConfigDialog(
+                    this._builtinLayersByGroup, this._customLayers, this.onConfigDialogOkClicked.bind(this)
+                );
+                this._map._controlContainer.appendChild(this._layersConfigDialog.getWindow());
             },
 
-            hideSelectWindow: function() {
-                if (!this._configWindowVisible) {
-                    return;
-                }
-                this._map._controlContainer.removeChild(this._configWindow);
-                this._configWindowVisible = false;
-            },
-
-            onSelectWindowCancelClicked: function() {
-                this.hideSelectWindow();
-            },
-
-            onSelectWindowResetClicked: function() {
-                if (!this._configWindow) {
-                    return;
-                }
-                [...this._allLayers, ...this._customLayers()].forEach((layer) => layer.checked(layer.isDefault));
-            },
-
-            onSelectWindowOkClicked: function() {
-                const newEnabledLayers = [];
-                for (let layer of [...this._allLayers, ...this._customLayers()]) {
-                    if (layer.checked()) {
-                        if (!layer.enabled) {
-                            newEnabledLayers.push(layer);
-                        }
-                        layer.enabled = true;
-                    } else {
-                        layer.enabled = false;
-                    }
-                }
-                this.updateLayers(newEnabledLayers);
-                this.hideSelectWindow();
+            onConfigDialogOkClicked: function(addedLayers) {
+                this.updateLayers(addedLayers);
             },
 
             onCustomLayerCreateClicked: function() {
@@ -236,12 +283,12 @@ function enableConfig(control, {layers, customLayersOrder}) {
             },
 
             updateLayersListControl: function(addedLayers) {
-                const disabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => !l.enabled);
+                const disabledLayers = [...this._builtinLayers, ...this._customLayers].filter((l) => !l.enabled);
                 disabledLayers.forEach((l) => this._map.removeLayer(l.layer));
                 [...this._layers].forEach((l) => this.removeLayer(l.layer));
 
                 let hasBaselayerOnMap = false;
-                const enabledLayers = [...this._allLayers, ...this._customLayers()].filter((l) => l.enabled);
+                const enabledLayers = [...this._builtinLayers, ...this._customLayers].filter((l) => l.enabled);
                 enabledLayers.sort((l1, l2) => l1.order - l2.order);
                 enabledLayers.forEach((l) => {
                         l.layer._justAdded = addedLayers && addedLayers.includes(l);
@@ -275,7 +322,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
             saveSettings: function() {
                 const layersSettings = [];
 
-                for (let layer of [...this._allLayers, ...this._customLayers()]) {
+                for (let layer of [...this._builtinLayers, ...this._customLayers]) {
                     layersSettings.push({
                         code: layer.layer.options.code,
                         isCustom: layer.isCustom,
@@ -292,7 +339,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
                         let newCode = this.loadCustomLayerFromString(code);
                         return newCode || code;
                     });
-                    for (let layer of [...this._allLayers, ...this._customLayers()]) {
+                    for (let layer of [...this._builtinLayers, ...this._customLayers]) {
                         if (layer.layer.options && values.includes(layer.layer.options.code)) {
                             layer.enabled = true;
                         }
@@ -405,7 +452,7 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
             customLayerExists: function(fieldValues, ignoreLayer) {
                 const serialized = this.serializeCustomLayer(fieldValues);
-                for (let layer of this._customLayers()) {
+                for (let layer of this._customLayers) {
                     if (layer !== ignoreLayer && layer.serialized === serialized) {
                         return layer;
                     }
@@ -442,7 +489,6 @@ function enableConfig(control, {layers, customLayersOrder}) {
 
                 const layer = this.createCustomLayer(fieldValues);
                 layer.enabled = true;
-                layer.checked = ko.observable(true);
                 this._customLayers.push(layer);
                 this.hideCustomLayerForm();
                 this.updateLayers();

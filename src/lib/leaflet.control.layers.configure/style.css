@@ -36,7 +36,7 @@
     left: 50%;
 }
 
-.leaflet-layers-select-window {
+.leaflet-layers-config-window {
     position: relative;
     left: -50%;
     background-color: white;
@@ -50,7 +50,7 @@
     min-width: 290px;
 }
 
-.leaflet-layers-select-window form {
+.leaflet-layers-config-window form {
     overflow: auto;
     overflow: overlay;
     padding-right: 18px;
@@ -59,18 +59,18 @@
     /*width: auto ;*/
 }
 
-.leaflet-layers-select-window .buttons-row {
+.leaflet-layers-config-window .buttons-row {
     position: absolute;
     bottom: 0;
     margin-bottom: 6px;
     white-space: nowrap;
 }
 
-.leaflet-layers-select-window label {
+.leaflet-layers-config-window label {
     display: block;
 }
 
-.leaflet-layers-select-window .button,
+.leaflet-layers-config-window .button,
 .custom-layers-window .button {
     display: inline-block;
     height: 26px;
@@ -84,16 +84,16 @@
     color: #333;
 }
 
-.leaflet-layers-select-window .button:hover {
+.leaflet-layers-config-window .button:hover {
     background-color: #f4f4f4;
 }
 
-.leaflet-layers-select-window .section-header{
+.leaflet-layers-config-window .section-header{
     font-size: 14px;
     font-weight: bold;
 }
 
-.leaflet-layers-select-window .section-header a {
+.leaflet-layers-config-window .section-header a {
     color: #666;
 }
 
