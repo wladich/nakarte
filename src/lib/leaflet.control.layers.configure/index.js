@@ -167,6 +167,15 @@ class LayersConfigDialog {
         }
     }
 
+    displayError(message, layerModel, event) {
+        layerModel.error(message);
+
+        setTimeout(() => {
+            event.target.parentNode.querySelector('.error')
+                .scrollIntoView({block: 'nearest', behavior: 'smooth'});
+        }, 0);
+    }
+
     onHotkeyInput(layerModel, event) {
         layerModel.error(null);
         if (['Delete', 'Backspace', 'Space'].includes(event.code)) {
@@ -184,13 +193,13 @@ class LayersConfigDialog {
         }
         const match = /^(Key|Digit)(.)/u.exec(event.code);
         if (!match) {
-            layerModel.error('Only keys A-Z and 0-9 can be used for hotkeys.');
+            this.displayError('Only keys A-Z and 0-9 can be used for hotkeys.', layerModel, event);
             return;
         }
         const newHotkey = match[2];
         for (const layer of this.allLayerModels()) {
             if (layer !== layerModel && layer.hotkey() === newHotkey) {
-                layerModel.error(`Hotkey "${newHotkey}" is already used by layer "${layer.title}"`);
+                this.displayError(`Hotkey "${newHotkey}" is already used by layer "${layer.title}"`, layerModel, event);
                 return;
             }
         }
