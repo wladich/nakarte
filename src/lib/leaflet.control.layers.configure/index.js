@@ -63,10 +63,10 @@ class LayersConfigDialog {
                     <span data-bind="text: title"></span>
                     <!-- ko if: $root.withHotkeys -->
                     <div class="hotkey-input"
-                        title="Change hotkey"
                         tabindex="0"
                         data-bind="
                             text: hotkey,
+                            attr: {title: $root.getHotkeyTooltip($data)},
                             event: {
                                 keyup: $root.onHotkeyInput.bind($root),
                                 keypress: function() {},
@@ -197,6 +197,14 @@ class LayersConfigDialog {
             }
         }
         layerModel.hotkey(newHotkey);
+    }
+
+    getHotkeyTooltip(layer) {
+        console.log(layer);
+        return {
+            true: 'Change or remove hotkey',
+            false: 'Set hotkey',
+        }[Boolean(layer.hotkey())];
     }
 }
 

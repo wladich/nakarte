@@ -180,6 +180,7 @@
     width: 15px;
     height: 15px;
     border-radius: 2px;
+    cursor: text;
 }
 
 .leaflet-layers-config-window .error {
