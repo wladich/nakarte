@@ -200,11 +200,7 @@ class LayersConfigDialog {
     }
 
     getHotkeyTooltip(layer) {
-        console.log(layer);
-        return {
-            true: 'Change or remove hotkey',
-            false: 'Set hotkey',
-        }[Boolean(layer.hotkey())];
+        return layer.hotkey() ? 'Change or remove hotkey' : 'Set hotkey';
     }
 }
 

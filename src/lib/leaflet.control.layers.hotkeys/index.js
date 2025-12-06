@@ -5,7 +5,7 @@ function getLayerHotkey(layer) {
     if (!layer) {
         return null;
     }
-    if (layer.hotkey) {
+    if (typeof layer.hotkey !== 'undefined') {
         return layer.hotkey;
     }
     if (!layer.options) {
