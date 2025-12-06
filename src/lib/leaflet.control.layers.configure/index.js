@@ -69,12 +69,10 @@ class LayersConfigDialog {
                             attr: {title: $root.getHotkeyTooltip($data)},
                             event: {
                                 keyup: $root.onHotkeyInput.bind($root),
-                                keypress: function() {},
                                 click: function(_, e) {e.target.focus()},
                                 blur: function() {error(null)},
                             },
                             clickBubble: false,
-                            keypressBubble: false,
                             keyupBubble: false">
                     ></div>
                     <div class="error" data-bind="text: error, visible: error"></div>
