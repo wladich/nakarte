@@ -29,20 +29,20 @@
 
 .leaflet-layers-dialog-wrapper {
     position: absolute;
+    z-index: 3000;
     top: 25px;
     bottom: 25px;
     max-width: 100%;
     padding-bottom: 50px;
     left: 50%;
+    transform: translateX(-50%);
 }
 
 .leaflet-layers-config-window {
     position: relative;
-    left: -50%;
     background-color: white;
     border-radius: 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-    z-index: 3000;
     max-width: 100%;
     overflow: hidden;
     height: 100%;
