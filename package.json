@@ -10,7 +10,8 @@
     "test": "cross-env NODE_ENV=testing  karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
     "test-docker": "cross-env NODE_ENV=testing  karma start --single-run --browsers ChromiumHeadlessInDocker test/karma.conf.js",
     "testdev-docker": "cross-env NODE_ENV=testing  karma start --browsers ChromiumHeadlessInDocker test/karma.conf.js",
-    "testdev": "cross-env NODE_ENV=testing karma start --browsers ChromeHeadless test/karma.conf.js"
+    "testdev": "cross-env NODE_ENV=testing karma start --browsers ChromeHeadless test/karma.conf.js",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
     "fs-extra": "^11.1.1",
     "gzip-size": "^6.0.0",
     "html-webpack-plugin": "^5.5.1",
+    "husky": "8.0.3",
     "karma": "^6.4.2",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.2.0",
