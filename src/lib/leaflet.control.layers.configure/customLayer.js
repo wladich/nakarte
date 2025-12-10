@@ -1,6 +1,48 @@
 import L from 'leaflet';
 
 L.Layer.CustomLayer = L.TileLayer.extend({
+    _getCrs: function() {
+        if (this.crs) {
+            return this.crs;
+        }
+
+        let code = this.__customLayer.crs?.replace(':', '');
+
+        if (!(code in L.CRS)) {
+            code = 'EPSG3857';
+        }
+
+        return L.CRS[code];
+    },
+
+    _getTilePos: function(coords) {
+        this.crs = this._getCrs();
+        const tilePosLatLng = this.crs.pointToLatLng(coords.scaleBy(this.getTileSize()), coords.z);
+        return this._map.project(tilePosLatLng, coords.z).subtract(this._level.origin).round();
+    },
+
+    createTile: function(coords, done) {
+        const tile = L.TileLayer.prototype.createTile.call(this, coords, done);
+        const coordsBelow = L.point(coords).add([0, 1]);
+        coordsBelow.z = coords.z;
+        tile._adjustHeight = this._getTilePos(coordsBelow).y - this._getTilePos(coords).y;
+        return tile;
+    },
+
+    _initTile: function(tile) {
+        L.TileLayer.prototype._initTile.call(this, tile);
+        tile.style.height = `${tile._adjustHeight}px`;
+    },
+
+    _pxBoundsToTileRange: function(bounds) {
+        this.crs = this._getCrs();
+        const zoom = this._tileZoom;
+        const bounds2 = new L.Bounds(
+            this.crs.latLngToPoint(this._map.unproject(bounds.min, zoom), zoom),
+            this.crs.latLngToPoint(this._map.unproject(bounds.max, zoom), zoom));
+        return L.TileLayer.prototype._pxBoundsToTileRange.call(this, bounds2);
+    },
+
     getTileUrl: function(coords) {
         const z = this._getZoomForUrl();
         var data = {
