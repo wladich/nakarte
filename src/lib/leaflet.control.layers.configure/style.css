@@ -101,9 +101,7 @@
 
 .custom-layers-window {
     position: relative;
-    left: -50%;
     min-width: 290px;
-    /*margin-left: -150px;*/
     margin-top: 15px;
     background-color: white;
     border-radius: 5px 5px 5px 5px;
