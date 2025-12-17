@@ -43,9 +43,6 @@ const JnxWriter = L.Class.extend({
             if (totalTilesCount === 0) {
                 throw new Error('No tiles collected, JNX is empty');
             }
-            if (totalTilesCount > 50000) {
-                throw new Error('Too many tiles found (more then 50000)');
-            }
 
             let west = 1e10,
                 east = -1e10,
