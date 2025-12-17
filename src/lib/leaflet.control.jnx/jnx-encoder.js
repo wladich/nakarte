@@ -101,7 +101,6 @@ const JnxWriter = L.Class.extend({
                 level = parseInt(level, 10);
                 stream.writeInt32(this.tiles[level].length);
                 stream.writeUint32(tileDescriptorOffset);
-                // jnxScale = JnxScales[level + 3];
                 jnxScale = 34115555 / (2 ** level) * Math.cos((north + south) / 2 / 180 * Math.PI) / 1.1;
                 stream.writeInt32(jnxScale);
                 stream.writeInt32(2);

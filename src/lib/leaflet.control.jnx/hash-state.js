@@ -7,8 +7,8 @@ L.Control.JNX.include({
 
         serializeState: function() {
             let state;
-            if (this._selector) {
-                const bounds = this._selector.getBounds();
+            if (this._areaSelector) {
+                const bounds = this._areaSelector.getBounds();
                 state = [
                     bounds.getSouth().toFixed(5),
                     bounds.getWest().toFixed(5),
@@ -49,8 +49,7 @@ L.Control.JNX.include({
                     }
                     throw e;
                 }
-                this.removeSelector();
-                this.addSelector([[south, west], [north, east]]);
+                this.setAreaSelector([[south, west], [north, east]]);
                 return true;
             }
             return false;

@@ -1,0 +1,60 @@
+<div class="leaflet-control-button-toggle" title="Export JNX file for Garmin (Birdseye, Outdoor Maps+)"
+     data-bind="click: onMinimizedDialogButtonClick, css: {'icon-spinner-nuclear': makingJnx, 'icon-navigator': !makingJnx()}">
+</div>
+<div class="leaflet-control-content">
+    <div class="title">Export Garmin JNX</div>
+    <div class="row">
+        <div data-bind="if: !layerForExport()" class="error">No supported layer for export</div>
+        <div data-bind="if: layerForExport()">Layer to export: <span class="value" data-bind="text: layerForExport().name"></span></div>
+    </div>
+
+    <div class="row area-selection-row">
+        Area selection<br>
+        <a class="text-button" data-bind="click: setAreaSelector()">Set here</a>
+        <a class="text-button" data-bind="css: {disabled: !areaSelectorVisible()}, click: removeAreaSelector()">Remove</a>
+        <a class="text-button" data-bind="css: {disabled: !areaSelectorVisible()}, click: moveMapToAreaSelector()">Go to</a>
+    </div>
+
+
+    <table class="zoom-choices" data-bind="visible: zoomChoices">
+        <tbody>
+            <tr class="zoom-choices-header">
+                <th>Zoom</th><th>Resolution,<br>m/pixel</th><th>Est. file size,<br>Mb</th><th>Max tiles<br>count</th>
+            </tr>
+            <!-- ko foreach: zoomChoices() ? Object.values(zoomChoices()).reverse() : null -->
+            <tr class="zoom-choice" data-bind="
+                    css: {selected: $root.zoomLevel() === zoom, warning: warning},
+                    click: function() {$root.zoomLevel(zoom)}">
+                <td data-bind="text: zoom"></td>
+                <td data-bind="text: metersPerPixel.toFixed(2)"></td>
+                <td data-bind="text: fileSizeMb.toFixed(fileSizeMb > 1 ? 0 : 1)"></td>
+                <td data-bind="text: maxLevelTiles"></td>
+            </tr>
+            <!-- /ko -->
+        </tbody>
+    </table>
+
+    <div class="row warning" data-bind="css: {visible: zoomChoices() && zoomChoices()[zoomLevel()] && zoomChoices()[zoomLevel()].warning}">
+        Warning: Too many tiles
+        <div class="icon-info" title="Garmin devices do not support JNX files with more than 50 000 tiles on a single zoom level">
+        </div>
+    </div>
+
+    <div class="bottom-row row">
+        <a class="text-button" data-bind="
+                                    click: makeJnx,
+                                    visible: !makingJnx(),
+                                    attr: {title: errorMessage()},
+                                    css: {disabled: errorMessage()}">Save JNX
+        </a>
+        <div class="button-minimize" data-bind="click: setMinimized"></div>
+        <div data-bind="
+            component: {
+                name: 'progress-indicator',
+                params: {progressRange: downloadProgressRange, progressDone: downloadProgressDone}
+            },
+            visible: makingJnx()">
+        </div>
+    </div>
+</div>
+

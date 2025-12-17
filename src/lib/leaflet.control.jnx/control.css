@@ -1,0 +1,81 @@
+.leaflet-control-jnx .leaflet-control-content {
+    margin-bottom: 4px;
+    width: 250px;
+}
+
+.leaflet-control-jnx .icon-navigator {
+    background-image: url("images/navigator.svg");
+}
+
+.leaflet-control-jnx .row {
+    margin-top: 4px;
+}
+
+.leaflet-control-jnx .title {
+    text-align: center;
+    font-weight: bold;
+}
+
+.leaflet-control-jnx .area-selection-row {
+    text-align: center;
+}
+
+.leaflet-control-jnx .zoom-choices {
+    text-align: right;
+    margin-top: 8px;
+}
+
+.leaflet-control-jnx .zoom-choices th,
+.leaflet-control-jnx .zoom-choices td {
+    padding: 0 2px 0 2px;
+}
+.leaflet-control-jnx .zoom-choices,
+.leaflet-control-jnx .zoom-choices th,
+.leaflet-control-jnx .zoom-choices td {
+    border-collapse: collapse;
+    border: 1px dotted hsl(0, 0%, 80%);
+}
+
+.leaflet-control-jnx .zoom-choice.selected {
+    background-color: hsl(200, 70%, 80%) !important;
+}
+.leaflet-control-jnx .zoom-choice:hover {
+    background-color: hsl(0, 0%, 95%);
+}
+
+.leaflet-control-jnx .zoom-choices-header {
+    vertical-align: top;
+    font-size: 11px;
+}
+
+.leaflet-control-jnx .warning {
+    color: hsl(0, 60%, 50%);
+}
+
+.leaflet-control-jnx .error {
+    color: hsl(0, 60%, 50%);
+    font-weight: bold;
+}
+
+.leaflet-control-jnx .value {
+    font-weight: bold;
+}
+
+.leaflet-control-jnx .row.warning {
+    opacity: 0;
+}
+
+.leaflet-control-jnx .row.warning.visible {
+    opacity: unset;
+}
+
+.leaflet-control-jnx .bottom-row {
+    position: relative;
+    text-align: center;
+}
+
+.leaflet-control-jnx .button-minimize {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
