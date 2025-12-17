@@ -10,11 +10,12 @@ function jnxCoordinates(extents) {
 }
 
 const JnxWriter = L.Class.extend({
-        initialize: function(productName, productId, zOrder) {
+        initialize: function(productName, productId, zOrder, scaleMultiplier = 1) {
             this.tiles = {};
             this.productName = productName || 'Raster map';
             this.productId = productId || 0;
             this.zOrder = zOrder;
+            this.scaleMultiplier = scaleMultiplier;
         },
 
         addTile: function(tileData, level, latLngBounds) {
@@ -101,7 +102,11 @@ const JnxWriter = L.Class.extend({
                 level = parseInt(level, 10);
                 stream.writeInt32(this.tiles[level].length);
                 stream.writeUint32(tileDescriptorOffset);
-                jnxScale = 34115555 / (2 ** level) * Math.cos((north + south) / 2 / 180 * Math.PI) / 1.1;
+                jnxScale =
+                    34115555 /
+                    (2 ** level) *
+                    Math.cos((north + south) / 2 / 180 * Math.PI) /
+                    1.1 * this.scaleMultiplier;
                 stream.writeInt32(jnxScale);
                 stream.writeInt32(2);
                 stream.writeUint8(0);

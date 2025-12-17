@@ -25,6 +25,7 @@ L.Control.JNX = L.Control.extend({
         this.areaSelectorVisible = ko.observable(false);
         this.zoomLevel = ko.observable(null);
         this.zoomChoices = ko.observable(null);
+        this.fixZoom = ko.observable(false);
     },
 
     getLayerForJnx: function () {
@@ -136,7 +137,7 @@ L.Control.JNX = L.Control.extend({
             zoom,
             bounds,
         });
-        makeJnxFromLayer(layer, layerName, zoom, bounds, this.notifyProgress.bind(this))
+        makeJnxFromLayer(layer, layerName, zoom, bounds, this.fixZoom(), this.notifyProgress.bind(this))
             .then((fileData) => {
                 saveAs(fileData, fileName, true);
                 this.fire('tileExportEnd', {eventId, success: true});
