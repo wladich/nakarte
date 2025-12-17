@@ -31,7 +31,6 @@ module.exports = [
     'src/lib/leaflet.control.jnx/jnx-encoder.js',
     'src/lib/leaflet.control.jnx/binary-stream.js',
     'src/lib/leaflet.control.jnx/selector.js',
-    'src/lib/leaflet.control.jnx/index.js',
     'src/lib/leaflet.control.jnx/hash-state.js',
     'src/lib/leaflet.control.layers.hotkeys/index.js',
     'src/lib/leaflet.layer.yandex/index.js',
