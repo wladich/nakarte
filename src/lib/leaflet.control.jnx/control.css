@@ -69,6 +69,11 @@
     opacity: unset;
 }
 
+.leaflet-control-jnx .cb-fix-zoom {
+    margin-left: 0;
+    vertical-align: bottom;
+}
+
 .leaflet-control-jnx .bottom-row {
     position: relative;
     text-align: center;

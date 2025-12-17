@@ -55,10 +55,14 @@ function ensureImageJpg(image) {
     return null;
 }
 
-async function makeJnxFromLayer(srcLayer, layerName, maxZoomLevel, latLngBounds, progress) {
+async function makeJnxFromLayer(
+    srcLayer, layerName, maxZoomLevel, latLngBounds, correctZoom, progress
+) {
     const jnxProductId = L.stamp(srcLayer);
     const jnxZOrder = Math.min(jnxProductId, 100);
-    const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder);
+    // scale multiplier for GPSMAP 67
+    const scaleMultiplier = correctZoom ? 3.5 : 1;
+    const writer = new JnxWriter(layerName, jnxProductId, jnxZOrder, scaleMultiplier);
     const xhrQueue = new XHRQueue();
     let doStop = false;
     let error;
