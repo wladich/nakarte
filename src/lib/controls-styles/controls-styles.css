@@ -37,9 +37,22 @@
     color: #333;
 }
 
+.leaflet-control .text-button.disabled,
+.leaflet-control .image-button.disabled
+{
+    border-color: #eee;
+    color: #aaa;
+}
+
 .leaflet-control .image-button:hover,
 .leaflet-control .text-button:hover {
     background-color: #f4f4f4;
+}
+
+.leaflet-control .image-button.disabled:hover,
+.leaflet-control .text-button.disabled:hover {
+    background-color: unset;
+    cursor: unset;
 }
 
 .leaflet-control-button {
@@ -113,4 +126,14 @@
 
 .icon-spinner-nuclear {
     background-image: url('images/spinner.gif');
+}
+
+.leaflet-control .icon-info {
+    display: inline-block;
+    vertical-align: bottom;
+    background-image: url("./images/info.svg");
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0 0 0 2px;
 }

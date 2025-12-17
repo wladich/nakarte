@@ -1,5 +1,7 @@
 import L from 'leaflet';
 
+import './selector.css';
+
 const RectangleSelect = L.Rectangle.extend({
         includes: L.Mixin.Events,
 

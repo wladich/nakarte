@@ -75,6 +75,8 @@ function setUp() { // eslint-disable-line complexity
         layers: validateMinimizeState(minimizeState[1]),
         print: validateMinimizeState(minimizeState[2]),
         search: validateMinimizeState(minimizeState[3]),
+        jnx: validateMinimizeState(minimizeState[4]),
+
     };
 
     const map = new MapWithSidebars('map', {
@@ -227,6 +229,12 @@ function setUp() { // eslint-disable-line complexity
     const jnxControl = new L.Control.JNX(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
+    if (
+        minimizeControls.jnx === minimizeStateMinimized ||
+        (minimizeControls.jnx === minimizeStateAuto && !jnxControl.areaSelectorVisible())
+    ) {
+        jnxControl.setMinimized();
+    }
 
     /* controls bottom-right corner */
 

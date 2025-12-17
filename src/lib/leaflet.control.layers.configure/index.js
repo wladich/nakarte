@@ -401,9 +401,15 @@ function enableConfig(control, {layers, customLayersOrder}, options = {withHotke
                     for (let layer of enabledLayers) {
                         if (!layer.layer.options.isOverlay) {
                             this._map.addLayer(layer.layer);
+                            hasBaselayerOnMap = true;
                             break;
                         }
                     }
+                }
+                // Not quite correct - the event will be fired even if there was no base layer before the update.
+                // Still it is better than not firing event at all when there is no base layer after update.
+                if (!hasBaselayerOnMap) {
+                    this._map.fire('baselayerchange');
                 }
             },
 
