@@ -26,6 +26,9 @@ L.Control.JNX = L.Control.extend({
         this.zoomLevel = ko.observable(null);
         this.zoomChoices = ko.observable(null);
         this.fixZoom = ko.observable(false);
+
+        this.zoomLevel.subscribe(() => this.fireChangeEvent());
+        this.fixZoom.subscribe(() => this.fireChangeEvent());
     },
 
     getLayerForJnx: function () {
@@ -92,10 +95,10 @@ L.Control.JNX = L.Control.extend({
             };
             metersPerPixel *= 2;
         }
-        this.zoomChoices(choices);
-        if (!this.zoomChoices()[this.zoomLevel()]) {
+        if (!choices[this.zoomLevel()]) {
             this.zoomLevel(null);
         }
+        this.zoomChoices(choices);
     },
 
     notifyProgress: function (value, maxValue) {
@@ -187,9 +190,13 @@ L.Control.JNX = L.Control.extend({
         this.onSelectorChange();
     },
 
+    fireChangeEvent: function () {
+        this.fire('settingschange');
+    },
+
     onSelectorChange: function () {
         this.updateZoomChoices();
-        this.fire('selectionchange');
+        this.fireChangeEvent();
     },
 
     moveMapToAreaSelector: function () {
