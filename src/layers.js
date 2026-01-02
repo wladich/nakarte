@@ -7,6 +7,7 @@ import '~/lib/leaflet.layer.soviet-topomaps-grid';
 import '~/lib/leaflet.layer.westraPasses';
 import '~/lib/leaflet.layer.wikimapia';
 import {GeocachingSu} from '~/lib/leaflet.layer.geocaching-su';
+import {OSMPasses} from '~/lib/leaflet.layer.osmpasses';
 import {RetinaTileLayer} from '~/lib/leaflet.layer.RetinaTileLayer';
 import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import '~/lib/leaflet.layer.TileLayer.cutline';
@@ -653,6 +654,18 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     })
                 },
                 {
+                    title: 'OSM passes',
+                    isDefault: false,
+                    layer: new OSMPasses(config.overpassTurboUrl, {
+                        code: 'OP',
+                        isOverlay: true,
+                        isOverlayTransparent: true,
+                        print: true,
+                        jnx: false,
+                        shortName: 'osmpasses'
+                    })
+                },
+                {
                     title: 'OpenStreetMap GPS traces',
                     isDefault: false,
                     layer: L.tileLayer('https://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png',
@@ -1176,7 +1189,8 @@ class LayerGroupWithOptions extends L.LayerGroup {
             layers: [
                 'Mountains by Alexander Purikov',
                 'Google Hybrid',
-                'geocaching.su'
+                'geocaching.su',
+                'OSM passes'
             ]
         },
         {
@@ -1274,6 +1288,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         // point overlays
         'Mountain passes (Westra)',
         'geocaching.su',
+        'OSM passes',
     ];
 
 function getLayers() {
