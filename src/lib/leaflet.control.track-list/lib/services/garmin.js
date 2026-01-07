@@ -1,5 +1,4 @@
 import {urlViaCorsProxy} from '~/lib/CORSProxy';
-import {fetch} from '~/lib/xhr-promise';
 
 import BaseService from './baseService';
 
@@ -9,29 +8,6 @@ class GarminBase extends BaseService {
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
     }
-
-    async prepare() {
-        let response;
-        try {
-            response = await fetch(urlViaCorsProxy(this.origUrl + '?' + Date.now()), {
-                isResponseSuccess: (xhr) => xhr.status === 200,
-            });
-        } catch {
-            return 'NETWORK';
-        }
-        let dom;
-        try {
-            dom = new DOMParser().parseFromString(response.response, 'text/html');
-        } catch {
-            return 'NETWORK';
-        }
-        const token = dom.querySelector('meta[name="csrf-token"]')?.content;
-        if (!token) {
-            return 'NETWORK';
-        }
-        this.token = token;
-        return null;
-    }
 }
 
 function isResponseSuccess(xhr) {
@@ -39,7 +15,7 @@ function isResponseSuccess(xhr) {
 }
 
 class GarminRoute extends GarminBase {
-    urlRe = /^https?:\/\/connect\.garmin\.com\/modern\/course\/(\d+)/u;
+    urlRe = /^https?:\/\/connect\.garmin\.com\/(?:modern|app)\/course\/(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
@@ -48,11 +24,7 @@ class GarminRoute extends GarminBase {
         return [
             {
                 url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/course-service/course/${trackId}`),
-                options: {
-                    responseType: 'json',
-                    headers: [['connect-csrf-token', this.token]],
-                    isResponseSuccess,
-                },
+                options: {responseType: 'json', isResponseSuccess},
             },
         ];
     }
@@ -94,7 +66,7 @@ class GarminRoute extends GarminBase {
 }
 
 class GarminActivity extends GarminBase {
-    urlRe = /^https?:\/\/connect\.garmin\.com\/modern\/activity\/(\d+)/u;
+    urlRe = /^https?:\/\/connect\.garmin\.com\/(?:modern|app)\/activity\/(\d+)/u;
 
     requestOptions() {
         const m = this.urlRe.exec(this.origUrl);
@@ -103,19 +75,11 @@ class GarminActivity extends GarminBase {
         return [
             {
                 url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/activity-service/activity/${trackId}`),
-                options: {
-                    responseType: 'json',
-                    headers: [['connect-csrf-token', this.token]],
-                    isResponseSuccess,
-                },
+                options: {responseType: 'json', isResponseSuccess},
             },
             {
                 url: urlViaCorsProxy(`https://connect.garmin.com/gc-api/activity-service/activity/${trackId}/details`),
-                options: {
-                    responseType: 'json',
-                    headers: [['connect-csrf-token', this.token]],
-                    isResponseSuccess,
-                },
+                options: {responseType: 'json', isResponseSuccess},
             },
         ];
     }

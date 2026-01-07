@@ -1,9 +1,10 @@
 {
     "query": [
       "https://connect.garmin.com/modern/activity/5346900838",
-      "https://connect.garmin.com/modern/activity/5346900838?a=1",
-      "http://connect.garmin.com/modern/activity/5346900838",
-      "https://connect.garmin.com/modern/activity/5346900838/"
+      "https://connect.garmin.com/app/activity/5346900838",
+      "https://connect.garmin.com/app/activity/5346900838?a=1",
+      "http://connect.garmin.com/app/activity/5346900838",
+      "https://connect.garmin.com/app/activity/5346900838/"
     ],
     "geodata": [
         {

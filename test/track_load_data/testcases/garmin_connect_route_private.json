@@ -1,4 +1,7 @@
 {
-  "query": ["https://connect.garmin.com/modern/course/39283823"],
+  "query": [
+      "https://connect.garmin.com/modern/course/39283823",
+      "https://connect.garmin.com/app/course/39283823"
+  ],
   "geodata": [{"error":"Garmin Connect user disabled viewing this route"}]
 }
