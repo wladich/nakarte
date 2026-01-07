@@ -1,4 +1,9 @@
 {
-  "query": ["https://connect.garmin.com/modern/activity/5346927324", "https://connect.garmin.com/modern/activity/5346934574", "https://connect.garmin.com/modern/activity/5346935811"],
-  "geodata": [{"error":"Garmin Connect user disabled viewing this activity"}]
+    "query": [
+        "https://connect.garmin.com/modern/activity/5346927324",
+        "https://connect.garmin.com/app/activity/5346927324",
+        "https://connect.garmin.com/app/activity/5346934574",
+        "https://connect.garmin.com/app/activity/5346935811"
+    ],
+    "geodata": [{"error": "Garmin Connect user disabled viewing this activity"}]
 }

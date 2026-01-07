@@ -1,9 +1,10 @@
 {
     "query": [
       "https://connect.garmin.com/modern/course/39283383",
-      "https://connect.garmin.com/modern/course/39283383?a=1",
-      "http://connect.garmin.com/modern/course/39283383",
-      "https://connect.garmin.com/modern/course/39283383/"
+      "https://connect.garmin.com/app/course/39283383",
+      "https://connect.garmin.com/app/course/39283383?a=1",
+      "http://connect.garmin.com/app/course/39283383",
+      "https://connect.garmin.com/app/course/39283383/"
     ],
     "geodata": [
         {

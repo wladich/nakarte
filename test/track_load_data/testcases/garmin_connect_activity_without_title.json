@@ -1,5 +1,8 @@
 {
-    "query": ["https://connect.garmin.com/modern/activity/5346914204"],
+    "query": [
+        "https://connect.garmin.com/modern/activity/5346914204",
+        "https://connect.garmin.com/app/activity/5346914204"
+    ],
     "geodata": [
         {
             "name": "Uncategorized",

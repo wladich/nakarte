@@ -17,17 +17,9 @@ class BaseService {
         throw new Error('Method not implemented');
     }
 
-    async prepare() {
-        return null;
-    }
-
     async geoData() {
         if (!this.isOurUrl()) {
             throw new Error('Unsupported url');
-        }
-        const error = await this.prepare();
-        if (error) {
-            return [{name: this.origUrl, error: error}];
         }
         const requests = this.requestOptions().map((it) => fetch(it.url, it.options));
         let responses;
