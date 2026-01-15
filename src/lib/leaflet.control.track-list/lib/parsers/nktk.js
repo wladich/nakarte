@@ -131,6 +131,7 @@ function saveNktk(segments, name, color, measureTicksShown, waypoints, trackHidd
         for (let waypoint of waypoints) {
             packedWaypoints.push({
                 name: waypoint.label,
+                desc: waypoint.desc,
                 lat: Math.round(waypoint.latlng.lat * arcUnit) - midLat,
                 lon: Math.round(waypoint.latlng.lng * arcUnit) - midLon
             });
@@ -287,6 +288,7 @@ function parseNktkProtobuf(s) {
         for (let waypoint of trackView.track.waypoints.waypoints) {
             waypoints.push({
                 name: waypoint.name,
+                desc: waypoint.desc,
                 lat: (waypoint.lat + trackView.track.waypoints.midLat) / arcUnit,
                 lng: (waypoint.lon + trackView.track.waypoints.midLon) / arcUnit
             });
