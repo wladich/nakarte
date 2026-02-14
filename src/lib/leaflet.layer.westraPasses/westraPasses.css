@@ -141,6 +141,9 @@
     cursor: pointer;
 }
 
+.pass-details .winter{
+    color: hsl(200, 100%, 45%);
+}
 
 
 .westra-passes-description-comment {
