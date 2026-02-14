@@ -195,6 +195,13 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                 return `<a href="${regionUrlBase}/${id}">${name}</a>`;
             }).join(' / ');
 
+            let gradeTitle = 'Категория';
+            let slopesTitle = 'Характеристика склонов';
+            if (properties.grade_season === 'winter') {
+                gradeTitle += ' <span class="winter">зимой</span>';
+                slopesTitle += ' <span class="winter">зимой</span>';
+            }
+
             let description = `
                 <table class="pass-details">
                     <tr>
@@ -203,7 +210,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     </tr>
                     ${altnames}
                     <tr>
-                        <td>Категория</td>
+                        <td>${gradeTitle}</td>
                         <td>${properties.grade ? escapeHtml(properties.grade) : "неизвестная"}</td>
                     </tr>
                     <tr>
@@ -212,7 +219,7 @@ const WestraPassesMarkers = L.Layer.CanvasMarkers.extend({
                     </tr>
                     ${connects}
                     <tr>
-                        <td>Характеристика склонов</td>
+                        <td>${slopesTitle}</td>
                         <td>${properties.slopes ? escapeHtml(properties.slopes) : "неизвестная"}</td>
                     </tr>
                     <tr>
