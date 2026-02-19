@@ -1,6 +1,8 @@
 {
     "query": [
-        "https://tracedetrail.fr/en/trace/trace/125395"
+        "https://tracedetrail.fr/en/trace/trace/125395",
+        "https://tracedetrail.fr/en/trace/125395",
+        "https://tracedetrail.fr/en/iframe/9577"
     ],
     "geodata": [
         {

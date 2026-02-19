@@ -3,7 +3,7 @@ import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import L from 'leaflet';
 
 class Tracedetrail extends BaseService {
-    urlRe = /^https?:\/\/(?:www\.)?tracedetrail\.[a-z]{2,}.*\/trace\/trace\/([0-9]+)/u;
+    urlRe = /^https?:\/\/(?:www\.)?tracedetrail\.[a-z]{2,}.*\/(?:trace\/trace|trace|iframe)\/([0-9]+)/u;
 
     isOurUrl() {
         return this.urlRe.test(this.origUrl);
