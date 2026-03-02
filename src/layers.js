@@ -183,14 +183,13 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'Topomapper 1km (Out of order)',
+                    title: 'Topomapper 1km',
                     isDefault: true,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
                             'http://88.99.52.156/tmg/{z}/{x}/{y}'
                         ),
                         {
-                            maxZoom: -1,
                             code: 'T',
                             isOverlay: false,
                             scaleDependent: false,
@@ -1126,7 +1125,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Google Satellite',
                 'Google Terrain',
                 'Bing Satellite',
-                'Topomapper 1km (Out of order)',
+                'Topomapper 1km',
                 'Topo 10km',
                 'GGC 2 km',
                 'ArbaletMO',
@@ -1142,12 +1141,19 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'O-sport',
                 'Soviet topo maps grid',
                 'Wikimapia',
-                'Mountain passes (Westra)',
+                'Mountain passes (Westra)'
             ],
         },
         {
             title: 'OpenStreetMap alternatives',
-            layers: ['OpenTopoMap', 'OpenCycleMap', 'OSM Outdoors', 'mapy.cz tourist', 'mapy.cz winter'],
+            layers: [
+                'OpenTopoMap',
+                'OpenCycleMap',
+                'OSM Outdoors',
+                'mapy.cz tourist',
+                'mapy.cz winter',
+
+            ],
         },
         {
             title: 'Topo maps',
@@ -1167,7 +1173,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
         },
         {
             title: 'Miscellaneous',
-            layers: ['Mountains by Alexander Purikov', 'Google Hybrid', 'geocaching.su'],
+            layers: [
+                'Mountains by Alexander Purikov',
+                'Google Hybrid',
+                'geocaching.su'
+            ]
         },
         {
             title: 'Routes and traces',
@@ -1180,10 +1190,16 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Strava heatmap (ride)',
                 'Strava heatmap (winter)',
             ],
+
         },
         {
             title: 'Norway',
-            layers: ['Norway paper map', 'Norway topo', 'Norway roads'],
+            layers: [
+                'Norway paper map',
+                'Norway topo',
+                'Norway roads'
+            ],
+
         },
     ];
 
@@ -1207,7 +1223,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Google Map',
         'Google Terrain',
         // Topo maps
-        'Topomapper 1km (Out of order)',
+        'Topomapper 1km',
 
         // local base layers
 
