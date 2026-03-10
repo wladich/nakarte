@@ -82,13 +82,8 @@ function parseSearchResponse(resp) { // eslint-disable-line complexity
             if (author && /^<table (.|\n)+<\/table>$/u.test(author)) {
                 author = `See author info at <a href="${iinfo.descriptionurl}">Wikimedia commons</a>`;
             }
-
-            // original images can be rotated, 90 degrees
-            // thumbnails are always oriented right
-            // so we request thumbnail of original image size
-            let url = iinfo.thumburl.replace(/\/(134|250)px-/u, `/${iinfo.width}px-`);
             images.push({
-                url,
+                url: iinfo.url,
                 width: iinfo.width,
                 height: iinfo.height,
                 lat: coordinates.lat,
