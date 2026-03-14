@@ -1,11 +1,11 @@
 {
     "query": [
-        "https://connect.garmin.com/modern/activity/5346914204",
-        "https://connect.garmin.com/app/activity/5346914204"
+        "https://connect.garmin.com/modern/activity/22075096275",
+        "https://connect.garmin.com/app/activity/22075096275"
     ],
     "geodata": [
         {
-            "name": "Uncategorized",
+            "name": "Other",
             "tracks": [
                 [
                     {"lat": 39.148948872461915, "lng": 68.29878690652549},
