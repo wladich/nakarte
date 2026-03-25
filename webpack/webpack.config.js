@@ -180,6 +180,7 @@ module.exports = {
         client: {
             overlay: false,
         },
+        allowedHosts: 'all',
     },
 
     entry: {
