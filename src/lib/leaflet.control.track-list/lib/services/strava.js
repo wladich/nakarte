@@ -1,6 +1,14 @@
 import BaseService from './baseService';
 import {corsProxyOriginalUrl, urlViaCorsProxy} from '~/lib/CORSProxy';
 
+function parseTimeTag(s) {
+    const m = /\b(?<month>[A-Z][a-z]+)\s+(?<day>\d{1,2}),?\s+(?<year>\d{4})\b/u.exec(s);
+    if (m) {
+        return m.groups;
+    }
+    return null;
+}
+
 class Strava extends BaseService {
     urlRe = /^https?:\/\/(?:.+\.)?strava\.com\/activities\/(\d+)/u;
 
@@ -55,11 +63,10 @@ class Strava extends BaseService {
         if (dom) {
             const userName = (dom.querySelector('a.minimal[href*="/athletes/"]')?.textContent ?? '').trim();
             const activityTitle = (dom.querySelector('h1.activity-name')?.textContent ?? '').trim();
-            let date = dom.querySelector('time')?.textContent ?? '';
-            date = date.split(',')[1] ?? '';
-            date = date.trim();
+            let timeTagContent = dom.querySelector('time')?.textContent;
+            let date = timeTagContent ? parseTimeTag(timeTagContent) : null;
             if (userName && activityTitle && date) {
-                name = `${userName} - ${activityTitle} ${date}`;
+                name = `${userName} - ${activityTitle} ${date.day} ${date.month} ${date.year}`;
             }
         }
         return [{
