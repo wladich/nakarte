@@ -26,6 +26,7 @@ import md5 from 'blueimp-md5';
 import {wrapLatLngToTarget, wrapLatLngBoundsToTarget} from '~/lib/leaflet.fixes/fixWorldCopyJump';
 import {createZipFile} from '~/lib/zip-writer';
 import {splitLinesAt180Meridian} from "./lib/meridian180";
+import {RectangleSelect} from '~/lib/leaflet.control.jnx/selector';
 import {ElevationProvider} from '~/lib/elevations';
 import {parseNktkSequence} from './lib/parsers/nktk';
 import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
@@ -156,6 +157,7 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+            this._poiSelectionState = null;
         },
 
         onAdd: function(map) {
@@ -334,6 +336,7 @@ L.Control.TrackList = L.Control.extend({
 
         addSegmentAndEdit: function(track) {
             this.stopPlacingPoint();
+            this.cancelPoiSelection();
             const segment = this.addTrackSegment(track);
             this.startEditTrackSegement(segment);
             segment.startDrawingLine();
@@ -467,6 +470,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackVisibilityChanged: function(track) {
+            if (!track.visible() && this._poiSelectionState && this._poiSelectionState.sourceTrack === track) {
+                this.cancelPoiSelection();
+            }
             if (track.visible()) {
                 this.map.addLayer(track.feature);
                 this._markerLayer.addMarkers(track.markers);
@@ -607,6 +613,11 @@ L.Control.TrackList = L.Control.extend({
                 {text: 'Rename', callback: this.renameTrack.bind(this, track)},
                 {text: 'Duplicate', callback: this.duplicateTrack.bind(this, track)},
                 {text: 'Reverse', callback: this.reverseTrack.bind(this, track)},
+                () => ({
+                    text: 'Select points',
+                    callback: this.beginPoiSelection.bind(this, track),
+                    disabled: !track.markers.length,
+                }),
                 {text: 'Show elevation profile', callback: this.showElevationProfileForTrack.bind(this, track)},
                 '-',
                 {text: 'Delete', callback: this.removeTrack.bind(this, track)},
@@ -803,6 +814,15 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
             const trackSegment = e.target;
+            const state = this._poiSelectionState;
+            if (state && state.phase === 'targeting') {
+                const track = trackSegment._parentTrack;
+                if (track && track !== state.sourceTrack) {
+                    L.DomEvent.stopPropagation(e);
+                    this._executePoiAction(track);
+                }
+                return;
+            }
             if (this._lineJoinActive) {
                 L.DomEvent.stopPropagation(e);
                 this.joinTrackSegments(trackSegment, isPointCloserToStart(e.target.getLatLngs(), e.latlng));
@@ -813,6 +833,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         startEditTrackSegement: function(polyline) {
+            this.cancelPoiSelection();
             if (this._editedLine && this._editedLine !== polyline) {
                 this.stopEditLine();
             }
@@ -836,6 +857,7 @@ L.Control.TrackList = L.Control.extend({
         _beginPointEdit: function() {
             this.stopPlacingPoint();
             this.stopEditLine();
+            this.cancelPoiSelection();
             L.DomUtil.addClass(this._map._container, 'leaflet-point-placing');
             this.isPlacingPoint = true;
             L.DomEvent.on(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
@@ -910,6 +932,277 @@ L.Control.TrackList = L.Control.extend({
             L.DomEvent.off(document, 'keydown', this.stopPlacingPointOnEscPressed, this);
             this.map.off('click', this.createNewPoint, this);
             this.map.off('click', this.movePoint, this);
+        },
+
+        beginPoiSelection: function(track) {
+            this.stopPlacingPoint();
+            this.stopEditLine();
+            this.cancelPoiSelection();
+
+            if (!track.markers.length) {
+                return;
+            }
+
+            let minLat = Infinity;
+            let maxLat = -Infinity;
+            let minLng = Infinity;
+            let maxLng = -Infinity;
+            for (const marker of track.markers) {
+                const lat = marker.latlng.lat;
+                const lng = marker.latlng.lng;
+                if (lat < minLat) {
+                    minLat = lat;
+                }
+                if (lat > maxLat) {
+                    maxLat = lat;
+                }
+                if (lng < minLng) {
+                    minLng = lng;
+                }
+                if (lng > maxLng) {
+                    maxLng = lng;
+                }
+            }
+            const latPad = (maxLat - minLat) * 0.1 || 0.01;
+            const lngPad = (maxLng - minLng) * 0.1 || 0.01;
+            const bounds = L.latLngBounds(
+                [minLat - latPad, minLng - lngPad],
+                [maxLat + latPad, maxLng + lngPad]
+            );
+
+            const selector = new RectangleSelect(bounds).addTo(this._map);
+            const highlightLayer = L.featureGroup([]).addTo(this._map);
+
+            this._poiSelectionState = {
+                sourceTrack: track,
+                selector: selector,
+                selectedMarkers: [],
+                highlightLayer: highlightLayer,
+                phase: 'selecting',
+                action: null,
+                _toolbar: null,
+                _targetClickHandler: null,
+            };
+
+            selector.on('change', this._updatePoiSelection, this);
+            L.DomUtil.addClass(this._map._container, 'leaflet-poi-selecting');
+            L.DomEvent.on(document, 'keydown', this._onPoiSelectionKeyDown, this);
+            this.fire('startedit');
+            this._showPoiSelectionToolbar();
+            this._updatePoiSelection();
+        },
+
+        _updatePoiSelection: function() {
+            const state = this._poiSelectionState;
+            if (!state) {
+                return;
+            }
+            const bounds = state.selector.getBounds();
+            const results = this._markerLayer.rtree.search({
+                minX: bounds.getWest(),
+                minY: bounds.getSouth(),
+                maxX: bounds.getEast(),
+                maxY: bounds.getNorth(),
+            });
+            state.selectedMarkers = results.filter((m) => m._parentTrack === state.sourceTrack);
+            this._updatePoiHighlights();
+            this._updatePoiSelectionToolbarCount();
+        },
+
+        _updatePoiHighlights: function() {
+            const state = this._poiSelectionState;
+            if (!state) {
+                return;
+            }
+            state.highlightLayer.clearLayers();
+            const trackColor = this.colors[state.sourceTrack.color()];
+            for (const marker of state.selectedMarkers) {
+                L.circleMarker(marker.latlng, {
+                    radius: 12,
+                    color: trackColor,
+                    weight: 2,
+                    fillColor: trackColor,
+                    fillOpacity: 0.3,
+                    interactive: false,
+                }).addTo(state.highlightLayer);
+            }
+        },
+
+        _showPoiSelectionToolbar: function() {
+            const state = this._poiSelectionState;
+            if (!state) {
+                return;
+            }
+            const toolbar = L.DomUtil.create('div', 'poi-selection-toolbar', this._map._container);
+            L.DomEvent.disableClickPropagation(toolbar);
+
+            toolbar.innerHTML = `
+                <span class="poi-selection-count">0 points selected</span>
+                <button class="poi-btn poi-btn-delete" type="button">Delete</button>
+                <button class="poi-btn poi-btn-copy" type="button">Copy</button>
+                <button class="poi-btn poi-btn-move" type="button">Move</button>
+                <button class="poi-btn poi-btn-cancel" type="button">Cancel</button>
+            `;
+
+            toolbar.querySelector('.poi-btn-delete').addEventListener('click', () => this._poiActionDelete());
+            toolbar.querySelector('.poi-btn-copy').addEventListener('click', () => this._poiActionCopy());
+            toolbar.querySelector('.poi-btn-move').addEventListener('click', () => this._poiActionMove());
+            toolbar.querySelector('.poi-btn-cancel').addEventListener('click', () => this.cancelPoiSelection());
+
+            state._toolbar = toolbar;
+            this._updatePoiSelectionToolbarCount();
+        },
+
+        _updatePoiSelectionToolbarCount: function() {
+            const state = this._poiSelectionState;
+            if (!state || !state._toolbar) {
+                return;
+            }
+            const count = state.selectedMarkers.length;
+            const countEl = state._toolbar.querySelector('.poi-selection-count');
+            countEl.textContent = `${count} point${count === 1 ? '' : 's'} selected`;
+
+            const empty = count === 0;
+            const onlyOneTrack = this.tracks().length < 2;
+            state._toolbar.querySelector('.poi-btn-delete').disabled = empty;
+            state._toolbar.querySelector('.poi-btn-copy').disabled = empty || onlyOneTrack;
+            state._toolbar.querySelector('.poi-btn-move').disabled = empty || onlyOneTrack;
+        },
+
+        _poiActionDelete: function() {
+            const state = this._poiSelectionState;
+            if (!state || !state.selectedMarkers.length) {
+                return;
+            }
+            this._markerLayer.removeMarkers(state.selectedMarkers);
+            const trackMarkers = state.sourceTrack.markers;
+            for (const marker of state.selectedMarkers) {
+                const idx = trackMarkers.indexOf(marker);
+                if (idx > -1) {
+                    trackMarkers.splice(idx, 1);
+                }
+            }
+            this.notifyTracksChanged();
+            this.cancelPoiSelection();
+        },
+
+        _poiActionCopy: function() {
+            const state = this._poiSelectionState;
+            if (!state || !state.selectedMarkers.length) {
+                return;
+            }
+            state.phase = 'targeting';
+            state.action = 'copy';
+            this._beginTargetTrackSelection();
+        },
+
+        _poiActionMove: function() {
+            const state = this._poiSelectionState;
+            if (!state || !state.selectedMarkers.length) {
+                return;
+            }
+            state.phase = 'targeting';
+            state.action = 'move';
+            this._beginTargetTrackSelection();
+        },
+
+        _beginTargetTrackSelection: function() {
+            const state = this._poiSelectionState;
+            if (!state || !state._toolbar) {
+                return;
+            }
+            const countEl = state._toolbar.querySelector('.poi-selection-count');
+            countEl.textContent = 'Click target track in list or on map';
+            state._toolbar.querySelector('.poi-btn-delete').style.display = 'none';
+            state._toolbar.querySelector('.poi-btn-copy').style.display = 'none';
+            state._toolbar.querySelector('.poi-btn-move').style.display = 'none';
+
+            L.DomUtil.addClass(this._container, 'poi-target-selecting');
+
+            const table = this._container.querySelector('.tracks-rows');
+            const handler = (e) => {
+                const row = e.target.closest('tr');
+                if (!row) {
+                    return;
+                }
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+                const rowIndex = rows.indexOf(row);
+                if (rowIndex < 0) {
+                    return;
+                }
+                const targetTrack = this.tracks()[rowIndex];
+                if (!targetTrack || targetTrack === state.sourceTrack) {
+                    return;
+                }
+                e.stopPropagation();
+                e.preventDefault();
+                this._executePoiAction(targetTrack);
+            };
+            table.addEventListener('click', handler, true);
+            state._targetClickHandler = handler;
+        },
+
+        _executePoiAction: function(targetTrack) {
+            const state = this._poiSelectionState;
+            if (!state) {
+                return;
+            }
+            const newMarkers = [];
+            for (const marker of state.selectedMarkers) {
+                const newMarker = this.addPoint(targetTrack, {
+                    name: marker.label,
+                    lat: marker.latlng.lat,
+                    lng: marker.latlng.lng,
+                });
+                newMarkers.push(newMarker);
+            }
+            if (targetTrack.visible()) {
+                this._markerLayer.addMarkers(newMarkers);
+            }
+            if (state.action === 'move') {
+                this._markerLayer.removeMarkers(state.selectedMarkers);
+                const trackMarkers = state.sourceTrack.markers;
+                for (const marker of state.selectedMarkers) {
+                    const idx = trackMarkers.indexOf(marker);
+                    if (idx > -1) {
+                        trackMarkers.splice(idx, 1);
+                    }
+                }
+            }
+            this.notifyTracksChanged();
+            this.cancelPoiSelection();
+        },
+
+        cancelPoiSelection: function() {
+            const state = this._poiSelectionState;
+            if (!state) {
+                return;
+            }
+            if (state.selector) {
+                this._map.removeLayer(state.selector);
+            }
+            if (state.highlightLayer) {
+                this._map.removeLayer(state.highlightLayer);
+            }
+            if (state._toolbar && state._toolbar.parentNode) {
+                state._toolbar.parentNode.removeChild(state._toolbar);
+            }
+            if (state._targetClickHandler) {
+                const table = this._container.querySelector('.tracks-rows');
+                if (table) {
+                    table.removeEventListener('click', state._targetClickHandler, true);
+                }
+            }
+            L.DomUtil.removeClass(this._map._container, 'leaflet-poi-selecting');
+            L.DomUtil.removeClass(this._container, 'poi-target-selecting');
+            L.DomEvent.off(document, 'keydown', this._onPoiSelectionKeyDown, this);
+            this._poiSelectionState = null;
+        },
+
+        _onPoiSelectionKeyDown: function(e) {
+            if (e.keyCode === 27) {
+                this.cancelPoiSelection();
+            }
         },
 
         joinTrackSegments: function(newSegment, joinToStart) {
@@ -1432,15 +1725,63 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerClick: function(e) {
+            const marker = e.marker;
+            const hasOtherTracks = this.tracks().some((t) => t !== marker._parentTrack);
             new Contextmenu([
-                    {text: e.marker.label, header: true},
+                    {text: marker.label, header: true},
                     '-',
-                    {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
-                    {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
-                    {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
-                    {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
+                    {text: 'Rename', callback: this.renamePoint.bind(this, marker)},
+                    {text: 'Move', callback: this.beginPointMove.bind(this, marker)},
+                    {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, marker, e)},
+                    {text: 'Delete', callback: this.removePoint.bind(this, marker)},
+                    '-',
+                    {
+                        text: 'Copy to track',
+                        callback: () => this._beginSinglePoiTargeting(marker, 'copy'),
+                        disabled: !hasOtherTracks,
+                    },
+                    {
+                        text: 'Move to track',
+                        callback: () => this._beginSinglePoiTargeting(marker, 'move'),
+                        disabled: !hasOtherTracks,
+                    },
                 ]
             ).show(e);
+        },
+
+        _beginSinglePoiTargeting: function(marker, action) {
+            this.stopPlacingPoint();
+            this.stopEditLine();
+            this.cancelPoiSelection();
+
+            const sourceTrack = marker._parentTrack;
+            const trackColor = this.colors[sourceTrack.color()];
+            const highlightLayer = L.featureGroup([]).addTo(this._map);
+            L.circleMarker(marker.latlng, {
+                radius: 12,
+                color: trackColor,
+                weight: 2,
+                fillColor: trackColor,
+                fillOpacity: 0.3,
+                interactive: false,
+            }).addTo(highlightLayer);
+
+            this._poiSelectionState = {
+                sourceTrack: sourceTrack,
+                selector: null,
+                selectedMarkers: [marker],
+                highlightLayer: highlightLayer,
+                phase: 'targeting',
+                action: action,
+                _toolbar: null,
+                _targetClickHandler: null,
+            };
+
+            L.DomUtil.addClass(this._map._container, 'leaflet-poi-selecting');
+            L.DomEvent.on(document, 'keydown', this._onPoiSelectionKeyDown, this);
+            this.fire('startedit');
+            this._showPoiSelectionToolbar();
+            this._beginTargetTrackSelection();
         },
 
         onMarkerEnter: function(e) {
@@ -1471,6 +1812,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         removeTrack: function(track) {
+            if (this._poiSelectionState && this._poiSelectionState.sourceTrack === track) {
+                this.cancelPoiSelection();
+            }
             track.visible(false);
             this.tracks.remove(track);
             this.notifyTracksChanged();
