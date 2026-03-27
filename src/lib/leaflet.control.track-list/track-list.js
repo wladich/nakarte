@@ -640,7 +640,7 @@ L.Control.TrackList = L.Control.extend({
                 line.getLatLngs().map((latlng) => [latlng.lat, latlng.lng])
             );
             const points = this.getTrackPoints(track)
-                .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label}));
+                .map((point) => ({lat: point.latlng.lat, lng: point.latlng.lng, name: point.label, desc: point.desc}));
             this.addTrack({name: track.name(), tracks: segments, points});
         },
 
@@ -1419,6 +1419,12 @@ L.Control.TrackList = L.Control.extend({
             marker.label = label;
         },
 
+        setMarkerDesc: function(marker, desc) {
+            marker.desc = desc;
+            // property tooltip natively used by leaflet
+            marker.tooltip = desc;
+        },
+
         addPoint: function(track, srcPoint) {
             var marker = {
                 latlng: L.latLng([srcPoint.lat, srcPoint.lng]),
@@ -1426,6 +1432,7 @@ L.Control.TrackList = L.Control.extend({
             };
             this.setMarkerIcon(marker);
             this.setMarkerLabel(marker, srcPoint.name);
+            this.setMarkerDesc(marker, srcPoint.desc);
             track.markers.push(marker);
             marker._parentTrack = track;
             return marker;
@@ -1436,6 +1443,7 @@ L.Control.TrackList = L.Control.extend({
                     {text: e.marker.label, header: true},
                     '-',
                     {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
+                    {text: 'Comment', callback: this.commentPoint.bind(this, e.marker)},
                     {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
                     {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
                     {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
@@ -1449,6 +1457,16 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerLeave: function(e) {
             e.marker._parentTrack.hover(false);
+        },
+
+        commentPoint: function(marker) {
+            this.stopPlacingPoint();
+            var desc = prompt('New point description', marker.desc);
+            if (desc !== null) {
+                this.setMarkerDesc(marker, desc.trim());
+                this._markerLayer.updateMarker(marker);
+                this.notifyTracksChanged();
+            }
         },
 
         removePoint: function(marker) {
@@ -1543,7 +1561,8 @@ L.Control.TrackList = L.Control.extend({
                 const points = this.getTrackPoints(track).map((point) => ({
                     lat: point.latlng.lat,
                     lng: point.latlng.lng,
-                    name: point.label
+                    name: point.label,
+                    desc: point.desc,
                 }));
                 newTrackPoints.push(...points);
             }
