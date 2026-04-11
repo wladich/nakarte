@@ -40,14 +40,14 @@ class Strava extends BaseService {
     }
 
     parseResponse(responses) {
-        const statusMessages = {
-            401: 'Requested Strava activity marked as private',
-            404: 'Requested Strava activity could not be found'
-        };
         const [pageResponse, trackResponse] = responses;
-        if (trackResponse.status !== 200) {
-            return [{error: statusMessages[trackResponse.status]}];
+        if (trackResponse.status === 404) {
+            return [{error: 'Strava activity is deleted or marked as private'}];
         }
+        if (trackResponse.status !== 200) {
+            return [{error: 'NETWORK', name: this.origUrl}];
+        }
+
         let name = `Strava ${this.trackId}`;
         const latlngs = trackResponse.responseJSON?.latlng;
         if (!latlngs || !Array.isArray(latlngs)) {
@@ -94,13 +94,13 @@ class StravaShortUrl extends BaseService {
 
     parseResponse(responses) {
         const response = responses[0];
-        const url = corsProxyOriginalUrl(response.responseURL);
         if (response.status === 404) {
-            return [{error: 'Requested Strava activity was deleted'}];
+            return [{error: 'Strava activity is deleted or marked as private'}];
         }
+        const url = corsProxyOriginalUrl(response.responseURL);
         const strava = new Strava(url);
         if (!strava.isOurUrl()) {
-            return [{error: 'Bad short link for Strava activity or activity is marked as private'}];
+            return [{error: 'Bad short link for Strava activity'}];
         }
         return strava.geoData();
     }
