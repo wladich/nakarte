@@ -156,6 +156,7 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+            this._trackIdCounter = 0;
         },
 
         onAdd: function(map) {
@@ -207,7 +208,8 @@ L.Control.TrackList = L.Control.extend({
                                        mouseenter: $parent.onTrackRowMouseEnter.bind($parent, track),
                                        mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
                                    },
-                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
+                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1},
+                                   attr: { 'data-item-id': track.id } ">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible, click: $parent.onTrackCheckboxClicked.bind($parent)"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -1271,6 +1273,8 @@ L.Control.TrackList = L.Control.extend({
 
         onTrackEditStart: function(track) {
             track.isEdited(true);
+            const row = this._container.querySelector('[data-item-id="' + track.id + '"]');
+            row.scrollIntoView();
         },
 
         onTrackEditEnd: function(track) {
@@ -1342,7 +1346,8 @@ L.Control.TrackList = L.Control.extend({
                 feature: L.featureGroup([]),
                 markers: [],
                 hover: ko.observable(false),
-                isEdited: ko.observable(false)
+                isEdited: ko.observable(false),
+                id: this._trackIdCounter++
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
