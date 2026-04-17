@@ -1349,13 +1349,14 @@ L.Control.TrackList = L.Control.extend({
 
             this.tracks.push(track);
 
+            this.onTrackVisibilityChanged(track);
+
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
             track.hover.subscribe(this.onTrackHoverChanged.bind(this, track));
 
             // this.onTrackColorChanged(track);
-            this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
             this.notifyTracksChanged();
