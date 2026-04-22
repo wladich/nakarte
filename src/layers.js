@@ -183,11 +183,11 @@ class LayerGroupWithOptions extends L.LayerGroup {
                     )
                 },
                 {
-                    title: 'Topomapper 1km',
+                    title: 'Soviet topo maps (AtloMaps)',
                     isDefault: true,
                     layer: L.tileLayer(
                         urlViaCorsProxy(
-                            'http://88.99.52.156/tmg/{z}/{x}/{y}'
+                            'https://extern.atlogis.com/rtm/{z}/{x}/{y}'
                         ),
                         {
                             code: 'T',
@@ -197,9 +197,10 @@ class LayerGroupWithOptions extends L.LayerGroup {
                             noCors: false,
                             print: true,
                             jnx: true,
-                            shortName: 'topomapper_1k',
-                            attribution: '<a href="https://play.google.com/store/apps/' +
-                                'details?id=com.atlogis.sovietmaps.free&hl=en&gl=US">Russian Topo Maps</a>',
+                            shortName: 'soviet_topo',
+                            attribution:
+                                '<a href="https://play.google.com/store/apps/details?id=com.atlogis.atlomaps">' +
+                                'AtloMaps</a>',
                         }
                     )
                 },
@@ -1125,7 +1126,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 'Google Satellite',
                 'Google Terrain',
                 'Bing Satellite',
-                'Topomapper 1km',
+                'Soviet topo maps (AtloMaps)',
                 'Topo 10km',
                 'GGC 2 km',
                 'ArbaletMO',
@@ -1223,7 +1224,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
         'Google Map',
         'Google Terrain',
         // Topo maps
-        'Topomapper 1km',
+        'Soviet topo maps (AtloMaps)',
 
         // local base layers
 
