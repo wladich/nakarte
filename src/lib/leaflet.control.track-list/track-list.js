@@ -1359,6 +1359,7 @@ L.Control.TrackList = L.Control.extend({
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
             this.notifyTracksChanged();
+            this.scrollToTrack();
             return track;
         },
 
@@ -1626,6 +1627,10 @@ L.Control.TrackList = L.Control.extend({
 
         notifyTracksChanged() {
             this.fire('trackschanged');
+        },
+
+        scrollToTrack: function() {
+            document.querySelector('.tracks-rows tr:last-child').scrollIntoView();
         },
 
         showAllTracks: function() {
