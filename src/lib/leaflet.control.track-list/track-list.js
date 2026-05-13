@@ -156,6 +156,12 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+
+            L.DomEvent.on(document, 'keydown', this._refocusOnMap, this);
+        },
+
+        _refocusOnMap: function() {
+            this._map.getContainer().focus();
         },
 
         onAdd: function(map) {
