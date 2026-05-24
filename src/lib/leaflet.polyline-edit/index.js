@@ -163,13 +163,17 @@ L.Polyline.EditMixin = {
     },
 
     onKeyPress: function(e) {
-        if (e.target.tagName.toLowerCase() === 'input') {
+        const code = e.keyCode;
+        const targetTag = e.target.tagName.toLowerCase();
+        const isTargetTextInput = (targetTag === 'input' && e.target.type.toLowerCase() === 'text') ||
+            targetTag === 'textarea';
+        if (code !== 27 && isTargetTextInput) {
             return;
         }
-        var code = e.keyCode;
+
         switch (code) {
-            case 27:
-            case 13:
+            case 27: // Escape
+            case 13: // Enter
                 if (this._drawingDirection) {
                     this.stopDrawingLine();
                 } else {
@@ -179,8 +183,8 @@ L.Polyline.EditMixin = {
                 }
                 L.DomEvent.stop(e);
                 break;
-            case 8:
-            case 46:
+            case 8: // Backspace
+            case 46: // Delete
                 if (this._drawingDirection && this.getLatLngs().length > 2) {
                     const nodeIndex = this._drawingDirection === 1 ? this.getLatLngs().length - 2 : 1;
                     this.removeNode(nodeIndex);
