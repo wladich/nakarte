@@ -2,6 +2,7 @@ import L from 'leaflet';
 import ko from 'knockout';
 import Contextmenu from '~/lib/contextmenu';
 import '~/lib/knockout.component.progress/progress';
+import '~/lib/knockout.binding.element';
 import './track-list.css';
 import {selectFiles, readFiles} from '~/lib/file-read';
 import parseGeoFile from './lib/parseGeoFile';
@@ -207,7 +208,8 @@ L.Control.TrackList = L.Control.extend({
                                        mouseenter: $parent.onTrackRowMouseEnter.bind($parent, track),
                                        mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
                                    },
-                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1}">
+                                   css: {hover: hover() && $parent.tracks().length > 1, edit: isEdited() && $parent.tracks().length > 1},
+                                   element: track.row">
                         <td><input type="checkbox" class="visibility-switch" data-bind="checked: track.visible, click: $parent.onTrackCheckboxClicked.bind($parent)"></td>
                         <td><div class="color-sample" data-bind="style: {backgroundColor: $parent.colors[track.color()]}, click: $parent.onColorSelectorClicked.bind($parent)"></div></td>
                         <td><div class="track-name-wrapper"><div class="track-name" data-bind="text: track.name, attr: {title: track.name}, click: $parent.setViewToTrack.bind($parent)"></div></div></td>
@@ -1271,6 +1273,7 @@ L.Control.TrackList = L.Control.extend({
 
         onTrackEditStart: function(track) {
             track.isEdited(true);
+            this.scrollListToTrack(track);
         },
 
         onTrackEditEnd: function(track) {
@@ -1342,7 +1345,8 @@ L.Control.TrackList = L.Control.extend({
                 feature: L.featureGroup([]),
                 markers: [],
                 hover: ko.observable(false),
-                isEdited: ko.observable(false)
+                isEdited: ko.observable(false),
+                row: ko.observable(null),
             };
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
@@ -1359,6 +1363,7 @@ L.Control.TrackList = L.Control.extend({
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
             this.notifyTracksChanged();
+            this.scrollListToTrack(track);
             return track;
         },
 
@@ -1406,6 +1411,10 @@ L.Control.TrackList = L.Control.extend({
                 }
                 this._trackHighlight = trackHighlight;
             }
+        },
+
+        scrollListToTrack: function(track) {
+            track.row().scrollIntoView({behavior: 'smooth', block: 'nearest', container: 'nearest'});
         },
 
         setMarkerIcon: function(marker) {
