@@ -109,6 +109,13 @@ function fixDoubleZoomOnMouseWheel() {
     };
 }
 
+// Removed in 1.7.0 https://github.com/Leaflet/Leaflet/pull/7013/
+function removeClickFilterForAndroid4() {
+    L.DomEvent._filterClick = function _filterClick(e, handler) {
+        handler(e);
+    };
+}
+
 function fixAll() {
     fixPanAnimationBug();
     fixTouchDetection();
@@ -118,6 +125,7 @@ function fixAll() {
     allowControlHorizontalStacking();
     addTooltipDelay();
     fixDoubleZoomOnMouseWheel();
+    removeClickFilterForAndroid4();
 }
 
 export {fixAll};
