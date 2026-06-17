@@ -219,7 +219,7 @@ async function* iterateLayersTiles(
             map = getTempMap(zoom, layer._rasterizeNeedsFullSizeMap, pixelBounds);
             map.addLayer(layer);
         }
-        let {iterateTilePromises, count, tileScale = 1} = await layer.getTilesInfo({
+        let {iterateTilePromises, count, overrideTileScale} = await layer.getTilesInfo({
                 xhrOptions: defaultXHROptions,
                 pixelBounds,
                 latLngBounds,
@@ -239,8 +239,8 @@ async function* iterateLayersTiles(
                 zoom,
                 progressInc,
                 layer,
-                tileScale,
                 ...tileInfo,
+                tileScale: overrideTileScale ?? tileInfo.tileScale,
             }));
             doStop = yield tilePromise;
             if (doStop) {
