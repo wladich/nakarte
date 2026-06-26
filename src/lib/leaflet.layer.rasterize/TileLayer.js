@@ -45,7 +45,7 @@ const GridLayerGrabMixin = {
                             tilePos,
                             tileSize,
                             latLngBounds,
-                            tileScale: (image.width > this.getTileSize().x) ? 2 : 1,
+                            tileScale: (image && (image.width > this.getTileSize().x)) ? 2 : 1,
                         })),
                         abortLoading
                     };
