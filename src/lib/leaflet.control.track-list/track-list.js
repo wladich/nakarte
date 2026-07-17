@@ -173,7 +173,7 @@ L.Control.TrackList = L.Control.extend({
                 <div class="leaflet-control-content">
                 <div class="header">
                     <div class="hint"
-                     title="gpx kml Ozi geojson zip YandexMaps Strava Etomesto GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
+                     title="gpx kml Ozi geojson zip YandexMaps Strava GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
                         gpx kml Ozi geojson zip YandexMaps Strava
                         <span class="formats-hint-more">&hellip;</span>
                     </div>
