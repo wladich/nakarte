@@ -23,17 +23,19 @@ Segment.write = function (obj, pbf) {
 var Waypoint = self.Waypoint = {};
 
 Waypoint.read = function (pbf, end) {
-    return pbf.readFields(Waypoint._readField, {lat: 0, lon: 0, name: ""}, end);
+    return pbf.readFields(Waypoint._readField, {lat: 0, lon: 0, name: "", desc: ""}, end);
 };
 Waypoint._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.lat = pbf.readSVarint();
     else if (tag === 2) obj.lon = pbf.readSVarint();
     else if (tag === 3) obj.name = pbf.readString();
+    else if (tag === 4) obj.desc = pbf.readString();
 };
 Waypoint.write = function (obj, pbf) {
     if (obj.lat) pbf.writeSVarintField(1, obj.lat);
     if (obj.lon) pbf.writeSVarintField(2, obj.lon);
     if (obj.name) pbf.writeStringField(3, obj.name);
+    if (obj.desc) pbf.writeStringField(4, obj.desc);
 };
 
 // Waypoints ========================================
