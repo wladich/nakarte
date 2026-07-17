@@ -307,3 +307,60 @@
 .tracks-hide-all {
     margin-left: 10px;
 }
+
+.poi-selection-toolbar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.poi-selection-count {
+    font-weight: bold;
+}
+
+.poi-btn {
+    padding: 4px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.poi-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.poi-btn:hover:not(:disabled) {
+    background-color: #eee;
+}
+
+.poi-btn-delete {
+    color: #d00;
+    border-color: #d00;
+}
+
+.poi-btn-cancel {
+    color: #666;
+}
+
+.leaflet-poi-selecting {
+    cursor: default;
+}
+
+.poi-target-selecting .tracks-rows tr:hover {
+    background-color: #d0e4ff !important;
+    cursor: pointer;
+}
