@@ -77,7 +77,6 @@ module.exports = [
     'src/lib/leaflet.control.track-list/lib/services/gpslib.js',
     'src/lib/leaflet.control.track-list/lib/services/openstreetmapRu.js',
     'src/lib/leaflet.control.track-list/lib/services/wikiloc.js',
-    'src/lib/leaflet.control.track-list/lib/services/etomesto.js',
     'src/lib/leaflet.control.track-list/lib/services/yandex.js',
     'src/lib/leaflet.control.track-list/lib/services/osm.js',
     'src/lib/leaflet.control.track-list/lib/services/gpsies.js',

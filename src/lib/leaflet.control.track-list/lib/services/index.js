@@ -1,5 +1,4 @@
 import SimpleService from './simpleService';
-import Etomesto from './etomesto';
 import Osm from './osm';
 import {Strava, StravaShortUrl} from './strava';
 import Tracedetrail from './tracedetrail';
@@ -13,7 +12,6 @@ const services = [
     YandexRuler,
     NakarteTrack,
     NakarteUrl,
-    Etomesto,
     Osm,
     StravaShortUrl,
     Strava,
