@@ -376,6 +376,7 @@ L.Control.TrackList = L.Control.extend({
             this.readingFiles(this.readingFiles() + 1);
 
             logging.captureBreadcrumb('load track from url', {trackUrl: url});
+            logging.logEvent('load track from url', {trackUrl: url});
             loadFromUrl(url)
                 .then((geodata) => {
                     this.addTracksFromGeodataArray(geodata);
