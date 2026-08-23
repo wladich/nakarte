@@ -23,3 +23,29 @@
 .leaflet-rectangle-select-edge.edge-right {
     cursor: e-resize !important;
 }
+
+.leaflet-rectangle-select-corner {
+    width: 14px !important;
+    height: 14px !important;
+    margin-left: -7px !important;
+    margin-top: -7px !important;
+    background: white;
+    border: 2px solid #3388ff;
+    border-radius: 2px;
+}
+
+.leaflet-rectangle-select-corner.corner-topleft {
+    cursor: nw-resize !important;
+}
+
+.leaflet-rectangle-select-corner.corner-topright {
+    cursor: ne-resize !important;
+}
+
+.leaflet-rectangle-select-corner.corner-bottomleft {
+    cursor: sw-resize !important;
+}
+
+.leaflet-rectangle-select-corner.corner-bottomright {
+    cursor: se-resize !important;
+}
