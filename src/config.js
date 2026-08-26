@@ -14,6 +14,7 @@ const config = {
     elevationsServer: 'https://elevation.nakarte.me/',
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',
+    overpassTurboUrl: 'https://overpass.kumi.systems/api/interpreter',
     tracksStorageServer: 'https://tracks.nakarte.me',
     wikimapiaTilesBaseUrl: 'https://proxy.nakarte.me/wikimapia/',
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
