@@ -457,7 +457,7 @@ class LayerGroupWithOptions extends L.LayerGroup {
                 {
                     title: 'OpenTopoMap',
                     isDefault: false,
-                    layer: L.tileLayer('https://tile.top-o-map.com/{z}/{x}/{y}.png',
+                    layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
                         {
                             code: 'Otm',
                             isOverlay: false,
