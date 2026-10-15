@@ -470,6 +470,7 @@ function enableConfig(control, {layers, customLayersOrder}, options = {withHotke
                     tms: ko.observable(fieldValues.tms),
                     scaleDependent: ko.observable(fieldValues.scaleDependent),
                     maxZoom: ko.observable(fieldValues.maxZoom),
+                    crs: ko.observable(fieldValues.crs),
                     isOverlay: ko.observable(fieldValues.isOverlay),
                     isTop: ko.observable(fieldValues.isTop),
                     buttons: buttons,
@@ -480,6 +481,7 @@ function enableConfig(control, {layers, customLayersOrder}, options = {withHotke
                             tms: dialogModel.tms(),
                             scaleDependent: dialogModel.scaleDependent(),
                             maxZoom: dialogModel.maxZoom(),
+                            crs: dialogModel.crs(),
                             isOverlay: dialogModel.isOverlay(),
                             isTop: dialogModel.isTop()
                         };
@@ -504,9 +506,13 @@ function enableConfig(control, {layers, customLayersOrder}, options = {withHotke
 <hr/>
 <label><input type="checkbox" data-bind="checked: scaleDependent"/>Content depends on scale(like OSM or Google maps)</label><br/>
 <label><input type="checkbox" data-bind="checked: tms" />TMS rows order</label><br />
-
 <label>Max zoom<br>
-<select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label>
+<select data-bind="options: [9,10,11,12,13,14,15,16,17,18], value: maxZoom"></select></label><br />
+<details>
+<summary>Additional parameters</summary>
+<label>Projection<br />
+<select data-bind="options: ['EPSG:3857','EPSG:3395'], value: crs"></select></label><br />
+</details>
 <div data-bind="foreach: buttons">
     <a class="button" data-bind="click: $root.buttonClicked.bind(null, $index()), text: caption"></a>
 </div>`;
@@ -614,6 +620,7 @@ function enableConfig(control, {layers, customLayersOrder}, options = {withHotke
                     isDefault: false,
                     isCustom: true,
                     serialized: serialized,
+                    crs: fieldValues.crs,
                     layer: tileLayer,
                     order:
                         (fieldValues.isOverlay && fieldValues.isTop) ? customLayersOrder.top : customLayersOrder.bottom,
