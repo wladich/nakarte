@@ -27,6 +27,9 @@ function saveGpx(segments, name, points, withElevations = false) {
                 gpx.push(`\t\t<ele>${marker.latlng.alt.toFixed(1)}</ele>`);
             }
             gpx.push(`\t\t<name>${label}</name>`);
+            if (marker.desc) {
+                gpx.push(`\t\t<desc>${marker.desc}</desc>`);
+            }
             gpx.push('\t</wpt>');
         }
     );
