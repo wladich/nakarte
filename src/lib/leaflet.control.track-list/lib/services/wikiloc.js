@@ -4,12 +4,12 @@ import {stringToArrayBuffer} from '~/lib/binary-strings';
 import twkb from 'twkb';
 
 class Wikiloc extends BaseService {
-    urlRe = /^https?:\/\/(?:.+\.)?wikiloc\.com\/.*-(\d+)/u;
+    urlRe = /^https?:\/\/(?:.+\.)?wikiloc\.com\/(.+-)(\d+)/u;
     mapDataRe = /mapData\s*=\s*(.+);/u;
 
     getTrackId() {
         const m = this.urlRe.exec(this.origUrl);
-        return m[1];
+        return m[2];
     }
 
     isOurUrl() {
@@ -17,8 +17,10 @@ class Wikiloc extends BaseService {
     }
 
     requestOptions() {
+        const m = this.urlRe.exec(this.origUrl);
+        const url = `https://www.wikiloc.com/${m[1]}${m[2]}`;
         return [{
-            url: urlViaCorsProxy(this.origUrl),
+            url: urlViaCorsProxy(url),
             options: {
                 isResponseSuccess: (xhr) => xhr.status === 200 || xhr.status === 404
             }
