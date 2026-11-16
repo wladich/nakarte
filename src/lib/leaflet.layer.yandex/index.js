@@ -1,41 +1,19 @@
 import L from 'leaflet';
 import './style.css';
-
-const yandexCrs = L.CRS.EPSG3395;
+import {BaseLayer} from '../leaflet.control.layers.configure/baseLayer';
 
 L.Layer.Yandex = L.TileLayer.extend({
-        options: {
-            className: L.Browser.retina ? '' : 'yandex-tile-layer',
-            yandexScale: L.Browser.retina ? 2 : 1
-        },
+    includes: BaseLayer,
 
-        _getTilePos: function(coords) {
-            const tilePosLatLng = yandexCrs.pointToLatLng(coords.scaleBy(this.getTileSize()), coords.z);
-            return this._map.project(tilePosLatLng, coords.z).subtract(this._level.origin).round();
-        },
+    options: {
+        // className: L.Browser.retina ? '' : 'yandex-tile-layer',
+        yandexScale: L.Browser.retina ? 2 : 1
+    },
 
-        _pxBoundsToTileRange: function(bounds) {
-            const zoom = this._tileZoom;
-            const bounds2 = new L.Bounds(
-                yandexCrs.latLngToPoint(this._map.unproject(bounds.min, zoom), zoom),
-                yandexCrs.latLngToPoint(this._map.unproject(bounds.max, zoom), zoom));
-            return L.TileLayer.prototype._pxBoundsToTileRange.call(this, bounds2);
-        },
-
-        createTile: function(coords, done) {
-            const tile = L.TileLayer.prototype.createTile.call(this, coords, done);
-            const coordsBelow = L.point(coords).add([0, 1]);
-            coordsBelow.z = coords.z;
-            tile._adjustHeight = this._getTilePos(coordsBelow).y - this._getTilePos(coords).y;
-            return tile;
-        },
-
-        _initTile: function(tile) {
-            L.TileLayer.prototype._initTile.call(this, tile);
-            tile.style.height = `${tile._adjustHeight}px`;
-        }
-    }
-);
+    getCrs: function() {
+        return L.CRS.EPSG3395;
+    },
+});
 
 L.Layer.Yandex.Map = L.Layer.Yandex.extend({
     initialize: function(options) {
