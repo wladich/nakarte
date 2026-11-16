@@ -80,6 +80,14 @@ function parseGpx(txt, name, preferNameFromFile) {
                 error = 'CORRUPT';
                 wptName = '__invalid point name__';
             }
+            try {
+                const desc = utf8_decode(xmlGetNodeText(waypoint_element.getElementsByTagName('desc')[0]));
+                if (desc) {
+                    waypoint.desc = desc;
+                }
+            } catch (e) {
+                // do nothing
+            }
             waypoint.name = wptName;
             waypoint.symbol_name = xmlGetNodeText(waypoint_element.getElementsByTagName('sym')[0]);
             waypoints.push(waypoint);

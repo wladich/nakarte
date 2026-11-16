@@ -8,6 +8,7 @@ L.Layer.CanvasMarkers.include({
             return {
                 latlng: {lat: marker.latlng.lat, lng: marker.latlng.lng},
                 label: marker.label,
+                desc: marker.desc,
                 icon: marker.icon
             };
         },
